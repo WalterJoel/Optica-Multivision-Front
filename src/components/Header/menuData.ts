@@ -101,7 +101,7 @@ export const menuData: Menu[] = [
         id: 88,
         title: 'Registrar Cliente Sayu',
         newTab: false,
-        path: '/resgister-client',
+        path: '/register-client',
       },
     ],
   },
