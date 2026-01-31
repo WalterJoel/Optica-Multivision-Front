@@ -101,7 +101,7 @@ export const menuData: Menu[] = [
         id: 88,
         title: 'Registrar Cliente',
         newTab: false,
-        path: '/mail-success',
+        path: '/resgister-client',
       },
     ],
   },
