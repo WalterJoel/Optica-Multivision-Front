@@ -3,18 +3,14 @@
 import { useState } from "react";
 import Breadcrumb from "../Common/Breadcrumb";
 
-/* =====================
-   CYL VALUES
-===================== */
+   //CYL VALUES
 const cylValues = [
   -0.25, -0.5, -0.75, -1.0, -1.25, -1.5, -1.75, -2.0,
   -2.25, -2.5, -2.75, -3.0, -3.25, -3.5, -3.75, -4.0,
   -4.25, -4.5, -4.75, -5.0, -5.25, -5.5, -5.75, -6.0,
 ];
 
-/* =====================
-   MATRICES
-===================== */
+   //MATRICES
 const negativeMatrix: Record<string, number[]> = {
   NEUTRO: Array(24).fill(6),
   "-0.25": Array(24).fill(5),
@@ -31,9 +27,7 @@ const positiveMatrix: Record<string, number[]> = {
   "+1.25": Array(24).fill(2),
 };
 
-/* =====================
-   MATRICES POR MATERIAL
-===================== */
+   //MATRICES POR MATERIAL
 const matricesByMaterial = {
   Policarbonato: {
     negative: negativeMatrix,
@@ -65,9 +59,7 @@ const matricesByMaterial = {
   },
 };
 
-/* =====================
-   COMPONENT
-===================== */
+   //COMPONENT
 export default function Matrix() {
   const [material, setMaterial] =
     useState<keyof typeof matricesByMaterial>("Policarbonato");
@@ -142,11 +134,14 @@ export default function Matrix() {
 
           <div className="overflow-x-auto">
             <table className="w-full border-collapse text-sm">
-              <thead>
+              <thead className="sticky top-0 z-30">
                 <tr>
-                  <th className="border bg-gray-1 px-3 py-2 text-left">
+                  <th
+                    className="sticky left-0 z-40 border bg-gray-1 px-3 py-2 text-left"
+                  >
                     SPH \ CYL
                   </th>
+
                   {cylValues.map((cyl) => (
                     <th
                       key={cyl}
@@ -158,12 +153,16 @@ export default function Matrix() {
                 </tr>
               </thead>
 
+
               <tbody>
                 {Object.entries(activeMatrix).map(([sph, values]) => (
                   <tr key={sph}>
-                    <td className="border px-3 py-2 font-medium">
+                    <td
+                      className="sticky left-0 z-20 border bg-white px-3 py-2 font-medium"
+                    >
                       {sph}
                     </td>
+
 
                     {values.map((stock, i) => (
                       <td
