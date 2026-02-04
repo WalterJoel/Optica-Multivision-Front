@@ -12,61 +12,70 @@ const cylValues = [
 ];
 
 // MATRICES COMPLETAS
-const negativeMatrix: Record<string, number[]> = {
-  NEUTRO: [10	,8	,6	,10	,9	,5	,1	,4	,1	,1,2	,1	,1	,2	,2	,3,	,3,	,2	,2	,2	,2	,2	,2	,2	,2],
-  "-0.25": [9,5,0,5,4,5,5,4,3,1,0,2,2,2,1,2,2,2,2,2,2,2,2,2,2],
-  "-0.50": [8,5,10,5,4,4,5,5,4,2,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "-0.75": [10,5,5,5,5,5,4,3,4,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "-1.00": [7,5,5,5,5,5,5,5,5,2,1,2,2,2,2,1,2,2,2,2,2,2,2,2,2,],
-  "-1.25": [5,5,4,5,4,5,5,5,5,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "-1.50": [5,5,4,5,5,5,5,5,5,2,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "-1.75": [5,5,4,5,5,5,5,5,5,2,1,1,2,2,1,2,2,2,2,2,2,2,2,2,2],
-  "-2.00": [5,5,5,5,5,5,5,5,5,2,2,2,1,2,2,2,2,2,2,2,2,2,2,2,2],
-  "-2.25": [3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "-2.50": [3,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "-2.75": [3,2,2,2,2,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "-3.00": [3,2,2,2,2,2,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "-3.25": [3,2,2,1,2,2,2,2,2,2,2,2,2,2,2,0,2,2,2,2,2,2,2,2,2],
-  "-3.50": [3,2,2,2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "-3.75": [3,2,2,2,2,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "-4.00": [3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "-4.25": [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "-4.50": [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "-4.75": [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "-5.00": [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "-5.25": [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "-5.50": [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "-5.75": [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "-6.00": [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
+type StockBySede = { total: number; sedes: { Arequipa: number; Lima: number; Cusco: number } };
+
+const negativeMatrix: Record<string, StockBySede[]> = {
+  NEUTRO: [
+    { total: 10, sedes: { Arequipa: 3, Lima: 4, Cusco: 3 } },
+    { total: 8, sedes: { Arequipa: 2, Lima: 3, Cusco: 3 } },
+    { total: 6, sedes: { Arequipa: 1, Lima: 3, Cusco: 2 } },
+    { total: 10, sedes: { Arequipa: 4, Lima: 4, Cusco: 2 } },
+    { total: 9, sedes: { Arequipa: 3, Lima: 3, Cusco: 3 } },
+    { total: 5, sedes: { Arequipa: 2, Lima: 2, Cusco: 1 } },
+    { total: 1, sedes: { Arequipa: 0, Lima: 1, Cusco: 0 } },
+    { total: 4, sedes: { Arequipa: 2, Lima: 2, Cusco: 0 } },
+    { total: 1, sedes: { Arequipa: 0, Lima: 1, Cusco: 0 } },
+    { total: 1, sedes: { Arequipa: 0, Lima: 1, Cusco: 0 } },
+    { total: 2, sedes: { Arequipa: 1, Lima: 1, Cusco: 0 } },
+    { total: 1, sedes: { Arequipa: 0, Lima: 1, Cusco: 0 } },
+    { total: 1, sedes: { Arequipa: 0, Lima: 1, Cusco: 0 } },
+    { total: 2, sedes: { Arequipa: 1, Lima: 1, Cusco: 0 } },
+    { total: 2, sedes: { Arequipa: 1, Lima: 1, Cusco: 0 } },
+    { total: 3, sedes: { Arequipa: 1, Lima: 2, Cusco: 0 } },
+    { total: 3, sedes: { Arequipa: 1, Lima: 1, Cusco: 1 } },
+    { total: 2, sedes: { Arequipa: 1, Lima: 1, Cusco: 0 } },
+    { total: 2, sedes: { Arequipa: 1, Lima: 1, Cusco: 0 } },
+    { total: 2, sedes: { Arequipa: 1, Lima: 1, Cusco: 0 } },
+    { total: 2, sedes: { Arequipa: 1, Lima: 1, Cusco: 0 } },
+    { total: 2, sedes: { Arequipa: 1, Lima: 1, Cusco: 0 } },
+    { total: 2, sedes: { Arequipa: 1, Lima: 1, Cusco: 0 } },
+    { total: 2, sedes: { Arequipa: 1, Lima: 1, Cusco: 0 } },
+    { total: 4, sedes: { Arequipa: 2, Lima: 1, Cusco: 1 } },
+  ],
+  "-0.25": Array(25).fill({ total: 0, sedes: { Arequipa: 0, Lima: 0, Cusco: 0 } }),
+  "-0.50": Array(25).fill({ total: 0, sedes: { Arequipa: 0, Lima: 0, Cusco: 0 } }),
+  "-0.75": Array(25).fill({ total: 0, sedes: { Arequipa: 0, Lima: 0, Cusco: 0 } }),
+  "-1.00": Array(25).fill({ total: 0, sedes: { Arequipa: 0, Lima: 0, Cusco: 0 } }),
+  "-1.25": Array(25).fill({ total: 0, sedes: { Arequipa: 0, Lima: 0, Cusco: 0 } }),
+  "-1.50": Array(25).fill({ total: 0, sedes: { Arequipa: 0, Lima: 0, Cusco: 0 } }),
+  "-1.75": Array(25).fill({ total: 0, sedes: { Arequipa: 0, Lima: 0, Cusco: 0 } }),
+  "-2.00": Array(25).fill({ total: 0, sedes: { Arequipa: 0, Lima: 0, Cusco: 0 } }),
+  "-2.25": Array(25).fill({ total: 0, sedes: { Arequipa: 0, Lima: 0, Cusco: 0 } }),
+  "-2.50": Array(25).fill({ total: 0, sedes: { Arequipa: 0, Lima: 0, Cusco: 0 } }),
+  "-2.75": Array(25).fill({ total: 0, sedes: { Arequipa: 0, Lima: 0, Cusco: 0 } }),
+  "-3.00": Array(25).fill({ total: 0, sedes: { Arequipa: 0, Lima: 0, Cusco: 0 } }),
+  "-3.25": Array(25).fill({ total: 0, sedes: { Arequipa: 0, Lima: 0, Cusco: 0 } }),
+  "-3.50": Array(25).fill({ total: 0, sedes: { Arequipa: 0, Lima: 0, Cusco: 0 } }),
+  "-3.75": Array(25).fill({ total: 0, sedes: { Arequipa: 0, Lima: 0, Cusco: 0 } }),
+  "-4.00": Array(25).fill({ total: 0, sedes: { Arequipa: 0, Lima: 0, Cusco: 0 } }),
+  "-4.25": Array(25).fill({ total: 0, sedes: { Arequipa: 0, Lima: 0, Cusco: 0 } }),
+  "-4.50": Array(25).fill({ total: 0, sedes: { Arequipa: 0, Lima: 0, Cusco: 0 } }),
+  "-4.75": Array(25).fill({ total: 0, sedes: { Arequipa: 0, Lima: 0, Cusco: 0 } }),
+  "-5.00": Array(25).fill({ total: 0, sedes: { Arequipa: 0, Lima: 0, Cusco: 0 } }),
+  "-5.25": Array(25).fill({ total: 0, sedes: { Arequipa: 0, Lima: 0, Cusco: 0 } }),
+  "-5.50": Array(25).fill({ total: 0, sedes: { Arequipa: 0, Lima: 0, Cusco: 0 } }),
+  "-5.75": Array(25).fill({ total: 0, sedes: { Arequipa: 0, Lima: 0, Cusco: 0 } }),
+  "-6.00": Array(25).fill({ total: 0, sedes: { Arequipa: 0, Lima: 0, Cusco: 0 } }),
 };
 
-const positiveMatrix: Record<string, number[]> = {
-  NEUTRO: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  "+0.25": [10,5,5,5,3,5,5,5,5,2,2,2,2,2,1,2,1,2,2,2,2,2,2,2,2],
-  "+0.50": [9,5,2,5,5,5,5,4,5,1,1,2,2,2,2,1,2,2,2,2,2,2,2,2,2],
-  "+0.75": [10,5,5,5,5,5,5,5,5,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,2],
-  "+1.00": [10,5,5,4,5,5,5,5,5,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "+1.25": [5,5,5,5,5,5,5,5,5,2,0,2,2,2,2,2,2,2,0,2,2,2,2,2,2],
-  "+1.50": [5,5,5,5,5,5,5,5,5,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "+1.75": [5,5,5,5,5,5,5,5,4,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "+2.00": [5,5,5,5,5,5,5,5,5,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "+2.25": [3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "+2.50": [2,1,2,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "+2.75": [3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "+3.00": [3,2,2,1,2,2,2,2,2,2,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "+3.25": [3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "+3.50": [3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "+3.75": [3,2,2,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "+4.00": [3,2,2,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "+4.25": [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "+4.50": [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "+4.75": [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "+5.00": [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "+5.25": [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "+5.50": [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "+5.75": [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-  "+6.00": [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
-};
+// --- SOLUCIÓN: copia profunda para positiveMatrix ---
+const positiveMatrix: Record<string, StockBySede[]> = {};
+Object.entries(negativeMatrix).forEach(([sph, arr]) => {
+  positiveMatrix[sph] = arr.map((stock) => ({
+    total: stock.total,
+    sedes: { ...stock.sedes },
+  }));
+});
 
 // MATRICES POR MATERIAL
 const matricesByMaterial = {
@@ -79,7 +88,7 @@ const matricesByMaterial = {
   BlueCut: { negative: negativeMatrix, positive: positiveMatrix },
 };
 
-// COMPONENT
+// COMPONENTE
 export default function Matrix() {
   const [material, setMaterial] =
     useState<keyof typeof matricesByMaterial>("Policarbonato");
@@ -90,7 +99,7 @@ export default function Matrix() {
   const [selected, setSelected] = useState<null | {
     sph: string;
     cyl: number;
-    stock: number;
+    stock: StockBySede;
   }>(null);
 
   const activeMatrix = matricesByMaterial[material][matrixType];
@@ -100,24 +109,23 @@ export default function Matrix() {
       <Breadcrumb title="Matrix" pages={["Matrix"]} />
 
       <div className="mx- max-w-[1200px] space-y-6">
-{/* ===== MATERIAL BUTTONS ===== */}
-<div className="flex justify-center">
-  <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
-    {Object.keys(matricesByMaterial).map((item) => (
-      <button
-        key={item}
-        onClick={() => setMaterial(item as any)}
-        className={`rounded-xl border px-3 py-2 text-sm font-medium transition
-          ${material === item ? "bg-blue text-white" : "bg-white hover:bg-blue/10"}`}
-      >
-        {item}
-      </button>
-    ))}
-  </div>
-</div>
+        {/* MATERIAL BUTTONS */}
+        <div className="flex justify-center">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
+            {Object.keys(matricesByMaterial).map((item) => (
+              <button
+                key={item}
+                onClick={() => setMaterial(item as any)}
+                className={`rounded-xl border px-3 py-2 text-sm font-medium transition
+                  ${material === item ? "bg-blue text-white" : "bg-white hover:bg-blue/10"}`}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+        </div>
 
-
-        {/* ===== MATRIX TYPE ===== */}
+        {/* MATRIX TYPE */}
         <div className="flex gap-3 justify-center ">
           <button
             onClick={() => setMatrixType("negative")}
@@ -137,59 +145,60 @@ export default function Matrix() {
           </button>
         </div>
 
-       {/* ===== MATRIX TABLE ===== */}
-<div className="rounded-xl bg-white p-6 shadow-1 ml-15 ">
-  <h2 className="mb-4 text-lg font-semibold text-dark">
-    Disponibilidad por Medida – {material}
-  </h2>
+        {/* MATRIX TABLE */}
+        <div className="rounded-xl bg-white p-6 shadow-1 ml-15 ">
+          <h2 className="mb-4 text-lg font-semibold text-dark">
+            Disponibilidad por Medida – {material}
+          </h2>
 
-  <div className="w-full">
-    <table className="w-full table-auto border-collapse text-sm  ml-0">
-      <thead>
-        <tr>
-          <th className="sticky left-0 z-40 border bg-gray-1 px-3 py-2 text-left">
-            SPH \ CYL
-          </th>
-          {cylValues.map((cyl) => (
-            <th key={cyl} className="border bg-gray-1 px-3 py-2 text-center">
-              {cyl}
-            </th>
-          ))}
-        </tr>
-      </thead>
+          <div className="w-full">
+            <table className="w-full table-auto border-collapse text-sm  ml-0">
+              <thead>
+  <tr>
+    <th className="sticky left-0 z-40 border bg-gray-1 px-3 py-2 text-left">
+      SPH \ CYL
+    </th>
+    {cylValues.map((cyl) => (
+      <th key={cyl} className="border bg-gray-1 px-3 py-2 text-center">
+        {matrixType === "positive" ? cyl : cyl} {/* siempre negativo */}
+      </th>
+    ))}
+  </tr>
+</thead>
 
-      <tbody>
-        {Object.entries(activeMatrix).map(([sph, values]) => (
-          <tr key={sph}>
-            <td className="sticky left-0 z-20 border bg-white px-3 py-2 font-medium">
-              {sph}
-            </td>
-            {values.map((stock, i) => (
-              <td
-                key={i}
-                onClick={() => setSelected({ sph, cyl: cylValues[i], stock })}
-                className={`border px-3 py-2 text-center cursor-pointer transition font-medium ${
-                  stock === 0
-                    ? "bg-red/20 text-red"
-                    : stock <= 5
-                    ? "bg-yellow/20 text-yellow-700"
-                    : "bg-green/20 text-green"
-                } hover:brightness-95`}
-              >
-                {stock}
-              </td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-</div>
+<tbody>
+  {Object.entries(activeMatrix).map(([sph, values]) => (
+    <tr key={sph}>
+      <td className="sticky left-0 z-20 border bg-white px-3 py-2 font-medium">
+        {matrixType === "positive"
+          ? Math.abs(Number(sph)) // columna SPH positiva
+          : sph} 
+      </td>
+      {values.map((stock, i) => (
+        <td
+          key={i}
+          onClick={() => setSelected({ sph, cyl: cylValues[i], stock })}
+          className={`border px-3 py-2 text-center cursor-pointer transition font-medium ${
+            stock.total === 0
+              ? "bg-red/20 text-red"
+              : stock.total <= 5
+              ? "bg-yellow/20 text-yellow-700"
+              : "bg-green/20 text-green"
+          } hover:brightness-95`}
+        >
+          {stock.total}
+        </td>
+      ))}
+    </tr>
+  ))}
+</tbody>
 
-
+            </table>
+          </div>
+        </div>
       </div>
 
-      {/* ===== MODAL ===== */}
+      {/* MODAL */}
       {selected && (
         <div className="fixed inset-0 z-999 flex items-center justify-center bg-black/40">
           <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-2">
@@ -212,8 +221,19 @@ export default function Matrix() {
                 <span className="font-medium">{selected.cyl}</span>
               </div>
               <div className="flex justify-between">
-                <span>Stock</span>
-                <span className="font-medium">{selected.stock}</span>
+                <span>Stock total</span>
+                <span className="font-medium">{selected.stock.total}</span>
+              </div>
+
+              {/* Stock por sede */}
+              <div className="flex flex-col gap-1">
+                <span className="font-medium">Stock por sede:</span>
+                {Object.entries(selected.stock.sedes).map(([sede, cantidad]) => (
+                  <div key={sede} className="flex justify-between">
+                    <span>{sede}</span>
+                    <span>{cantidad}</span>
+                  </div>
+                ))}
               </div>
             </div>
 
