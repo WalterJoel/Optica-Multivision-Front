@@ -165,27 +165,29 @@ export default function Matrix() {
 
 
                     {values.map((stock, i) => (
-                      <td
-                        key={i}
-                        onClick={() =>
-                          setSelected({
-                            sph,
-                            cyl: cylValues[i],
-                            stock,
-                          })
+                    <td
+                      key={i}
+                      onClick={() =>
+                        setSelected({
+                          sph,
+                          cyl: cylValues[i],
+                          stock,
+                        })
+                      }
+                      className={`border px-3 py-2 text-center cursor-pointer transition font-medium
+                        ${
+                          stock === 0
+                            ? "bg-red/20 text-red"
+                            : stock <= 5
+                            ? "bg-yellow/20 text-yellow-700"
+                            : "bg-green/20 text-green"
                         }
-                        className={`border px-3 py-2 text-center cursor-pointer transition
-                          ${
-                            stock === 0
-                              ? "bg-red/10 text-red opacity-50"
-                              : stock <= 2
-                              ? "bg-yellow/10 text-yellow-700"
-                              : "hover:bg-blue/10"
-                          }`}
-                      >
-                        {stock}
-                      </td>
-                    ))}
+                        hover:brightness-95
+                      `}
+                    >
+                      {stock}
+                    </td>
+                  ))}
                   </tr>
                 ))}
               </tbody>
