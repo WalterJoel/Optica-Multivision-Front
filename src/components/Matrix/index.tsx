@@ -99,23 +99,26 @@ export default function Matrix() {
     <>
       <Breadcrumb title="Matrix" pages={["Matrix"]} />
 
-      <div className="mx-auto max-w-[1200px] space-y-6">
-        {/* ===== MATERIAL BUTTONS ===== */}
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
-          {Object.keys(matricesByMaterial).map((item) => (
-            <button
-              key={item}
-              onClick={() => setMaterial(item as any)}
-              className={`rounded-xl border px-3 py-2 text-sm font-medium transition
-                ${material === item ? "bg-blue text-white" : "bg-white hover:bg-blue/10"}`}
-            >
-              {item}
-            </button>
-          ))}
-        </div>
+      <div className="mx- max-w-[1200px] space-y-6">
+{/* ===== MATERIAL BUTTONS ===== */}
+<div className="flex justify-center">
+  <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
+    {Object.keys(matricesByMaterial).map((item) => (
+      <button
+        key={item}
+        onClick={() => setMaterial(item as any)}
+        className={`rounded-xl border px-3 py-2 text-sm font-medium transition
+          ${material === item ? "bg-blue text-white" : "bg-white hover:bg-blue/10"}`}
+      >
+        {item}
+      </button>
+    ))}
+  </div>
+</div>
+
 
         {/* ===== MATRIX TYPE ===== */}
-        <div className="flex gap-3">
+        <div className="flex gap-3 justify-center ">
           <button
             onClick={() => setMatrixType("negative")}
             className={`rounded-lg border px-4 py-2 text-sm ${
@@ -134,54 +137,56 @@ export default function Matrix() {
           </button>
         </div>
 
-        {/* ===== MATRIX TABLE ===== */}
-        <div className="rounded-xl bg-white p-6 shadow-1">
-          <h2 className="mb-4 text-lg font-semibold text-dark">
-            Disponibilidad por Medida – {material}
-          </h2>
+       {/* ===== MATRIX TABLE ===== */}
+<div className="rounded-xl bg-white p-6 shadow-1 ml-15 ">
+  <h2 className="mb-4 text-lg font-semibold text-dark">
+    Disponibilidad por Medida – {material}
+  </h2>
 
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse text-sm">
-              <thead className="sticky top-0 z-30">
-                <tr>
-                  <th className="sticky left-0 z-40 border bg-gray-1 px-3 py-2 text-left">
-                    SPH \ CYL
-                  </th>
-                  {cylValues.map((cyl) => (
-                    <th key={cyl} className="border bg-gray-1 px-3 py-2 text-center">
-                      {cyl}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
+  <div className="w-full">
+    <table className="w-full table-auto border-collapse text-sm  ml-0">
+      <thead>
+        <tr>
+          <th className="sticky left-0 z-40 border bg-gray-1 px-3 py-2 text-left">
+            SPH \ CYL
+          </th>
+          {cylValues.map((cyl) => (
+            <th key={cyl} className="border bg-gray-1 px-3 py-2 text-center">
+              {cyl}
+            </th>
+          ))}
+        </tr>
+      </thead>
 
-              <tbody>
-                {Object.entries(activeMatrix).map(([sph, values]) => (
-                  <tr key={sph}>
-                    <td className="sticky left-0 z-20 border bg-white px-3 py-2 font-medium">
-                      {sph}
-                    </td>
-                    {values.map((stock, i) => (
-                      <td
-                        key={i}
-                        onClick={() => setSelected({ sph, cyl: cylValues[i], stock })}
-                        className={`border px-3 py-2 text-center cursor-pointer transition font-medium ${
-                          stock === 0
-                            ? "bg-red/20 text-red"
-                            : stock <= 5
-                            ? "bg-yellow/20 text-yellow-700"
-                            : "bg-green/20 text-green"
-                        } hover:brightness-95`}
-                      >
-                        {stock}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+      <tbody>
+        {Object.entries(activeMatrix).map(([sph, values]) => (
+          <tr key={sph}>
+            <td className="sticky left-0 z-20 border bg-white px-3 py-2 font-medium">
+              {sph}
+            </td>
+            {values.map((stock, i) => (
+              <td
+                key={i}
+                onClick={() => setSelected({ sph, cyl: cylValues[i], stock })}
+                className={`border px-3 py-2 text-center cursor-pointer transition font-medium ${
+                  stock === 0
+                    ? "bg-red/20 text-red"
+                    : stock <= 5
+                    ? "bg-yellow/20 text-yellow-700"
+                    : "bg-green/20 text-green"
+                } hover:brightness-95`}
+              >
+                {stock}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
       </div>
 
       {/* ===== MODAL ===== */}
