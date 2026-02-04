@@ -6,6 +6,7 @@ const CustomerInformation = () => {
       <h2 className="font-medium text-dark text-xl sm:text-2xl mb-5.5">
         Información del cliente
       </h2>
+      <form onSubmit={}>
 
       <div className="bg-white shadow-1 rounded-[10px] p-4 sm:p-8.5">
         <div className="flex flex-col lg:flex-row gap-5 sm:gap-8 mb-5">
