@@ -3,7 +3,7 @@ import RegisterClient from "@/components/RegisterClient";
 
 import { Metadata } from "next";
 export const metadata: Metadata = {
-  title: "Checkout Page | NextCommerce Nextjs E-commerce template",
+  title: "Register Client Page | NextCommerce Nextjs E-commerce template",
   description: "This is Checkout Page for NextCommerce Template",
   // other metadata
 };

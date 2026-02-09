@@ -7,7 +7,7 @@ import MeasurementSpecifications from "./MeasurementSpecifications";
 const RegisterClient = () => {
   return (
     <>
-      <Breadcrumb title={"Checkout"} pages={["checkout"]} />
+      <Breadcrumb title={"Registrar Cliente"} pages={["registrar cliente"]} />
       <section className="overflow-hidden py-20 bg-gray-2">
         <div className="max-w-[1170px] w-full mx-auto px-4 sm:px-8 xl:px-0">
           <form>
@@ -20,9 +20,9 @@ const RegisterClient = () => {
 
               </div>
 
-              <div className="max-w-[670px] w-full">
+               <div className="max-w-[670px] w-full">
                 {/* <!-- rigth --> */}
-                <div className="lg:max-w-[670px] w-full">
+                 <div className="lg:max-w-[670px] w-full">
                 
                   {/* <!-- Measurement Specifications --> */}
                   <MeasurementSpecifications />
@@ -36,7 +36,7 @@ const RegisterClient = () => {
                   Process to Checkout
                 </button>
 
-              </div>
+              </div> 
             </div>
           </form>
         </div>

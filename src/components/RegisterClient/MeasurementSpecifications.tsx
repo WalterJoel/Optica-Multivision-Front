@@ -10,7 +10,7 @@ const MeasurementSpecifications = () => {
     eje1: "",
     dip: "",
     add: "",
-    address: "",
+    optometricAssistant: "",
   });
 
   const handleChange = (e) => {
@@ -37,7 +37,11 @@ const MeasurementSpecifications = () => {
 
             <div className="flex flex-col lg:flex-row gap-5 sm:gap-8">
               <div className="w-full">
-                <label className="block mb-2.5">ESF *</label>
+                <label className="block mb-2.5">
+                  ESF <span className="text-red">*
+                  </span>
+                </label>
+                
                 <input
                   type="text"
                   name="esf"
@@ -149,23 +153,17 @@ const MeasurementSpecifications = () => {
 
         {/* DIRECCIÓN */}
         <div className="mb-5">
-          <label className="block mb-2.5">Dirección</label>
+          <label className="block mb-2.5">Encargado de Mediciones</label>
           <textarea
-            name="address"
+            name="optometricAssistant"
             rows={5}
-            value={formData.address}
+            value={formData.optometricAssistant}
             onChange={handleChange}
             placeholder="Notas adicionales"
             className="rounded-md border border-gray-3 bg-gray-1 w-full p-5 outline-none focus:ring-2 focus:ring-blue/20"
           />
         </div>
 
-        <button
-          type="submit"
-          className="inline-flex font-medium text-white bg-blue py-3 px-6 rounded-md hover:bg-blue-dark duration-200"
-        >
-          Guardar
-        </button>
       </div>
     </div>
   );
