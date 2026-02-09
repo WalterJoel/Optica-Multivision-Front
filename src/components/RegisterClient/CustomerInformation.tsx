@@ -37,40 +37,41 @@ const CustomerInformation = () => {
   
   return (
 
-    <div className="flex flex-col md:flex-row gap-8">
+    <div className="flex flex-col lg:flex-row gap-8 xl:gap-11 items-stretch">
 
-  {/* COLUMNA */}
-  <div className="flex-1">
+      {/* COLUMNA */}
+      <div className="flex-1 w-full">
 
-    <h2 className="font-medium text-dark text-xl sm:text-2xl mb-5.5">
-      Información del cliente
-    </h2>
-
-    <div className="bg-white shadow-1 rounded-[10px] p-4 sm:p-8.5">
-
-      {/* DNI + Fecha Registro */}
-      <div className="flex flex-col lg:flex-row gap-5 sm:gap-8 mb-5">
+        <h2 className="font-medium text-dark text-xl sm:text-2xl mb-5.5">
+          Información del cliente
+        </h2>
         
-        <div className="w-full">
-          <label htmlFor="dni" className="block mb-2.5">
-            DNI <span className="text-red">*</span>
-          </label>
+        <div className="bg-white shadow-1 rounded-[10px] p-4 sm:p-8.5">
 
-          <input
-            type="text"
-            name="dni"
-            id="dni"
-            value={formData.dni}
-            onChange={handleChange}
-            placeholder="12345678"
-            className="rounded-md border border-gray-300 w-full py-2.5 px-5 outline-none focus:ring-2 focus:ring-blue/20"
-          />
-        </div>
+          {/* DNI + Fecha Registro */}
+          <div className="flex flex-col lg:flex-row gap-5 sm:gap-8 mb-5">
+            
+            <div className="w-full">
+               
+               <label htmlFor="dni" className="block mb-2.5">
+                DNI <span className="text-red">*</span>
+               </label>
 
-        <div className="w-full">
-          <label htmlFor="fechaRegistro" className="block mb-2.5 text-sm font-medium">
-            Fecha de Registro <span className="text-red">*</span>
-          </label>
+               <input
+                type="text"
+                name="dni"
+                id="dni"
+                value={formData.dni}
+                onChange={handleChange}
+                placeholder="12345678"
+                className="rounded-md border border-gray-300 w-full py-2.5 px-5 outline-none focus:ring-2 focus:ring-blue/20"
+               />
+            </div>
+
+            <div className="w-full">
+               <label htmlFor="fechaRegistro" className="block mb-2.5 text-sm font-medium">
+                Fecha de Registro <span className="text-red">*</span>
+               </label>
 
           <input
             type="datetime-local"
@@ -201,9 +202,8 @@ const CustomerInformation = () => {
     </div>
   </div>
       
-      <div className="flex-1">
-
-  <h2 className="font-medium text-dark text-xl sm:text-2xl mb-5.5">
+      <div className="flex-1 w-full">
+    <h2 className="font-medium text-dark text-xl sm:text-2xl mb-5.5">
     Especificaciones de las Medidas
   </h2>
 
