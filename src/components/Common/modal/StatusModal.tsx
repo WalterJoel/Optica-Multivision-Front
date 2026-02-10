@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
+import { SUCCESS_ICON } from "@/commons/constants";
 
 type StatusModalProps = {
   isOpen: boolean;
@@ -37,9 +38,7 @@ export function StatusModal({
     textColor: isSuccess ? "text-[#1976D2]" : "text-[#991B1B]",
     buttonBg: isSuccess ? "bg-[#1976D2]" : "bg-[#991B1B]",
     ringClass: isSuccess ? "ring-blue-light" : "ring-[#FEE2E2]",
-    icon: isSuccess
-      ? "/images/icons/success-modal.png"
-      : "/images/icons/error-modal.png",
+    icon: isSuccess ? SUCCESS_ICON : "/images/icons/error-modal.png",
   };
 
   return createPortal(

@@ -10,3 +10,5 @@ export enum STATUS_MODAL {
   SUCCESS_MODAL = "success",
   ERROR_MODAL = "error",
 }
+
+export const SUCCESS_ICON = "/images/icons/success-modal.png";
