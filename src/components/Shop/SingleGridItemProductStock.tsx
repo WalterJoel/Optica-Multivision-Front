@@ -1,10 +1,23 @@
 "use client";
 import React from "react";
 import { Product } from "@/types/product";
+import { useModalContext } from "@/app/context/QuickViewModalContext";
+import { updateQuickView } from "@/redux/features/quickView-slice";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/redux/store";
+
 import Link from "next/link";
 import Image from "next/image";
 
 const SingleGridItemProduct = ({ item }: { item: Product }) => {
+  const { openModal } = useModalContext();
+  const dispatch = useDispatch<AppDispatch>();
+
+  // update the QuickView state
+  const handleQuickViewUpdate = () => {
+    dispatch(updateQuickView({ ...item }));
+  };
+
   return (
     <div className="group">
       <div className="relative overflow-hidden flex items-center justify-center rounded-lg bg-white shadow-1 min-h-[270px] mb-4">
@@ -14,11 +27,11 @@ const SingleGridItemProduct = ({ item }: { item: Product }) => {
           <Link
             href={{
               pathname: "/matrix",
-              query: { lenteId: item.id },
+              query: { lenteId: item.id, type: "stock" },
             }}
             className="inline-flex font-medium text-custom-sm py-[7px] px-5 rounded-[5px] bg-blue text-white ease-out duration-200 hover:bg-blue-dark"
           >
-            Abrir Matriz
+            Ver Stock
           </Link>
         </div>
       </div>

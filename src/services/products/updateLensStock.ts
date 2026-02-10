@@ -5,9 +5,6 @@ export interface StockChange {
   cantidad: number;
 }
 
-/**
- * Envía los cambios de stock al backend
- */
 export const UpdateLensStock = async (changes: StockChange[]) => {
   // Eliminar duplicados y tomar la última cantidad de cada id
   const grouped: Record<number, number> = {};

@@ -7,11 +7,7 @@ import ProductList from "@/components/Products/ProductsList";
 const ProductListPage = () => {
   return (
     <main>
-      <Breadcrumb
-        title="Listado de Productos"
-        pages={["productos", "listado"]}
-      />
-      <ProductList />
+      <ProductList stock={true} />
     </main>
   );
 };

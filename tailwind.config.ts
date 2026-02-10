@@ -243,6 +243,16 @@ const config: Config = {
         list: "1px 0px 0px 0px #E5E7EB",
         input: "inset 0 0 0 2px #3C50E0",
       },
+      keyframes: {
+        lens: {
+          "0%": { transform: "rotate(0deg) scale(1)" },
+          "50%": { transform: "rotate(180deg) scale(1.05)" },
+          "100%": { transform: "rotate(360deg) scale(1)" },
+        },
+      },
+      animation: {
+        lens: "lens 2.4s ease-in-out infinite",
+      },
     },
   },
   plugins: [],
