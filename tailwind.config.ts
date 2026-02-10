@@ -51,9 +51,9 @@ const config: Config = {
         7: "#374151",
       },
       blue: {
-        DEFAULT: "#3C50E0",
-        dark: "#1C3FB7",
-        light: "#5475E5",
+        DEFAULT: "#1976D2",
+        dark: "#0288D1",
+        light: "#81D4FA",
         "light-2": "#8099EC",
         "light-3": "#ADBCF2",
         "light-4": "#C3CEF6",
@@ -242,16 +242,6 @@ const config: Config = {
         filter: "0px 1px 0px 0px #E5E7EB",
         list: "1px 0px 0px 0px #E5E7EB",
         input: "inset 0 0 0 2px #3C50E0",
-      },
-      keyframes: {
-        lens: {
-          "0%": { transform: "rotate(0deg) scale(1)" },
-          "50%": { transform: "rotate(180deg) scale(1.05)" },
-          "100%": { transform: "rotate(360deg) scale(1)" },
-        },
-      },
-      animation: {
-        lens: "lens 2.4s ease-in-out infinite",
       },
     },
   },

@@ -1,22 +1,26 @@
 import { useState } from "react";
-import { Lens, CreateLens } from "@/types/products";
+import { CreateLens } from "@/types/products";
 import { createLens } from "@/services/products";
 
 export function useCreateLens() {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [statusMessage, setMessage] = useState<string>("");
+  const [success, setSuccess] = useState<boolean>(false);
 
   const addLens = async (payload: CreateLens) => {
+    setLoading(true);
+    setSuccess(false);
+
     try {
-      setLoading(true);
       await createLens(payload);
+      setSuccess(true);
+      setMessage("Lente creado correctamente");
     } catch (err: any) {
-      setError(err.message || "Error al crear lente");
-      throw err;
+      setMessage("Error al registrar lente");
     } finally {
       setLoading(false);
     }
   };
 
-  return { addLens, loading, error };
+  return { addLens, loading, statusMessage, success };
 }

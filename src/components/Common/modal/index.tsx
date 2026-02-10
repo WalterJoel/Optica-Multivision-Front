@@ -1,1 +1,2 @@
-export * from "./ErrorModal";
+export * from "./StatusModal";
+export * from "./LoadingModal";

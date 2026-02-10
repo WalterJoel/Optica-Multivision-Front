@@ -1,42 +1,47 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useCreateLens } from "@/hooks/products";
 import { BaseInput } from "@/components/Inputs/BaseInput";
-import { PRODUCTOS, IMG_LENTE } from "@/commons/constants";
+import { PRODUCTOS, IMG_LENTE, STATUS_MODAL } from "@/commons/constants";
 import { CreateLens } from "@/types/products";
-import { ErrorModal } from "@/components/Common/modal";
+import { StatusModal, LoadingModal } from "@/components/Common/modal";
 
 const initialForm: CreateLens = {
   marca: "",
   material: "",
-  precio_serie1: "",
-  precio_serie2: "",
-  precio_serie3: "",
+  precio_serie1: 0,
+  precio_serie2: 0,
+  precio_serie3: 0,
   imagenUrl: IMG_LENTE,
   tipo: PRODUCTOS.LENTE,
 };
 
 export default function LensForm() {
-  const { addLens, loading, error } = useCreateLens();
-  const [showError, setShowError] = useState(false);
-
   const [form, setForm] = useState<CreateLens>(initialForm);
+  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [typeModal, setTypeModal] = useState<string>("");
   const [imagenUrl, setImagen] = useState<File | null>(null);
+  const { addLens, success, statusMessage, loading } = useCreateLens();
 
-  useEffect(() => {
-    if (error) {
-      setShowError(true);
+  const openStatusModal = () => {
+    if (success) {
+      setTypeModal(STATUS_MODAL.SUCCESS_MODAL);
+    } else {
+      setTypeModal(STATUS_MODAL.ERROR_MODAL);
     }
-  }, [error]);
+
+    setOpenModal(true);
+  };
+
+  const resetForm = () => {
+    setForm(initialForm);
+    setImagen(null);
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-
-    setForm((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -50,11 +55,8 @@ export default function LensForm() {
     };
 
     await addLens(payload);
-
-    if (!error) {
-      setForm(initialForm);
-      setImagen(null);
-    }
+    openStatusModal();
+    resetForm();
   };
 
   return (
@@ -69,7 +71,6 @@ export default function LensForm() {
             required
             onChange={handleChange}
           />
-
           <BaseInput
             label="Material"
             name="material"
@@ -85,33 +86,25 @@ export default function LensForm() {
             label="Precio Serie 1"
             name="precio_serie1"
             type="number"
-            min={0}
             step="0.01"
-            placeholder="0.00"
             value={form.precio_serie1}
             required
             onChange={handleChange}
           />
-
           <BaseInput
             label="Precio Serie 2"
             name="precio_serie2"
             type="number"
-            min={0}
             step="0.01"
-            placeholder="0.00"
             value={form.precio_serie2}
             required
             onChange={handleChange}
           />
-
           <BaseInput
             label="Precio Serie 3"
             name="precio_serie3"
             type="number"
-            min={0}
             step="0.01"
-            placeholder="0.00"
             value={form.precio_serie3}
             required
             onChange={handleChange}
@@ -132,15 +125,19 @@ export default function LensForm() {
         <button
           type="submit"
           disabled={loading}
-          className="inline-flex font-medium text-white bg-blue py-3 px-7 rounded-md disabled:opacity-50"
+          className="inline-flex font-medium text-white bg-blue py-3 px-7 rounded-md disabled:opacity-50 hover:bg-opacity-90 transition-all"
         >
-          {loading ? "Guardando..." : "Guardar"}
+          Guardar
         </button>
       </form>
 
-      {showError && error && (
-        <ErrorModal message={error} onClose={() => setShowError(false)} />
-      )}
+      <LoadingModal isOpen={loading} />
+      <StatusModal
+        isOpen={openModal}
+        type={typeModal}
+        message={statusMessage}
+        onClose={() => setOpenModal(false)}
+      />
     </>
   );
 }
