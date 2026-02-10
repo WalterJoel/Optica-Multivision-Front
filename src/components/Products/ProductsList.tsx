@@ -4,10 +4,14 @@ import React, { useState } from "react";
 import Breadcrumb from "@/components/Common/Breadcrumb";
 import { useLenses } from "@/hooks/products/useLenses";
 import CustomSelect from "@/components/ShopWithSidebar/CustomSelect";
-import SingleGridItem from "@/components/Shop/SingleGridItem"; // podemos crear uno
+import SingleGridItemProduct from "@/components/Shop/SingleGridItemProduct";
+import SingleGridItemProductStock from "@/components/Shop/SingleGridItemProductStock";
 import SingleListItem from "@/components/Shop/SingleListItem"; // podemos crear uno
 
-export default function ProductList() {
+interface ProductListProps {
+  stock?: boolean;
+}
+export default function ProductList({ stock }: ProductListProps) {
   const { lenses, loading } = useLenses();
   const [productStyle, setProductStyle] = useState("grid");
 
@@ -75,7 +79,13 @@ export default function ProductList() {
                 {!loading &&
                   lenses.map((lens) =>
                     productStyle === "grid" ? (
-                      <SingleGridItem key={lens.id} item={lens} />
+                      stock ? (
+                        <SingleGridItemProductStock key={lens.id} item={lens} />
+                      ) : (
+                        <SingleGridItemProduct key={lens.id} item={lens} />
+                      )
+                    ) : stock ? (
+                      <SingleListItem key={lens.id} item={lens} />
                     ) : (
                       <SingleListItem key={lens.id} item={lens} />
                     ),

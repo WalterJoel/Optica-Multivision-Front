@@ -24,83 +24,173 @@ const HeroCarousal = () => {
       className="hero-carousel"
     >
       <SwiperSlide>
-        <div className="flex items-center pt-6 sm:pt-0 flex-col-reverse sm:flex-row">
-          <div className="max-w-[394px] py-10 sm:py-15 lg:py-24.5 pl-4 sm:pl-7.5 lg:pl-12.5">
-            <div className="flex items-center gap-4 mb-7.5 sm:mb-10">
-              <span className="block font-semibold text-heading-3 sm:text-heading-1 text-blue">
+        <div className="flex items-center flex-col-reverse sm:flex-row min-h-[520px]">
+          {/* LEFT CONTENT */}
+          <div className="w-full sm:w-1/2 max-w-[420px] px-4 sm:px-8 lg:px-12 py-10">
+            <div className="flex items-center gap-4 mb-8">
+              <span className="font-semibold text-4xl sm:text-6xl text-blue">
                 30%
               </span>
-              <span className="block text-dark text-sm sm:text-custom-1 sm:leading-[24px]">
-                Sale
-                <br />
-                Off
+              <span className="text-dark text-sm leading-tight">
+                Sale <br /> Off
               </span>
             </div>
 
-            <h1 className="font-semibold text-dark text-xl sm:text-3xl mb-3">
-              <a href="#">True Wireless Noise Cancelling Headphone</a>
+            <h1 className="font-semibold text-dark text-xl sm:text-3xl mb-4">
+              True Wireless Noise Cancelling Headphone
             </h1>
 
-            <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi at ipsum at risus euismod lobortis in
+            <p className="text-gray-600 mb-8">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi at
+              ipsum at risus euismod lobortis.
             </p>
 
             <a
               href="#"
-              className="inline-flex font-medium text-white text-custom-sm rounded-md bg-dark py-3 px-9 ease-out duration-200 hover:bg-blue mt-10"
+              className="inline-flex items-center justify-center font-medium text-white rounded-md bg-dark px-9 py-3 transition hover:bg-blue"
             >
               Shop Now
             </a>
           </div>
 
-          <div>
+          {/* RIGHT IMAGE */}
+          <div className="relative w-full sm:w-1/2 h-[280px] sm:h-[420px] lg:h-[550px] overflow-hidden">
             <Image
-              src="/images/hero/hero-01.png"
-              alt="headphone"
-              width={351}
-              height={358}
+              src="/images/persons/amarillo.png"
+              alt="Hero image"
+              fill
+              priority
+              sizes="(max-width: 640px) 100vw, 50vw"
+              className="object-cover object-center"
             />
           </div>
         </div>
       </SwiperSlide>
       <SwiperSlide>
-        {" "}
-        <div className="flex items-center pt-6 sm:pt-0 flex-col-reverse sm:flex-row">
-          <div className="max-w-[394px] py-10 sm:py-15 lg:py-26 pl-4 sm:pl-7.5 lg:pl-12.5">
-            <div className="flex items-center gap-4 mb-7.5 sm:mb-10">
-              <span className="block font-semibold text-heading-3 sm:text-heading-1 text-blue">
+        <div className="flex items-center flex-col-reverse sm:flex-row min-h-[520px]">
+          {/* LEFT CONTENT */}
+          <div className="w-full sm:w-1/2 max-w-[420px] px-4 sm:px-8 lg:px-12 py-10">
+            <div className="flex items-center gap-4 mb-8">
+              <span className="font-semibold text-4xl sm:text-6xl text-blue">
                 30%
               </span>
-              <span className="block text-dark text-sm sm:text-custom-1 sm:leading-[24px]">
-                Sale
-                <br />
-                Off
+              <span className="text-dark text-sm leading-tight">
+                Sale <br /> Off
               </span>
             </div>
 
-            <h1 className="font-semibold text-dark text-xl sm:text-3xl mb-3">
-              <a href="#">True Wireless Noise Cancelling Headphone</a>
+            <h1 className="font-semibold text-dark text-xl sm:text-3xl mb-4">
+              True Wireless Noise Cancelling Headphone
             </h1>
 
-            <p>
-              Lorem ipsum dolor sit, consectetur elit nunc suscipit non ipsum
-              nec suscipit.
+            <p className="text-gray-600 mb-8">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi at
+              ipsum at risus euismod lobortis.
             </p>
 
             <a
               href="#"
-              className="inline-flex font-medium text-white text-custom-sm rounded-md bg-dark py-3 px-9 ease-out duration-200 hover:bg-blue mt-10"
+              className="inline-flex items-center justify-center font-medium text-white rounded-md bg-dark px-9 py-3 transition hover:bg-blue"
             >
               Shop Now
             </a>
           </div>
 
-          <div>
+          {/* RIGHT IMAGE */}
+          <div className="relative w-full sm:w-1/2 h-[280px] sm:h-[420px] lg:h-[550px] overflow-hidden">
             <Image
-              src="/images/hero/hero-01.png"
-              alt="headphone"
-              width={351}
-              height={358}
+              src="/images/persons/medicion.png"
+              alt="Hero image"
+              fill
+              priority
+              sizes="(max-width: 640px) 100vw, 50vw"
+              className="object-cover object-center"
+            />
+          </div>
+        </div>
+      </SwiperSlide>
+      <SwiperSlide>
+        <div className="flex items-center flex-col-reverse sm:flex-row min-h-[520px]">
+          {/* LEFT CONTENT */}
+          <div className="w-full sm:w-1/2 max-w-[420px] px-4 sm:px-8 lg:px-12 py-10">
+            <div className="flex items-center gap-4 mb-8">
+              <span className="font-semibold text-4xl sm:text-6xl text-blue">
+                30%
+              </span>
+              <span className="text-dark text-sm leading-tight">
+                Sale <br /> Off
+              </span>
+            </div>
+
+            <h1 className="font-semibold text-dark text-xl sm:text-3xl mb-4">
+              True Wireless Noise Cancelling Headphone
+            </h1>
+
+            <p className="text-gray-600 mb-8">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi at
+              ipsum at risus euismod lobortis.
+            </p>
+
+            <a
+              href="#"
+              className="inline-flex items-center justify-center font-medium text-white rounded-md bg-dark px-9 py-3 transition hover:bg-blue"
+            >
+              Shop Now
+            </a>
+          </div>
+
+          {/* RIGHT IMAGE */}
+          <div className="relative w-full sm:w-1/2 h-[280px] sm:h-[420px] lg:h-[550px] overflow-hidden">
+            <Image
+              src="/images/persons/amarillo2.png"
+              alt="Hero image"
+              fill
+              priority
+              sizes="(max-width: 640px) 100vw, 50vw"
+              className="object-cover object-center"
+            />
+          </div>
+        </div>
+      </SwiperSlide>
+      <SwiperSlide>
+        <div className="flex items-center flex-col-reverse sm:flex-row min-h-[520px]">
+          {/* LEFT CONTENT */}
+          <div className="w-full sm:w-1/2 max-w-[420px] px-4 sm:px-8 lg:px-12 py-10">
+            <div className="flex items-center gap-4 mb-8">
+              <span className="font-semibold text-4xl sm:text-6xl text-blue">
+                30%
+              </span>
+              <span className="text-dark text-sm leading-tight">
+                Sale <br /> Off
+              </span>
+            </div>
+
+            <h1 className="font-semibold text-dark text-xl sm:text-3xl mb-4">
+              True Wireless Noise Cancelling Headphone
+            </h1>
+
+            <p className="text-gray-600 mb-8">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi at
+              ipsum at risus euismod lobortis.
+            </p>
+
+            <a
+              href="#"
+              className="inline-flex items-center justify-center font-medium text-white rounded-md bg-dark px-9 py-3 transition hover:bg-blue"
+            >
+              Shop Now
+            </a>
+          </div>
+
+          {/* RIGHT IMAGE */}
+          <div className="relative w-full sm:w-1/2 h-[280px] sm:h-[420px] lg:h-[550px] overflow-hidden">
+            <Image
+              src="/images/persons/aqepena.png"
+              alt="Hero image"
+              fill
+              priority
+              sizes="(max-width: 640px) 100vw, 50vw"
+              className="object-cover object-center"
             />
           </div>
         </div>

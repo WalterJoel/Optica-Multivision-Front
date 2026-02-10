@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import Breadcrumb from "../Common/Breadcrumb";
-import { useParams } from "next/navigation";
 import { useLenteStock, useLenses } from "@/hooks/products";
+import { useSearchParams } from "next/navigation";
 
 const cylValues = [
   0, -0.25, -0.5, -0.75, -1.0, -1.25, -1.5, -1.75, -2.0, -2.25, -2.5, -2.75,
@@ -45,12 +45,13 @@ const esfValuesPositivo = [
 ];
 
 export default function Matrix() {
-  const params = useParams();
-  const lenteId = Number(1); // params.lenteId
-  const sedeId = Number(1); // params.sedeId
+  const searchParams = useSearchParams();
+
+  const lenteId = Number(searchParams.get("lenteId"));
+  const renderizarModal = searchParams.get("type");
+  const sedeId = 1;
 
   const { updateStock, stockVersion } = useLenses();
-
   const { stock, loading, error } = useLenteStock(
     lenteId,
     sedeId,
@@ -60,8 +61,12 @@ export default function Matrix() {
   const [matrixType, setMatrixType] = useState<"NEGATIVO" | "POSITIVO">(
     "NEGATIVO",
   );
-
   const [changes, setChanges] = useState<Record<number, string>>({});
+  const [selected, setSelected] = useState<null | {
+    sph: number | string;
+    cyl: number;
+    stock: number;
+  }>(null);
 
   if (!lenteId || !sedeId) return <div>Pasa Lente y Sede ID</div>;
   if (loading) return <div>Cargando stock...</div>;
@@ -96,7 +101,6 @@ export default function Matrix() {
   return (
     <>
       <Breadcrumb title="Matrix" pages={["Matrix"]} />
-
       <div className="mx-auto max-w-[1200px] space-y-6">
         {/* MATRIX TYPE */}
         <div className="flex gap-3 justify-center">
@@ -108,7 +112,7 @@ export default function Matrix() {
                 : "hover:bg-blue/10"
             }`}
           >
-            Negativos / Mixta
+            Negativos
           </button>
           <button
             onClick={() => setMatrixType("POSITIVO")}
@@ -118,7 +122,7 @@ export default function Matrix() {
                 : "hover:bg-blue/10"
             }`}
           >
-            Solo Positivos
+            Positivos
           </button>
         </div>
 
@@ -174,19 +178,32 @@ export default function Matrix() {
                                   ? "bg-yellow/20 text-yellow-700"
                                   : "bg-green/20 text-green"
                             }`}
+                            onClick={() => {
+                              if (renderizarModal === "stock") {
+                                setSelected({
+                                  sph: esf,
+                                  cyl: cylValues[colIndex],
+                                  stock: cantidadNum,
+                                });
+                              }
+                            }}
                           >
-                            <input
-                              type="number"
-                              min={0}
-                              value={cantidadStr}
-                              className="w-16 text-center bg-transparent focus:outline-none"
-                              onChange={(e) => {
-                                setChanges((prev) => ({
-                                  ...prev,
-                                  [cell.id]: e.target.value,
-                                }));
-                              }}
-                            />
+                            {renderizarModal === "stock" ? (
+                              cantidadNum
+                            ) : (
+                              <input
+                                type="number"
+                                min={0}
+                                value={cantidadStr}
+                                className="w-16 text-center bg-transparent focus:outline-none"
+                                onChange={(e) =>
+                                  setChanges((prev) => ({
+                                    ...prev,
+                                    [cell.id]: e.target.value,
+                                  }))
+                                }
+                              />
+                            )}
                           </td>
                         );
                       })}
@@ -198,16 +215,89 @@ export default function Matrix() {
           </div>
 
           {/* Botón Guardar */}
-          <div className="mt-4 flex justify-end">
-            <button
-              onClick={handleSave}
-              className="rounded-lg bg-blue px-4 py-2 text-white hover:bg-blue-600"
-            >
-              Guardar cambios
-            </button>
-          </div>
+          {renderizarModal !== "stock" && (
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={handleSave}
+                className="rounded-lg bg-blue px-4 py-2 text-white hover:bg-blue-600"
+              >
+                Guardar cambios
+              </button>
+            </div>
+          )}
         </div>
       </div>
+
+      {/* MODAL */}
+      {renderizarModal === "stock" && selected && (
+        <div className="fixed inset-0 z-999 flex items-center justify-center bg-black/40">
+          <div className="w-full max-w-md rounded-xl bg-white shadow-2 p-6 relative">
+            {/* Header */}
+            <div className="mb-4 flex items-center justify-between border-b pb-3">
+              <h3 className="text-lg font-semibold text-dark">
+                Detalle del Producto
+              </h3>
+              <button
+                onClick={() => setSelected(null)}
+                className="text-gray-5 hover:text-dark"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="space-y-3 text-sm">
+              <div className="flex justify-between">
+                <span className="text-gray-6">Marca</span>
+                <span className="font-medium text-dark">Poly AR</span>
+              </div>
+
+              <div className="flex justify-between">
+                <span className="text-gray-6">Medida</span>
+                <span className="font-medium text-dark">
+                  SPH {selected.sph} / CYL {selected.cyl}
+                </span>
+              </div>
+
+              <div className="flex justify-between">
+                <span className="text-gray-6">Stock disponible</span>
+                <span className="font-semibold text-green">
+                  {selected.stock} unidades
+                </span>
+              </div>
+
+              <div className="rounded-lg bg-gray-1 p-3">
+                <p className="mb-2 font-medium text-dark">
+                  Stock en otras sedes
+                </p>
+                <ul className="space-y-1 text-gray-6">
+                  <li>📍 Lima Centro: 4</li>
+                  <li>📍 San Isidro: 2</li>
+                  <li>📍 Arequipa: 1</li>
+                </ul>
+              </div>
+
+              <div className="flex justify-between items-center rounded-lg bg-blue/10 p-3">
+                <span className="text-gray-7">Precio</span>
+                <span className="text-xl font-bold text-blue">S/ 180.00</span>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                onClick={() => setSelected(null)}
+                className="rounded-lg border border-gray-3 px-4 py-2 text-sm"
+              >
+                Cerrar
+              </button>
+              <button className="rounded-lg bg-blue px-4 py-2 text-sm text-white hover:bg-blue-dark">
+                Agregar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
