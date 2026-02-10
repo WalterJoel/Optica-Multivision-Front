@@ -1,11 +1,6 @@
 import { useEffect, useState } from "react";
-import { Lens } from "@/types/products";
-import {
-  createLens,
-  getLenses,
-  CreateLensPayload,
-  UpdateLensStock,
-} from "@/services/products";
+import { Lens, CreateLens } from "@/types/products";
+import { createLens, getLenses, UpdateLensStock } from "@/services/products";
 
 export function useLenses() {
   const [lenses, setLenses] = useState<Lens[]>([]);
@@ -21,19 +16,6 @@ export function useLenses() {
       setLenses(data);
     } catch (err: any) {
       setError(err.message || "Error al cargar lentes");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Agregar un nuevo lente
-  const addLens = async (payload: CreateLensPayload) => {
-    try {
-      setLoading(true);
-      await createLens(payload);
-      await getAllLenses(); // refrescar lista después de agregar
-    } catch (err: any) {
-      setError(err.message || "Error al crear lente");
     } finally {
       setLoading(false);
     }
@@ -64,7 +46,6 @@ export function useLenses() {
     loading,
     error,
     getAllLenses,
-    addLens,
     updateStock,
     stockVersion, // <--- importante para el refresh de stock
   };
