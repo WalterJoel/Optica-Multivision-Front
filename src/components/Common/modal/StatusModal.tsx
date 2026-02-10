@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
-import { SUCCESS_ICON } from "@/commons/constants";
+import { SUCCESS_ICON, STATUS_MODAL } from "@/commons/constants";
 
 type StatusModalProps = {
   isOpen: boolean;
@@ -31,7 +31,7 @@ export function StatusModal({
 
   if (!isOpen) return null;
 
-  const isSuccess = type === "success";
+  const isSuccess = type === STATUS_MODAL.SUCCESS_MODAL;
 
   const config = {
     title: isSuccess ? "¡Éxito!" : "Ocurrió un error",
