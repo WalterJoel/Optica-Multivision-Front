@@ -89,7 +89,7 @@ export default function LensForm() {
       <div className="flex flex-col lg:flex-row gap-5 mb-5">
         <BaseInput
           label="Precio Serie 1"
-          name="precioSerie1"
+          name="precio_serie1"
           type="number"
           placeholder="0.00"
           value={form.precio_serie1}
@@ -99,7 +99,7 @@ export default function LensForm() {
 
         <BaseInput
           label="Precio Serie 2"
-          name="precioSerie2"
+          name="precio_serie2"
           type="number"
           placeholder="0.00"
           value={form.precio_serie2}
@@ -109,7 +109,7 @@ export default function LensForm() {
 
         <BaseInput
           label="Precio Serie 3"
-          name="precioSerie3"
+          name="precio_serie3"
           type="number"
           placeholder="0.00"
           value={form.precio_serie3}

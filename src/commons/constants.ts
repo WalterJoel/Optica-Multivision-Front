@@ -1,6 +1,7 @@
 export enum PRODUCTOS {
   LENTE = "LENTE",
   ACCESORIO = "ACCESORIO",
+  MONTURA = "MONTURA",
 }
 
 export const IMG_LENTE =
