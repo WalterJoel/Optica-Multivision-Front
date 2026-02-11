@@ -1,5 +1,7 @@
 import React from "react";
 import { useState } from "react";
+import { BaseInput } from "@/components/Inputs/BaseInput";
+import { CreateLens } from "@/types/products";
 
 const CustomerInformation = () => {
 
