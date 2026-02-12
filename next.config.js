@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ["encrypted-tbn0.gstatic.com"], // <- aquí tu dominio externo
+    domains: ["encrypted-tbn0.gstatic.com", "images.unsplash.com"],
   },
 };
 

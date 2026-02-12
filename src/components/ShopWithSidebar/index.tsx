@@ -283,7 +283,7 @@ const ShopWithSidebar = () => {
                     <SingleGridItem item={item} key={key} />
                   ) : (
                     <SingleListItem item={item} key={key} />
-                  )
+                  ),
                 )}
               </div>
               {/* <!-- Products Grid Tab Content End --> */}
@@ -415,5 +415,3 @@ const ShopWithSidebar = () => {
 };
 
 export default ShopWithSidebar;
-
-
