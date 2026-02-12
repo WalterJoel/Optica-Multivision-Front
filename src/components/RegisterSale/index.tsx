@@ -1,12 +1,12 @@
 "use client";
 import React from "react";
 import Breadcrumb from "../Common/Breadcrumb";
-import MeasurementSpecifications from "./MeasurementSpecifications";
+import PaymentMethod from "./PaymentMethod";
 
-const RegisterClient = () => {
+const RegisterSale = () => {
   return (
     <>
-      <Breadcrumb title={"Registrar Cliente"} pages={["registrar cliente"]} />
+      <Breadcrumb title={"Registrar Venta"} pages={["registrar venta"]} />
       <section className="overflow-hidden py-20 bg-gray-2">
         
         <div className="max-w-[1170px] w-full mx-auto px-4 sm:px-8 xl:px-0">
@@ -15,7 +15,7 @@ const RegisterClient = () => {
             <div className="flex flex-col lg:flex-row gap-7.5 xl:gap-11">
                          
               {/* <!-- Customer Information --> */}
-              <MeasurementSpecifications />
+              <PaymentMethod />
 
             </div> 
             
@@ -26,4 +26,4 @@ const RegisterClient = () => {
   );
 };
 
-export default RegisterClient;
+export default RegisterSale;

@@ -121,6 +121,12 @@ export const menuData: Menu[] = [
         newTab: false,
         path: '/register-client',
       },
+      {
+        id: 88,
+        title: 'Registrar Venta',
+        newTab: false,
+        path: '/register-sale',
+      },
     ],
   },
   {
