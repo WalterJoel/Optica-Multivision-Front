@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import Breadcrumb from "../Common/Breadcrumb";
-// import RegisterSaleModal from "./RegisterSaleModal";
 import PaymentMethod from "./PaymentMethod";
 
 const RegisterSale = () => {

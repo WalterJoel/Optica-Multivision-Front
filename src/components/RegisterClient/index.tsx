@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import Breadcrumb from "../Common/Breadcrumb";
-import CustomerInformation from "./CustomerInformation";
 import MeasurementSpecifications from "./MeasurementSpecifications";
 
 const RegisterClient = () => {
@@ -16,7 +15,7 @@ const RegisterClient = () => {
             <div className="flex flex-col lg:flex-row gap-7.5 xl:gap-11">
                          
               {/* <!-- Customer Information --> */}
-              <CustomerInformation />
+              <MeasurementSpecifications />
 
             </div> 
             
