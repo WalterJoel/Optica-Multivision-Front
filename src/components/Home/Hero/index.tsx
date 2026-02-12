@@ -49,7 +49,7 @@ const Hero = () => {
 
                   <div>
                     <Image
-                      src="/images/hero/hero-02.jpg"
+                      src="/images/hero/hero-02.png"
                       alt="mobile image"
                       width={123}
                       height={161}

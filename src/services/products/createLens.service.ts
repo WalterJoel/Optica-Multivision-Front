@@ -3,6 +3,6 @@ import { api } from "../api";
 import { CreateLens } from "@/types/products";
 
 export const createLens = async (payload: CreateLens) => {
-  const { data } = await api.post("/productos", payload);
+  const { data } = await api.post("/productos/crearLente", payload);
   return data;
 };
