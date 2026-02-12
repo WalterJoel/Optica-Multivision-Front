@@ -7,7 +7,7 @@ export interface Lens {
   precio_serie1: number;
   precio_serie2: number;
   precio_serie3: number;
-  imagenUrl?: string;
+  imagenUrl: string;
 }
 
 export type CreateLens = Omit<Lens, "id"> & {
