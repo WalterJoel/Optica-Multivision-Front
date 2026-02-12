@@ -4,6 +4,8 @@ import { useState } from "react";
 import Breadcrumb from "@/components/Common/Breadcrumb";
 import TabsProducto from "./TabsProducto";
 import LensForm from "./LensForm";
+import AccessoryForm from "./AccessoryForm";
+import MonturaForm from "./MonturaForm";
 
 export default function RegisterProduct() {
   const [tipo, setTipo] = useState<"montura" | "luna" | "accesorio">("luna");
@@ -20,6 +22,11 @@ export default function RegisterProduct() {
             <p className="text-sm text-red mb-4">* Campo requerido</p>
 
             {tipo === "luna" && <LensForm />}
+            {tipo === "accesorio" && <AccessoryForm />}
+            {tipo === "montura" && <MonturaForm />}
+
+
+            
           </div>
         </div>
       </section>

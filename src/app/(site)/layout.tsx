@@ -16,6 +16,8 @@ import PreviewSliderModal from "@/components/Common/PreviewSlider";
 import ScrollToTop from "@/components/Common/ScrollToTop";
 import PreLoader from "@/components/Common/PreLoader";
 
+import FloatingChat from "@/components/Chat/FloatingChat";
+
 export default function RootLayout({
   children,
 }: {
@@ -30,6 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <body>
+        
         {loading ? (
           <PreLoader />
         ) : (
@@ -39,6 +42,8 @@ export default function RootLayout({
                 <ModalProvider>
                   <PreviewSliderProvider>
                     <Header />
+                    
+
                     {children}
 
                     <QuickViewModal />
