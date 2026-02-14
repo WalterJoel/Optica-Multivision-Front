@@ -4,6 +4,7 @@ import { BaseInput } from "@/components/Inputs/BaseInput";
 const PaymentMethod = () => {
   const [paymentType, setPaymentType] = useState<"cash" | "credit">("credit");
   const [installments, setInstallments] = useState(2);
+  const [showOrder, setShowOrder] = useState(false);
 
   const [formData, setFormData] = useState({
     // PAYMENT
@@ -68,7 +69,7 @@ const PaymentMethod = () => {
   }, [formData.payment, paymentType, formData.total]);
 
   return (
-    <div className="flex flex-col lg:flex-row gap-8 xl:gap-11 items-stretch">
+    <div className={`flex flex-col ${showOrder ? "lg:flex-row" : ""} gap-8 xl:gap-11 items-stretch`}>
       {/* COLUMNA */}
       <div className="flex-1 w-full">
         <h2 className="font-medium text-dark text-xl sm:text-2xl mb-5.5">
@@ -101,6 +102,20 @@ const PaymentMethod = () => {
             >
               Al Crédito
             </button>
+          </div>
+
+          {/* Checkbox Orden de Pedido */}
+          <div className="flex items-center gap-2 mb-4">
+            <input
+             type="checkbox"
+             id="showOrder"
+             checked={showOrder}
+             onChange={() => setShowOrder(!showOrder)}
+             className="w-4 h-4"
+             />
+            <label htmlFor="showOrder" className="text-sm font-medium">
+              Generar Orden de Pedido
+            </label>
           </div>
 
           <div className="space-y-5">
@@ -257,6 +272,7 @@ const PaymentMethod = () => {
         </div>
       </div>
 
+      {/* {showOrder && ( */}
       <div className="flex-1 w-full">
         <h2 className="font-medium text-dark text-xl sm:text-2xl mb-5.5">
           Orden de Pedido
@@ -520,6 +536,7 @@ const PaymentMethod = () => {
           </div>
         </div>
       </div>
+      {/* )} */}
     </div>
   );
 };
