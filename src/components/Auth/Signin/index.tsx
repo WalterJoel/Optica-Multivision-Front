@@ -31,10 +31,11 @@ const Signin = () => {
         throw new Error(data.message || "Error al iniciar sesión");
       }
 
-      localStorage.setItem("token", data.access_token);
-      localStorage.setItem("user", JSON.stringify(data.user));
+localStorage.setItem("token", data.access_token);
+localStorage.setItem("user", JSON.stringify(data.user));
+window.dispatchEvent(new Event("storage"));
+router.push("/products");
 
-      router.push("/products");
     } catch (err: any) {
       setError(err.message);
     }

@@ -10,6 +10,7 @@ import { selectTotalPrice } from "@/redux/features/cart-slice";
 import { useCartModalContext } from "@/app/context/CartSidebarModalContext";
 import Image from "next/image";
 import Chat from "@/components/Chat";
+import { useRouter } from "next/navigation";
 
 
 const Header = () => {
@@ -21,6 +22,14 @@ const Header = () => {
   const product = useAppSelector((state) => state.cartReducer.items);
   const totalPrice = useSelector(selectTotalPrice);
   const [chatOpen, setChatOpen] = useState(false);
+const router = useRouter();
+
+const handleLogout = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  setUser(null);
+  router.push("/signin");
+};
 
   const handleOpenCartModal = () => {
     openCartModal();
@@ -35,11 +44,27 @@ const Header = () => {
     }
   };
 useEffect(() => {
-  const storedUser = localStorage.getItem("user");
-  if (storedUser) {
-    setUser(JSON.parse(storedUser));
-  }
+  const checkAuth = () => {
+    const token = localStorage.getItem("token");
+    const userData = localStorage.getItem("user");
+
+    if (token && userData) {
+      setUser(JSON.parse(userData));
+    } else {
+      setUser(null);
+    }
+  };
+
+  checkAuth();
+
+  window.addEventListener("storage", checkAuth);
+
+  return () => {
+    window.removeEventListener("storage", checkAuth);
+  };
 }, []);
+
+
 
   useEffect(() => {
     window.addEventListener("scroll", handleStickyMenu);
@@ -191,6 +216,13 @@ useEffect(() => {
       <p className="font-medium text-custom-sm text-dark">
         {user.email}
       </p>
+      <button
+  onClick={handleLogout}
+  className="text-xs text-red-500 hover:underline"
+>
+  Logout
+</button>
+
       <button
   onClick={() => setChatOpen(!chatOpen)}
   className="relative ml-4"
