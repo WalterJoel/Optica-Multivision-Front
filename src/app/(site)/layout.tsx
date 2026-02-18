@@ -17,6 +17,8 @@ import ScrollToTop from "@/components/Common/ScrollToTop";
 import PreLoader from "@/components/Common/PreLoader";
 
 import FloatingChat from "@/components/Chat/FloatingChat";
+import { usePathname } from "next/navigation";
+
 
 export default function RootLayout({
   children,
@@ -24,6 +26,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const [loading, setLoading] = useState<boolean>(true);
+  const pathname = usePathname();
+  const isAuthPage = pathname === "/signin" || pathname === "/signup";
+
 
   useEffect(() => {
     setTimeout(() => setLoading(false), 1000);
@@ -41,7 +46,8 @@ export default function RootLayout({
               <CartModalProvider>
                 <ModalProvider>
                   <PreviewSliderProvider>
-                    <Header />
+                    {!isAuthPage && <Header />}
+
                     
 
                     {children}
@@ -54,7 +60,8 @@ export default function RootLayout({
               </CartModalProvider>
             </ReduxProvider>
             <ScrollToTop />
-            <Footer />
+            {!isAuthPage && <Footer />}
+
           </>
         )}
       </body>
