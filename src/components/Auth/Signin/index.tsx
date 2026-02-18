@@ -41,10 +41,11 @@ const Signin = () => {
       <div className="mx-auto w-full max-w-[1200px]">
         <div className="overflow-hidden rounded-[14px] bg-white shadow-[0_18px_45px_rgba(15,23,42,.12)] border border-[#e2e8f0] md:flex">
           {/* Imagen */}
-          <div className="relative h-[200px] md:h-auto md:basis-[55%] bg-[url('/img/bg.jpg')] bg-cover bg-center md:bg-right">
-            <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(37,99,235,.55),rgba(56,189,248,.35))]" />
+          <div
+            className="relative h-[200px] md:h-auto md:basis-[55%] bg-cover bg-center md:bg-right"
+            style={{ backgroundImage: "url('/images/login/opticafondo.jpg')" }}>
+            <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(37,99,235,.25),rgba(56,189,248,.15))]" />
           </div>
-
           {/* Form */}
           <form onSubmit={handleLogin} className="flex-1 bg-white p-7 sm:p-10 md:p-[50px]">
             <div className="text-center">
