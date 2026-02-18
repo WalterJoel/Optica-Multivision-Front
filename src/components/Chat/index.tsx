@@ -6,6 +6,7 @@ interface User {
   id: number;
   email: string;
   role: string;
+  avatarUrl?: string; // ✅ nuevo
 }
 
 interface Message {
@@ -44,17 +45,50 @@ function formatSize(bytes?: number) {
   return `${(kb / 1024).toFixed(1)} MB`;
 }
 
+function Avatar({
+  email,
+  avatarUrl,
+  variant = "message",
+}: {
+  email: string;
+  avatarUrl?: string;
+  variant?: "header" | "message";
+}) {
+  const initial = getInitial(email);
+  const sizeClass = variant === "header" ? "w-9 h-9" : "w-8 h-8";
+
+  return avatarUrl ? (
+    <img
+      src={`http://localhost:3001${avatarUrl}`}
+      alt={email}
+      className={`${sizeClass} rounded-full object-cover border border-gray-3`}
+    />
+  ) : (
+    <div
+      className={`${sizeClass} rounded-full bg-gray-2 border border-gray-3 flex items-center justify-center text-xs font-semibold text-dark`}
+      title={email}
+    >
+      {initial}
+    </div>
+  );
+}
+
 const Chat: React.FC<ChatProps> = ({ user }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
+  const listRef = useRef<HTMLDivElement | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const listRef = useRef<HTMLDivElement | null>(null);
-  const shouldAutoScrollRef = useRef(true);
   const autoScrollRef = useRef(true);
-
+  const [me, setMe] = useState<User>(user);
+  useEffect(() => {
+    fetch(`http://localhost:3001/users/${user.id}`)
+      .then((r) => r.json())
+      .then((u) => setMe(u))
+      .catch(() => setMe(user));
+  }, [user.id]);
 
 
   // Traer mensajes cada 2s
@@ -62,7 +96,15 @@ const Chat: React.FC<ChatProps> = ({ user }) => {
     const fetchMessages = () => {
       fetch("http://localhost:3001/chat")
         .then((res) => res.json())
-        .then((data) => setMessages(data))
+        .then((data) => {
+          // ✅ evita re-render si no cambió el último mensaje
+          setMessages((prev) => {
+            const prevLast = prev[prev.length - 1]?.id;
+            const newLast = data?.[data.length - 1]?.id;
+            if (prevLast === newLast) return prev;
+            return data;
+          });
+        })
         .catch((err) => console.error("Error trayendo mensajes:", err));
     };
 
@@ -71,34 +113,28 @@ const Chat: React.FC<ChatProps> = ({ user }) => {
     return () => clearInterval(interval);
   }, []);
 
-  // Scroll al final
-useEffect(() => {
-  const el = listRef.current;
-  if (!el) return;
+  // Detectar si el usuario está leyendo arriba (para NO jalarlo)
+  useEffect(() => {
+    const el = listRef.current;
+    if (!el) return;
 
-  const onScroll = () => {
-    const threshold = 60; // px
-    const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+    const onScroll = () => {
+      const threshold = 60;
+      const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+      autoScrollRef.current = distanceFromBottom <= threshold;
+    };
 
-    // Si NO está cerca del final, significa que subió -> apagamos auto scroll
-    autoScrollRef.current = distanceFromBottom <= threshold;
-  };
+    el.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => el.removeEventListener("scroll", onScroll);
+  }, []);
 
-  el.addEventListener("scroll", onScroll, { passive: true });
-  onScroll();
+  // Auto-scroll solo si el usuario está abajo
+  useEffect(() => {
+    if (!autoScrollRef.current) return;
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
-  return () => el.removeEventListener("scroll", onScroll);
-}, []);
-
-useEffect(() => {
-  if (!autoScrollRef.current) return;
-  messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-}, [messages]);
-
-
-
-
-  // Enviar mensaje / archivo
   const sendMessage = async () => {
     const text = newMessage.trim();
     if (!text && !selectedFile) return;
@@ -143,15 +179,11 @@ useEffect(() => {
       {/* Header */}
       <div className="bg-blue-dark text-white px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3 min-w-0">
-          <div className="w-9 h-9 rounded-full bg-white/15 flex items-center justify-center font-semibold">
-            {myInitial}
-          </div>
-          <div className="min-w-0">
-            <p className="font-medium leading-tight">Soporte</p>
-            <p className="text-xs opacity-80 truncate">
-              {user.email} • en línea
-            </p>
-          </div>
+          {/* ✅ avatar en header */}
+          <Avatar email={me.email} avatarUrl={me.avatarUrl} variant="header" />
+          <p className="text-xs opacity-80 truncate">{me.email} </p>
+
+
         </div>
 
         <div className="text-xs opacity-90 px-2 py-1 rounded-md bg-white/10">
@@ -160,45 +192,43 @@ useEffect(() => {
       </div>
 
       {/* Body */}
-<div
-  ref={listRef}
-  className="flex-1 p-4 overflow-y-auto bg-gray-1 min-h-[320px] max-h-[420px]"
->
+      <div
+        ref={listRef}
+        className="flex-1 p-4 overflow-y-auto bg-gray-1 min-h-[320px] max-h-[420px]"
+      >
         <div className="space-y-3">
           {messages.map((msg) => {
             const isMe = msg.user.email === user.email;
-            const initial = getInitial(msg.user.email);
             const time = formatTime(msg.createdAt);
 
             return (
               <div
                 key={msg.id}
-                className={`flex items-end gap-2 ${
-                  isMe ? "justify-end" : "justify-start"
-                }`}
+                className={`flex items-end gap-2 ${isMe ? "justify-end" : "justify-start"
+                  }`}
               >
+                {/* Avatar izquierda */}
                 {!isMe && (
-                  <div className="w-8 h-8 rounded-full bg-gray-2 border border-gray-3 flex items-center justify-center text-xs font-semibold text-dark">
-                    {initial}
-                  </div>
+                  <Avatar
+                    email={msg.user.email}
+                    avatarUrl={msg.user.avatarUrl}
+                    variant="message"
+                  />
                 )}
 
+                {/* Burbuja */}
                 <div
-                  className={`max-w-[78%] rounded-[14px] border px-3 py-2 ${
-                    isMe
+                  className={`max-w-[78%] rounded-[14px] border px-3 py-2 ${isMe
                       ? "bg-blue text-white border-blue/30"
                       : "bg-white text-dark border-gray-3 shadow-1"
-                  }`}
+                    }`}
                 >
                   {/* Nombre + hora */}
                   <div
-                    className={`text-[11px] mb-1 flex items-center justify-between gap-3 ${
-                      isMe ? "text-white/80" : "text-dark-5"
-                    }`}
+                    className={`text-[11px] mb-1 flex items-center justify-between gap-3 ${isMe ? "text-white/80" : "text-dark-5"
+                      }`}
                   >
-                    <span className="truncate">
-                      {isMe ? "Yo" : msg.user.email}
-                    </span>
+                    <span className="truncate">{isMe ? "Yo" : msg.user.email}</span>
                     <span className="shrink-0">{time}</span>
                   </div>
 
@@ -209,7 +239,10 @@ useEffect(() => {
 
                   {/* Archivo */}
                   {msg.fileUrl && (
-                    <div className={`mt-2 rounded-md p-2 ${isMe ? "bg-white/10" : "bg-gray-1 border border-gray-3"}`}>
+                    <div
+                      className={`mt-2 rounded-md p-2 ${isMe ? "bg-white/10" : "bg-gray-1 border border-gray-3"
+                        }`}
+                    >
                       {msg.fileType?.startsWith("image/") ? (
                         <img
                           src={`http://localhost:3001${msg.fileUrl}`}
@@ -221,20 +254,31 @@ useEffect(() => {
                           href={`http://localhost:3001${msg.fileUrl}`}
                           target="_blank"
                           rel="noreferrer"
-                          className={`text-sm underline ${isMe ? "text-white" : "text-blue"}`}
+                          className={`text-sm underline ${isMe ? "text-white" : "text-blue"
+                            }`}
                         >
                           📄 {msg.fileName || "Ver archivo"}
                         </a>
+                      )}
+
+                      {!!msg.fileSize && (
+                        <div className={`mt-1 text-[11px] ${isMe ? "text-white/70" : "text-dark-5"}`}>
+                          {formatSize(msg.fileSize)}
+                        </div>
                       )}
                     </div>
                   )}
                 </div>
 
+                {/* Avatar derecha */}
                 {isMe && (
-                  <div className="w-8 h-8 rounded-full bg-blue border border-blue/30 flex items-center justify-center text-xs font-semibold text-white">
-                    {myInitial}
-                  </div>
+                  <Avatar
+                    email={msg.user.email}
+                    avatarUrl={msg.user.avatarUrl}
+                    variant="message"
+                  />
                 )}
+
               </div>
             );
           })}
@@ -252,9 +296,7 @@ useEffect(() => {
               <p className="text-xs text-dark truncate">
                 📎 <span className="font-medium">{selectedFile.name}</span>
               </p>
-              <p className="text-[11px] text-dark-5">
-                {formatSize(selectedFile.size)}
-              </p>
+              <p className="text-[11px] text-dark-5">{formatSize(selectedFile.size)}</p>
             </div>
             <button
               type="button"
