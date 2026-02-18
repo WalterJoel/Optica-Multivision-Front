@@ -18,12 +18,12 @@ const Signin = () => {
 
     try {
       const res = await fetch("http://localhost:3001/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include", // Guardamos  cookie
+      body: JSON.stringify({ email, password }),
+    });
+
 
       const data = await res.json();
 
@@ -31,8 +31,8 @@ const Signin = () => {
         throw new Error(data.message || "Error al iniciar sesión");
       }
 
-      localStorage.setItem("token", data.access_token);
       localStorage.setItem("user", JSON.stringify(data.user));
+
 
       router.push("/products");
     } catch (err: any) {

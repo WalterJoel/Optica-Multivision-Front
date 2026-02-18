@@ -34,12 +34,32 @@ const Header = () => {
       setStickyMenu(false);
     }
   };
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+useEffect(() => {
+  const loadMe = async () => {
+    try {
+      const res = await fetch("http://localhost:3001/auth/me", {
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        setUser(null);
+        localStorage.removeItem("user");
+        return;
+      }
+
+      const data = await res.json();
+      setUser(data.user);
+
+      // opcional: cachear en localStorage
+      localStorage.setItem("user", JSON.stringify(data.user));
+    } catch {
+      setUser(null);
     }
-  }, []);
+  };
+
+  loadMe();
+}, []);
+
 
   useEffect(() => {
     window.addEventListener("scroll", handleStickyMenu);
