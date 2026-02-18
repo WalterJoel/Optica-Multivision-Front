@@ -35,9 +35,9 @@ export function StatusModal({
 
   const config = {
     title: isSuccess ? "¡Éxito!" : "Ocurrió un error",
-    textColor: isSuccess ? "text-[#1976D2]" : "text-[#991B1B]",
-    buttonBg: isSuccess ? "bg-[#1976D2]" : "bg-[#991B1B]",
-    ringClass: isSuccess ? "ring-blue-light" : "ring-[#FEE2E2]",
+    textColor: isSuccess ? "text-blue" : "text-red-vino",
+    buttonBg: isSuccess ? "bg-blue" : "bg-red-vino",
+    ringClass: isSuccess ? "ring-blue-light" : "ring-red-vinolight",
     icon: isSuccess ? SUCCESS_ICON : "/images/icons/error-modal.png",
   };
 

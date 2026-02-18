@@ -27,7 +27,7 @@ const SingleGridItemProduct = ({ item }: { item: Product }) => {
           <Link
             href={{
               pathname: "/matrix",
-              query: { lenteId: item.id, type: "stock" },
+              query: { lenteId: item.id },
             }}
             className="inline-flex font-medium text-custom-sm py-[7px] px-5 rounded-[5px] bg-blue text-white ease-out duration-200 hover:bg-blue-dark"
           >
