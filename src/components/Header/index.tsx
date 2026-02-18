@@ -34,12 +34,12 @@ const Header = () => {
       setStickyMenu(false);
     }
   };
-useEffect(() => {
-  const storedUser = localStorage.getItem("user");
-  if (storedUser) {
-    setUser(JSON.parse(storedUser));
-  }
-}, []);
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
 
   useEffect(() => {
     window.addEventListener("scroll", handleStickyMenu);
@@ -58,16 +58,14 @@ useEffect(() => {
 
   return (
     <header
-      className={`fixed left-0 top-0 w-full z-9999 bg-white transition-all ease-in-out duration-300 ${
-        stickyMenu && "shadow"
-      }`}
+      className={`fixed left-0 top-0 w-full z-9999 bg-white transition-all ease-in-out duration-300 ${stickyMenu && "shadow"
+        }`}
     >
       <div className="max-w-[1170px] mx-auto px-4 sm:px-7.5 xl:px-0">
         {/* <!-- header top start --> */}
         <div
-          className={`flex flex-col lg:flex-row gap-5 items-end lg:items-center xl:justify-between ease-out duration-200 ${
-            stickyMenu ? "py-4" : "py-6"
-          }`}
+          className={`flex flex-col lg:flex-row gap-5 items-end lg:items-center xl:justify-between ease-out duration-200 ${stickyMenu ? "py-4" : "py-6"
+            }`}
         >
           {/* <!-- header top left --> */}
           <div className="xl:w-auto flex-col sm:flex-row w-full flex sm:justify-between sm:items-center gap-5 sm:gap-10">
@@ -168,63 +166,72 @@ useEffect(() => {
             <div className="flex w-full lg:w-auto justify-between items-center gap-5">
               <div className="flex items-center gap-5">
                 {user ? (
-  <div className="flex items-center gap-2.5">
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <circle cx="12" cy="8" r="4" fill="#3C50E0" />
-      <path
-        d="M4 20c0-4 4-6 8-6s8 2 8 6"
-        stroke="#3C50E0"
-        strokeWidth="2"
-      />
-    </svg>
+                  <div className="flex items-center gap-3">
+                    {/* Icono usuario */}
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="shrink-0"
+                    >
+                      <circle cx="12" cy="8" r="4" fill="#3C50E0" />
+                      <path
+                        d="M4 20c0-4 4-6 8-6s8 2 8 6"
+                        stroke="#3C50E0"
+                        strokeWidth="2"
+                      />
+                    </svg>
 
-    <div>
-      <span className="block text-2xs text-dark-4 uppercase">
-        {user.role}
-      </span>
-      <p className="font-medium text-custom-sm text-dark">
-        {user.email}
-      </p>
-      <button
-  onClick={() => setChatOpen(!chatOpen)}
-  className="relative ml-4"
->
-  <svg
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      d="M21 15a4 4 0 01-4 4H8l-5 3V7a4 4 0 014-4h10a4 4 0 014 4v8z"
-      stroke="#3C50E0"
-      strokeWidth="2"
-      fill="none"
-    />
-  </svg>
-</button>
+                    {/* Texto */}
+                    <div className="min-w-0">
+                      <span className="block text-2xs text-dark-4 uppercase">
+                        {user.role}
+                      </span>
+                      <p className="font-medium text-custom-sm text-dark truncate max-w-[220px]">
+                        {user.email}
+                      </p>
+                    </div>
 
-    </div>
-  </div>
-) : (
-  <Link href="/signin" className="flex items-center gap-2.5">
-    <div>
-      <span className="block text-2xs text-dark-4 uppercase">
-        account
-      </span>
-      <p className="font-medium text-custom-sm text-dark">
-        Sign In
-      </p>
-    </div>
-  </Link>
-)}
+                    {/* Botón chat (alineado y bonito) */}
+                    <button
+                      type="button"
+                      onClick={() => setChatOpen((v) => !v)}
+                      className="
+        relative ml-1
+        inline-flex items-center justify-center
+        h-10 w-10 rounded-full
+        border border-gray-3 bg-gray-1
+        hover:bg-gray-2 transition
+        shrink-0
+      "
+                      aria-label="Abrir chat"
+                      title="Chat"
+                    >
+                      <svg
+                        className="h-5 w-5"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M21 15a4 4 0 01-4 4H8l-5 3V7a4 4 0 014-4h10a4 4 0 014 4v8z"
+                          stroke="#3C50E0"
+                          strokeWidth="2"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                ) : (
+                  <Link href="/signin" className="flex items-center gap-2.5">
+                    <div>
+                      <span className="block text-2xs text-dark-4 uppercase">account</span>
+                      <p className="font-medium text-custom-sm text-dark">Sign In</p>
+                    </div>
+                  </Link>
+                )}
+
 
 
                 <button
@@ -289,32 +296,27 @@ useEffect(() => {
                 <span className="block relative cursor-pointer w-5.5 h-5.5">
                   <span className="du-block absolute right-0 w-full h-full">
                     <span
-                      className={`block relative top-0 left-0 bg-dark rounded-sm w-0 h-0.5 my-1 ease-in-out duration-200 delay-[0] ${
-                        !navigationOpen && "!w-full delay-300"
-                      }`}
+                      className={`block relative top-0 left-0 bg-dark rounded-sm w-0 h-0.5 my-1 ease-in-out duration-200 delay-[0] ${!navigationOpen && "!w-full delay-300"
+                        }`}
                     ></span>
                     <span
-                      className={`block relative top-0 left-0 bg-dark rounded-sm w-0 h-0.5 my-1 ease-in-out duration-200 delay-150 ${
-                        !navigationOpen && "!w-full delay-400"
-                      }`}
+                      className={`block relative top-0 left-0 bg-dark rounded-sm w-0 h-0.5 my-1 ease-in-out duration-200 delay-150 ${!navigationOpen && "!w-full delay-400"
+                        }`}
                     ></span>
                     <span
-                      className={`block relative top-0 left-0 bg-dark rounded-sm w-0 h-0.5 my-1 ease-in-out duration-200 delay-200 ${
-                        !navigationOpen && "!w-full delay-500"
-                      }`}
+                      className={`block relative top-0 left-0 bg-dark rounded-sm w-0 h-0.5 my-1 ease-in-out duration-200 delay-200 ${!navigationOpen && "!w-full delay-500"
+                        }`}
                     ></span>
                   </span>
 
                   <span className="block absolute right-0 w-full h-full rotate-45">
                     <span
-                      className={`block bg-dark rounded-sm ease-in-out duration-200 delay-300 absolute left-2.5 top-0 w-0.5 h-full ${
-                        !navigationOpen && "!h-0 delay-[0] "
-                      }`}
+                      className={`block bg-dark rounded-sm ease-in-out duration-200 delay-300 absolute left-2.5 top-0 w-0.5 h-full ${!navigationOpen && "!h-0 delay-[0] "
+                        }`}
                     ></span>
                     <span
-                      className={`block bg-dark rounded-sm ease-in-out duration-200 delay-400 absolute left-0 top-2.5 w-full h-0.5 ${
-                        !navigationOpen && "!h-0 dealy-200"
-                      }`}
+                      className={`block bg-dark rounded-sm ease-in-out duration-200 delay-400 absolute left-0 top-2.5 w-full h-0.5 ${!navigationOpen && "!h-0 dealy-200"
+                        }`}
                     ></span>
                   </span>
                 </span>
@@ -331,10 +333,9 @@ useEffect(() => {
           <div className="flex items-center justify-between">
             {/* <!--=== Main Nav Start ===--> */}
             <div
-              className={`w-[288px] absolute right-4 top-full xl:static xl:w-auto h-0 xl:h-auto invisible xl:visible xl:flex items-center justify-between ${
-                navigationOpen &&
+              className={`w-[288px] absolute right-4 top-full xl:static xl:w-auto h-0 xl:h-auto invisible xl:visible xl:flex items-center justify-between ${navigationOpen &&
                 `!visible bg-white shadow-lg border border-gray-3 !h-auto max-h-[400px] overflow-y-scroll rounded-md p-5`
-              }`}
+                }`}
             >
               {/* <!-- Main Nav Start --> */}
               <nav>
@@ -353,9 +354,8 @@ useEffect(() => {
                       >
                         <Link
                           href={menuItem.path}
-                          className={`hover:text-blue text-custom-sm font-medium text-dark flex ${
-                            stickyMenu ? "xl:py-4" : "xl:py-6"
-                          }`}
+                          className={`hover:text-blue text-custom-sm font-medium text-dark flex ${stickyMenu ? "xl:py-4" : "xl:py-6"
+                            }`}
                         >
                           {menuItem.title}
                         </Link>
@@ -425,10 +425,11 @@ useEffect(() => {
         </div>
       </div>
       {chatOpen && user && (
-  <div className="absolute right-10 top-[90px] z-50">
-    <Chat user={user} token="" />
-  </div>
-)}
+        <div className="absolute right-4 top-full mt-4 z-50">
+          <Chat user={user} token="" />
+        </div>
+      )}
+
 
     </header>
   );

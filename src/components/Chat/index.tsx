@@ -51,6 +51,11 @@ const Chat: React.FC<ChatProps> = ({ user }) => {
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const listRef = useRef<HTMLDivElement | null>(null);
+  const shouldAutoScrollRef = useRef(true);
+  const autoScrollRef = useRef(true);
+
+
 
   // Traer mensajes cada 2s
   useEffect(() => {
@@ -67,9 +72,31 @@ const Chat: React.FC<ChatProps> = ({ user }) => {
   }, []);
 
   // Scroll al final
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+useEffect(() => {
+  const el = listRef.current;
+  if (!el) return;
+
+  const onScroll = () => {
+    const threshold = 60; // px
+    const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+
+    // Si NO está cerca del final, significa que subió -> apagamos auto scroll
+    autoScrollRef.current = distanceFromBottom <= threshold;
+  };
+
+  el.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  return () => el.removeEventListener("scroll", onScroll);
+}, []);
+
+useEffect(() => {
+  if (!autoScrollRef.current) return;
+  messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+}, [messages]);
+
+
+
 
   // Enviar mensaje / archivo
   const sendMessage = async () => {
@@ -133,7 +160,10 @@ const Chat: React.FC<ChatProps> = ({ user }) => {
       </div>
 
       {/* Body */}
-      <div className="flex-1 p-4 overflow-y-auto h-80 bg-gray-1">
+<div
+  ref={listRef}
+  className="flex-1 p-4 overflow-y-auto bg-gray-1 min-h-[320px] max-h-[420px]"
+>
         <div className="space-y-3">
           {messages.map((msg) => {
             const isMe = msg.user.email === user.email;
