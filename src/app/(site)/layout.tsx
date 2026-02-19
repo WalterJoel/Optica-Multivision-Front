@@ -1,4 +1,5 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import "../css/euclid-circular-a-font.css";
 import "../css/style.css";
@@ -15,56 +16,39 @@ import PreviewSliderModal from "@/components/Common/PreviewSlider";
 
 import ScrollToTop from "@/components/Common/ScrollToTop";
 import PreLoader from "@/components/Common/PreLoader";
-
-import FloatingChat from "@/components/Chat/FloatingChat";
 import { usePathname } from "next/navigation";
 
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const [loading, setLoading] = useState<boolean>(true);
+export default function SiteLayout({ children }: { children: React.ReactNode }) {
+  const [loading, setLoading] = useState(true);
   const pathname = usePathname();
   const isAuthPage = pathname === "/signin" || pathname === "/signup";
-
 
   useEffect(() => {
     setTimeout(() => setLoading(false), 1000);
   }, []);
 
+  if (loading) return <PreLoader />;
+
   return (
-    <html lang="en" suppressHydrationWarning={true}>
-      <body>
-        
-        {loading ? (
-          <PreLoader />
-        ) : (
-          <>
-            <ReduxProvider>
-              <CartModalProvider>
-                <ModalProvider>
-                  <PreviewSliderProvider>
-                    {!isAuthPage && <Header />}
+    <>
+      <ReduxProvider>
+        <CartModalProvider>
+          <ModalProvider>
+            <PreviewSliderProvider>
+              {!isAuthPage && <Header />}
 
-                    
+              {children}
 
-                    {children}
+              <QuickViewModal />
+              <CartSidebarModal />
+              <PreviewSliderModal />
+            </PreviewSliderProvider>
+          </ModalProvider>
+        </CartModalProvider>
+      </ReduxProvider>
 
-                    <QuickViewModal />
-                    <CartSidebarModal />
-                    <PreviewSliderModal />
-                  </PreviewSliderProvider>
-                </ModalProvider>
-              </CartModalProvider>
-            </ReduxProvider>
-            <ScrollToTop />
-            {!isAuthPage && <Footer />}
-
-          </>
-        )}
-      </body>
-    </html>
+      <ScrollToTop />
+      {!isAuthPage && <Footer />}
+    </>
   );
 }

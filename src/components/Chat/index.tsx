@@ -6,7 +6,7 @@ interface User {
   id: number;
   email: string;
   role: string;
-  avatarUrl?: string; // ✅ nuevo
+  avatarUrl?: string;
 }
 
 interface Message {
@@ -59,9 +59,11 @@ function Avatar({
 
   return avatarUrl ? (
     <img
-    src={`http://localhost:3001${avatarUrl}?v=${encodeURIComponent(avatarUrl)}&t=${Date.now()}`}
+      src={`http://localhost:3001${avatarUrl}?v=${encodeURIComponent(
+        avatarUrl
+      )}&t=${Date.now()}`}
       alt={email}
-    className={`${sizeClass} rounded-full object-cover border border-gray-3`}
+      className={`${sizeClass} rounded-full object-cover border border-gray-3`}
     />
   ) : (
     <div
@@ -73,7 +75,7 @@ function Avatar({
   );
 }
 
-const Chat: React.FC<ChatProps> = ({ user }) => {
+const Chat: React.FC<ChatProps> = ({ user, token }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -83,39 +85,66 @@ const Chat: React.FC<ChatProps> = ({ user }) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const autoScrollRef = useRef(true);
   const [me, setMe] = useState<User>(user);
-useEffect(() => {
-  fetch(`http://localhost:3001/users/${user.id}`, { credentials: "include" })
-    .then((r) => r.json())
-    .then((u) => {
-      console.log("ME =>", u); // ✅ mira si viene avatarUrl acá
-      setMe(u);
-    })
-    .catch(() => setMe(user));
-}, []);
 
+  const authHeaders = useMemo(() => {
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  }, [token]);
 
-  // Traer mensajes cada 2s
+  // Si no hay token, no renderizar chat (evita 401 spam)
+  if (!token) return null;
+
+  // Cargar perfil (para avatar)
   useEffect(() => {
-    const fetchMessages = () => {
-fetch("http://localhost:3001/chat", {
-  credentials: "include",
-})        .then((res) => res.json())
-        .then((data) => {
-          // ✅ evita re-render si no cambió el último mensaje
-          setMessages((prev) => {
-            const prevLast = prev[prev.length - 1]?.id;
-            const newLast = data?.[data.length - 1]?.id;
-            if (prevLast === newLast) return prev;
-            return data;
-          });
-        })
-        .catch((err) => console.error("Error trayendo mensajes:", err));
+    const loadMe = async () => {
+      try {
+        const r = await fetch(`http://localhost:3001/users/${user.id}`, {
+          headers: authHeaders,
+        });
+
+        if (!r.ok) return setMe(user);
+
+        const u = await r.json();
+        setMe(u);
+      } catch {
+        setMe(user);
+      }
+    };
+
+    loadMe();
+  }, [user.id, user, authHeaders]);
+
+  // Traer mensajes cada 2s (token-only)
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const res = await fetch("http://localhost:3001/chat", {
+          headers: authHeaders,
+        });
+
+        if (res.status === 401) {
+          setMessages([]);
+          return;
+        }
+
+        if (!res.ok) throw new Error("Error trayendo mensajes");
+
+        const data = await res.json();
+
+        setMessages((prev) => {
+          const prevLast = prev[prev.length - 1]?.id;
+          const newLast = data?.[data.length - 1]?.id;
+          if (prevLast === newLast) return prev;
+          return data;
+        });
+      } catch (err) {
+        console.error("Error trayendo mensajes:", err);
+      }
     };
 
     fetchMessages();
     const interval = setInterval(fetchMessages, 2000);
     return () => clearInterval(interval);
-  }, []);
+  }, [authHeaders]);
 
   // Detectar si el usuario está leyendo arriba (para NO jalarlo)
   useEffect(() => {
@@ -124,7 +153,8 @@ fetch("http://localhost:3001/chat", {
 
     const onScroll = () => {
       const threshold = 60;
-      const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+      const distanceFromBottom =
+        el.scrollHeight - el.scrollTop - el.clientHeight;
       autoScrollRef.current = distanceFromBottom <= threshold;
     };
 
@@ -144,32 +174,42 @@ fetch("http://localhost:3001/chat", {
     if (!text && !selectedFile) return;
 
     try {
+      // ✅ Con archivo (imagen/pdf)
       if (selectedFile) {
         const form = new FormData();
-form.append("file", selectedFile);
-if (text) form.append("mensaje", text);
+        form.append("file", selectedFile);
+        if (text) form.append("mensaje", text);
 
-await fetch("http://localhost:3001/chat/upload", {
-  method: "POST",
-  credentials: "include",
-  body: form,
-});
+        const res = await fetch("http://localhost:3001/chat/upload", {
+          method: "POST",
+          headers: authHeaders, // ✅ Bearer
+          body: form, // ✅ NO Content-Type manual
+        });
 
-
+        if (!res.ok) {
+          const t = await res.text();
+          throw new Error(t || "Error subiendo archivo");
+        }
 
         setSelectedFile(null);
         setNewMessage("");
         return;
       }
 
-    await fetch("http://localhost:3001/chat", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  credentials: "include",
-  body: JSON.stringify({ mensaje: text, userId: user.id }),
-});
+      // ✅ Solo texto
+      const res = await fetch("http://localhost:3001/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...authHeaders, // ✅ Bearer
+        },
+        body: JSON.stringify({ mensaje: text }), // ✅ sin userId
+      });
 
-
+      if (!res.ok) {
+        const t = await res.text();
+        throw new Error(t || "Error enviando mensaje");
+      }
 
       setNewMessage("");
     } catch (err) {
@@ -181,18 +221,13 @@ await fetch("http://localhost:3001/chat/upload", {
     if (e.key === "Enter") sendMessage();
   };
 
-  const myInitial = useMemo(() => getInitial(user.email), [user.email]);
-
   return (
     <div className="fixed bottom-5 right-5 z-50 w-[380px] bg-white shadow-1 rounded-[14px] border border-gray-3 flex flex-col overflow-hidden">
       {/* Header */}
       <div className="bg-blue-dark text-white px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3 min-w-0">
-          {/* ✅ avatar en header */}
           <Avatar email={me.email} avatarUrl={me.avatarUrl} variant="header" />
-          <p className="text-xs opacity-80 truncate">{me.email} </p>
-
-
+          <p className="text-xs opacity-80 truncate">{me.email}</p>
         </div>
 
         <div className="text-xs opacity-90 px-2 py-1 rounded-md bg-white/10">
@@ -213,10 +248,10 @@ await fetch("http://localhost:3001/chat/upload", {
             return (
               <div
                 key={msg.id}
-                className={`flex items-end gap-2 ${isMe ? "justify-end" : "justify-start"
-                  }`}
+                className={`flex items-end gap-2 ${
+                  isMe ? "justify-end" : "justify-start"
+                }`}
               >
-                {/* Avatar izquierda */}
                 {!isMe && (
                   <Avatar
                     email={msg.user.email}
@@ -225,32 +260,33 @@ await fetch("http://localhost:3001/chat/upload", {
                   />
                 )}
 
-                {/* Burbuja */}
                 <div
-                  className={`max-w-[78%] rounded-[14px] border px-3 py-2 ${isMe
+                  className={`max-w-[78%] rounded-[14px] border px-3 py-2 ${
+                    isMe
                       ? "bg-blue text-white border-blue/30"
                       : "bg-white text-dark border-gray-3 shadow-1"
-                    }`}
+                  }`}
                 >
-                  {/* Nombre + hora */}
                   <div
-                    className={`text-[11px] mb-1 flex items-center justify-between gap-3 ${isMe ? "text-white/80" : "text-dark-5"
-                      }`}
+                    className={`text-[11px] mb-1 flex items-center justify-between gap-3 ${
+                      isMe ? "text-white/80" : "text-dark-5"
+                    }`}
                   >
                     <span className="truncate">{isMe ? "Yo" : msg.user.email}</span>
                     <span className="shrink-0">{time}</span>
                   </div>
 
-                  {/* Texto */}
                   {msg.mensaje && (
                     <p className="text-sm whitespace-pre-wrap">{msg.mensaje}</p>
                   )}
 
-                  {/* Archivo */}
                   {msg.fileUrl && (
                     <div
-                      className={`mt-2 rounded-md p-2 ${isMe ? "bg-white/10" : "bg-gray-1 border border-gray-3"
-                        }`}
+                      className={`mt-2 rounded-md p-2 ${
+                        isMe
+                          ? "bg-white/10"
+                          : "bg-gray-1 border border-gray-3"
+                      }`}
                     >
                       {msg.fileType?.startsWith("image/") ? (
                         <img
@@ -263,15 +299,20 @@ await fetch("http://localhost:3001/chat/upload", {
                           href={`http://localhost:3001${msg.fileUrl}`}
                           target="_blank"
                           rel="noreferrer"
-                          className={`text-sm underline ${isMe ? "text-white" : "text-blue"
-                            }`}
+                          className={`text-sm underline ${
+                            isMe ? "text-white" : "text-blue"
+                          }`}
                         >
                           📄 {msg.fileName || "Ver archivo"}
                         </a>
                       )}
 
                       {!!msg.fileSize && (
-                        <div className={`mt-1 text-[11px] ${isMe ? "text-white/70" : "text-dark-5"}`}>
+                        <div
+                          className={`mt-1 text-[11px] ${
+                            isMe ? "text-white/70" : "text-dark-5"
+                          }`}
+                        >
                           {formatSize(msg.fileSize)}
                         </div>
                       )}
@@ -279,7 +320,6 @@ await fetch("http://localhost:3001/chat/upload", {
                   )}
                 </div>
 
-                {/* Avatar derecha */}
                 {isMe && (
                   <Avatar
                     email={msg.user.email}
@@ -287,7 +327,6 @@ await fetch("http://localhost:3001/chat/upload", {
                     variant="message"
                   />
                 )}
-
               </div>
             );
           })}
@@ -298,14 +337,15 @@ await fetch("http://localhost:3001/chat/upload", {
 
       {/* Footer */}
       <div className="border-t border-gray-3 bg-white p-3">
-        {/* Preview archivo */}
         {selectedFile && (
           <div className="mb-2 flex items-center justify-between rounded-[10px] border border-gray-3 bg-gray-1 px-3 py-2">
             <div className="min-w-0">
               <p className="text-xs text-dark truncate">
                 📎 <span className="font-medium">{selectedFile.name}</span>
               </p>
-              <p className="text-[11px] text-dark-5">{formatSize(selectedFile.size)}</p>
+              <p className="text-[11px] text-dark-5">
+                {formatSize(selectedFile.size)}
+              </p>
             </div>
             <button
               type="button"
@@ -319,7 +359,6 @@ await fetch("http://localhost:3001/chat/upload", {
         )}
 
         <div className="flex items-center gap-2">
-          {/* file input oculto */}
           <input
             ref={fileInputRef}
             type="file"
@@ -328,7 +367,6 @@ await fetch("http://localhost:3001/chat/upload", {
             className="hidden"
           />
 
-          {/* Adjuntar */}
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
@@ -338,7 +376,6 @@ await fetch("http://localhost:3001/chat/upload", {
             📎
           </button>
 
-          {/* Input */}
           <input
             type="text"
             value={newMessage}
@@ -348,7 +385,6 @@ await fetch("http://localhost:3001/chat/upload", {
             className="flex-1 rounded-full border border-gray-3 bg-gray-1 px-4 py-2 outline-none duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20"
           />
 
-          {/* Enviar */}
           <button
             type="button"
             onClick={sendMessage}
