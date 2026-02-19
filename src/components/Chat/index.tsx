@@ -59,9 +59,9 @@ function Avatar({
 
   return avatarUrl ? (
     <img
-      src={`http://localhost:3001${avatarUrl}`}
+    src={`http://localhost:3001${avatarUrl}?v=${encodeURIComponent(avatarUrl)}&t=${Date.now()}`}
       alt={email}
-      className={`${sizeClass} rounded-full object-cover border border-gray-3`}
+    className={`${sizeClass} rounded-full object-cover border border-gray-3`}
     />
   ) : (
     <div
@@ -83,19 +83,23 @@ const Chat: React.FC<ChatProps> = ({ user }) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const autoScrollRef = useRef(true);
   const [me, setMe] = useState<User>(user);
-  useEffect(() => {
-    fetch(`http://localhost:3001/users/${user.id}`)
-      .then((r) => r.json())
-      .then((u) => setMe(u))
-      .catch(() => setMe(user));
-  }, [user.id]);
+useEffect(() => {
+  fetch(`http://localhost:3001/users/${user.id}`, { credentials: "include" })
+    .then((r) => r.json())
+    .then((u) => {
+      console.log("ME =>", u); // ✅ mira si viene avatarUrl acá
+      setMe(u);
+    })
+    .catch(() => setMe(user));
+}, []);
 
 
   // Traer mensajes cada 2s
   useEffect(() => {
     const fetchMessages = () => {
-      fetch("http://localhost:3001/chat")
-        .then((res) => res.json())
+fetch("http://localhost:3001/chat", {
+  credentials: "include",
+})        .then((res) => res.json())
         .then((data) => {
           // ✅ evita re-render si no cambió el último mensaje
           setMessages((prev) => {
@@ -142,25 +146,30 @@ const Chat: React.FC<ChatProps> = ({ user }) => {
     try {
       if (selectedFile) {
         const form = new FormData();
-        form.append("file", selectedFile);
-        form.append("userId", String(user.id));
-        if (text) form.append("mensaje", text);
+form.append("file", selectedFile);
+if (text) form.append("mensaje", text);
 
-        await fetch("http://localhost:3001/chat/upload", {
-          method: "POST",
-          body: form,
-        });
+await fetch("http://localhost:3001/chat/upload", {
+  method: "POST",
+  credentials: "include",
+  body: form,
+});
+
+
 
         setSelectedFile(null);
         setNewMessage("");
         return;
       }
 
-      await fetch("http://localhost:3001/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mensaje: text, userId: user.id }),
-      });
+    await fetch("http://localhost:3001/chat", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  credentials: "include",
+  body: JSON.stringify({ mensaje: text, userId: user.id }),
+});
+
+
 
       setNewMessage("");
     } catch (err) {
