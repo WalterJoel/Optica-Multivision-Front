@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Breadcrumb from "../Common/Breadcrumb";
+import { ModalFrameWrapper } from "@/components/Common/modal";
+import { BaseButton } from "@/components/Common/Buttons";
 import { useLenteStock, useLenses } from "@/hooks/products";
 import { useSearchParams } from "next/navigation";
 
@@ -109,8 +111,8 @@ export default function Matrix() {
   return (
     <>
       <Breadcrumb title="Matriz de Stock" pages={["Matriz"]} />
-      <section className="overflow-hidden relative pb-20 pt-5 lg:pt-20 xl:pt-28 bg-[#f3f4f6]">
-        <div className="mx-auto max-w-[1400px] px-4 pt-5 space-y-4">
+      <section className="overflow-hidden relative pb-20 pt-2 lg:pt-6 xl:pt-8 bg-[#f3f4f6]">
+        <div className="mx-auto max-w-[1400px] px-4 pt-5 space-y-4 ">
           {/* Selectores */}
           <div className="flex gap-2 justify-center">
             {["NEGATIVO", "POSITIVO"].map((type) => (
@@ -126,21 +128,19 @@ export default function Matrix() {
                     : "bg-white text-dark hover:bg-gray-1"
                 }`}
               >
-                {type === "NEGATIVO"
-                  ? "ESPECIALES NEGATIVOS"
-                  : "ESPECIALES POSITIVOS"}
+                {type === "NEGATIVO" ? "NEGATIVOS" : "POSITIVOS"}
               </button>
             ))}
           </div>
 
           {/* Tabla Contenedor */}
-          <div className="rounded-xl bg-white p-4 shadow-1 border border-stroke overflow-hidden">
-            <div className="w-full overflow-x-auto border rounded-lg">
+          <div className="rounded-xl bg-white overflow-hidden ring-8 ring-blue-light ring-opacity-30">
+            <div className="w-full overflow-x-auto rounded-lg">
               <table className="matrix-table">
                 <thead>
                   <tr className="bg-gray-2 text-dark font-black">
                     <th className="sticky left-0 top-0 z-[50] bg-gray-3 border-r-2 text-[9px] w-[65px]">
-                      SPH \ CYL
+                      ESF \\ CYL
                     </th>
                     {cylValues.map((cyl, i) => (
                       <th
@@ -238,66 +238,72 @@ export default function Matrix() {
           </div>
         )}
 
-        {/* Modal de Detalle permanece igual */}
+        {/* Modal de Detalle con campo Precio */}
         {renderizarModal === "stock" && selected && (
-          <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-            <div className="w-full max-w-sm rounded-2xl bg-white shadow-2xl p-6 relative animate-in fade-in zoom-in duration-200">
-              <div className="mb-4 flex items-center justify-between border-b pb-3">
-                <h3 className="text-lg font-bold text-dark italic">
-                  Detalle de Medida
-                </h3>
-                <button
-                  onClick={() => setSelected(null)}
-                  className="text-gray-500 hover:text-dark text-xl"
-                >
-                  ✕
-                </button>
-              </div>
-              <div className="space-y-4">
-                <div className="bg-blue/5 p-4 rounded-xl border border-blue/10 text-center">
-                  <p className="text-[10px] text-blue font-bold uppercase tracking-widest">
-                    Graduación Seleccionada
-                  </p>
-                  <p className="text-2xl font-black text-blue">
-                    SPH {selected.sph} / CYL {selected.cyl.toFixed(2)}
-                  </p>
-                </div>
-                <div className="flex justify-between items-center px-2">
-                  <span className="text-gray-500">Stock en Sede Actual:</span>
-                  <span
-                    className={`text-xl font-black ${selected.stock > 0 ? "text-green" : "text-red"}`}
-                  >
-                    {selected.stock}{" "}
-                    <small className="text-[10px] uppercase">Und</small>
+          <ModalFrameWrapper>
+            <div className="space-y-4">
+              {/* Header con Graduación y Precio */}
+              <div className="bg-blue/5 p-4 rounded-xl border border-blue/10 text-center relative overflow-hidden">
+                <p className="text-[10px] text-blue font-bold uppercase tracking-widest">
+                  Graduación Seleccionada
+                </p>
+                <p className="text-2xl font-black text-blue">
+                  ESF {selected.sph} / CYL {selected.cyl.toFixed(2)}
+                </p>
+                {/* Campo de Precio Destacado */}
+                <div className="mt-2 inline-block px-3 py-1 bg-white rounded-lg border border-blue/20 shadow-sm">
+                  <span className="text-xs font-bold text-blue/60 mr-1 text-[10px]">
+                    PRECIO:
+                  </span>
+                  <span className="text-lg font-black text-blue">
+                    S/ {selected.price?.toFixed(2) || "10.50"}
                   </span>
                 </div>
-                <div className="rounded-xl bg-gray-1 p-3 text-[11px] space-y-2">
-                  <p className="font-bold text-dark uppercase text-[9px] opacity-60">
-                    Disponibilidad otras sedes
-                  </p>
-                  <div className="flex justify-between italic">
-                    <span>📍 Lima Centro</span>
-                    <span className="font-bold">12</span>
-                  </div>
-                  <div className="flex justify-between italic">
-                    <span>📍 San Isidro</span>
-                    <span className="font-bold">08</span>
-                  </div>
+              </div>
+
+              {/* Stock Sede Actual */}
+              <div className="flex justify-between items-center px-2">
+                <span className="text-gray-500 font-medium">
+                  Stock en Sede Actual:
+                </span>
+                <span
+                  className={`text-xl font-black ${selected.stock > 0 ? "text-green" : "text-red"}`}
+                >
+                  {selected.stock}{" "}
+                  <small className="text-[10px] uppercase font-bold">Und</small>
+                </span>
+              </div>
+
+              {/* Otras Sedes */}
+              <div className="rounded-xl bg-gray-1 p-3 text-[11px] space-y-2 border border-gray-2">
+                <p className="font-bold text-gray-6 uppercase text-[9px] opacity-70">
+                  Disponibilidad otras sedes
+                </p>
+                <div className="flex justify-between items-center text-gray-7">
+                  <span className="italic">📍 Lima Centro</span>
+                  <span className="font-bold bg-gray-2 px-2 py-0.5 rounded text-[10px]">
+                    12
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-gray-7">
+                  <span className="italic">📍 San Isidro</span>
+                  <span className="font-bold bg-gray-2 px-2 py-0.5 rounded text-[10px]">
+                    08
+                  </span>
                 </div>
               </div>
-              <div className="mt-6 flex flex-col gap-2">
-                <button className="w-full rounded-xl bg-blue py-3 text-white font-bold hover:brightness-110 shadow-md">
-                  Añadir al Pedido
-                </button>
-                <button
-                  onClick={() => setSelected(null)}
-                  className="w-full py-2 text-gray-500 text-sm font-medium"
-                >
-                  Cancelar
-                </button>
-              </div>
             </div>
-          </div>
+
+            {/* Acciones */}
+            <div className="mt-6 flex flex-col gap-2">
+              <BaseButton disabled={selected.stock <= 0}>
+                Agregar al carrito
+              </BaseButton>
+              <BaseButton variant="cancel" onClick={() => setSelected(null)}>
+                Cancelar
+              </BaseButton>
+            </div>
+          </ModalFrameWrapper>
         )}
       </section>
     </>

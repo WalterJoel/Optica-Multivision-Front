@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useAccessories } from "@/hooks/products";
-import { BaseInput } from "@/components/Inputs/BaseInput";
+import { BaseInput } from "@/components/Common/Inputs/BaseInput";
 import { PRODUCTOS, IMG_LENTE } from "@/commons/constants";
 import { CreateAccessory } from "@/types/products";
 
@@ -41,14 +41,44 @@ export default function AccessoryForm() {
   return (
     <form onSubmit={handleSubmit}>
       <div className="flex gap-5 mb-5">
-        <BaseInput label="Marca" name="marca" value={form.marca} required onChange={handleChange} />
-        <BaseInput label="Material" name="material" value={form.material} required onChange={handleChange} />
+        <BaseInput
+          label="Marca"
+          name="marca"
+          value={form.marca}
+          required
+          onChange={handleChange}
+        />
+        <BaseInput
+          label="Material"
+          name="material"
+          value={form.material}
+          required
+          onChange={handleChange}
+        />
       </div>
 
       <div className="flex gap-5 mb-5">
-        <BaseInput label="Precio Serie 1" name="precio_serie1" type="number" value={form.precio_serie1} onChange={handleChange} />
-        <BaseInput label="Precio Serie 2" name="precio_serie2" type="number" value={form.precio_serie2} onChange={handleChange} />
-        <BaseInput label="Precio Serie 3" name="precio_serie3" type="number" value={form.precio_serie3} onChange={handleChange} />
+        <BaseInput
+          label="Precio Serie 1"
+          name="precio_serie1"
+          type="number"
+          value={form.precio_serie1}
+          onChange={handleChange}
+        />
+        <BaseInput
+          label="Precio Serie 2"
+          name="precio_serie2"
+          type="number"
+          value={form.precio_serie2}
+          onChange={handleChange}
+        />
+        <BaseInput
+          label="Precio Serie 3"
+          name="precio_serie3"
+          type="number"
+          value={form.precio_serie3}
+          onChange={handleChange}
+        />
       </div>
 
       <button className="bg-blue text-white px-6 py-3 rounded-md">

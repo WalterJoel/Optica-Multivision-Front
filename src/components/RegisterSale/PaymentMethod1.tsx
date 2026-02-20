@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { BaseInput } from "@/components/Inputs/BaseInput";
+import { BaseInput } from "@/components/Common/Inputs/BaseInput";
 
 const PaymentMethod1 = () => {
   const [paymentType, setPaymentType] = useState<"cash" | "credit">("credit");
@@ -20,7 +20,9 @@ const PaymentMethod1 = () => {
   const [debt, setDebt] = useState(0);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) => {
     const { name, value } = e.target;
 
@@ -42,7 +44,7 @@ const PaymentMethod1 = () => {
 
   return (
     <div className="bg-white w-full rounded-xl shadow-lg p-6">
-    {/* HEADER */}
+      {/* HEADER */}
       <h2 className="text-xl font-semibold mb-6">Método de Pago</h2>
 
       {/* Tabs */}
@@ -180,9 +182,7 @@ const PaymentMethod1 = () => {
               name="result"
               type="text"
               value={`S/ ${
-                paymentType === "cash"
-                  ? change.toFixed(2)
-                  : debt.toFixed(2)
+                paymentType === "cash" ? change.toFixed(2) : debt.toFixed(2)
               }`}
               onChange={() => {}}
               readOnly
@@ -218,14 +218,16 @@ const PaymentMethod1 = () => {
         {/* Botones */}
         <div className="flex justify-end gap-3 pt-4">
           <button
-          type="submit"
-          className="w-full flex justify-center font-medium text-white bg-blue py-3 px-6 rounded-md ease-out duration-200 hover:bg-blue-dark mt-7.5">
+            type="submit"
+            className="w-full flex justify-center font-medium text-white bg-blue py-3 px-6 rounded-md ease-out duration-200 hover:bg-blue-dark mt-7.5"
+          >
             Cerrar
           </button>
-          
-          <button 
-          type="submit"
-          className="w-full flex justify-center font-medium text-white bg-blue py-3 px-6 rounded-md ease-out duration-200 hover:bg-blue-dark mt-7.5">
+
+          <button
+            type="submit"
+            className="w-full flex justify-center font-medium text-white bg-blue py-3 px-6 rounded-md ease-out duration-200 hover:bg-blue-dark mt-7.5"
+          >
             Registrar Venta
           </button>
         </div>
