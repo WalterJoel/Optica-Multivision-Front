@@ -225,15 +225,35 @@ const Chat: React.FC<ChatProps> = ({ user, token }) => {
     <div className="fixed bottom-5 right-5 z-50 w-[380px] bg-white shadow-1 rounded-[14px] border border-gray-3 flex flex-col overflow-hidden">
       {/* Header */}
       <div className="bg-blue-dark text-white px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-3 min-w-0">
-          <Avatar email={me.email} avatarUrl={me.avatarUrl} variant="header" />
-          <p className="text-xs opacity-80 truncate">{me.email}</p>
-        </div>
+  <div className="flex items-center gap-3 min-w-0">
+    <Avatar email={me.email} avatarUrl={me.avatarUrl} variant="header" />
+    <p className="text-xs opacity-80 truncate">{me.email}</p>
+  </div>
 
-        <div className="text-xs opacity-90 px-2 py-1 rounded-md bg-white/10">
-          Chat
-        </div>
-      </div>
+  <div className="flex items-center gap-2">
+    <div className="text-xs opacity-90 px-2 py-1 rounded-md bg-white/10">
+      Chat
+    </div>
+
+    {/* ✅ Botón cerrar */}
+    <button
+      type="button"
+      onClick={() => window.dispatchEvent(new Event("close-chat"))}
+      className="
+        h-8 w-8
+        rounded-full
+        bg-white/10 hover:bg-white/20
+        border border-white/15
+        flex items-center justify-center
+        transition
+      "
+      aria-label="Cerrar chat"
+      title="Cerrar"
+    >
+      ✕
+    </button>
+  </div>
+</div>
 
       {/* Body */}
       <div

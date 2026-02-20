@@ -50,6 +50,13 @@ const Header = () => {
     if (window.scrollY >= 80) setStickyMenu(true);
     else setStickyMenu(false);
   };
+  //nuevo x del chat index
+  useEffect(() => {
+  const close = () => setChatOpen(false);
+
+  window.addEventListener("close-chat", close);
+  return () => window.removeEventListener("close-chat", close);
+}, []);
 
   // Cargar usuario (token-only)
   useEffect(() => {
@@ -202,98 +209,103 @@ const Header = () => {
 
             <div className="flex w-full lg:w-auto justify-between items-center gap-5">
               <div className="flex items-center gap-5">
-                {user ? (
-  <div className="relative" ref={userMenuRef}>
-    <button
-      type="button"
-      onClick={() => setUserMenuOpen((v) => !v)}
-      className="
-        flex items-center gap-3
-        rounded-xl border border-gray-3 bg-gray-1
-        px-3 py-2
-        hover:bg-gray-2 transition
-        min-h-[44px]
-      "
-      aria-label="Abrir menú de usuario"
-      title="Cuenta"
-    >
-      {/* Icono usuario (centrado) */}
-      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white border border-gray-3 shrink-0">
+               <div className="flex items-center gap-3">
+  {user ? (
+    <div className="relative" ref={userMenuRef}>
+      <button
+        type="button"
+        onClick={() => setUserMenuOpen((v) => !v)}
+        className="
+          flex items-center gap-3
+          rounded-xl border border-gray-3 bg-gray-1
+          px-3 py-2
+          hover:bg-gray-2 transition
+          min-h-[44px]
+        "
+        aria-label="Abrir menú de usuario"
+        title="Cuenta"
+      >
+        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white border border-gray-3 shrink-0">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="8" r="4" fill="#3C50E0" />
+            <path d="M4 20c0-4 4-6 8-6s8 2 8 6" stroke="#3C50E0" strokeWidth="2" />
+          </svg>
+        </span>
+
+        <div className="min-w-0 leading-tight hidden sm:block">
+          <span className="block text-[10px] font-semibold tracking-wide text-dark-4 uppercase">
+            {user.role}
+          </span>
+          <p className="text-[13px] font-semibold text-dark truncate max-w-[180px]">
+            {user.email}
+          </p>
+        </div>
+
         <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className="shrink-0"
+          className={`ml-1 h-4 w-4 shrink-0 transition ${userMenuOpen ? "rotate-180" : ""}`}
+          viewBox="0 0 20 20"
+          fill="currentColor"
         >
-          <circle cx="12" cy="8" r="4" fill="#3C50E0" />
           <path
-            d="M4 20c0-4 4-6 8-6s8 2 8 6"
-            stroke="#3C50E0"
-            strokeWidth="2"
+            fillRule="evenodd"
+            d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+            clipRule="evenodd"
           />
         </svg>
-      </span>
+      </button>
 
-      {/* Texto (alineado y sin descuadrarse) */}
-      <div className="min-w-0 leading-tight">
-        <span className="block text-[10px] font-semibold tracking-wide text-dark-4 uppercase">
-          {user.role}
-        </span>
-        <p className="text-[13px] font-semibold text-dark truncate max-w-[200px]">
-          {user.email}
-        </p>
+      {userMenuOpen && (
+        <div className="absolute right-0 mt-2 w-56 rounded-xl border border-gray-3 bg-white shadow-lg z-50 overflow-hidden">
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="w-full px-4 py-3 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+          >
+            🚪 Cerrar sesión
+          </button>
+        </div>
+      )}
+    </div>
+  ) : (
+    <Link href="/signin" className="flex items-center gap-2.5">
+      <div>
+        <span className="block text-2xs text-dark-4 uppercase">account</span>
+        <p className="font-medium text-custom-sm text-dark">Sign In</p>
       </div>
+    </Link>
+  )}
 
-      {/* Flechita (se ve pro y ayuda a entender dropdown) */}
-      <svg
-        className={`ml-1 h-4 w-4 shrink-0 transition ${userMenuOpen ? "rotate-180" : ""}`}
-        viewBox="0 0 20 20"
-        fill="currentColor"
-      >
+  {/* ✅ Botón Chat aparte (icon-only, pro, alineado) */}
+  {user && (
+    <button
+      type="button"
+      onClick={() => setChatOpen((v) => !v)}
+      className="
+        flex items-center justify-center
+        h-[44px] w-[44px]
+        rounded-xl border border-gray-3 bg-gray-1
+        hover:bg-gray-2 transition
+        relative
+      "
+      aria-label="Abrir chat"
+      title="Chat"
+    >
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path
-          fillRule="evenodd"
-          d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-          clipRule="evenodd"
+          d="M4 5.5C4 4.67 4.67 4 5.5 4H18.5C19.33 4 20 4.67 20 5.5V14.5C20 15.33 19.33 16 18.5 16H10L6 19V16H5.5C4.67 16 4 15.33 4 14.5V5.5Z"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinejoin="round"
         />
       </svg>
+
+      {/* opcional: puntito cuando está abierto */}
+      <span className={`absolute -top-1 -right-1 h-3 w-3 rounded-full bg-blue ${chatOpen ? "" : "hidden"}`} />
     </button>
+  )}
 
-    {/* Dropdown menu */}
-    {userMenuOpen && (
-      <div className="absolute right-0 mt-2 w-56 rounded-xl border border-gray-3 bg-white shadow-lg z-50 overflow-hidden">
-        <button
-          type="button"
-          onClick={() => {
-            setUserMenuOpen(false);
-            setChatOpen((v) => !v);
-          }}
-          className="w-full px-4 py-3 text-left text-sm hover:bg-gray-1 flex items-center gap-2"
-        >
-          💬 Abrir chat
-        </button>
-
-        <div className="h-px bg-gray-3" />
-
-        <button
-          type="button"
-          onClick={handleLogout}
-          className="w-full px-4 py-3 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
-        >
-          🚪 Cerrar sesión
-        </button>
-      </div>
-    )}
-  </div>
-) : (
-  <Link href="/signin" className="flex items-center gap-2.5">
-    <div>
-      <span className="block text-2xs text-dark-4 uppercase">account</span>
-      <p className="font-medium text-custom-sm text-dark">Sign In</p>
-    </div>
-  </Link>
-)}
+  
+</div>
 
 
                 <button onClick={handleOpenCartModal} className="flex items-center gap-2.5">
