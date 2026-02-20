@@ -69,40 +69,9 @@ const PaymentMethod = () => {
   }, [formData.payment, paymentType, formData.total]);
 
   return (
-    <div className={`flex flex-col ${showOrder ? "lg:flex-row" : ""} gap-8 xl:gap-11 items-stretch`}>
-      {/* COLUMNA */}
-      <div className="flex-1 w-full">
-        <h2 className="font-medium text-dark text-xl sm:text-2xl mb-5.5">
-          Método de Pago
-        </h2>
-
-        <div className="bg-white w-full rounded-xl shadow-lg p-6">
-          {/* Tabs */}
-          <div className="bg-gray-200 p-1 rounded-lg flex mb-6">
-            <button
-              type="button"
-              onClick={() => setPaymentType("cash")}
-              className={`w-1/2 py-2 text-sm font-semibold rounded-md transition-all duration-200 ${
-                paymentType === "cash"
-                  ? "bg-blue-800 text-blue shadow"
-                  : "text-gray-600"
-              }`}
-            >
-              Al Contado
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setPaymentType("credit")}
-              className={`w-1/2 py-2 text-sm font-semibold rounded-md transition-all duration-200 ${
-                paymentType === "credit"
-                  ? "bg-blue-800 text-blue shadow"
-                  : "text-gray-600"
-              }`}
-            >
-              Al Crédito
-            </button>
-          </div>
+    <div>
+      <div>
+        <div className="flex-1 w-full">
 
           {/* Checkbox Orden de Pedido */}
           <div className="flex items-center gap-2 mb-4">
@@ -114,8 +83,47 @@ const PaymentMethod = () => {
              className="w-4 h-4"
              />
             <label htmlFor="showOrder" className="text-sm font-medium">
-              Generar Orden de Pedido
+              Montaje
             </label>
+          </div>
+
+        </div>
+      </div>
+
+    <div className={`w-full flex flex-col ${showOrder ? "lg:flex-row" : ""} gap-8 xl:gap-11 items-stretch`}>
+      
+      {/* COLUMNA */}
+      <div className="flex-1 w-full">
+
+        <h2 className="font-medium text-dark text-xl sm:text-2xl mb-5.5">
+          Modalidad de Pago
+        </h2>
+
+        <div className="bg-white w-full rounded-xl shadow-lg p-6">
+          
+          {/* Tabs */}
+          <div className="bg-gray-200 p-1 rounded-lg flex mb-6">
+            <button
+              type="button"
+              onClick={() => setPaymentType("cash")}
+              className={`w-1/2 py-2 text-sm font-semibold rounded-md transition-all duration-200 ${
+                paymentType === "cash"
+                  ? "bg-blue-800 text-blue shadow"
+                  : "text-gray-600"
+              }`}
+              >Al Contado
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setPaymentType("credit")}
+              className={`w-1/2 py-2 text-sm font-semibold rounded-md transition-all duration-200 ${
+                paymentType === "credit"
+                  ? "bg-blue-800 text-blue shadow"
+                  : "text-gray-600"
+              }`}
+              >Al Crédito
+            </button>
           </div>
 
           <div className="space-y-5">
@@ -162,24 +170,31 @@ const PaymentMethod = () => {
             {/* Crédito */}
             {paymentType === "credit" && (
               <div>
-                <label className="block mb-2 font-medium">
-                  Número de Cuotas: {installments}
-                </label>
+  <label className="block mb-3 font-medium text-sm text-gray-700">
+    Elige el número de cuotas:
+  </label>
 
-                <input
-                  type="range"
-                  min="2"
-                  max="3"
-                  value={installments}
-                  onChange={(e) => setInstallments(Number(e.target.value))}
-                  className="w-full accent-blue-800"
-                />
-
-                <div className="flex justify-between text-sm text-gray-500">
-                  <span>2</span>
-                  <span>3</span>
-                </div>
-              </div>
+  <div className="flex gap-3">
+    {[2, 3].map((num) => (
+      <button
+        key={num}
+        type="button"
+        onClick={() => setInstallments(num)}
+        className={`
+          w-12 h-12 text-sm font-semibold transition-all duration-200
+          ${
+            installments === num
+              ? "bg-blue text-white shadow-input scale-105"
+              : "rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 outline-none focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20"
+          }
+        `}
+      >
+        {num}
+      </button>
+    ))}
+  </div>
+</div>
+              
             )}
 
             {/* Cliente */}
@@ -272,7 +287,7 @@ const PaymentMethod = () => {
         </div>
       </div>
 
-      {/* {showOrder && ( */}
+      {showOrder && (
       <div className="flex-1 w-full">
         <h2 className="font-medium text-dark text-xl sm:text-2xl mb-5.5">
           Orden de Pedido
@@ -536,8 +551,10 @@ const PaymentMethod = () => {
           </div>
         </div>
       </div>
-      {/* )} */}
+       )} 
     </div>
+
+  </div>
   );
 };
 

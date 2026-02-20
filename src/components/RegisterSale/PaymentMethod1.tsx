@@ -42,7 +42,9 @@ const PaymentMethod1 = () => {
 
   return (
     <div className="bg-white w-full rounded-xl shadow-lg p-6">
+
     {/* HEADER */}
+    
       <h2 className="text-xl font-semibold mb-6">Método de Pago</h2>
 
       {/* Tabs */}
@@ -116,25 +118,25 @@ const PaymentMethod1 = () => {
         {/* Crédito */}
         {paymentType === "credit" && (
           <div>
-            <label className="block mb-2 font-medium">
-              Número de Cuotas: {installments}
-            </label>
-
-            <input
-              type="range"
-              min="2"
-              max="3"
-              value={installments}
-              onChange={(e) => setInstallments(Number(e.target.value))}
-              className="w-full accent-blue-800"
-            />
-
-            <div className="flex justify-between text-sm text-gray-500">
-              <span>2</span>
-              <span>3</span>
-            </div>
-          </div>
-        )}
+                          <label className="block mb-2 font-medium">
+                            Número de Cuotas: {installments}
+                          </label>
+          
+                          <input
+                            type="range"
+                            min="2"
+                            max="3"
+                            value={installments}
+                            onChange={(e) => setInstallments(Number(e.target.value))}
+                            className="w-full accent-blue-800"
+                          />
+          
+                          <div className="flex justify-between text-sm text-gray-500">
+                            <span>2</span>
+                            <span>3</span>
+                          </div>
+                        </div>
+          )}
 
         {/* Cliente */}
         <BaseInput
