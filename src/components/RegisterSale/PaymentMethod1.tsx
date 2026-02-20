@@ -45,6 +45,7 @@ const PaymentMethod1 = () => {
   return (
     <div className="bg-white w-full rounded-xl shadow-lg p-6">
       {/* HEADER */}
+
       <h2 className="text-xl font-semibold mb-6">Método de Pago</h2>
 
       {/* Tabs */}
