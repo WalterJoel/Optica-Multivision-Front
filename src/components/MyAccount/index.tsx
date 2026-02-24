@@ -4,7 +4,7 @@ import Breadcrumb from "../Common/Breadcrumb";
 import Image from "next/image";
 import AddressModal from "./AddressModal";
 import Orders from "../Orders";
-
+import UsersTab from "./UsersTab";
 const MyAccount = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [addressModal, setAddressModal] = useState(false);
@@ -90,6 +90,18 @@ const MyAccount = () => {
                       </svg>
                       Dashboard
                     </button>
+                    <button
+  onClick={() => setActiveTab("users")}
+  className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
+    activeTab === "users" ? "text-white bg-blue" : "text-dark-2 bg-gray-1"
+  }`}
+>
+  {/* icono simple */}
+  <svg className="fill-current" width="22" height="22" viewBox="0 0 24 24">
+    <path d="M12 12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4zm0 2c-3.3 0-8 1.7-8 5v1h16v-1c0-3.3-4.7-5-8-5z" />
+  </svg>
+  Usuarios
+</button>
                     <button
                       onClick={() => setActiveTab("orders")}
                       className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
@@ -277,6 +289,13 @@ const MyAccount = () => {
                 password and account details.
               </p>
             </div>
+            <div
+  className={`xl:max-w-[770px] w-full bg-white rounded-xl shadow-1 ${
+    activeTab === "users" ? "block" : "hidden"
+  }`}
+>
+  <UsersTab />
+</div>
             {/* <!-- dashboard tab content end -->
 
           <!-- orders tab content start --> */}
