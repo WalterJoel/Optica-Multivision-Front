@@ -5,6 +5,7 @@ import Image from "next/image";
 import AddressModal from "./AddressModal";
 import Orders from "../Orders";
 import UsersTab from "./UsersTab";
+import SedesTab from "./SedesTab";
 const MyAccount = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [addressModal, setAddressModal] = useState(false);
@@ -90,6 +91,19 @@ const MyAccount = () => {
                       </svg>
                       Dashboard
                     </button>
+                    <button
+  onClick={() => setActiveTab("sedes")}
+  className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
+    activeTab === "sedes"
+      ? "text-white bg-blue"
+      : "text-dark-2 bg-gray-1"
+  }`}
+>
+  <svg width="22" height="22" viewBox="0 0 24 24" className="fill-current">
+    <path d="M12 2L2 7v13h20V7L12 2zm0 2.2L19.6 8H4.4L12 4.2z" />
+  </svg>
+  Sedes
+</button>
                     <button
   onClick={() => setActiveTab("users")}
   className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
@@ -261,6 +275,13 @@ const MyAccount = () => {
                 </div>
               </div>
             </div>
+            <div
+  className={`xl:max-w-[770px] w-full bg-white rounded-xl shadow-1 ${
+    activeTab === "sedes" ? "block" : "hidden"
+  }`}
+>
+  <SedesTab />
+</div>
             {/* <!--== user dashboard menu end ==-->
 
             
