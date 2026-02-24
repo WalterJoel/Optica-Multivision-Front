@@ -53,7 +53,7 @@ const SingleGridItemProduct = ({ item }: { item: any }) => {
 
   return (
     <div className="group">
-      <div className="relative overflow-hidden flex items-center justify-center rounded-lg bg-white shadow-1 min-h-[270px] mb-4 ring-4 ring-blue-light ring-opacity-30">
+      <div className="relative overflow-hidden flex items-center justify-center rounded-lg bg-white shadow-1 min-h-[270px] mb-4 ring-4 ring-blue-light/30">
         {displayImage && (
           <Image
             src={displayImage}

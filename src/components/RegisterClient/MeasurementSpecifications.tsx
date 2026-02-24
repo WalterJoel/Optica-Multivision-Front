@@ -1,10 +1,9 @@
 import React from "react";
 import { useState } from "react";
-import { BaseInput } from "@/components/Inputs/BaseInput";
+import { BaseInput } from "@/components/Common/Inputs/BaseInput";
 import { CreateLens } from "@/types/products";
 
 const MeasurementSpecifications = () => {
-
   const [formData, setFormData] = useState({
     dni: "",
     firstName: "",
@@ -26,7 +25,9 @@ const MeasurementSpecifications = () => {
     optometricAssistant: "",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
 
     setFormData({
@@ -36,21 +37,16 @@ const MeasurementSpecifications = () => {
   };
 
   return (
-
     <div className="flex flex-col lg:flex-row gap-8 xl:gap-11 items-stretch">
-
       {/* COLUMNA */}
       <div className="flex-1 w-full">
-
         <h2 className="font-medium text-dark text-xl sm:text-2xl mb-5.5">
           Información del cliente
         </h2>
-        
-        <div className="bg-white shadow-1 rounded-[10px] p-4 sm:p-8.5">
 
+        <div className="bg-white shadow-1 rounded-[10px] p-4 sm:p-8.5">
           {/* DNI + Fecha Registro */}
           <div className="flex flex-col lg:flex-row gap-5 sm:gap-8 mb-5">
-            
             <BaseInput
               label="DNI"
               name="dni"
@@ -69,12 +65,10 @@ const MeasurementSpecifications = () => {
               onChange={handleChange}
               required
             />
-
           </div>
 
           {/* Nombres + Apellidos */}
           <div className="flex flex-col lg:flex-row gap-5 sm:gap-8 mb-5">
-
             <BaseInput
               label="Nombres"
               name="firstName"
@@ -94,12 +88,10 @@ const MeasurementSpecifications = () => {
               onChange={handleChange}
               required
             />
-
           </div>
 
           {/* Fecha Nacimiento + Teléfono + Email */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8 mb-5">
-
             <BaseInput
               label="Fecha de Nacimiento"
               name="birthDate"
@@ -128,16 +120,12 @@ const MeasurementSpecifications = () => {
               onChange={handleChange}
               required
             />
-
           </div>
 
           {/* Dirección + Antecedentes */}
           <div className="flex flex-col lg:flex-row gap-5 sm:gap-8">
-
             <div className="w-full">
-              <label className="block mb-2.5">
-                Dirección
-              </label>
+              <label className="block mb-2.5">Dirección</label>
 
               <textarea
                 name="address"
@@ -149,9 +137,7 @@ const MeasurementSpecifications = () => {
             </div>
 
             <div className="w-full">
-              <label className="block mb-2.5">
-                Antecedentes
-              </label>
+              <label className="block mb-2.5">Antecedentes</label>
 
               <textarea
                 name="background"
@@ -161,23 +147,18 @@ const MeasurementSpecifications = () => {
                 className="rounded-md border border-gray-300 w-full p-5 outline-none focus:ring-2 focus:ring-blue/20"
               />
             </div>
-
           </div>
-
         </div>
       </div>
-      
-      <div className="flex-1 w-full">
 
+      <div className="flex-1 w-full">
         <h2 className="font-medium text-dark text-xl sm:text-2xl mb-5.5">
           Especificaciones de las Medidas
         </h2>
 
         <div className="bg-white shadow-1 rounded-[10px] p-4 sm:p-8.5">
-
           {/* OJOS */}
           <div className="flex flex-col xl:flex-row gap-8 mb-8">
-
             {/* OJO DERECHO */}
             <div className="flex-1">
               <label className="inline-block mb-4 text-sm font-semibold text-gray-700">
@@ -185,7 +166,6 @@ const MeasurementSpecifications = () => {
               </label>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-
                 <BaseInput
                   label="ESF"
                   name="esf"
@@ -212,7 +192,6 @@ const MeasurementSpecifications = () => {
                   onChange={handleChange}
                   required
                 />
-
               </div>
             </div>
 
@@ -223,7 +202,6 @@ const MeasurementSpecifications = () => {
               </label>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-
                 <BaseInput
                   label="ESF"
                   name="esf1"
@@ -250,15 +228,12 @@ const MeasurementSpecifications = () => {
                   onChange={handleChange}
                   required
                 />
-
               </div>
             </div>
-
           </div>
 
           {/* DIP / ADD */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
-
             <BaseInput
               label="DIP"
               name="dip"
@@ -276,7 +251,6 @@ const MeasurementSpecifications = () => {
               onChange={handleChange}
               required
             />
-
           </div>
 
           {/* ENCARGADO */}
@@ -291,8 +265,6 @@ const MeasurementSpecifications = () => {
               required
             />
           </div>
-
-
         </div>
 
         <button
@@ -301,11 +273,8 @@ const MeasurementSpecifications = () => {
         >
           Process to Checkout
         </button>
-
       </div>
-
     </div>
-
   );
 };
 

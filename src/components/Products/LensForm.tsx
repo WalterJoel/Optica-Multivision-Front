@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useCreateLens } from "@/hooks/products";
-import { BaseInput } from "@/components/Inputs/BaseInput";
+import { BaseInput } from "@/components/Common/Inputs/BaseInput";
 import { PRODUCTOS, IMG_LENTE, STATUS_MODAL } from "@/commons/constants";
 import { CreateLens } from "@/types/products";
 import { StatusModal, LoadingModal } from "@/components/Common/modal";
