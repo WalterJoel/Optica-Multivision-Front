@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Breadcrumb from "../Common/Breadcrumb";
-import CustomSelect from "./CustomSelect";
 import CategoryDropdown from "./CategoryDropdown";
 import GenderDropdown from "./GenderDropdown";
 import SizeDropdown from "./SizeDropdown";
@@ -9,6 +8,7 @@ import ColorsDropdwon from "./ColorsDropdwon";
 import PriceDropdown from "./PriceDropdown";
 import SingleGridItemProduct from "../Shop/SingleGridItemProduct";
 import SingleListItem from "../Shop/SingleListItem";
+import { Lens } from "@/types/products";
 
 // Importación de tus 3 hooks
 import { useLenses } from "@/hooks/products/useLenses";
@@ -16,7 +16,6 @@ import { useLenses } from "@/hooks/products/useLenses";
 // import { useAccessories } from "@/hooks/products/useAccessories";
 
 const ShopProducts = () => {
-  const [productStyle, setProductStyle] = useState<"grid" | "list">("grid");
   const [productSidebar, setProductSidebar] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("Monturas");
 
@@ -177,11 +176,6 @@ const ShopProducts = () => {
     { name: "Lentes", products: lenses?.length || 0 },
   ];
 
-  const sortOptions = [
-    { label: "Últimos productos", value: "0" },
-    { label: "Más vendidos", value: "1" },
-  ];
-
   return (
     <>
       <Breadcrumb
@@ -227,7 +221,6 @@ const ShopProducts = () => {
             <div className="xl:max-w-[870px] w-full">
               <div className="rounded-lg bg-white shadow-1 pl-3 pr-2.5 py-2.5 mb-6 flex items-center justify-between">
                 <div className="flex flex-wrap items-center gap-4">
-                  <CustomSelect options={sortOptions} />
                   <p>
                     Mostrando{" "}
                     <span className="text-dark font-bold">
@@ -235,21 +228,6 @@ const ShopProducts = () => {
                     </span>{" "}
                     {selectedCategory}
                   </p>
-                </div>
-
-                <div className="flex items-center gap-2.5">
-                  <button
-                    onClick={() => setProductStyle("grid")}
-                    className={`${productStyle === "grid" ? "bg-blue text-white" : "bg-gray-1 text-dark"} w-10.5 h-9 rounded-[5px] flex items-center justify-center`}
-                  >
-                    G
-                  </button>
-                  <button
-                    onClick={() => setProductStyle("list")}
-                    className={`${productStyle === "list" ? "bg-blue text-white" : "bg-gray-1 text-dark"} w-10.5 h-9 rounded-[5px] flex items-center justify-center`}
-                  >
-                    L
-                  </button>
                 </div>
               </div>
 
@@ -265,20 +243,10 @@ const ShopProducts = () => {
                   </p>
                 </div>
               ) : (
-                <div
-                  className={
-                    productStyle === "grid"
-                      ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-7.5 gap-y-9"
-                      : "flex flex-col gap-7.5"
-                  }
-                >
-                  {currentProducts.map((item) =>
-                    productStyle === "grid" ? (
-                      <SingleGridItemProduct item={item} key={item.id} />
-                    ) : (
-                      <SingleListItem item={item} key={item.id} />
-                    ),
-                  )}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-7.5 gap-y-9">
+                  {currentProducts.map((item) => (
+                    <SingleGridItemProduct item={item} key={item.id} />
+                  ))}
                 </div>
               )}
             </div>

@@ -18,7 +18,7 @@ const SingleGridItemProduct = ({ item }: { item: any }) => {
 
   // Normalización de datos para que el componente no explote
   const displayImage = item.imagenUrl || item.imgs?.previews[0];
-  const displayBrand = item.marca || "Óptica";
+  const displayBrand = item.marca || "Sin Marca";
   const displayTitle = isLente
     ? `${item.marca} - ${item.material}`
     : item.producto?.nombre || item.title;
@@ -53,7 +53,7 @@ const SingleGridItemProduct = ({ item }: { item: any }) => {
 
   return (
     <div className="group">
-      <div className="relative overflow-hidden flex items-center justify-center rounded-lg bg-white shadow-1 min-h-[270px] mb-4">
+      <div className="relative overflow-hidden flex items-center justify-center rounded-lg bg-white shadow-1 min-h-[270px] mb-4 ring-4 ring-blue-light/30">
         {displayImage && (
           <Image
             src={displayImage}
@@ -71,7 +71,8 @@ const SingleGridItemProduct = ({ item }: { item: any }) => {
             <Link
               href={{
                 pathname: "/matrix",
-                query: { lenteId: item.id },
+                // query: { lenteId: item.id },
+                query: { lenteId: item.id, type: "stock" },
               }}
               className="inline-flex font-medium text-custom-sm py-[7px] px-5 rounded-[5px] bg-blue text-white ease-out duration-200 hover:bg-blue-dark shadow-md"
             >

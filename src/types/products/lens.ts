@@ -13,3 +13,12 @@ export interface Lens {
 export type CreateLens = Omit<Lens, "id"> & {
   tipo: PRODUCTOS;
 };
+
+export type InventoryByStoreResponse = {
+  precioCalculado: number;
+  sedes: {
+    id: number;
+    nombre: string;
+    unidades: number;
+  }[];
+};

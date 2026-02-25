@@ -61,8 +61,10 @@ const config: Config = {
       },
       red: {
         DEFAULT: "#F23030",
+        vino: "#991B1B",
         dark: "#E10E0E",
         light: "#F56060",
+        vinolight: "#FEE2E2",
         "light-2": "#F89090",
         "light-3": "#FBC0C0",
         "light-4": "#FDD8D8",

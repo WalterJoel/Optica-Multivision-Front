@@ -15,37 +15,34 @@ export default function FloatingChat() {
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
+    if (storedUser) setUser(JSON.parse(storedUser));
   }, []);
 
-  if (!user) return null; // 🔥 si no está logueado no aparece nada
+  if (!user) return null;
 
   return (
     <>
-      {/* Botón flotante */}
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="fixed bottom-6 right-6 bg-blue-600 text-white p-4 rounded-full shadow-lg hover:scale-105 transition"
+          className="fixed bottom-6 right-6 z-50 bg-blue text-white p-4 rounded-full shadow-1 hover:bg-blue-dark ease-out duration-200"
+          aria-label="Abrir chat"
         >
           💬
         </button>
       )}
 
-      {/* Ventana del chat */}
       {open && (
-        <div>
+        <>
           <button
             onClick={() => setOpen(false)}
-            className="fixed bottom-[420px] right-6 bg-red-500 text-white px-3 py-1 rounded"
+            className="fixed bottom-[420px] right-6 z-50 bg-red text-white px-3 py-1 rounded-md shadow-1"
           >
             X
           </button>
 
           <Chat user={user} token="" />
-        </div>
+        </>
       )}
     </>
   );
