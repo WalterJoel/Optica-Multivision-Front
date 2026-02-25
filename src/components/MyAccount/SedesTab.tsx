@@ -164,7 +164,7 @@ export default function SedesTab() {
               </tr>
             </thead>
 
-            <tbody>
+            {/* <tbody>
               {loadingList ? (
                 <tr>
                   <td className="px-4 py-4" colSpan={5}>
@@ -190,7 +190,7 @@ export default function SedesTab() {
                   </tr>
                 ))
               )}
-            </tbody>
+            </tbody> */}
           </table>
         </div>
       </div>

@@ -6,6 +6,7 @@ import AddressModal from "./AddressModal";
 import Orders from "../Orders";
 import UsersTab from "./UsersTab";
 import SedesTab from "./SedesTab";
+
 const MyAccount = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [addressModal, setAddressModal] = useState(false);
@@ -25,7 +26,6 @@ const MyAccount = () => {
       <section className="overflow-hidden py-20 bg-gray-2">
         <div className="max-w-[1170px] w-full mx-auto px-4 sm:px-8 xl:px-0">
           <div className="flex flex-col xl:flex-row gap-7.5">
-            {/* <!--== user dashboard menu start ==--> */}
             <div className="xl:max-w-[370px] w-full bg-white rounded-xl shadow-1">
               <div className="flex xl:flex-col">
                 <div className="hidden lg:flex flex-wrap items-center gap-5 py-6 px-4 sm:px-7.5 xl:px-9 border-r xl:border-r-0 xl:border-b border-gray-3">
@@ -92,30 +92,42 @@ const MyAccount = () => {
                       Dashboard
                     </button>
                     <button
-  onClick={() => setActiveTab("sedes")}
-  className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
-    activeTab === "sedes"
-      ? "text-white bg-blue"
-      : "text-dark-2 bg-gray-1"
-  }`}
->
-  <svg width="22" height="22" viewBox="0 0 24 24" className="fill-current">
-    <path d="M12 2L2 7v13h20V7L12 2zm0 2.2L19.6 8H4.4L12 4.2z" />
-  </svg>
-  Sedes
-</button>
+                      onClick={() => setActiveTab("sedes")}
+                      className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
+                        activeTab === "sedes"
+                          ? "text-white bg-blue"
+                          : "text-dark-2 bg-gray-1"
+                      }`}
+                    >
+                      <svg
+                        width="22"
+                        height="22"
+                        viewBox="0 0 24 24"
+                        className="fill-current"
+                      >
+                        <path d="M12 2L2 7v13h20V7L12 2zm0 2.2L19.6 8H4.4L12 4.2z" />
+                      </svg>
+                      Sedes
+                    </button>
                     <button
-  onClick={() => setActiveTab("users")}
-  className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
-    activeTab === "users" ? "text-white bg-blue" : "text-dark-2 bg-gray-1"
-  }`}
->
-  {/* icono simple */}
-  <svg className="fill-current" width="22" height="22" viewBox="0 0 24 24">
-    <path d="M12 12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4zm0 2c-3.3 0-8 1.7-8 5v1h16v-1c0-3.3-4.7-5-8-5z" />
-  </svg>
-  Usuarios
-</button>
+                      onClick={() => setActiveTab("users")}
+                      className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
+                        activeTab === "users"
+                          ? "text-white bg-blue"
+                          : "text-dark-2 bg-gray-1"
+                      }`}
+                    >
+                      {/* icono simple */}
+                      <svg
+                        className="fill-current"
+                        width="22"
+                        height="22"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M12 12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4zm0 2c-3.3 0-8 1.7-8 5v1h16v-1c0-3.3-4.7-5-8-5z" />
+                      </svg>
+                      Usuarios
+                    </button>
                     <button
                       onClick={() => setActiveTab("orders")}
                       className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
@@ -276,12 +288,12 @@ const MyAccount = () => {
               </div>
             </div>
             <div
-  className={`xl:max-w-[770px] w-full bg-white rounded-xl shadow-1 ${
-    activeTab === "sedes" ? "block" : "hidden"
-  }`}
->
-  <SedesTab />
-</div>
+              className={`xl:max-w-[770px] w-full bg-white rounded-xl shadow-1 ${
+                activeTab === "sedes" ? "block" : "hidden"
+              }`}
+            >
+              <SedesTab />
+            </div>
             {/* <!--== user dashboard menu end ==-->
 
             
@@ -311,12 +323,12 @@ const MyAccount = () => {
               </p>
             </div>
             <div
-  className={`xl:max-w-[770px] w-full bg-white rounded-xl shadow-1 ${
-    activeTab === "users" ? "block" : "hidden"
-  }`}
->
-  <UsersTab />
-</div>
+              className={`xl:max-w-[770px] w-full bg-white rounded-xl shadow-1 ${
+                activeTab === "users" ? "block" : "hidden"
+              }`}
+            >
+              <UsersTab />
+            </div>
             {/* <!-- dashboard tab content end -->
 
           <!-- orders tab content start --> */}
@@ -630,7 +642,7 @@ const MyAccount = () => {
                         name="firstName"
                         id="firstName"
                         placeholder="Jhon"
-                        value="Jhon"
+                        defaultValue="Jhon"
                         className="rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 w-full py-2.5 px-5 outline-none duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20"
                       />
                     </div>
@@ -644,8 +656,8 @@ const MyAccount = () => {
                         type="text"
                         name="lastName"
                         id="lastName"
+                        defaultValue="Jhon"
                         placeholder="Deo"
-                        value="Deo"
                         className="rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 w-full py-2.5 px-5 outline-none duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20"
                       />
                     </div>
@@ -676,7 +688,6 @@ const MyAccount = () => {
                             d="M2.41469 5.03569L2.41467 5.03571L2.41749 5.03846L7.76749 10.2635L8.0015 10.492L8.23442 10.2623L13.5844 4.98735L13.5844 4.98735L13.5861 4.98569C13.6809 4.89086 13.8199 4.89087 13.9147 4.98569C14.0092 5.08024 14.0095 5.21864 13.9155 5.31345C13.9152 5.31373 13.915 5.31401 13.9147 5.31429L8.16676 10.9622L8.16676 10.9622L8.16469 10.9643C8.06838 11.0606 8.02352 11.0667 8.00039 11.0667C7.94147 11.0667 7.89042 11.0522 7.82064 10.9991L2.08526 5.36345C1.99127 5.26865 1.99154 5.13024 2.08609 5.03569C2.18092 4.94086 2.31986 4.94086 2.41469 5.03569Z"
                             fill=""
                             stroke=""
-                            stroke-width="0.666667"
                           />
                         </svg>
                       </span>
