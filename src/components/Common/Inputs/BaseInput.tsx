@@ -12,6 +12,8 @@ interface InputProps {
   max?: number;
   step?: number | string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  pattern?: string;
+  title?: string;
 }
 
 export const BaseInput = ({
@@ -26,6 +28,8 @@ export const BaseInput = ({
   max,
   step,
   onChange,
+  pattern,
+  title,
 }: InputProps) => {
   return (
     <div className="flex flex-col gap-1 w-full">
@@ -47,6 +51,8 @@ export const BaseInput = ({
         min={type === "number" ? min : undefined}
         max={type === "number" ? max : undefined}
         step={type === "number" ? step : undefined}
+        pattern={pattern} // Patron de validacion
+        title={title} // Mensaje de error que muestra el navegador
         onChange={onChange}
         className="rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5
                    w-full py-2.5 px-5 outline-none duration-200

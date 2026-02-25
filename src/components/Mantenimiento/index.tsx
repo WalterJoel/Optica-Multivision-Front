@@ -5,11 +5,11 @@ import Image from "next/image";
 import AddressModal from "./AddressModal";
 import Orders from "../Orders";
 import UsersTab from "./UsersTab";
-import SedesTab from "./SedesTab";
-import { User } from "lucide-react";
+import SedesTab from "./Sedes/SedesPage";
+import { LayoutDashboard, ShoppingBag, User } from "lucide-react";
 
 const MyAccount = () => {
-  const [activeTab, setActiveTab] = useState("dashboard");
+  const [activeTab, setActiveTab] = useState("clientes");
   const [addressModal, setAddressModal] = useState(false);
 
   const openAddressModal = () => {
@@ -50,9 +50,9 @@ const MyAccount = () => {
                 <div className="p-4 sm:p-7.5 xl:p-9">
                   <div className="flex flex-wrap xl:flex-nowrap xl:flex-col gap-4">
                     <button
-                      onClick={() => setActiveTab("dashboard")}
+                      onClick={() => setActiveTab("clientes")}
                       className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
-                        activeTab === "dashboard"
+                        activeTab === "clientes"
                           ? "text-white bg-blue"
                           : "text-dark-2 bg-gray-1"
                       }`}
@@ -243,7 +243,7 @@ const MyAccount = () => {
 
             <div
               className={`xl:max-w-[770px] w-full bg-white rounded-xl shadow-1 py-9.5 px-4 sm:px-7.5 xl:px-10 ${
-                activeTab === "dashboard" ? "block" : "hidden"
+                activeTab === "clientes" ? "block" : "hidden"
               }`}
             >
               <p className="text-dark">
