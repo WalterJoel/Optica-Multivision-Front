@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
-import { Lens, CreateLens } from "@/types/products";
-import { createLens, getLenses, UpdateLensStock } from "@/services/products";
+import { Lens, InventoryByStoreResponse } from "@/types/products";
+import {
+  createLens,
+  getLenses,
+  UpdateLensStock,
+  getInventoryByStoresService,
+} from "@/services/products";
 
 export function useLenses() {
   const [lenses, setLenses] = useState<Lens[]>([]);
@@ -48,5 +53,38 @@ export function useLenses() {
     getAllLenses,
     updateStock,
     stockVersion, // <--- importante para el refresh de stock
+  };
+}
+
+export function useInventoryByStores() {
+  const [loading, setLoading] = useState(false);
+  const [inventoryByStore, setInventoryByStore] =
+    useState<InventoryByStoreResponse | null>(null);
+  const [statusMessage, setMessage] = useState<string>("");
+  const [success, setSuccess] = useState<boolean>(false);
+
+  const getInventoryByStores = async (idStock: number) => {
+    setLoading(true);
+    setSuccess(false);
+
+    try {
+      const response: InventoryByStoreResponse =
+        await getInventoryByStoresService(idStock);
+      setInventoryByStore(response);
+      setSuccess(true);
+      setMessage("Se cargó correctamente ");
+    } catch (err: any) {
+      setMessage("Error al cargar inventario");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return {
+    getInventoryByStores,
+    loading,
+    statusMessage,
+    success,
+    inventoryByStore,
   };
 }

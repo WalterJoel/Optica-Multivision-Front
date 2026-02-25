@@ -11,6 +11,7 @@ import { selectTotalPrice } from "@/redux/features/cart-slice";
 import { useCartModalContext } from "@/app/context/CartSidebarModalContext";
 import Image from "next/image";
 import Chat from "@/components/Chat";
+import { useRouter } from "next/navigation";
 
 const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -21,6 +22,14 @@ const Header = () => {
   const product = useAppSelector((state) => state.cartReducer.items);
   const totalPrice = useSelector(selectTotalPrice);
   const [chatOpen, setChatOpen] = useState(false);
+const router = useRouter();
+
+const handleLogout = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  setUser(null);
+  router.push("/signin");
+};
 
   // dropdown user menu
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -58,40 +67,8 @@ const Header = () => {
   return () => window.removeEventListener("close-chat", close);
 }, []);
 
-  // Cargar usuario (token-only)
-  useEffect(() => {
-    const loadMe = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          setUser(null);
-          localStorage.removeItem("user");
-          return;
-        }
 
-        const res = await fetch("http://localhost:3001/auth/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
 
-        if (!res.ok) {
-          setUser(null);
-          localStorage.removeItem("user");
-          localStorage.removeItem("token");
-          return;
-        }
-
-        const data = await res.json();
-        setUser(data.user);
-        localStorage.setItem("user", JSON.stringify(data.user));
-      } catch {
-        setUser(null);
-      }
-    };
-
-    loadMe();
-  }, []);
-
-  // Scroll listener
   useEffect(() => {
     window.addEventListener("scroll", handleStickyMenu);
     return () => window.removeEventListener("scroll", handleStickyMenu);
