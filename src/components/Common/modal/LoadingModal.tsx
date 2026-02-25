@@ -1,74 +1,46 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect } from "react";
-import { createPortal } from "react-dom";
+import { ModalFrameWrapper } from "./";
 
-type LoadingModalProps = {
-  isOpen: boolean;
-};
-
-export function LoadingModal({ isOpen }: LoadingModalProps) {
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, [isOpen]);
-
+export function LoadingModal({ isOpen }: { isOpen: boolean }) {
   if (!isOpen) return null;
 
-  return createPortal(
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center px-4">
-      {/* Overlay con blur */}
-      <div className="absolute inset-0 bg-black/30 backdrop-blur-md" />
-
-      {/* Card con el BORDE y el RING recuperados */}
-      <div className="relative z-10 w-full max-w-[280px] bg-white rounded-[40px] shadow-2xl ring-8 ring-blue-light ring-opacity-50 border-4 border-white px-4 py-10 text-center animate-in fade-in zoom-in duration-300">
-        {/* Contenedor de la Imagen */}
-        <div className="flex justify-center">
-          <div className="relative w-48 h-48 animate-side-to-side">
-            <Image
-              src="/images/icons/loading-spiner.png"
-              alt="Cargando..."
-              fill
-              className="object-contain"
-              priority
-            />
-          </div>
+  return (
+    <ModalFrameWrapper variant="blue" size="xs">
+      <div className="flex flex-col items-center text-center">
+        <div className="relative w-40 h-40 animate-side-to-side mb-2">
+          <Image
+            src="/images/icons/loading-spiner.png"
+            alt="Cargando..."
+            fill
+            className="object-contain"
+          />
         </div>
 
-        {/* Texto de carga */}
-        <h2 className="font-black text-2xl text-[#1976D2] tracking-tight animate-pulse">
+        <h2 className="font-black text-xl text-blue tracking-tight animate-pulse">
           Cargando...
         </h2>
 
-        <p className="text-gray-400 text-[11px] mt-2 uppercase tracking-[0.25em] font-bold">
+        <p className="text-gray-400 text-[10px] mt-1 uppercase tracking-widest font-bold">
           Espera un momento
         </p>
-
-        {/* Animación */}
-        <style jsx>{`
-          .animate-side-to-side {
-            animation: side-to-side 2.8s ease-in-out infinite;
-          }
-
-          @keyframes side-to-side {
-            0%,
-            100% {
-              transform: translateX(-15px) rotate(-10deg) scale(0.9);
-            }
-            50% {
-              transform: translateX(15px) rotate(10deg) scale(1.1);
-            }
-          }
-        `}</style>
       </div>
-    </div>,
-    document.body,
+
+      <style jsx>{`
+        .animate-side-to-side {
+          animation: side-to-side 2.5s ease-in-out infinite;
+        }
+        @keyframes side-to-side {
+          0%,
+          100% {
+            transform: translateX(-10px) rotate(-5deg);
+          }
+          50% {
+            transform: translateX(10px) rotate(5deg);
+          }
+        }
+      `}</style>
+    </ModalFrameWrapper>
   );
 }

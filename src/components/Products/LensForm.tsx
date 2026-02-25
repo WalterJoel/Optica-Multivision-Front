@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useCreateLens } from "@/hooks/products";
 import { BaseInput } from "@/components/Common/Inputs/BaseInput";
 import { PRODUCTOS, IMG_LENTE, STATUS_MODAL } from "@/commons/constants";
@@ -24,16 +24,6 @@ export default function LensForm() {
   const [imagenUrl, setImagen] = useState<File | null>(null);
   const { addLens, success, statusMessage, loading } = useCreateLens();
 
-  const openStatusModal = () => {
-    if (success) {
-      setTypeModal(STATUS_MODAL.SUCCESS_MODAL);
-    } else {
-      setTypeModal(STATUS_MODAL.ERROR_MODAL);
-    }
-
-    setOpenModal(true);
-  };
-
   const resetForm = () => {
     setForm(initialForm);
     setImagen(null);
@@ -55,9 +45,19 @@ export default function LensForm() {
     };
 
     await addLens(payload);
-    openStatusModal();
-    resetForm();
   };
+
+  useEffect(() => {
+    if (!loading && (success || statusMessage)) {
+      if (success) {
+        setTypeModal(STATUS_MODAL.SUCCESS_MODAL);
+        resetForm();
+      } else {
+        setTypeModal(STATUS_MODAL.ERROR_MODAL);
+      }
+      setOpenModal(true);
+    }
+  }, [loading, success, statusMessage]);
 
   return (
     <>
