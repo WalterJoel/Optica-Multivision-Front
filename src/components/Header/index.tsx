@@ -11,6 +11,7 @@ import { selectTotalPrice } from "@/redux/features/cart-slice";
 import { useCartModalContext } from "@/app/context/CartSidebarModalContext";
 import Image from "next/image";
 import Chat from "@/components/Chat";
+import { useRouter } from "next/navigation";
 
 const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -21,6 +22,14 @@ const Header = () => {
   const product = useAppSelector((state) => state.cartReducer.items);
   const totalPrice = useSelector(selectTotalPrice);
   const [chatOpen, setChatOpen] = useState(false);
+const router = useRouter();
+
+const handleLogout = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  setUser(null);
+  router.push("/signin");
+};
 
   // dropdown user menu
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -50,41 +59,29 @@ const Header = () => {
     if (window.scrollY >= 80) setStickyMenu(true);
     else setStickyMenu(false);
   };
+useEffect(() => {
+  const checkAuth = () => {
+    const token = localStorage.getItem("token");
+    const userData = localStorage.getItem("user");
 
-  // Cargar usuario (token-only)
-  useEffect(() => {
-    const loadMe = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          setUser(null);
-          localStorage.removeItem("user");
-          return;
-        }
+    if (token && userData) {
+      setUser(JSON.parse(userData));
+    } else {
+      setUser(null);
+    }
+  };
 
-        const res = await fetch("http://localhost:3001/auth/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+  checkAuth();
 
-        if (!res.ok) {
-          setUser(null);
-          localStorage.removeItem("user");
-          localStorage.removeItem("token");
-          return;
-        }
+  window.addEventListener("storage", checkAuth);
 
-        const data = await res.json();
-        setUser(data.user);
-        localStorage.setItem("user", JSON.stringify(data.user));
-      } catch {
-        setUser(null);
-      }
-    };
+  return () => {
+    window.removeEventListener("storage", checkAuth);
+  };
+}, []);
 
-    loadMe();
-  }, []);
 
-  // Scroll listener
+
   useEffect(() => {
     window.addEventListener("scroll", handleStickyMenu);
     return () => window.removeEventListener("scroll", handleStickyMenu);
@@ -235,6 +232,35 @@ const Header = () => {
           />
         </svg>
       </span>
+      <p className="font-medium text-custom-sm text-dark">
+        {user.email}
+      </p>
+      <button
+  onClick={handleLogout}
+  className="text-xs text-red-500 hover:underline"
+>
+  Logout
+</button>
+
+      <button
+  onClick={() => setChatOpen(!chatOpen)}
+  className="relative ml-4"
+>
+  <svg
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M21 15a4 4 0 01-4 4H8l-5 3V7a4 4 0 014-4h10a4 4 0 014 4v8z"
+      stroke="#3C50E0"
+      strokeWidth="2"
+      fill="none"
+    />
+  </svg>
+</button>
 
       {/* Texto (alineado y sin descuadrarse) */}
       <div className="min-w-0 leading-tight">
