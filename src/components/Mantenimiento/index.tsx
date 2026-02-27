@@ -4,7 +4,7 @@ import Breadcrumb from "../Common/Breadcrumb";
 import Image from "next/image";
 import AddressModal from "./AddressModal";
 import Orders from "../Orders";
-import UsersTab from "./UsersTab";
+import UsersTab from "./Usuarios/UsersPage";
 import SedesTab from "./Sedes/SedesPage";
 import { LayoutDashboard, ShoppingBag, User } from "lucide-react";
 
