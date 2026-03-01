@@ -5,8 +5,8 @@ import Image from "next/image";
 import AddressModal from "./AddressModal";
 import Orders from "../Orders";
 import UsersTab from "./Usuarios/UsersPage";
-import SedesTab from "./Sedes/SedesPage";
-import { LayoutDashboard, ShoppingBag, User } from "lucide-react";
+import SedesPage from "./Sedes/SedesPage";
+import { LayoutDashboard, ScanEye, User } from "lucide-react";
 import ClientesTab from "./Clientes/ClientesPage";
 const MyAccount = () => {
   const [activeTab, setActiveTab] = useState("clientes");
