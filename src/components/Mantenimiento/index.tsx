@@ -4,10 +4,10 @@ import Breadcrumb from "../Common/Breadcrumb";
 import Image from "next/image";
 import AddressModal from "./AddressModal";
 import Orders from "../Orders";
-import UsersTab from "./UsersTab";
-import SedesPage from "./Sedes/SedesPage";
-import { ScanEye, User } from "lucide-react";
-
+import UsersTab from "./Usuarios/UsersPage";
+import SedesTab from "./Sedes/SedesPage";
+import { LayoutDashboard, ShoppingBag, User } from "lucide-react";
+import ClientesTab from "./Clientes/ClientesPage";
 const MyAccount = () => {
   const [activeTab, setActiveTab] = useState("clientes");
   const [addressModal, setAddressModal] = useState(false);
@@ -216,20 +216,11 @@ const MyAccount = () => {
             {/* <!-- dashboard tab content start --> */}
 
             <div
-              className={`xl:max-w-[770px] w-full bg-white rounded-xl shadow-1 py-9.5 px-4 sm:px-7.5 xl:px-10 ${
+              className={`xl:max-w-[770px] w-full bg-white rounded-xl shadow-1 ${
                 activeTab === "clientes" ? "block" : "hidden"
               }`}
             >
-              <p className="text-dark">
-                Hello Annie (not Annie?
-                <a
-                  href="#"
-                  className="text-red ease-out duration-200 hover:underline"
-                >
-                  Log Out
-                </a>
-                )
-              </p>
+              <ClientesTab />
             </div>
             <div
               className={`xl:max-w-[770px] w-full bg-white rounded-xl shadow-1 ${
