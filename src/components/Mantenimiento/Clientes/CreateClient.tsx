@@ -6,7 +6,7 @@ import { BaseButton } from "@/components/Common/Buttons/BaseButton";
 import { StatusModal, LoadingModal } from "@/components/Common/modal";
 import { STATUS_MODAL } from "@/commons/constants";
 import { ClientType, ICreateClient } from "@/types/clients";
-import { useCreateClient } from "@/hooks/clients/useCreateClient"; // AJUSTA ESTA RUTA
+import { useCreateClient } from "@/hooks/clients/useCreateClient";
 
 const emptyForm: ICreateClient = {
   tipoCliente: "PERSONA",
@@ -17,6 +17,18 @@ const emptyForm: ICreateClient = {
   telefono: "",
   correo: "",
   direccion: "",
+
+  // ✅ MEDIDAS
+  dip: "",
+  add: "",
+
+  odEsf: "",
+  odCyl: "",
+  odEje: "",
+
+  oiEsf: "",
+  oiCyl: "",
+  oiEje: "",
 };
 
 export default function CreateClient() {
@@ -31,18 +43,58 @@ export default function CreateClient() {
     [form.tipoCliente]
   );
 
-const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const { name, value } = e.target;
+  // ✅ helper: permitir decimales con signo (-1.25, 2, 0.50, etc.)
+  const normalizeDecimal = (value: string) => {
+    // deja: dígitos, -, +, punto
+    let v = value.replace(/[^\d.+-]/g, "");
+    // solo 1 signo al inicio
+    v = v.replace(/(?!^)[+-]/g, "");
+    // solo 1 punto
+    const parts = v.split(".");
+    if (parts.length > 2) v = parts[0] + "." + parts.slice(1).join("");
+    // limitar largo
+    return v.slice(0, 8);
+  };
 
-  if (name === "telefono") {
+  const normalizeInt = (value: string, maxLen = 3) => {
     const onlyDigits = value.replace(/\D/g, "");
-    const cut = onlyDigits.slice(0, 9);
-    setForm((p) => ({ ...p, telefono: cut }));
-    return;
-  }
+    return onlyDigits.slice(0, maxLen);
+  };
 
-  setForm((p) => ({ ...p, [name]: value }));
-};
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    // teléfono 9 dígitos
+    if (name === "telefono") {
+      const cut = normalizeInt(value, 9);
+      setForm((p) => ({ ...p, telefono: cut }));
+      return;
+    }
+
+    // ejes (0-180)
+    if (name === "odEje" || name === "oiEje") {
+      const v = normalizeInt(value, 3);
+      setForm((p) => ({ ...p, [name]: v }));
+      return;
+    }
+
+    // DIP/ADD/ESF/CYL (decimales)
+    const decimalFields = [
+      "dip",
+      "add",
+      "odEsf",
+      "odCyl",
+      "oiEsf",
+      "oiCyl",
+    ];
+    if (decimalFields.includes(name)) {
+      setForm((p) => ({ ...p, [name]: normalizeDecimal(value) }));
+      return;
+    }
+
+    setForm((p) => ({ ...p, [name]: value }));
+  };
+
   const onChangeTipo = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const tipoCliente = e.target.value as ClientType;
 
@@ -58,7 +110,24 @@ const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
   const createClient = async (e: React.FormEvent) => {
     e.preventDefault();
-    await addClient(form);
+
+    // ✅ convertir strings a number donde toque (para el backend)
+    const payload: any = {
+      ...form,
+      tipoDoc,
+      dip: form.dip ? Number(form.dip) : undefined,
+      add: form.add ? Number(form.add) : undefined,
+
+      odEsf: form.odEsf ? Number(form.odEsf) : undefined,
+      odCyl: form.odCyl ? Number(form.odCyl) : undefined,
+      odEje: form.odEje ? Number(form.odEje) : undefined,
+
+      oiEsf: form.oiEsf ? Number(form.oiEsf) : undefined,
+      oiCyl: form.oiCyl ? Number(form.oiCyl) : undefined,
+      oiEje: form.oiEje ? Number(form.oiEje) : undefined,
+    };
+
+    await addClient(payload);
   };
 
   useEffect(() => {
@@ -79,8 +148,8 @@ const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         onSubmit={createClient}
         className="w-full rounded-xl border border-gray-3 bg-white p-6"
       >
+        {/* DATOS */}
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {/* tipo cliente */}
           <div className="flex flex-col gap-2">
             <label className="text-sm font-medium text-dark">Tipo</label>
             <select
@@ -93,7 +162,6 @@ const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             </select>
           </div>
 
-          {/* documento */}
           <BaseInput
             label={tipoDoc}
             name="numeroDoc"
@@ -109,7 +177,6 @@ const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             }
           />
 
-          {/* campos condicionales */}
           {form.tipoCliente === "PERSONA" ? (
             <>
               <BaseInput
@@ -120,7 +187,6 @@ const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                 required
                 onChange={onChange}
               />
-
               <BaseInput
                 label="Apellidos"
                 name="apellidos"
@@ -141,16 +207,15 @@ const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             />
           )}
 
-          {/* extras */}
           <BaseInput
-  label="Teléfono"
-  name="telefono"
-  value={form.telefono || ""}
-  placeholder="999888777"
-  onChange={onChange}
-  pattern={form.telefono.length === 9 ? "^\\d{9}$" : undefined}
-  title="El teléfono debe tener 9 dígitos"
-/>
+            label="Teléfono"
+            name="telefono"
+            value={form.telefono || ""}
+            placeholder="999888777"
+            onChange={onChange}
+            pattern={form.telefono?.length === 9 ? "^\\d{9}$" : undefined}
+            title="El teléfono debe tener 9 dígitos"
+          />
 
           <BaseInput
             label="Correo"
@@ -167,6 +232,93 @@ const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             placeholder="Av..."
             onChange={onChange}
           />
+        </div>
+
+        {/* MEDIDAS */}
+        <div className="mt-8 rounded-xl border border-gray-3 bg-gray-1 p-5">
+          <h3 className="mb-4 text-base font-semibold text-dark">
+            Especificaciones de las Medidas
+          </h3>
+
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+            <BaseInput
+              label="DIP"
+              name="dip"
+              value={form.dip || ""}
+              placeholder="63"
+              onChange={onChange}
+            />
+
+            <BaseInput
+              label="ADD"
+              name="add"
+              value={form.add || ""}
+              placeholder="1.50"
+              onChange={onChange}
+            />
+          </div>
+
+          <div className="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-2">
+            {/* OD */}
+            <div className="rounded-xl border border-gray-3 bg-white p-4">
+              <h4 className="mb-3 text-sm font-semibold text-dark">Ojo Derecho (OD)</h4>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                <BaseInput
+                  label="ESF"
+                  name="odEsf"
+                  value={form.odEsf || ""}
+                  placeholder="-1.25"
+                  onChange={onChange}
+                />
+                <BaseInput
+                  label="CYL"
+                  name="odCyl"
+                  value={form.odCyl || ""}
+                  placeholder="-0.50"
+                  onChange={onChange}
+                />
+                <BaseInput
+                  label="EJE"
+                  name="odEje"
+                  value={form.odEje || ""}
+                  placeholder="90"
+                  onChange={onChange}
+                />
+              </div>
+            </div>
+
+            {/* OI */}
+            <div className="rounded-xl border border-gray-3 bg-white p-4">
+              <h4 className="mb-3 text-sm font-semibold text-dark">Ojo Izquierdo (OI)</h4>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                <BaseInput
+                  label="ESF"
+                  name="oiEsf"
+                  value={form.oiEsf || ""}
+                  placeholder="-1.00"
+                  onChange={onChange}
+                />
+                <BaseInput
+                  label="CYL"
+                  name="oiCyl"
+                  value={form.oiCyl || ""}
+                  placeholder="-0.75"
+                  onChange={onChange}
+                />
+                <BaseInput
+                  label="EJE"
+                  name="oiEje"
+                  value={form.oiEje || ""}
+                  placeholder="80"
+                  onChange={onChange}
+                />
+              </div>
+            </div>
+          </div>
+
+          <p className="mt-3 text-xs text-dark-5">
+            * Si aún no tienes las medidas, puedes dejarlo vacío y registrarlo luego.
+          </p>
         </div>
 
         <div className="mt-8 flex justify-center">
