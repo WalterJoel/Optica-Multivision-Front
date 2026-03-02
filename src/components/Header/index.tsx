@@ -65,14 +65,21 @@ const Header = () => {
   }, []);
 
   useEffect(() => {
-    const onAuth = () => {
-      const u = localStorage.getItem("user");
-      setUser(u ? JSON.parse(u) : null);
-    };
+  const onAuth = () => {
+    const u = localStorage.getItem("user");
+    setUser(u ? JSON.parse(u) : null);
+  };
 
-    window.addEventListener("auth-changed", onAuth);
-    return () => window.removeEventListener("auth-changed", onAuth);
-  }, []);
+  onAuth(); // ✅ cargar al montar
+
+  window.addEventListener("auth-changed", onAuth);
+  window.addEventListener("storage", onAuth); // ✅ por si disparas storage
+
+  return () => {
+    window.removeEventListener("auth-changed", onAuth);
+    window.removeEventListener("storage", onAuth);
+  };
+}, []);
 
   // ✅ Cerrar dropdown al hacer click afuera + ESC
   useEffect(() => {
