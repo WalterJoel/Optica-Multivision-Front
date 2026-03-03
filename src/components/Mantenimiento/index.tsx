@@ -5,9 +5,10 @@ import Image from "next/image";
 import AddressModal from "./AddressModal";
 import Orders from "../Orders";
 import UsersTab from "./Usuarios/UsersPage";
-import SedesPage from "./Sedes/SedesPage";
+import SedesPage from "./Stores/StorePage";
+import KitPage from "./Kits/KitPage";
 import { LayoutDashboard, ScanEye, User } from "lucide-react";
-import ClientesTab from "./Clientes/ClientesPage";
+import ClientsPage from "./Clients/ClientsPage";
 const MyAccount = () => {
   const [activeTab, setActiveTab] = useState("clientes");
   const [addressModal, setAddressModal] = useState(false);
@@ -220,7 +221,7 @@ const MyAccount = () => {
                 activeTab === "clientes" ? "block" : "hidden"
               }`}
             >
-              <ClientesTab />
+              <ClientsPage />
             </div>
             <div
               className={`xl:max-w-[770px] w-full bg-white rounded-xl shadow-1 ${
@@ -237,7 +238,7 @@ const MyAccount = () => {
                 activeTab === "combos" ? "block" : "hidden"
               }`}
             >
-              <Orders />
+              <KitPage />
             </div>
             {/* <!-- orders tab content end -->
 
