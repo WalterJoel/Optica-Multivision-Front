@@ -1,5 +1,5 @@
 import { api } from "../api";
-import { ICreateStore, IStore } from "@/types/stores";
+import { ICreateStore } from "@/types/stores";
 
 export const createStoreService = async (payload: ICreateStore) => {
   const { data } = await api.post("/sedes/crearSede", payload);
