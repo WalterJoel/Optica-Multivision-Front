@@ -1,120 +1,199 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { BaseInput } from "@/components/Common/Inputs/BaseInput";
+import { BaseButtonIcon } from "@/components/Common/Buttons/BaseButtonIcon";
 import { BaseButton } from "@/components/Common/Buttons/BaseButton";
-import { ICreateStore } from "@/types/stores";
-import { useCreateStore } from "@/hooks/stores";
-import { StatusModal, LoadingModal } from "@/components/Common/modal";
-import { STATUS_MODAL } from "@/commons/constants";
+import { AddAccessoryModal } from "./AddAccessoryModal";
+import { ICreateKit } from "@/types/kits";
+import { Plus, Trash2 } from "lucide-react";
+interface IKitAccesorio {
+  accesorioId: number;
+  nombre: string;
+  cantidad: number;
+}
 
-const emptyForm: ICreateStore = {
+const emptyForm: ICreateKit = {
   nombre: "",
-  ruc: "",
-  direccion: "",
-  telefono: "",
-  logoUrl: "",
+  descripcion: "",
+  precio: 0,
+  accesorios: [],
 };
 
-export default function CreateStore() {
-  const [form, setForm] = useState<ICreateStore>(emptyForm);
-  const { addStore, success, statusMessage, loading } = useCreateStore();
-  const [typeModal, setTypeModal] = useState<string>("");
-  const [openModal, setOpenModal] = useState<boolean>(false);
+export default function CreateKit() {
+  const [form, setForm] = useState<ICreateKit>(emptyForm);
+  const [accesoriosKit, setAccesoriosKit] = useState<IKitAccesorio[]>([]);
+  const [openModal, setOpenModal] = useState(false);
+
+  const [nuevoAccesorio, setNuevoAccesorio] = useState({
+    nombre: "",
+    cantidad: 1,
+  });
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm((p) => ({
-      ...p,
-      [e.target.name]: e.target.value,
+    const { name, value } = e.target;
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: name === "precio" ? Number(value) : value,
     }));
   };
 
-  const createStore = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const agregarAccesorio = () => {
+    if (!nuevoAccesorio.nombre.trim()) return;
 
-    await addStore(form);
+    const existe = accesoriosKit.some(
+      (a) =>
+        a.nombre.toLowerCase().trim() ===
+        nuevoAccesorio.nombre.toLowerCase().trim(),
+    );
+
+    if (existe) {
+      alert("Este accesorio ya fue agregado al kit.");
+      return;
+    }
+
+    const nuevoItem: IKitAccesorio = {
+      accesorioId: Date.now(),
+      nombre: nuevoAccesorio.nombre.trim(),
+      cantidad: nuevoAccesorio.cantidad,
+    };
+
+    setAccesoriosKit((prev) => [...prev, nuevoItem]);
+    setNuevoAccesorio({ nombre: "", cantidad: 1 });
+    setOpenModal(false);
   };
 
-  useEffect(() => {
-    if (!loading && (success || statusMessage)) {
-      if (success) {
-        setTypeModal(STATUS_MODAL.SUCCESS_MODAL);
-        setForm(emptyForm);
-      } else {
-        setTypeModal(STATUS_MODAL.ERROR_MODAL);
-      }
-      setOpenModal(true);
-    }
-  }, [loading, success, statusMessage]);
+  const eliminarAccesorio = (id: number) => {
+    setAccesoriosKit((prev) => prev.filter((a) => a.accesorioId !== id));
+  };
+
+  const createKit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const payload: ICreateKit = {
+      ...form,
+      accesorios: accesoriosKit,
+    };
+
+    console.log("Payload listo:", payload);
+  };
 
   return (
     <>
       <form
-        onSubmit={createStore}
+        onSubmit={createKit}
         className="w-full rounded-xl border border-gray-3 bg-white p-6"
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+        {/* DATOS DEL KIT */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <BaseInput
-            label="Nombre"
+            label="Nombre del Kit"
             name="nombre"
             value={form.nombre}
-            placeholder="Sede Central"
+            placeholder="Kit de Limpieza Premium"
             required
             onChange={onChange}
           />
 
           <BaseInput
-            label="RUC"
-            name="ruc"
-            value={form.ruc}
-            placeholder="20123456789"
-            required
-            onChange={onChange}
-            pattern="^\d{11}$"
-            title="El RUC debe tener 11 dígitos"
-          />
-
-          <BaseInput
-            label="Dirección"
-            name="direccion"
-            value={form.direccion}
-            placeholder="Av..."
+            label="Precio"
+            name="precio"
+            type="number"
+            value={form.precio}
+            placeholder="29.90"
             required
             onChange={onChange}
           />
 
           <BaseInput
-            label="Teléfono"
-            name="telefono"
-            value={form.telefono}
-            placeholder="999888777"
-            required
-            onChange={onChange}
-            pattern="^\d{9}$"
-            title="El teléfono debe tener 9 dígitos"
-          />
-
-          <BaseInput
-            label="Logo URL"
-            name="logoUrl"
-            value={form.logoUrl}
-            placeholder="https://..."
+            label="Descripción"
+            name="descripcion"
+            value={form.descripcion}
+            placeholder="Kit completo para limpieza de lentes"
             onChange={onChange}
           />
         </div>
 
-        <div className="mt-8 flex justify-center">
-          <BaseButton type="submit" loading={loading} className="min-w-[240px]">
-            Crear sede
+        {/* ACCESORIOS */}
+        <div className="mt-12">
+          <div className="flex justify-end items-center mb-6">
+            <BaseButtonIcon
+              variant="primary"
+              onClick={() => setOpenModal(true)}
+              center={false}
+            >
+              <Plus size={20} />
+            </BaseButtonIcon>
+          </div>
+
+          <div className="border border-gray-3 rounded-2xl overflow-hidden">
+            <div className="max-h-[320px] overflow-y-auto">
+              <table className="w-full text-sm border-collapse">
+                <thead className="bg-gray-3 sticky top-0 z-10">
+                  <tr>
+                    <th className="p-4 text-left font-semibold text-gray-600">
+                      Producto
+                    </th>
+                    <th className="p-4 text-center font-semibold text-gray-600">
+                      Cantidad
+                    </th>
+                    <th className="p-4 text-center font-semibold text-gray-600">
+                      Acciones
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {accesoriosKit.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan={3}
+                        className="p-10 text-center text-gray-400"
+                      >
+                        No agregaste accesorios aún
+                      </td>
+                    </tr>
+                  ) : (
+                    accesoriosKit.map((acc) => (
+                      <tr
+                        key={acc.accesorioId}
+                        className="border-t hover:bg-gray-50 transition"
+                      >
+                        <td className="p-4">{acc.nombre}</td>
+                        <td className="p-4 text-center">{acc.cantidad}</td>
+                        <td className="p-4 text-center">
+                          <BaseButtonIcon
+                            type="button"
+                            variant="danger"
+                            onClick={() => eliminarAccesorio(acc.accesorioId)}
+                          >
+                            <Trash2 size={18} />
+                          </BaseButtonIcon>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        {/* BOTÓN CREAR */}
+        <div className="mt-12 flex justify-center">
+          <BaseButton type="submit" className="min-w-[260px]">
+            Crear Kit
           </BaseButton>
         </div>
       </form>
-      <LoadingModal isOpen={loading} />
-      <StatusModal
+
+      <AddAccessoryModal
         isOpen={openModal}
-        type={typeModal}
-        message={statusMessage}
         onClose={() => setOpenModal(false)}
+        nuevoAccesorio={nuevoAccesorio}
+        setNuevoAccesorio={setNuevoAccesorio}
+        onAdd={agregarAccesorio}
       />
     </>
   );

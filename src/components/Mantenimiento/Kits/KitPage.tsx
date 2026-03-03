@@ -15,8 +15,8 @@ export default function SedesPage() {
   ];
 
   return (
-    <div className="pt-4 px-6 xl:px-8 w-full">
-      <div className="border-b border-gray-3 mb-6">
+    <div className="pt-6 pb-12 px-6 xl:px-8 w-full">
+      <div className="border-b border-gray-3 mb-8 ">
         <BaseTabs tabs={tabsData} activeTab={tab} onChange={setTab} />{" "}
       </div>
 

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { ModalFrameWrapper } from "./";
+import { ModalFrameWrapper } from "@/components/Common/modal";
 
 export function LoadingModal({ isOpen }: { isOpen: boolean }) {
   if (!isOpen) return null;
