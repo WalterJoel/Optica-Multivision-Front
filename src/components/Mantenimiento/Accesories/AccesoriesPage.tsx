@@ -4,10 +4,10 @@ import { useState } from "react";
 import { List, CirclePlus } from "lucide-react";
 import { BaseTabs } from "@/components/Common/Inputs";
 
-import CreateClient from "./CreateClient";
-import ListClients from "./ListClients";
+import CreateAccesory from "./CreateAccesory";
+import ListAccesories from "./ListAccesories";
 
-export default function ClientesPage() {
+export default function AccesoriesPage() {
   const [tab, setTab] = useState("crear");
 
   const tabsData = [
@@ -21,8 +21,8 @@ export default function ClientesPage() {
         <BaseTabs tabs={tabsData} activeTab={tab} onChange={setTab} />
       </div>
 
-      {tab === "crear" && <CreateClient />}
-      {tab === "lista" && <ListClients />}
+      {tab === "crear" && <CreateAccesory />}
+      {tab === "lista" && <ListAccesories />}
     </div>
   );
 }

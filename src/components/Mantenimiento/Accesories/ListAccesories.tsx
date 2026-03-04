@@ -6,7 +6,7 @@ import { IClient } from "@/types/clients";
 
 type FilterDoc = "ALL" | "DNI" | "RUC";
 
-export default function ListClients() {
+export default function ListAccesories() {
   const [clientes, setClientes] = useState<IClient[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<FilterDoc>("ALL");

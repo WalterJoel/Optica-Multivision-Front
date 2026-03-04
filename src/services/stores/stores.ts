@@ -6,7 +6,10 @@ export const createStoreService = async (payload: ICreateStore) => {
   return data;
 };
 
-export const updateStoreService = async (id: number, payload: Partial<IStore>) => {
+export const updateStoreService = async (
+  id: number,
+  payload: Partial<ICreateStore>,
+) => {
   const { data } = await api.patch(`/sedes/${id}`, payload);
   return data;
 };
