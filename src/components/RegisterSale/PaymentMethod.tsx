@@ -4,7 +4,7 @@ import { BaseInput } from "@/components/Common/Inputs/BaseInput";
 const PaymentMethod = () => {
   const [paymentType, setPaymentType] = useState<"cash" | "credit">("credit");
   const [installments, setInstallments] = useState(2);
-  const [showOrder, setShowOrder] = useState(false);
+  const [showOrder, setShowOrder] = useState(false); // Estado para mostrar/ocultar Orden de Pedido
 
   const [formData, setFormData] = useState({
     // PAYMENT
@@ -70,34 +70,36 @@ const PaymentMethod = () => {
 
   return (
     <div>
-      <div>
-        <div className="flex-1 w-full">
-          {/* Checkbox Orden de Pedido */}
-          <div className="flex items-center gap-2 mb-4">
-            <input
-              type="checkbox"
-              id="showOrder"
-              checked={showOrder}
-              onChange={() => setShowOrder(!showOrder)}
-              className="w-4 h-4"
-            />
-            <label htmlFor="showOrder" className="text-sm font-medium">
-              Montaje
-            </label>
-          </div>
-        </div>
-      </div>
-
       <div
         className={`w-full flex flex-col ${showOrder ? "lg:flex-row" : ""} gap-8 xl:gap-11 items-stretch`}
       >
-        {/* COLUMNA */}
+        {/* COLUMNA PAGO (Izquierda) */}
         <div className="flex-1 w-full">
-          <h2 className="font-medium text-dark text-xl sm:text-2xl mb-5.5">
-            Modalidad de Pago
-          </h2>
+          <div className="bg-white w-full rounded-xl shadow-lg p-6 space-y-5">
+            {/* Cabecera LIMPIA sin líneas repetitivas */}
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-bold text-[#1e3a8a]">
+                Datos de Venta
+              </h2>
 
-          <div className="bg-white w-full rounded-xl shadow-lg p-6">
+              {/* ESTO ES LO NUEVO: El control de Montaje está FIJO AQUÍ permanentemente */}
+              <label className="flex items-center cursor-pointer gap-3 bg-gray-50 px-4 py-2 rounded-lg border border-gray-200 shadow-sm transition-all duration-300 ease-in-out">
+                <span className="text-sm font-semibold text-gray-600">
+                  ¿Requiere Montaje?
+                </span>
+                <div className="relative inline-flex items-center">
+                  <input
+                    type="checkbox"
+                    className="sr-only peer"
+                    checked={showOrder}
+                    onChange={() => setShowOrder(!showOrder)}
+                  />
+                  {/* Estilos Tailwind para el Toggle Switch DE COLOR AZUL */}
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                </div>
+              </label>
+            </div>
+
             {/* Tabs */}
             <div className="bg-gray-200 p-1 rounded-lg flex mb-6">
               <button
@@ -123,20 +125,6 @@ const PaymentMethod = () => {
               >
                 Al Crédito
               </button>
-            </div>
-
-            {/* Checkbox Orden de Pedido */}
-            <div className="flex items-center gap-2 mb-4">
-              <input
-                type="checkbox"
-                id="showOrder"
-                checked={showOrder}
-                onChange={() => setShowOrder(!showOrder)}
-                className="w-4 h-4"
-              />
-              <label htmlFor="showOrder" className="text-sm font-medium">
-                Generar Orden de Pedido
-              </label>
             </div>
 
             <div className="space-y-5">
@@ -186,21 +174,13 @@ const PaymentMethod = () => {
                   <label className="block mb-3 font-medium text-sm text-gray-700">
                     Elige el número de cuotas:
                   </label>
-
                   <div className="flex gap-3">
                     {[2, 3].map((num) => (
                       <button
                         key={num}
                         type="button"
                         onClick={() => setInstallments(num)}
-                        className={`
-          w-12 h-12 text-sm font-semibold transition-all duration-200
-          ${
-            installments === num
-              ? "bg-blue text-white shadow-input scale-105"
-              : "rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 outline-none focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20"
-          }
-        `}
+                        className={`w-12 h-12 text-sm font-semibold transition-all duration-200 ${installments === num ? "bg-blue text-white shadow-input scale-105" : "rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 outline-none focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20"}`}
                       >
                         {num}
                       </button>
@@ -226,7 +206,6 @@ const PaymentMethod = () => {
               {/* Montos */}
               <div>
                 <h3 className="font-semibold mb-3">Montos:</h3>
-
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <BaseInput
                     label="Total"
@@ -236,7 +215,6 @@ const PaymentMethod = () => {
                     onChange={() => {}}
                     readOnly
                   />
-
                   <BaseInput
                     label="Pago"
                     name="payment"
@@ -247,23 +225,17 @@ const PaymentMethod = () => {
                     min={0}
                     step="0.01"
                   />
-
                   <BaseInput
                     label={paymentType === "cash" ? "Cambio" : "Deuda"}
                     name="result"
                     type="text"
-                    value={`S/ ${
-                      paymentType === "cash"
-                        ? change.toFixed(2)
-                        : debt.toFixed(2)
-                    }`}
+                    value={`S/ ${paymentType === "cash" ? change.toFixed(2) : debt.toFixed(2)}`}
                     onChange={() => {}}
                     readOnly
                   />
                 </div>
               </div>
 
-              {/* Observaciones */}
               <div className="flex flex-col gap-1 w-full">
                 <label className="text-sm font-medium text-gray-600">
                   Observaciones
@@ -280,7 +252,7 @@ const PaymentMethod = () => {
 
               {/* Responsable */}
               <BaseInput
-                label="Responsable"
+                label="Responsable de la Venta"
                 name="responsible"
                 type="text"
                 placeholder="Nombre Completo"
@@ -301,15 +273,20 @@ const PaymentMethod = () => {
           </div>
         </div>
 
+        {/* COLUMNA ORDEN DE PEDIDO (Derecha) */}
         {showOrder && (
-          <div className="flex-1 w-full">
-            <h2 className="font-medium text-dark text-xl sm:text-2xl mb-5.5">
-              Orden de Pedido
-            </h2>
+          <div className="flex-1 w-full transition-all duration-300 ease-in-out">
+            {/* Cabecera LIMPIA sin líneas ni Toggle repetitivo */}
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-bold text-[#1e3a8a]">
+                Orden de Pedido
+              </h2>
+            </div>
 
-            <div className="bg-white w-full rounded-xl shadow-lg p-6">
+            <div className="bg-white w-full rounded-xl shadow-lg p-6 space-y-5">
+              {/* Campos de Orden de Pedido */}
               {/* ID */}
-              <div className="flex justify-end">
+              <div className="flex justify-end mb-5">
                 <BaseInput
                   label="Orden de Pedido (ID)"
                   name="orderId"
@@ -319,8 +296,8 @@ const PaymentMethod = () => {
                 />
               </div>
 
-              {/* Óptica y Fecha */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Óptica y Celular */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
                 <BaseInput
                   label="Óptica"
                   name="optica"
@@ -328,7 +305,6 @@ const PaymentMethod = () => {
                   value={formData.optica}
                   onChange={handleChange}
                 />
-
                 <BaseInput
                   label="Celular"
                   name="celular"
@@ -338,38 +314,40 @@ const PaymentMethod = () => {
                 />
               </div>
 
-              <BaseInput
-                label="Dirección"
-                name="direccion"
-                type="text"
-                value={formData.direccion}
-                onChange={handleChange}
-              />
+              {/* Dirección */}
+              <div className="mb-6">
+                <BaseInput
+                  label="Dirección"
+                  name="direccion"
+                  type="text"
+                  value={formData.direccion}
+                  onChange={handleChange}
+                />
+              </div>
 
               {/* TABLA MEDIDAS */}
-              <div>
+              <div className="mb-8 overflow-hidden">
                 <h3 className="font-semibold mb-3">Medidas</h3>
-
                 <div className="overflow-x-auto">
                   <table className="w-full border border-gray-300 text-sm text-center">
                     <thead className="bg-gray-100">
                       <tr>
-                        <th></th>
-                        <th>ESF</th>
-                        <th>CIL</th>
-                        <th>EJE</th>
-                        <th>DIP</th>
+                        <th className="p-2"></th>
+                        <th className="p-2">ESF</th>
+                        <th className="p-2">CIL</th>
+                        <th className="p-2">EJE</th>
+                        <th className="p-2">DIP</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td className="font-semibold">OD</td>
+                      <tr className="border-t">
+                        <td className="font-semibold p-2">OD</td>
                         <td>
                           <input
                             name="od_esf"
                             value={formData.od_esf}
                             onChange={handleChange}
-                            className="w-full p-1 border"
+                            className="w-full p-1 border outline-none focus:ring-1 focus:ring-blue/30"
                           />
                         </td>
                         <td>
@@ -377,7 +355,7 @@ const PaymentMethod = () => {
                             name="od_cil"
                             value={formData.od_cil}
                             onChange={handleChange}
-                            className="w-full p-1 border"
+                            className="w-full p-1 border outline-none focus:ring-1 focus:ring-blue/30"
                           />
                         </td>
                         <td>
@@ -385,7 +363,7 @@ const PaymentMethod = () => {
                             name="od_eje"
                             value={formData.od_eje}
                             onChange={handleChange}
-                            className="w-full p-1 border"
+                            className="w-full p-1 border outline-none focus:ring-1 focus:ring-blue/30"
                           />
                         </td>
                         <td>
@@ -393,19 +371,18 @@ const PaymentMethod = () => {
                             name="od_dip"
                             value={formData.od_dip}
                             onChange={handleChange}
-                            className="w-full p-1 border"
+                            className="w-full p-1 border outline-none focus:ring-1 focus:ring-blue/30"
                           />
                         </td>
                       </tr>
-
-                      <tr>
-                        <td className="font-semibold">OI</td>
+                      <tr className="border-t">
+                        <td className="font-semibold p-2">OI</td>
                         <td>
                           <input
                             name="oi_esf"
                             value={formData.oi_esf}
                             onChange={handleChange}
-                            className="w-full p-1 border"
+                            className="w-full p-1 border outline-none focus:ring-1 focus:ring-blue/30"
                           />
                         </td>
                         <td>
@@ -413,7 +390,7 @@ const PaymentMethod = () => {
                             name="oi_cil"
                             value={formData.oi_cil}
                             onChange={handleChange}
-                            className="w-full p-1 border"
+                            className="w-full p-1 border outline-none focus:ring-1 focus:ring-blue/30"
                           />
                         </td>
                         <td>
@@ -421,7 +398,7 @@ const PaymentMethod = () => {
                             name="oi_eje"
                             value={formData.oi_eje}
                             onChange={handleChange}
-                            className="w-full p-1 border"
+                            className="w-full p-1 border outline-none focus:ring-1 focus:ring-blue/30"
                           />
                         </td>
                         <td>
@@ -429,27 +406,28 @@ const PaymentMethod = () => {
                             name="oi_dip"
                             value={formData.oi_dip}
                             onChange={handleChange}
-                            className="w-full p-1 border"
+                            className="w-full p-1 border outline-none focus:ring-1 focus:ring-blue/30"
                           />
                         </td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
-
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 mt-4">
                   <span className="text-sm font-semibold">ADD:</span>
                   <input
                     type="text"
-                    className="flex-1 border-0 border-b border-black focus:outline-none"
+                    name="add"
+                    value={formData.add}
+                    onChange={handleChange}
+                    className="flex-1 border-0 border-b border-black focus:outline-none focus:border-blue"
                   />
                 </div>
               </div>
 
               {/* MATERIAL DEL LENTE */}
-              <div>
+              <div className="mb-6 space-y-3">
                 <h3 className="font-semibold mb-3">Material del Lente</h3>
-
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   {[
                     "Poly AR",
@@ -462,13 +440,17 @@ const PaymentMethod = () => {
                     "Crystal Blue",
                     "Fotoblue Crystal Blue",
                   ].map((item) => (
-                    <label key={item} className="flex items-center gap-2">
+                    <label
+                      key={item}
+                      className="flex items-center gap-2 cursor-pointer"
+                    >
                       <input
                         type="radio"
                         name="materialLente"
                         value={item}
                         checked={formData.materialLente === item}
                         onChange={handleChange}
+                        className="w-4 h-4 text-blue border-gray-300 focus:ring-blue"
                       />
                       {item}
                     </label>
@@ -477,35 +459,41 @@ const PaymentMethod = () => {
               </div>
 
               {/* MATERIAL MONTURA */}
-              <div>
+              <div className="mb-6 space-y-3">
                 <h3 className="font-semibold mb-3">Material de Montura</h3>
-
-                <div className="flex flex-wrap gap-4 text-sm">
+                <div className="flex flex-wrap gap-x-6 gap-y-3 text-sm mb-4">
                   {["Carey", "Acetato", "Metal", "TR-90", "Aluminio"].map(
                     (item) => (
-                      <label key={item} className="flex items-center gap-2">
+                      <label
+                        key={item}
+                        className="flex items-center gap-2 cursor-pointer"
+                      >
                         <input
                           type="radio"
                           name="materialMontura"
                           value={item}
                           checked={formData.materialMontura === item}
                           onChange={handleChange}
+                          className="w-4 h-4 text-blue border-gray-300 focus:ring-blue"
                         />
                         {item}
                       </label>
                     ),
                   )}
                 </div>
-
-                <div className="flex gap-6 mt-3 text-sm">
+                <div className="flex gap-6 mt-3 text-sm border-t pt-3 border-gray-200">
                   {["Nueva", "Usada"].map((item) => (
-                    <label key={item} className="flex items-center gap-2">
+                    <label
+                      key={item}
+                      className="flex items-center gap-2 cursor-pointer"
+                    >
                       <input
                         type="radio"
                         name="monturaEstado"
                         value={item}
                         checked={formData.monturaEstado === item}
                         onChange={handleChange}
+                        className="w-4 h-4 text-blue border-gray-300 focus:ring-blue"
                       />
                       {item}
                     </label>
@@ -513,27 +501,33 @@ const PaymentMethod = () => {
                 </div>
               </div>
 
-              <BaseInput
-                label="Marca"
-                name="marca"
-                type="text"
-                value={formData.marca}
-                onChange={handleChange}
-              />
+              {/* Marca */}
+              <div className="mb-6">
+                <BaseInput
+                  label="Marca"
+                  name="marca"
+                  type="text"
+                  value={formData.marca}
+                  onChange={handleChange}
+                  fullWidth
+                />
+              </div>
 
               {/* OBSERVACIONES + PRECIO */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
-                  <label className="font-semibold">Observaciones</label>
+                  <label className="font-semibold text-sm text-gray-700 block mb-2">
+                    Observaciones
+                  </label>
                   <textarea
                     name="orderObservations"
                     rows={4}
                     value={formData.orderObservations}
                     onChange={handleChange}
-                    className="w-full border p-2 mt-2"
+                    placeholder="Ingrese las observaciones de la orden"
+                    className="w-full rounded-md border border-gray-3 bg-gray-1 p-3 outline-none focus:ring-1 focus:ring-blue/30"
                   />
                 </div>
-
                 <BaseInput
                   label="Precio"
                   name="precio"
@@ -548,16 +542,20 @@ const PaymentMethod = () => {
               </div>
 
               {/* Bisel */}
-              <div className="flex gap-6 text-sm">
-                <span className="font-semibold">Bisel brillante:</span>
-                {["si", "no"].map((item) => (
-                  <label key={item} className="flex items-center gap-2">
+              <div className="flex gap-6 text-sm border-t pt-4 border-gray-200">
+                <span className="font-semibold">Shiny bevel:</span>
+                {["yes", "no"].map((item) => (
+                  <label
+                    key={item}
+                    className="flex items-center gap-2 cursor-pointer"
+                  >
                     <input
                       type="radio"
                       name="biselBrillante"
                       value={item}
                       checked={formData.biselBrillante === item}
                       onChange={handleChange}
+                      className="w-4 h-4 text-blue border-gray-300 focus:ring-blue"
                     />
                     {item.toUpperCase()}
                   </label>
