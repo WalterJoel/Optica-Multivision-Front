@@ -11,8 +11,8 @@ export default function AccesoriesPage() {
   const [tab, setTab] = useState("crear");
 
   const tabsData = [
-    { key: "crear", label: "Crear cliente", icon: <CirclePlus size={22} /> },
-    { key: "lista", label: "Lista de clientes", icon: <List size={22} /> },
+    { key: "crear", label: "Crear accesorio", icon: <CirclePlus size={22} /> },
+    { key: "lista", label: "Lista de accesorios", icon: <List size={22} /> },
   ];
 
   return (
