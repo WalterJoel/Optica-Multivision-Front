@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BaseInput, BaseFile, BaseTarea } from "@/components/Common/Inputs";
 import { BaseButton } from "@/components/Common/Buttons/BaseButton";
 import { ICreateAccessory } from "@/types/products";
-import { useCreateClient } from "@/hooks/clients/useCreateClient";
+import { useCreateAccessory } from "@/hooks/products/accesories/useCreateAccesory";
+import { StatusModal, LoadingModal } from "@/components/Common/modal";
+import { STATUS_MODAL } from "@/commons/constants";
 
 const emptyForm: ICreateAccessory = {
   nombre: "",
@@ -15,7 +17,9 @@ const emptyForm: ICreateAccessory = {
 
 export default function CreateAccessory() {
   const [form, setForm] = useState<ICreateAccessory>(emptyForm);
-  const { addClient, success, statusMessage, loading } = useCreateClient();
+  const { addAccessory, loading, statusMessage, success } = useCreateAccessory();
+  const [typeModal, setTypeModal] = useState<string>("");
+  const [openModal, setOpenModal] = useState<boolean>(false);
 
   const onChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -43,8 +47,20 @@ export default function CreateAccessory() {
 
   const createAccessory = async (e: React.FormEvent) => {
     e.preventDefault();
-    await addClient(form);
+    await addAccessory(form);
   };
+
+  useEffect(() => {
+      if (!loading && (success || statusMessage)) {
+        if (success) {
+          setTypeModal(STATUS_MODAL.SUCCESS_MODAL);
+          setForm(emptyForm);
+        } else {
+          setTypeModal(STATUS_MODAL.ERROR_MODAL);
+        }
+        setOpenModal(true);
+      }
+    }, [loading, success, statusMessage]);
 
   return (
     <form
@@ -60,8 +76,10 @@ export default function CreateAccessory() {
           name="nombre"
           value={form.nombre}
           placeholder="Nombre del accesorio"
+          type="string"
           required
           onChange={onChange}
+          pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
         />
 
         <BaseInput
@@ -71,7 +89,9 @@ export default function CreateAccessory() {
           value={form.precio}
           placeholder="0.00"
           step="0.01"
+          required
           onChange={onChange}
+          pattern="/^[0-9]*\.?[0-3]*$/"
         />
         <div className="col-span-1 md:col-span-2">
           <BaseTarea
@@ -96,6 +116,15 @@ export default function CreateAccessory() {
           Crear Accesorio
         </BaseButton>
       </div>
+      
+      <LoadingModal isOpen={loading} />
+      <StatusModal
+        isOpen={openModal}
+        type={typeModal}
+        message={statusMessage}
+        onClose={() => setOpenModal(false)}
+      />
+
     </form>
   );
 }
