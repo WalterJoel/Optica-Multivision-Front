@@ -59,3 +59,15 @@ export interface IClient {
   activo: boolean;
   fechaCreacion: string;
 }
+
+export interface ISearchClient {
+  id: number;
+  numeroDoc: string;
+  nombres: string | null;
+  apellidos: string | null;
+}
+
+export interface IResponseClient {
+  total: number;
+  clientes: ISearchClient[];
+}
