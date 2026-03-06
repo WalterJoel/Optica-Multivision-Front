@@ -1,32 +1,32 @@
 import { useState } from 'react';
-import { ICreateStore } from '@/types/stores';
-import { createStoreService } from '@/services/stores';
+import { ICreateKit } from '@/types/kits';
+import { createKitService } from '@/services/kits';
 
-export function useCreateStore() {
+export function useCreateKit() {
   const [loading, setLoading] = useState(false);
   const [statusMessage, setMessage] = useState<string>('');
   const [success, setSuccess] = useState<boolean>(false);
 
-  const addStore = async (payload: ICreateStore) => {
+  const addKit = async (payload: ICreateKit) => {
     setLoading(true);
     setSuccess(false);
     setMessage('');
 
     try {
-      await createStoreService(payload);
+      await createKitService(payload);
       setSuccess(true);
-      setMessage('Sede creada correctamente');
+      setMessage('Kit creado correctamente');
     } catch (err: any) {
       const backendMessage = err.response?.data?.message;
       setMessage(
         backendMessage
-          ? 'Error al registrar sede: ' + backendMessage
-          : 'Error al registrar sede',
+          ? 'Error al registrar kit: ' + backendMessage
+          : 'Error al registrar kit',
       );
     } finally {
       setLoading(false);
     }
   };
 
-  return { addStore, loading, statusMessage, success };
+  return { addKit, loading, statusMessage, success };
 }

@@ -1,12 +1,15 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { BaseInput } from "@/components/Common/Inputs/BaseInput";
-import { BaseButtonIcon } from "@/components/Common/Buttons/BaseButtonIcon";
-import { BaseButton } from "@/components/Common/Buttons/BaseButton";
-import { AddAccessoryModal } from "./AddAccessoryModal";
-import { ICreateKit } from "@/types/kits";
-import { Plus, Trash2 } from "lucide-react";
+import { useState } from 'react';
+import { BaseInput } from '@/components/Common/Inputs/BaseInput';
+import { BaseButtonIcon } from '@/components/Common/Buttons/BaseButtonIcon';
+import { BaseButton } from '@/components/Common/Buttons/BaseButton';
+import { AddAccessoryModal } from './AddAccessoryModal';
+import { ICreateKit } from '@/types/kits';
+import { useCreateKit } from '@/hooks/kits/useCreateKit';
+import { Plus, Trash2 } from 'lucide-react';
+import { ICreateKitAccesory } from '@/types/kits';
+
 interface IKitAccesorio {
   accesorioId: number;
   nombre: string;
@@ -14,19 +17,22 @@ interface IKitAccesorio {
 }
 
 const emptyForm: ICreateKit = {
-  nombre: "",
-  descripcion: "",
+  nombre: '',
+  descripcion: '',
   precio: 0,
   accesorios: [],
 };
 
 export default function CreateKit() {
   const [form, setForm] = useState<ICreateKit>(emptyForm);
-  const [accesoriosKit, setAccesoriosKit] = useState<IKitAccesorio[]>([]);
-  const [openModal, setOpenModal] = useState(false);
+  const { addKit, success, statusMessage, loading } = useCreateKit();
+  const [typeModal, setTypeModal] = useState<string>('');
+  const [openModal, setOpenModal] = useState<boolean>(false);
+
+  const [accesoriosKit, setAccesoriosKit] = useState<ICreateKitAccesory[]>([]);
 
   const [nuevoAccesorio, setNuevoAccesorio] = useState({
-    nombre: "",
+    nombre: '',
     cantidad: 1,
   });
 
@@ -35,7 +41,7 @@ export default function CreateKit() {
 
     setForm((prev) => ({
       ...prev,
-      [name]: name === "precio" ? Number(value) : value,
+      [name]: name === 'precio' ? Number(value) : value,
     }));
   };
 
@@ -49,7 +55,7 @@ export default function CreateKit() {
     );
 
     if (existe) {
-      alert("Este accesorio ya fue agregado al kit.");
+      alert('Este accesorio ya fue agregado al kit.');
       return;
     }
 
@@ -60,7 +66,7 @@ export default function CreateKit() {
     };
 
     setAccesoriosKit((prev) => [...prev, nuevoItem]);
-    setNuevoAccesorio({ nombre: "", cantidad: 1 });
+    setNuevoAccesorio({ nombre: '', cantidad: 1 });
     setOpenModal(false);
   };
 
@@ -76,7 +82,7 @@ export default function CreateKit() {
       accesorios: accesoriosKit,
     };
 
-    console.log("Payload listo:", payload);
+    console.log('Payload listo:', payload);
   };
 
   return (
