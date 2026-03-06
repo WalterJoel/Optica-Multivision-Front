@@ -10,6 +10,8 @@ import KitPage from "./Kits/KitPage";
 import { LayoutDashboard, ScanEye, User, BoomBox } from "lucide-react";
 import ClientsPage from "./Clients/ClientsPage";
 import AccesoriesPage from "./Accesories/AccesoriesPage";
+import EyeglassesPage from "./Eyeglasses/EyeglassesPage";
+
 const MyAccount = () => {
   const [activeTab, setActiveTab] = useState("clientes");
   const [addressModal, setAddressModal] = useState(false);
@@ -62,6 +64,7 @@ const MyAccount = () => {
                       <User size={25} />
                       Clientes
                     </button>
+
                     <button
                       onClick={() => setActiveTab("sedes")}
                       className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
@@ -80,6 +83,7 @@ const MyAccount = () => {
                       </svg>
                       Sedes
                     </button>
+
                     <button
                       onClick={() => setActiveTab("users")}
                       className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
@@ -88,7 +92,6 @@ const MyAccount = () => {
                           : "text-dark-2 bg-gray-1"
                       }`}
                     >
-                      {/* icono simple */}
                       <svg
                         className="fill-current"
                         width="22"
@@ -99,6 +102,7 @@ const MyAccount = () => {
                       </svg>
                       Usuarios
                     </button>
+
                     <button
                       onClick={() => setActiveTab("combos")}
                       className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
@@ -152,6 +156,18 @@ const MyAccount = () => {
                     </button>
 
                     <button
+                      onClick={() => setActiveTab("eyeglasses")}
+                      className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
+                        activeTab === "eyeglasses"
+                          ? "text-white bg-blue"
+                          : "text-dark-2 bg-gray-1"
+                      }`}
+                    >
+                      <ScanEye size={25} />
+                      Eyeglasses
+                    </button>
+
+                    <button
                       onClick={() => setActiveTab("account-details")}
                       className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
                         activeTab === "account-details"
@@ -186,6 +202,7 @@ const MyAccount = () => {
                 </div>
               </div>
             </div>
+
             <div
               className={`xl:max-w-[770px] w-full bg-white rounded-xl shadow-1 ${
                 activeTab === "sedes" ? "block" : "hidden"
@@ -193,11 +210,6 @@ const MyAccount = () => {
             >
               <SedesPage />
             </div>
-            {/* <!--== user dashboard menu end ==-->
-
-            
-          <!--== user dashboard content start ==--> */}
-            {/* <!-- dashboard tab content start --> */}
 
             <div
               className={`xl:max-w-[770px] w-full bg-white rounded-xl shadow-1 ${
@@ -206,6 +218,7 @@ const MyAccount = () => {
             >
               <ClientsPage />
             </div>
+
             <div
               className={`xl:max-w-[770px] w-full bg-white rounded-xl shadow-1 ${
                 activeTab === "users" ? "block" : "hidden"
@@ -213,9 +226,7 @@ const MyAccount = () => {
             >
               <UsersTab />
             </div>
-            {/* <!-- dashboard tab content end -->
 
-          <!-- orders tab content start --> */}
             <div
               className={`xl:max-w-[770px] w-full bg-white rounded-xl shadow-1 ${
                 activeTab === "combos" ? "block" : "hidden"
@@ -223,9 +234,7 @@ const MyAccount = () => {
             >
               <KitPage />
             </div>
-            {/* <!-- orders tab content end -->
 
-          <!-- downloads tab content start --> */}
             <div
               className={`xl:max-w-[770px] w-full bg-white rounded-xl shadow-1 py-9.5 px-4 sm:px-7.5 xl:px-10 ${
                 activeTab === "downloads" ? "block" : "hidden"
@@ -233,9 +242,7 @@ const MyAccount = () => {
             >
               <p>You don&apos;t have any download</p>
             </div>
-            {/* <!-- downloads tab content end -->
 
-          <!-- accesorios tab content start --> */}
             <div
               className={`xl:max-w-[770px] w-full bg-white rounded-xl shadow-1 ${
                 activeTab === "accesorios" ? "block" : "hidden"
@@ -243,9 +250,15 @@ const MyAccount = () => {
             >
               <AccesoriesPage />
             </div>
-            {/* <!-- accesorios tab content end -->
 
-          <!-- details tab content start --> */}
+            <div
+              className={`xl:max-w-[770px] w-full bg-white rounded-xl shadow-1 ${
+                activeTab === "eyeglasses" ? "block" : "hidden"
+              }`}
+            >
+              <EyeglassesPage />
+            </div>
+
             <div
               className={`xl:max-w-[770px] w-full ${
                 activeTab === "account-details" ? "block" : "hidden"
@@ -388,8 +401,6 @@ const MyAccount = () => {
                 </div>
               </form>
             </div>
-            {/* <!-- details tab content end -->
-          <!--== user dashboard content end ==--> */}
           </div>
         </div>
       </section>

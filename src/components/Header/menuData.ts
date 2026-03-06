@@ -15,6 +15,13 @@ export const menuData: Menu[] = [
     newTab: false,
     path: '/my-account',
   },
+  //vista de seguimiento de pedidos
+  {
+    id: 2,
+    title: 'Seguimiento de Pedidos',
+    newTab: false,
+    path: '/seguimiento-pedidos',
+  },
   {
     id: 0,
     title: 'Matriz',
