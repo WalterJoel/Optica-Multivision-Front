@@ -41,7 +41,12 @@ const PaymentMethod = () => {
             >
               <div className="flex items-center">
                 <div className="pr-2.5">
-                  <Image src="/images/checkout/bank.svg" alt="bank" width={29} height={12}/>
+                  <Image
+                    src="/images/checkout/bank.svg"
+                    alt="bank"
+                    width={29}
+                    height={12}
+                  />
                 </div>
 
                 <div className="border-l border-gray-4 pl-2.5">
@@ -81,7 +86,12 @@ const PaymentMethod = () => {
             >
               <div className="flex items-center">
                 <div className="pr-2.5">
-                  <Image src="/images/checkout/cash.svg" alt="cash" width={21} height={21} />
+                  <Image
+                    src="/images/checkout/cash.svg"
+                    alt="cash"
+                    width={21}
+                    height={21}
+                  />
                 </div>
 
                 <div className="border-l border-gray-4 pl-2.5">
@@ -120,7 +130,12 @@ const PaymentMethod = () => {
             >
               <div className="flex items-center">
                 <div className="pr-2.5">
-                  <Image src="/images/checkout/paypal.svg" alt="paypal" width={75} height={20}/>
+                  <Image
+                    src="/images/checkout/paypal.svg"
+                    alt="paypal"
+                    width={75}
+                    height={20}
+                  />
                 </div>
 
                 <div className="border-l border-gray-4 pl-2.5">

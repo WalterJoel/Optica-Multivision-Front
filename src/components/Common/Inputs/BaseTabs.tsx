@@ -18,6 +18,7 @@ export function BaseTabs({ tabs, activeTab, onChange }: BaseTabsProps) {
       {tabs.map((tab) => (
         <button
           key={tab.key}
+          type="button"
           onClick={() => onChange(tab.key)}
           className={`flex-1 flex items-center justify-center gap-2 py-4 text-sm border-b-2 transition
             ${

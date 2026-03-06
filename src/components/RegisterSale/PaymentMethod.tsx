@@ -1,13 +1,30 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
-import { BaseInput } from "@/components/Common/Inputs/BaseInput";
+import { BaseInput, BaseTabs } from "@/components/Common/Inputs";
+import { motion } from "framer-motion";
+import Image from "next/image";
+import { useSearchClient } from "@/hooks/clients";
 
 const PaymentMethod = () => {
   const [paymentType, setPaymentType] = useState<"cash" | "credit">("credit");
-  const [installments, setInstallments] = useState(2);
-  const [showOrder, setShowOrder] = useState(false); // Estado para mostrar/ocultar Orden de Pedido
+  const [showOrder, setShowOrder] = useState(false);
+
+  const { searchClients, clients, loading } = useSearchClient();
+
+  const paymentTabs = [
+    { key: "cash", label: "Al Contado" },
+    { key: "credit", label: "Al Crédito" },
+  ];
+
+  const paymentMethods = [
+    { key: "card", label: "Interbancario", icon: "/images/cart/int.png" },
+    { key: "cash", label: "Efectivo", icon: "/images/cart/efectivo.png" },
+    { key: "yape", label: "Yape", icon: "/images/cart/yape.png" },
+    { key: "plin", label: "Plin", icon: "/images/cart/plin.png" },
+  ];
 
   const [formData, setFormData] = useState({
-    // PAYMENT
     amountReceived: "",
     method: "",
     date: new Date().toISOString().slice(0, 10),
@@ -17,38 +34,21 @@ const PaymentMethod = () => {
     observations: "",
     responsible: "",
 
-    // ORDER
     orderId: "",
     optica: "",
     orderDate: new Date().toISOString().slice(0, 10),
-    materialLente: "",
-    materialMontura: "",
-    monturaEstado: "",
     marca: "",
-    biselBrillante: "no",
     precio: "",
-    orderObservations: "",
-    nombre: "",
     celular: "",
     direccion: "",
-    od_esf: "",
-    od_cil: "",
-    od_eje: "",
-    od_dip: "",
-    oi_esf: "",
-    oi_cil: "",
-    oi_eje: "",
-    oi_dip: "",
-    add: "",
   });
 
   const [change, setChange] = useState(0);
   const [debt, setDebt] = useState(0);
+  const [showClientList, setShowClientList] = useState(false);
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
 
@@ -56,7 +56,29 @@ const PaymentMethod = () => {
       ...prev,
       [name]: value,
     }));
+
+    /* ejecutar búsqueda */
+
+    if (name === "customerSearch") {
+      searchClients(value);
+      setShowClientList(true);
+    }
   };
+
+  /* seleccionar cliente */
+
+  const selectClient = (client: any) => {
+    setFormData((prev) => ({
+      ...prev,
+      customerSearch: client.nombres
+        ? `${client.nombres} ${client.apellidos ?? ""}`
+        : client.numeroDoc,
+    }));
+
+    setShowClientList(false);
+  };
+
+  /* CALCULOS */
 
   useEffect(() => {
     const payment = parseFloat(formData.payment) || 0;
@@ -70,497 +92,228 @@ const PaymentMethod = () => {
 
   return (
     <div>
-      <div
-        className={`w-full flex flex-col ${showOrder ? "lg:flex-row" : ""} gap-8 xl:gap-11 items-stretch`}
-      >
-        {/* COLUMNA PAGO (Izquierda) */}
+      <div className="w-full flex flex-col lg:flex-row gap-8 xl:gap-11 items-stretch">
         <div className="flex-1 w-full">
           <div className="bg-white w-full rounded-xl shadow-lg p-6 space-y-5">
-            {/* Cabecera LIMPIA sin líneas repetitivas */}
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold text-[#1e3a8a]">
-                Datos de Venta
-              </h2>
-
-              {/* ESTO ES LO NUEVO: El control de Montaje está FIJO AQUÍ permanentemente */}
-              <label className="flex items-center cursor-pointer gap-3 bg-gray-50 px-4 py-2 rounded-lg border border-gray-200 shadow-sm transition-all duration-300 ease-in-out">
+              <label className="flex items-center cursor-pointer gap-3 bg-gray-50 px-4 py-2 rounded-lg border border-gray-200 shadow-sm">
                 <span className="text-sm font-semibold text-gray-600">
                   ¿Requiere Montaje?
                 </span>
-                <div className="relative inline-flex items-center">
-                  <input
-                    type="checkbox"
-                    className="sr-only peer"
-                    checked={showOrder}
-                    onChange={() => setShowOrder(!showOrder)}
-                  />
-                  {/* Estilos Tailwind para el Toggle Switch DE COLOR AZUL */}
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                </div>
+
+                <input
+                  type="checkbox"
+                  checked={showOrder}
+                  onChange={() => setShowOrder(!showOrder)}
+                />
               </label>
             </div>
 
-            {/* Tabs */}
-            <div className="bg-gray-200 p-1 rounded-lg flex mb-6">
-              <button
-                type="button"
-                onClick={() => setPaymentType("cash")}
-                className={`w-1/2 py-2 text-sm font-semibold rounded-md transition-all duration-200 ${
-                  paymentType === "cash"
-                    ? "bg-blue-800 text-blue shadow"
-                    : "text-gray-600"
-                }`}
-              >
-                Al Contado
-              </button>
+            {/* TABS */}
 
-              <button
-                type="button"
-                onClick={() => setPaymentType("credit")}
-                className={`w-1/2 py-2 text-sm font-semibold rounded-md transition-all duration-200 ${
-                  paymentType === "credit"
-                    ? "bg-blue-800 text-blue shadow"
-                    : "text-gray-600"
-                }`}
-              >
-                Al Crédito
-              </button>
+            <div className="border-b border-gray-3 mb-6">
+              <BaseTabs
+                tabs={paymentTabs}
+                activeTab={paymentType}
+                onChange={(value) => setPaymentType(value as "cash" | "credit")}
+              />
             </div>
 
             <div className="space-y-5">
-              {/* Cantidad / Método / Fecha */}
-              <div className="flex flex-col lg:flex-row gap-5 mb-5">
-                <BaseInput
-                  label="Cantidad Recibida"
-                  name="amountReceived"
-                  type="number"
-                  placeholder="0.00"
-                  value={formData.amountReceived}
-                  onChange={handleChange}
-                  min={0}
-                  step="0.01"
-                  required
-                />
+              {/* METODO PAGO */}
 
-                <div className="flex flex-col gap-1 w-full">
-                  <label className="text-sm font-medium text-gray-600">
-                    Método de Pago
-                  </label>
-                  <select
-                    name="method"
-                    value={formData.method}
-                    onChange={handleChange}
-                    className="rounded-md border border-gray-3 bg-gray-1 w-full py-2.5 px-5 outline-none"
-                  >
-                    <option value="">Seleccione</option>
-                    <option value="cash">Efectivo</option>
-                    <option value="card">Tarjeta</option>
-                    <option value="transfer">Transferencia</option>
-                  </select>
+              <div>
+                <label className="text-sm font-medium text-gray-600 mb-3 block">
+                  Método de Pago
+                </label>
+
+                <div className="grid grid-cols-4 gap-4">
+                  {paymentMethods.map((method) => {
+                    const active = formData.method === method.key;
+
+                    return (
+                      <motion.button
+                        key={method.key}
+                        type="button"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            method: method.key,
+                          }))
+                        }
+                        className={`p-4 rounded-xl border ${
+                          active ? "border-blue bg-blue/5" : "border-gray-200"
+                        }`}
+                      >
+                        <Image
+                          src={method.icon}
+                          alt={method.label}
+                          width={40}
+                          height={40}
+                        />
+                        <span className="text-sm">{method.label}</span>
+                      </motion.button>
+                    );
+                  })}
                 </div>
-
-                <BaseInput
-                  label="Fecha"
-                  name="date"
-                  type="date"
-                  value={formData.date}
-                  onChange={handleChange}
-                />
               </div>
 
-              {/* Crédito */}
-              {paymentType === "credit" && (
-                <div>
-                  <label className="block mb-3 font-medium text-sm text-gray-700">
-                    Elige el número de cuotas:
-                  </label>
-                  <div className="flex gap-3">
-                    {[2, 3].map((num) => (
-                      <button
-                        key={num}
-                        type="button"
-                        onClick={() => setInstallments(num)}
-                        className={`w-12 h-12 text-sm font-semibold transition-all duration-200 ${installments === num ? "bg-blue text-white shadow-input scale-105" : "rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 outline-none focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20"}`}
+              {/* CLIENTE */}
+
+              <div className="relative">
+                <BaseInput
+                  label="Cliente"
+                  name="customerSearch"
+                  type="text"
+                  placeholder="Buscar por DNI, nombre o apellido"
+                  value={formData.customerSearch}
+                  onChange={handleChange}
+                />
+
+                {showClientList && (
+                  <div className="absolute z-50 bg-white border rounded-lg shadow w-full mt-1 max-h-60 overflow-auto">
+                    {loading && (
+                      <div className="p-3 text-sm text-gray-500">
+                        Buscando...
+                      </div>
+                    )}
+
+                    {!loading && clients.length === 0 && (
+                      <div className="p-3 text-sm text-gray-500">
+                        Sin resultados
+                      </div>
+                    )}
+
+                    {clients.map((client: any) => (
+                      <div
+                        key={client.id}
+                        onClick={() => selectClient(client)}
+                        className="p-3 hover:bg-gray-100 cursor-pointer text-sm"
                       >
-                        {num}
-                      </button>
+                        {client.nombres
+                          ? `${client.nombres} ${client.apellidos ?? ""}`
+                          : client.numeroDoc}
+                      </div>
                     ))}
                   </div>
-                </div>
-              )}
-
-              {/* Cliente */}
-              <BaseInput
-                label="Cliente"
-                name="customerSearch"
-                type="text"
-                placeholder={
-                  paymentType === "credit"
-                    ? "Buscar o Crear nuevo Cliente"
-                    : "Apellidos del cliente"
-                }
-                value={formData.customerSearch}
-                onChange={handleChange}
-              />
-
-              {/* Montos */}
-              <div>
-                <h3 className="font-semibold mb-3">Montos:</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <BaseInput
-                    label="Total"
-                    name="total"
-                    type="text"
-                    value={`S/ ${formData.total.toFixed(2)}`}
-                    onChange={() => {}}
-                    readOnly
-                  />
-                  <BaseInput
-                    label="Pago"
-                    name="payment"
-                    type="number"
-                    placeholder="0.00"
-                    value={formData.payment}
-                    onChange={handleChange}
-                    min={0}
-                    step="0.01"
-                  />
-                  <BaseInput
-                    label={paymentType === "cash" ? "Cambio" : "Deuda"}
-                    name="result"
-                    type="text"
-                    value={`S/ ${paymentType === "cash" ? change.toFixed(2) : debt.toFixed(2)}`}
-                    onChange={() => {}}
-                    readOnly
-                  />
-                </div>
+                )}
               </div>
 
-              <div className="flex flex-col gap-1 w-full">
-                <label className="text-sm font-medium text-gray-600">
-                  Observaciones
-                </label>
-                <textarea
-                  name="observations"
-                  rows={3}
-                  value={formData.observations}
+              {/* MONTOS */}
+
+              <div className="grid grid-cols-3 gap-4">
+                <BaseInput
+                  label="Total"
+                  name="total"
+                  type="text"
+                  value={`S/ ${formData.total}`}
+                  onChange={() => {}}
+                  readOnly
+                />
+
+                <BaseInput
+                  label="Pago"
+                  name="payment"
+                  type="number"
+                  value={formData.payment}
                   onChange={handleChange}
-                  placeholder="Ingrese las observaciones"
-                  className="rounded-md border border-gray-3 bg-gray-1 w-full py-2.5 px-5 outline-none"
+                />
+
+                <BaseInput
+                  label={paymentType === "cash" ? "Cambio" : "Deuda"}
+                  name="result"
+                  type="text"
+                  value={`S/ ${
+                    paymentType === "cash" ? change.toFixed(2) : debt.toFixed(2)
+                  }`}
+                  onChange={() => {}}
+                  readOnly
                 />
               </div>
 
-              {/* Responsable */}
+              {/* OBSERVACIONES */}
+
+              <textarea
+                name="observations"
+                rows={3}
+                value={formData.observations}
+                onChange={handleChange}
+                className="border rounded p-2 w-full"
+                placeholder="Observaciones"
+              />
+
               <BaseInput
-                label="Responsable de la Venta"
+                label="Responsable"
                 name="responsible"
                 type="text"
-                placeholder="Nombre Completo"
                 value={formData.responsible}
                 onChange={handleChange}
               />
 
-              {/* Botones */}
-              <div className="flex justify-end gap-3 pt-4">
-                <button
-                  type="submit"
-                  className="w-full flex justify-center font-medium text-white bg-blue py-3 px-6 rounded-md ease-out duration-200 hover:bg-blue-dark mt-7.5"
-                >
-                  Registrar Venta
-                </button>
-              </div>
+              <button
+                type="submit"
+                className="w-full bg-blue text-white py-3 rounded"
+              >
+                Registrar Venta
+              </button>
             </div>
           </div>
         </div>
 
-        {/* COLUMNA ORDEN DE PEDIDO (Derecha) */}
+        {/* COLUMNA ORDEN */}
+
         {showOrder && (
-          <div className="flex-1 w-full transition-all duration-300 ease-in-out">
-            {/* Cabecera LIMPIA sin líneas ni Toggle repetitivo */}
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold text-[#1e3a8a]">
-                Orden de Pedido
-              </h2>
-            </div>
+          <div className="lg:w-[35%] w-full">
+            <div className="bg-white rounded-xl shadow-lg p-6 space-y-5">
+              <BaseInput
+                label="Orden ID"
+                name="orderId"
+                type="text"
+                value={formData.orderId}
+                onChange={handleChange}
+              />
 
-            <div className="bg-white w-full rounded-xl shadow-lg p-6 space-y-5">
-              {/* Campos de Orden de Pedido */}
-              {/* ID */}
-              <div className="flex justify-end mb-5">
-                <BaseInput
-                  label="Orden de Pedido (ID)"
-                  name="orderId"
-                  type="text"
-                  value={formData.orderId}
-                  onChange={handleChange}
-                />
-              </div>
+              <BaseInput
+                label="Óptica"
+                name="optica"
+                type="text"
+                value={formData.optica}
+                onChange={handleChange}
+              />
 
-              {/* Óptica y Celular */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
-                <BaseInput
-                  label="Óptica"
-                  name="optica"
-                  type="text"
-                  value={formData.optica}
-                  onChange={handleChange}
-                />
-                <BaseInput
-                  label="Celular"
-                  name="celular"
-                  type="text"
-                  value={formData.celular}
-                  onChange={handleChange}
-                />
-              </div>
+              <BaseInput
+                label="Celular"
+                name="celular"
+                type="text"
+                value={formData.celular}
+                onChange={handleChange}
+              />
 
-              {/* Dirección */}
-              <div className="mb-6">
-                <BaseInput
-                  label="Dirección"
-                  name="direccion"
-                  type="text"
-                  value={formData.direccion}
-                  onChange={handleChange}
-                />
-              </div>
+              <BaseInput
+                label="Dirección"
+                name="direccion"
+                type="text"
+                value={formData.direccion}
+                onChange={handleChange}
+              />
 
-              {/* TABLA MEDIDAS */}
-              <div className="mb-8 overflow-hidden">
-                <h3 className="font-semibold mb-3">Medidas</h3>
-                <div className="overflow-x-auto">
-                  <table className="w-full border border-gray-300 text-sm text-center">
-                    <thead className="bg-gray-100">
-                      <tr>
-                        <th className="p-2"></th>
-                        <th className="p-2">ESF</th>
-                        <th className="p-2">CIL</th>
-                        <th className="p-2">EJE</th>
-                        <th className="p-2">DIP</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr className="border-t">
-                        <td className="font-semibold p-2">OD</td>
-                        <td>
-                          <input
-                            name="od_esf"
-                            value={formData.od_esf}
-                            onChange={handleChange}
-                            className="w-full p-1 border outline-none focus:ring-1 focus:ring-blue/30"
-                          />
-                        </td>
-                        <td>
-                          <input
-                            name="od_cil"
-                            value={formData.od_cil}
-                            onChange={handleChange}
-                            className="w-full p-1 border outline-none focus:ring-1 focus:ring-blue/30"
-                          />
-                        </td>
-                        <td>
-                          <input
-                            name="od_eje"
-                            value={formData.od_eje}
-                            onChange={handleChange}
-                            className="w-full p-1 border outline-none focus:ring-1 focus:ring-blue/30"
-                          />
-                        </td>
-                        <td>
-                          <input
-                            name="od_dip"
-                            value={formData.od_dip}
-                            onChange={handleChange}
-                            className="w-full p-1 border outline-none focus:ring-1 focus:ring-blue/30"
-                          />
-                        </td>
-                      </tr>
-                      <tr className="border-t">
-                        <td className="font-semibold p-2">OI</td>
-                        <td>
-                          <input
-                            name="oi_esf"
-                            value={formData.oi_esf}
-                            onChange={handleChange}
-                            className="w-full p-1 border outline-none focus:ring-1 focus:ring-blue/30"
-                          />
-                        </td>
-                        <td>
-                          <input
-                            name="oi_cil"
-                            value={formData.oi_cil}
-                            onChange={handleChange}
-                            className="w-full p-1 border outline-none focus:ring-1 focus:ring-blue/30"
-                          />
-                        </td>
-                        <td>
-                          <input
-                            name="oi_eje"
-                            value={formData.oi_eje}
-                            onChange={handleChange}
-                            className="w-full p-1 border outline-none focus:ring-1 focus:ring-blue/30"
-                          />
-                        </td>
-                        <td>
-                          <input
-                            name="oi_dip"
-                            value={formData.oi_dip}
-                            onChange={handleChange}
-                            className="w-full p-1 border outline-none focus:ring-1 focus:ring-blue/30"
-                          />
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                <div className="flex items-center gap-2 mt-4">
-                  <span className="text-sm font-semibold">ADD:</span>
-                  <input
-                    type="text"
-                    name="add"
-                    value={formData.add}
-                    onChange={handleChange}
-                    className="flex-1 border-0 border-b border-black focus:outline-none focus:border-blue"
-                  />
-                </div>
-              </div>
+              <BaseInput
+                label="Marca"
+                name="marca"
+                type="text"
+                value={formData.marca}
+                onChange={handleChange}
+              />
 
-              {/* MATERIAL DEL LENTE */}
-              <div className="mb-6 space-y-3">
-                <h3 className="font-semibold mb-3">Material del Lente</h3>
-                <div className="grid grid-cols-2 gap-3 text-sm">
-                  {[
-                    "Poly AR",
-                    "Poly Blue Green",
-                    "Poly Blue",
-                    "Poly Chromic Blue AR Gris",
-                    "NK Blue",
-                    "NK Chromic Ar Gris",
-                    "NK Chromic Blue AR Gris",
-                    "Crystal Blue",
-                    "Fotoblue Crystal Blue",
-                  ].map((item) => (
-                    <label
-                      key={item}
-                      className="flex items-center gap-2 cursor-pointer"
-                    >
-                      <input
-                        type="radio"
-                        name="materialLente"
-                        value={item}
-                        checked={formData.materialLente === item}
-                        onChange={handleChange}
-                        className="w-4 h-4 text-blue border-gray-300 focus:ring-blue"
-                      />
-                      {item}
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* MATERIAL MONTURA */}
-              <div className="mb-6 space-y-3">
-                <h3 className="font-semibold mb-3">Material de Montura</h3>
-                <div className="flex flex-wrap gap-x-6 gap-y-3 text-sm mb-4">
-                  {["Carey", "Acetato", "Metal", "TR-90", "Aluminio"].map(
-                    (item) => (
-                      <label
-                        key={item}
-                        className="flex items-center gap-2 cursor-pointer"
-                      >
-                        <input
-                          type="radio"
-                          name="materialMontura"
-                          value={item}
-                          checked={formData.materialMontura === item}
-                          onChange={handleChange}
-                          className="w-4 h-4 text-blue border-gray-300 focus:ring-blue"
-                        />
-                        {item}
-                      </label>
-                    ),
-                  )}
-                </div>
-                <div className="flex gap-6 mt-3 text-sm border-t pt-3 border-gray-200">
-                  {["Nueva", "Usada"].map((item) => (
-                    <label
-                      key={item}
-                      className="flex items-center gap-2 cursor-pointer"
-                    >
-                      <input
-                        type="radio"
-                        name="monturaEstado"
-                        value={item}
-                        checked={formData.monturaEstado === item}
-                        onChange={handleChange}
-                        className="w-4 h-4 text-blue border-gray-300 focus:ring-blue"
-                      />
-                      {item}
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Marca */}
-              <div className="mb-6">
-                <BaseInput
-                  label="Marca"
-                  name="marca"
-                  type="text"
-                  value={formData.marca}
-                  onChange={handleChange}
-                  fullWidth
-                />
-              </div>
-
-              {/* OBSERVACIONES + PRECIO */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div>
-                  <label className="font-semibold text-sm text-gray-700 block mb-2">
-                    Observaciones
-                  </label>
-                  <textarea
-                    name="orderObservations"
-                    rows={4}
-                    value={formData.orderObservations}
-                    onChange={handleChange}
-                    placeholder="Ingrese las observaciones de la orden"
-                    className="w-full rounded-md border border-gray-3 bg-gray-1 p-3 outline-none focus:ring-1 focus:ring-blue/30"
-                  />
-                </div>
-                <BaseInput
-                  label="Precio"
-                  name="precio"
-                  type="number"
-                  placeholder="0.00"
-                  value={formData.precio}
-                  onChange={handleChange}
-                  min={0}
-                  step="0.01"
-                  required
-                />
-              </div>
-
-              {/* Bisel */}
-              <div className="flex gap-6 text-sm border-t pt-4 border-gray-200">
-                <span className="font-semibold">Shiny bevel:</span>
-                {["yes", "no"].map((item) => (
-                  <label
-                    key={item}
-                    className="flex items-center gap-2 cursor-pointer"
-                  >
-                    <input
-                      type="radio"
-                      name="biselBrillante"
-                      value={item}
-                      checked={formData.biselBrillante === item}
-                      onChange={handleChange}
-                      className="w-4 h-4 text-blue border-gray-300 focus:ring-blue"
-                    />
-                    {item.toUpperCase()}
-                  </label>
-                ))}
-              </div>
+              <BaseInput
+                label="Precio"
+                name="precio"
+                type="number"
+                value={formData.precio}
+                onChange={handleChange}
+              />
             </div>
           </div>
         )}

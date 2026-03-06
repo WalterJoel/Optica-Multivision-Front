@@ -17,7 +17,8 @@ const emptyForm: ICreateAccessory = {
 
 export default function CreateAccessory() {
   const [form, setForm] = useState<ICreateAccessory>(emptyForm);
-  const { addAccessory, loading, statusMessage, success } = useCreateAccessory();
+  const { addAccessory, loading, statusMessage, success } =
+    useCreateAccessory();
   const [typeModal, setTypeModal] = useState<string>("");
   const [openModal, setOpenModal] = useState<boolean>(false);
 
@@ -51,16 +52,16 @@ export default function CreateAccessory() {
   };
 
   useEffect(() => {
-      if (!loading && (success || statusMessage)) {
-        if (success) {
-          setTypeModal(STATUS_MODAL.SUCCESS_MODAL);
-          setForm(emptyForm);
-        } else {
-          setTypeModal(STATUS_MODAL.ERROR_MODAL);
-        }
-        setOpenModal(true);
+    if (!loading && (success || statusMessage)) {
+      if (success) {
+        setTypeModal(STATUS_MODAL.SUCCESS_MODAL);
+        setForm(emptyForm);
+      } else {
+        setTypeModal(STATUS_MODAL.ERROR_MODAL);
       }
-    }, [loading, success, statusMessage]);
+      setOpenModal(true);
+    }
+  }, [loading, success, statusMessage]);
 
   return (
     <form
@@ -116,7 +117,7 @@ export default function CreateAccessory() {
           Crear Accesorio
         </BaseButton>
       </div>
-      
+
       <LoadingModal isOpen={loading} />
       <StatusModal
         isOpen={openModal}
@@ -124,7 +125,6 @@ export default function CreateAccessory() {
         message={statusMessage}
         onClose={() => setOpenModal(false)}
       />
-
     </form>
   );
 }
