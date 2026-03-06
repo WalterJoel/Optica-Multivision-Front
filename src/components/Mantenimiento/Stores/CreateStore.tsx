@@ -1,25 +1,25 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { BaseInput } from "@/components/Common/Inputs/BaseInput";
-import { BaseButton } from "@/components/Common/Buttons/BaseButton";
-import { ICreateStore } from "@/types/stores";
-import { useCreateStore } from "@/hooks/stores";
-import { StatusModal, LoadingModal } from "@/components/Common/modal";
-import { STATUS_MODAL } from "@/commons/constants";
+import { useState, useEffect } from 'react';
+import { BaseInput } from '@/components/Common/Inputs/BaseInput';
+import { BaseButton } from '@/components/Common/Buttons/BaseButton';
+import { ICreateStore } from '@/types/stores';
+import { useCreateStore } from '@/hooks/stores';
+import { StatusModal, LoadingModal } from '@/components/Common/modal';
+import { STATUS_MODAL } from '@/commons/constants';
 
 const emptyForm: ICreateStore = {
-  nombre: "",
-  ruc: "",
-  direccion: "",
-  telefono: "",
-  logoUrl: "",
+  nombre: '',
+  ruc: '',
+  direccion: '',
+  telefono: '',
+  logoUrl: '',
 };
 
 export default function CreateStore() {
   const [form, setForm] = useState<ICreateStore>(emptyForm);
   const { addStore, success, statusMessage, loading } = useCreateStore();
-  const [typeModal, setTypeModal] = useState<string>("");
+  const [typeModal, setTypeModal] = useState<string>('');
   const [openModal, setOpenModal] = useState<boolean>(false);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
