@@ -15,9 +15,15 @@ export interface ICreateKitAccesory {
   accesorioId: number;
 }
 
-export type ICreateKit = {
+export interface IListKitAccesory {
+  accesorioId: number;
+  nombre: string;
+  cantidad: number;
+}
+
+export interface ICreateKit {
   nombre: string;
   precio: number;
   descripcion: string;
   accesorios: ICreateKitAccesory[];
-};
+}
