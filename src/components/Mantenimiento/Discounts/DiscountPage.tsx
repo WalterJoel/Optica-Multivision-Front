@@ -8,7 +8,7 @@ import CreateLensDiscount from "./CreateLensDiscount";
 // import ListClients from "./CreateAccesoryDiscount";
 
 export default function DiscountPage() {
-  const [tab, setTab] = useState("crear");
+  const [tab, setTab] = useState("lente");
 
   const tabsData = [
     { key: "lente", label: "Lentes", icon: <CirclePlus size={22} /> },

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { BaseInput } from "@/components/Common/Inputs";
 import { BaseButton } from "@/components/Common/Buttons";
-import BaseSearchInput from "@/components/Common/Inputs/BaseSearchInput";
+import { BaseSearchInput } from "@/components/Common/Inputs/BaseSearchInput";
 import BaseSelectCard from "@/components/Common/Cards/BaseSelectCard";
 import { useSearchLens } from "@/hooks/products/lens";
 import { ILens } from "@/types/products/lens";

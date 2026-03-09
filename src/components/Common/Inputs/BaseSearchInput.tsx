@@ -14,10 +14,10 @@ interface BaseSearchInputProps<T> {
   results: T[];
   showList: boolean;
   renderItem: (item: T) => React.ReactNode;
-  error?: boolean; // Prop opcional para error visual
+  error?: boolean;
 }
 
-export default function BaseSearchInput<T>({
+export const BaseSearchInput = <T,>({
   label,
   name,
   required,
@@ -28,7 +28,7 @@ export default function BaseSearchInput<T>({
   showList,
   renderItem,
   error,
-}: BaseSearchInputProps<T>) {
+}: BaseSearchInputProps<T>) => {
   return (
     <div className="flex flex-col gap-2 w-full group">
       {label && (
@@ -54,7 +54,7 @@ export default function BaseSearchInput<T>({
             onChange={(e) => onChange(e.target.value)}
             placeholder={placeholder}
             autoComplete="off"
-            required={required} // Validación nativa de HTML5
+            required={required}
             className={`w-full bg-white rounded-full pl-11 pr-10 py-2.5 
                        outline-none transition-all duration-200 text-sm shadow-sm
                        placeholder:text-gray-400
@@ -101,4 +101,4 @@ export default function BaseSearchInput<T>({
       </div>
     </div>
   );
-}
+};
