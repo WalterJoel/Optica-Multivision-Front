@@ -12,6 +12,8 @@ interface InputProps {
   max?: number;
   step?: number | string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
   pattern?: string;
   title?: string;
 }
@@ -28,15 +30,17 @@ export const BaseInput = ({
   max,
   step,
   onChange,
+  onFocus,
+  onBlur,
   pattern,
   title,
 }: InputProps) => {
   return (
-    <div className="flex flex-col gap-1 w-full">
+    <div className="flex flex-col gap-2 w-full group">
       {label && (
-        <label htmlFor={name} className="text-sm font-medium text-gray-600">
+        <label htmlFor={name} className="text-sm font-medium text-gray-500">
           {label}
-          {required && <span className="text-red ml-1">*</span>}
+          {required && <span className="text-red-500 ml-1">*</span>}
         </label>
       )}
 
@@ -51,13 +55,15 @@ export const BaseInput = ({
         min={type === "number" ? min : undefined}
         max={type === "number" ? max : undefined}
         step={type === "number" ? step : undefined}
-        pattern={pattern} // Patron de validacion
-        title={title} // Mensaje de error que muestra el navegador
+        pattern={pattern}
+        title={title}
         onChange={onChange}
-        className="rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5
-                   w-full py-2.5 px-5 outline-none duration-200
-                   focus:border-transparent focus:shadow-input
-                   focus:ring-2 focus:ring-blue/20"
+        onFocus={onFocus}
+        onBlur={onBlur}
+        className="w-full bg-white border border-gray-100 text-dark rounded-full py-2.5 px-5 
+                   outline-none transition-all duration-200 text-sm shadow-sm shadow-gray-50/50
+                   placeholder:text-gray-300
+                   focus:border-blue focus:ring-4 focus:ring-blue/10"
       />
     </div>
   );

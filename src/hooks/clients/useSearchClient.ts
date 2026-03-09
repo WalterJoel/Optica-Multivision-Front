@@ -33,20 +33,11 @@ export function useSearchClient() {
     }, 300);
   };
 
-  const selectClient = (client: ISearchClient) => {
-    const name = client.nombres
-      ? `${client.nombres} ${client.apellidos ?? ""}`
-      : client.numeroDoc;
-
-    setClients([]);
-    setShowList(false);
-  };
-
   return {
     clients,
     loading,
     showList,
     searchClients,
-    selectClient,
+    setShowList,
   };
 }

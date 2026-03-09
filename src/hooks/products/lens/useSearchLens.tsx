@@ -1,10 +1,10 @@
 import { useState, useRef } from "react";
-import { ISearchlen } from "@/types/lens";
-import { searchlen } from "@/services/lens";
+import { ILens } from "@/types/products/lens";
+import { searchLens } from "@/services/products/lens";
 
 export function useSearchLens() {
   const [loading, setLoading] = useState(false);
-  const [lens, setLens] = useState<ISearchlen[]>([]);
+  const [lens, setLens] = useState<ILens[]>([]);
   const [showList, setShowList] = useState(false);
 
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
@@ -22,24 +22,15 @@ export function useSearchLens() {
       setLoading(true);
 
       try {
-        const data = await searchlen(value);
+        const data = await searchLens(value);
         setLens(data);
         setShowList(true);
       } catch (error) {
-        console.error("Error buscando lenes", error);
+        console.error("Error buscando lentes", error);
       } finally {
         setLoading(false);
       }
     }, 300);
-  };
-
-  const selectlen = (len: ISearchlen) => {
-    const name = len.nombres
-      ? `${len.nombres} ${len.apellidos ?? ""}`
-      : len.numeroDoc;
-
-    setLens([]);
-    setShowList(false);
   };
 
   return {
@@ -47,6 +38,6 @@ export function useSearchLens() {
     loading,
     showList,
     searchlens,
-    selectlen,
+    setShowList,
   };
 }
