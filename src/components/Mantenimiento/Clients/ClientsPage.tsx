@@ -7,7 +7,7 @@ import { BaseTabs } from "@/components/Common/Inputs";
 import CreateClient from "./CreateClient";
 import ListClients from "./ListClients";
 
-export default function ClientesPage() {
+export default function ClientsPage() {
   const [tab, setTab] = useState("crear");
 
   const tabsData = [
