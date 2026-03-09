@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BaseInput } from "@/components/Common/Inputs";
 import { BaseButton } from "@/components/Common/Buttons";
 import BaseSearchInput from "@/components/Common/Inputs/BaseSearchInput";
@@ -8,7 +8,11 @@ import BaseSelectCard from "@/components/Common/Cards/BaseSelectCard";
 import { useSearchLens } from "@/hooks/products/lens";
 import { ILens } from "@/types/products/lens";
 import { useSearchClient } from "@/hooks/clients";
+import { useCreateDiscount } from "@/hooks/discounts";
 import { ISearchClient } from "@/types/clients";
+import { ICreateDiscount } from "@/types/discounts";
+import { PRODUCTOS, STATUS_MODAL } from "@/commons/constants";
+import { LoadingModal, StatusModal } from "@/components/Common/modal";
 
 interface Series {
   id: number;
@@ -18,7 +22,19 @@ interface Series {
   icono: string;
 }
 
+const emptyForm: ICreateDiscount = {
+  clienteId: 0,
+  productoId: 0,
+  montoDescuento: 0,
+  serie: "",
+  tipoProducto: PRODUCTOS.LENTE,
+};
+
 const SeriesDescuentos = () => {
+  const [form, setForm] = useState<ICreateDiscount>(emptyForm);
+  const [searchLensTerm, setSearchLensTerm] = useState("");
+  const [searchClientTerm, setSearchClientTerm] = useState("");
+  const [selectedId, setSelectedId] = useState<number>(1);
   const [series, setSeries] = useState<Series[]>([
     {
       id: 1,
@@ -43,17 +59,8 @@ const SeriesDescuentos = () => {
     },
   ]);
 
-  const [selectedId, setSelectedId] = useState<number>(1);
-
-  const [searchLensTerm, setSearchLensTerm] = useState("");
-  const [selectedLens, setSelectedLens] = useState<ILens | null>(null);
-
-  const [searchClientTerm, setSearchClientTerm] = useState("");
-  const [selectedClient, setSelectedClient] = useState<ISearchClient | null>(
-    null,
-  );
-
   const { searchlens, lens, showList, setShowList } = useSearchLens();
+  const { addDiscount, loading, statusMessage, success } = useCreateDiscount();
   const {
     searchClients,
     clients,
@@ -61,11 +68,13 @@ const SeriesDescuentos = () => {
     setShowList: setShowListClient,
   } = useSearchClient();
 
+  const [typeModal, setTypeModal] = useState<string>("");
+  const [openModal, setOpenModal] = useState<boolean>(false);
+
   const handleSelectLens = (l: ILens) => {
-    setSelectedLens(l);
     setSearchLensTerm(l.marca);
     setShowList(false);
-
+    setForm((prev) => ({ ...prev, productoId: l.id }));
     setSeries((prev) =>
       prev.map((s) => ({
         ...s,
@@ -75,149 +84,154 @@ const SeriesDescuentos = () => {
   };
 
   const handleSelectClient = (c: ISearchClient) => {
-    setSelectedClient(c);
     setSearchClientTerm(`${c.nombres} ${c.apellidos}`);
     setShowListClient(false);
+    setForm((prev) => ({ ...prev, clienteId: c.id }));
   };
 
-  const handleDescuentoChange = (valor: number) => {
+  const handleSerieChange = (id: number) => {
+    setSelectedId(id);
+    const selected = series.find((s) => s.id === id);
+    setForm((prev) => ({
+      ...prev,
+      serie: selected?.nombre || "",
+      montoDescuento: selected?.descuento || 0,
+    }));
+  };
+
+  const handleDescuentoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    const numericValue = val === "" ? 0 : Number(val);
+
     setSeries((prev) =>
-      prev.map((s) => (s.id === selectedId ? { ...s, descuento: valor } : s)),
+      prev.map((s) =>
+        s.id === selectedId ? { ...s, descuento: numericValue } : s,
+      ),
     );
+    setForm((prev) => ({ ...prev, montoDescuento: numericValue }));
   };
 
-  const selectedSerie = series.find((s) => s.id === selectedId)!;
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await addDiscount(form);
+  };
+
+  const resetAll = () => {
+    setForm(emptyForm);
+    setSearchLensTerm("");
+    setSearchClientTerm("");
+    setSelectedId(1);
+    setSeries((prev) => prev.map((s) => ({ ...s, precio: 0, descuento: 0 })));
+  };
+
+  useEffect(() => {
+    if (!loading && (success || statusMessage)) {
+      if (success) {
+        setTypeModal(STATUS_MODAL.SUCCESS_MODAL);
+        resetAll();
+      } else {
+        setTypeModal(STATUS_MODAL.ERROR_MODAL);
+      }
+      setOpenModal(true);
+    }
+  }, [loading, success, statusMessage]);
 
   return (
-    <form className="flex flex-col gap-8 p-6 w-full max-w-5xl mx-auto">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
-        <BaseSearchInput
-          label="Buscar Cliente"
-          name="clientSearch"
-          value={searchClientTerm}
-          onChange={(val) => {
-            setSearchClientTerm(val);
-            searchClients(val);
-          }}
-          placeholder="Buscar por DNI, nombre o apellido"
-          results={clients}
-          showList={showListClient}
-          renderItem={(c: ISearchClient) => (
-            <div
-              onMouseDown={() => handleSelectClient(c)}
-              className="w-full flex items-center justify-between gap-4"
-            >
-              <span className="truncate">
-                {c.nombres} {c.apellidos}
-              </span>
-              <span className="text-[11px] font-mono text-gray-400 bg-gray-50 px-2 py-0.5 rounded border border-gray-100 shrink-0">
-                DNI: {c.numeroDoc}
-              </span>
-            </div>
-          )}
-        />
+    <>
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-8 p-6 w-full max-w-5xl mx-auto"
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
+          <BaseSearchInput
+            label="Buscar Cliente"
+            value={searchClientTerm}
+            required
+            onChange={(val) => {
+              setSearchClientTerm(val);
+              searchClients(val);
+            }}
+            results={clients}
+            showList={showListClient}
+            renderItem={(c: ISearchClient) => (
+              <div
+                onMouseDown={() => handleSelectClient(c)}
+                className="w-full flex items-center justify-between gap-4"
+              >
+                <span className="truncate">
+                  {c.nombres} {c.apellidos}
+                </span>
+                <span className="text-[11px] font-mono text-blue-dark bg-blue-light/10 px-2 py-0.5 rounded border border-blue-dark/20 shrink-0">
+                  DNI: {c.numeroDoc}
+                </span>
+              </div>
+            )}
+          />
 
-        <BaseSearchInput
-          label="Buscar Lente"
-          name="lensSearch"
-          value={searchLensTerm}
-          onChange={(val) => {
-            setSearchLensTerm(val);
-            searchlens(val);
-          }}
-          placeholder="Buscar por nombre, marca o material"
-          results={lens}
-          showList={showList}
-          renderItem={(l: ILens) => (
-            <div onMouseDown={() => handleSelectLens(l)} className="w-full">
-              {l.marca}
-            </div>
-          )}
-        />
-      </div>
-
-      <div className="flex flex-col gap-4">
-        <label className="text-sm font-medium text-gray-600">
-          Seleccione la Serie
-        </label>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {series.map((s) => (
-            <BaseSelectCard
-              key={s.id}
-              id={s.id}
-              title={s.nombre}
-              price={s.precio}
-              icon={s.icono}
-              selected={selectedId === s.id}
-              onSelect={setSelectedId}
-            />
-          ))}
+          <BaseSearchInput
+            label="Buscar Lente"
+            value={searchLensTerm}
+            required
+            onChange={(val) => {
+              setSearchLensTerm(val);
+              searchlens(val);
+            }}
+            results={lens}
+            showList={showList}
+            renderItem={(l: ILens) => (
+              <div onMouseDown={() => handleSelectLens(l)} className="w-full">
+                {l.marca}
+              </div>
+            )}
+          />
         </div>
-      </div>
 
-      <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-col gap-4">
+          <label className="text-sm font-medium text-gray-500">
+            Seleccione la Serie
+          </label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {series.map((s) => (
+              <BaseSelectCard
+                key={s.id}
+                id={s.id}
+                title={s.nombre}
+                price={s.precio}
+                icon={s.icono}
+                selected={selectedId === s.id}
+                onSelect={handleSerieChange}
+              />
+            ))}
+          </div>
+        </div>
+
         <div className="flex-1 max-w-xs">
           <BaseInput
             label="Monto de Descuento"
             type="number"
-            value={selectedSerie.descuento}
-            onChange={(e) => handleDescuentoChange(Number(e.target.value))}
+            name="montoDescuento"
+            required
+            value={form.montoDescuento === 0 ? "" : form.montoDescuento}
+            placeholder="0"
+            onChange={handleDescuentoChange}
           />
         </div>
-      </div>
 
-      {/* DETALLE DE SELECCIÓN */}
-      {(selectedLens || selectedClient) && (
-        <div className="bg-blue-light-5 p-4 rounded-2xl border border-blue-light-4 flex flex-col gap-2 shadow-sm shadow-blue/5">
-          {selectedClient && (
-            <p className="text-sm text-blue-dark flex justify-between items-center">
-              <span>
-                👤 Cliente:{" "}
-                <span className="font-bold">
-                  {selectedClient.nombres} {selectedClient.apellidos}
-                </span>
-              </span>
-              <span className="text-[10px] bg-blue-light/20 px-2 py-0.5 rounded-full font-mono uppercase tracking-tighter">
-                DNI: {selectedClient.numeroDoc}
-              </span>
-            </p>
-          )}
-
-          {selectedLens && (
-            <p className="text-sm text-blue-dark">
-              👓 Lente: <span className="font-bold">{selectedLens.marca}</span>
-              {selectedLens.material && (
-                <span className="text-blue-dark/60 italic">
-                  {" "}
-                  — {selectedLens.material}
-                </span>
-              )}
-            </p>
-          )}
-
-          <div className="h-px bg-blue-light-4 my-1" />
-
-          <div className="flex items-center gap-4 text-sm text-blue-dark">
-            <p>
-              📦 Serie:{" "}
-              <span className="font-bold">{selectedSerie.nombre}</span>
-            </p>
-            <p>
-              💰 Descuento:{" "}
-              <span className="font-bold text-blue">
-                S/ {selectedSerie.descuento || 0}
-              </span>
-            </p>
-          </div>
+        <div className="mt-6 flex justify-center">
+          <BaseButton type="submit" disabled={loading}>
+            Crear descuento
+          </BaseButton>
         </div>
-      )}
+      </form>
 
-      <div className="mt-6 flex justify-center">
-        <BaseButton type="submit" className="min-w-[240px]">
-          Crear descuento
-        </BaseButton>
-      </div>
-    </form>
+      <LoadingModal isOpen={loading} />
+      <StatusModal
+        isOpen={openModal}
+        type={typeModal}
+        message={statusMessage}
+        onClose={() => setOpenModal(false)}
+      />
+    </>
   );
 };
 

@@ -40,7 +40,7 @@ export const BaseInput = ({
       {label && (
         <label htmlFor={name} className="text-sm font-medium text-gray-500">
           {label}
-          {required && <span className="text-red-500 ml-1">*</span>}
+          {required && <span className="text-red ml-1">*</span>}
         </label>
       )}
 

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search } from "lucide-react";
+import { Search, AlertCircle } from "lucide-react";
 
 interface BaseSearchInputProps<T> {
   label?: string;
@@ -14,6 +14,7 @@ interface BaseSearchInputProps<T> {
   results: T[];
   showList: boolean;
   renderItem: (item: T) => React.ReactNode;
+  error?: boolean; // Prop opcional para error visual
 }
 
 export default function BaseSearchInput<T>({
@@ -26,33 +27,49 @@ export default function BaseSearchInput<T>({
   results,
   showList,
   renderItem,
+  error,
 }: BaseSearchInputProps<T>) {
   return (
     <div className="flex flex-col gap-2 w-full group">
       {label && (
         <label htmlFor={name} className="text-sm font-medium text-gray-500">
           {label}
-          {required && <span className="text-red-500 ml-1">*</span>}
+          {required && <span className="text-red ml-1">*</span>}
         </label>
       )}
 
       <div className="relative w-full">
         <div className="relative w-full">
-          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-dark/50 group-focus-within:text-blue transition-colors z-10">
+          <div
+            className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors z-10 
+            ${error ? "text-red-500" : "text-blue-dark/50 group-focus-within:text-blue"}`}
+          >
             <Search size={18} />
           </div>
 
           <input
             id={name}
+            name={name}
             value={value}
             onChange={(e) => onChange(e.target.value)}
             placeholder={placeholder}
             autoComplete="off"
-            className="w-full bg-white border border-blue-dark/20 text-blue-dark rounded-full pl-11 pr-4 py-2.5 
-                       outline-none transition-all duration-200 text-sm
-                       focus:border-blue focus:ring-4 focus:ring-blue/10
-                       placeholder:text-gray-400 shadow-sm"
+            required={required} // Validación nativa de HTML5
+            className={`w-full bg-white rounded-full pl-11 pr-10 py-2.5 
+                       outline-none transition-all duration-200 text-sm shadow-sm
+                       placeholder:text-gray-400
+                       ${
+                         error
+                           ? "border-2 border-red-500 focus:ring-red-100"
+                           : "border border-blue-dark/20 focus:border-blue focus:ring-4 focus:ring-blue/10"
+                       }`}
           />
+
+          {error && (
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-red-500">
+              <AlertCircle size={18} />
+            </div>
+          )}
         </div>
 
         <AnimatePresence>
