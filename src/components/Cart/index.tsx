@@ -30,6 +30,10 @@ const Cart = () => {
                     </div>
 
                     <div className="min-w-[180px]">
+                      <p className="text-dark">Cilindro</p>
+                    </div>
+
+                    <div className="min-w-[180px]">
                       <p className="text-dark">Precio</p>
                     </div>
 

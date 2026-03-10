@@ -48,7 +48,6 @@ const SingleItem = ({ item }) => {
             <div>
               <h3 className="text-dark ease-out duration-200 hover:text-blue">
                 <a href="#"> {item.title} </a>
-                <a href="#"> {item.id} </a>
               </h3>
             </div>
           </div>
@@ -56,7 +55,11 @@ const SingleItem = ({ item }) => {
       </div>
 
       <div className="min-w-[180px]">
-        <p className="text-dark">${item.discountedPrice}</p>
+        <p className="text-dark">{item.cyl}</p>
+      </div>
+
+      <div className="min-w-[180px]">
+        <p className="text-dark">S/. {item.discountedPrice}</p>
       </div>
 
       <div className="min-w-[275px]">

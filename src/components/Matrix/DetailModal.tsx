@@ -32,7 +32,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({
 
     const itemToCart = {
       id: selected.id,
-      title: "Lente " + selected.cyl,
+      title: "Lente",
       discountedPrice: price, // usa el precio calculado
       price: price,
       quantity: 1,
