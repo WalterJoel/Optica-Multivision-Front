@@ -8,6 +8,8 @@ type InitialState = {
 type CartItem = {
   id: number;
   title: string;
+  cyl: number;
+  isLens: boolean;
   price: number;
   discountedPrice: number;
   quantity: number;
@@ -26,7 +28,7 @@ export const cart = createSlice({
   initialState,
   reducers: {
     addItemToCart: (state, action: PayloadAction<CartItem>) => {
-      const { id, title, price, quantity, discountedPrice, imgs } =
+      const { id, title, price, quantity, discountedPrice, imgs, isLens, cyl } =
         action.payload;
       const existingItem = state.items.find((item) => item.id === id);
 
@@ -40,6 +42,8 @@ export const cart = createSlice({
           quantity,
           discountedPrice,
           imgs,
+          cyl,
+          isLens,
         });
       }
     },
@@ -49,7 +53,7 @@ export const cart = createSlice({
     },
     updateCartItemQuantity: (
       state,
-      action: PayloadAction<{ id: number; quantity: number }>
+      action: PayloadAction<{ id: number; quantity: number }>,
     ) => {
       const { id, quantity } = action.payload;
       const existingItem = state.items.find((item) => item.id === id);

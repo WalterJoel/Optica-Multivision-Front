@@ -36,6 +36,8 @@ export const DetailModal: React.FC<DetailModalProps> = ({
       discountedPrice: price, // usa el precio calculado
       price: price,
       quantity: 1,
+      cyl: selected.cyl,
+      isLens: true, //TODO: MEJORAR
       imgs: {
         thumbnails: [
           "https://www.flaticon.es/icono-gratis/anteojos-con-media-montura_27114",

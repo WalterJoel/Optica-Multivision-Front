@@ -4,8 +4,11 @@ import React, { useState } from "react";
 import { BaseSearchInput } from "@/components/Common/Inputs";
 import { useSearchClient } from "@/hooks/clients";
 import { ISearchClient } from "@/types/clients";
+import { useAppSelector } from "@/redux/store";
 
 const Discount = () => {
+  const cartItems = useAppSelector((state) => state.cartReducer.items);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedClientId, setSelectedClientId] = useState<number | null>(null);
 
@@ -69,7 +72,7 @@ const Discount = () => {
                 type="submit"
                 className="inline-flex font-medium text-white bg-blue py-3 px-8 rounded-full ease-out duration-200 hover:bg-blue-dark h-[46px] items-center"
               >
-                Aplicar
+                Buscar
               </button>
             </div>
           </div>

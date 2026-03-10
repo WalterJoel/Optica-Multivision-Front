@@ -1,7 +1,7 @@
 export interface ICreateDiscount {
   clienteId: number;
   productoId: number;
-  serie?: string;
+  serie?: number;
   montoDescuento: number;
   tipoProducto: string;
 }

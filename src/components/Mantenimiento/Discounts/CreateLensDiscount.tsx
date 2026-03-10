@@ -17,6 +17,7 @@ import { LoadingModal, StatusModal } from "@/components/Common/modal";
 interface Series {
   id: number;
   nombre: string;
+  value: number;
   precio: number;
   descuento: number;
   icono: string;
@@ -26,7 +27,7 @@ const emptyForm: ICreateDiscount = {
   clienteId: 0,
   productoId: 0,
   montoDescuento: 0,
-  serie: "",
+  serie: 1, //Default
   tipoProducto: PRODUCTOS.LENTE,
 };
 
@@ -40,6 +41,7 @@ const SeriesDescuentos = () => {
       id: 1,
       nombre: "Serie 1",
       precio: 0,
+      value: 1,
       descuento: 0,
       icono: "/images/icons/serie1.png",
     },
@@ -47,6 +49,7 @@ const SeriesDescuentos = () => {
       id: 2,
       nombre: "Serie 2",
       precio: 0,
+      value: 2,
       descuento: 0,
       icono: "/images/icons/serie2.png",
     },
@@ -54,6 +57,7 @@ const SeriesDescuentos = () => {
       id: 3,
       nombre: "Serie 3",
       precio: 0,
+      value: 3,
       descuento: 0,
       icono: "/images/icons/serie3.png",
     },
@@ -94,7 +98,7 @@ const SeriesDescuentos = () => {
     const selected = series.find((s) => s.id === id);
     setForm((prev) => ({
       ...prev,
-      serie: selected?.nombre || "",
+      serie: selected?.value || 1,
       montoDescuento: selected?.descuento || 0,
     }));
   };
