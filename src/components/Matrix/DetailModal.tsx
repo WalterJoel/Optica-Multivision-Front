@@ -49,6 +49,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({
     };
 
     dispatch(addItemToCart(itemToCart));
+    onClose();
   };
 
   useEffect(() => {

@@ -5,6 +5,7 @@ import { BaseSearchInput } from "@/components/Common/Inputs";
 import { useSearchClient } from "@/hooks/clients";
 import { ISearchClient } from "@/types/clients";
 import { useAppSelector } from "@/redux/store";
+import { useSearchDiscountByProducts } from "@/hooks/discounts";
 
 const Discount = () => {
   const cartItems = useAppSelector((state) => state.cartReducer.items);
@@ -13,19 +14,43 @@ const Discount = () => {
   const [selectedClientId, setSelectedClientId] = useState<number | null>(null);
 
   const { clients, searchClients, setShowList, showList } = useSearchClient();
+  const { discounts, searchDiscounts } = useSearchDiscountByProducts();
 
+  // Seleccionar cliente
   const handleSelectClient = (client: ISearchClient) => {
     setSearchTerm(`${client.nombres} ${client.apellidos}`);
     setSelectedClientId(client.id);
     setShowList(false);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Obtener la serie para lentes
+  const obtenerSeriePorCilindro = (cyl: number | null): number => {
+    if (cyl === null) return 1;
+    return Math.min(3, Math.ceil(Math.abs(cyl) / 2));
+  };
+
+  // Enviar al backend
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!selectedClientId) {
       alert("Por favor selecciona un cliente de la lista");
       return;
     }
+
+    // Transformar items del carrito
+    const productosPayload = cartItems.map((item) => ({
+      // productoId: item.id,
+      productoId: 3,
+      esLente: item.isLens,
+      cyl: item.isLens ? item.cyl : null,
+    }));
+    console.log(productosPayload, " --- PAYLOAD");
+    // Ejecutar hook para buscar descuentos
+    await searchDiscounts({
+      clienteId: selectedClientId,
+      productos: productosPayload,
+    });
   };
 
   return (
@@ -55,7 +80,7 @@ const Discount = () => {
                   renderItem={(c: ISearchClient) => (
                     <div
                       onMouseDown={() => handleSelectClient(c)}
-                      className="w-full flex items-center justify-between gap-4"
+                      className="w-full flex items-center justify-between gap-4 cursor-pointer"
                     >
                       <span className="truncate">
                         {c.nombres} {c.apellidos}
@@ -75,6 +100,31 @@ const Discount = () => {
                 Buscar
               </button>
             </div>
+
+            {/* Mostrar descuentos */}
+            {discounts.length > 0 && (
+              <div className="mt-6">
+                <h4 className="font-medium text-dark mb-3">
+                  Descuentos aplicables:
+                </h4>
+                <ul className="space-y-2">
+                  {discounts.map((d) => (
+                    <li
+                      key={`${d.productoId}-${d.serie ?? "no-serie"}`}
+                      className="flex justify-between bg-gray-100 px-4 py-2 rounded"
+                    >
+                      <span>
+                        {d.nombreProducto}{" "}
+                        {d.esLente ? `(Serie ${d.serie})` : ""}
+                      </span>
+                      <span className="font-medium">
+                        S/. {d.montoDescuento}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
       </form>
