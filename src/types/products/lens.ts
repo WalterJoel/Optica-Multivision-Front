@@ -1,6 +1,6 @@
 import { PRODUCTOS } from "@/commons/constants";
 
-export interface Lens {
+export interface ILens {
   id: number;
   marca: string;
   material: string;
@@ -10,7 +10,7 @@ export interface Lens {
   imagenUrl: string;
 }
 
-export type CreateLens = Omit<Lens, "id"> & {
+export type CreateLens = Omit<ILens, "id"> & {
   tipo: PRODUCTOS;
 };
 
@@ -21,4 +21,9 @@ export type InventoryByStoreResponse = {
     nombre: string;
     unidades: number;
   }[];
+};
+
+export type ISearchLensResponse = {
+  total: number;
+  lentes: ILens[];
 };

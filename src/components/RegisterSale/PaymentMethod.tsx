@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { BaseInput, BaseTabs } from "@/components/Common/Inputs";
+import { BaseInput, BaseTabs, BaseTarea } from "@/components/Common/Inputs";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useSearchClient } from "@/hooks/clients";
@@ -24,14 +24,14 @@ const PaymentMethod = () => {
     { key: "plin", label: "Plin", icon: "/images/cart/plin.png" },
   ];
 
-  const [formData, setFormData] = useState({
+  const [form, setform] = useState({
     amountReceived: "",
     method: "",
     date: new Date().toISOString().slice(0, 10),
     customerSearch: "",
     total: 125,
     payment: "",
-    observations: "",
+    observaciones: "",
     responsible: "",
 
     orderId: "",
@@ -47,12 +47,12 @@ const PaymentMethod = () => {
   const [debt, setDebt] = useState(0);
   const [showClientList, setShowClientList] = useState(false);
 
-  const handleChange = (
+  const onChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
 
-    setFormData((prev) => ({
+    setform((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -68,7 +68,7 @@ const PaymentMethod = () => {
   /* seleccionar cliente */
 
   const selectClient = (client: any) => {
-    setFormData((prev) => ({
+    setform((prev) => ({
       ...prev,
       customerSearch: client.nombres
         ? `${client.nombres} ${client.apellidos ?? ""}`
@@ -81,14 +81,14 @@ const PaymentMethod = () => {
   /* CALCULOS */
 
   useEffect(() => {
-    const payment = parseFloat(formData.payment) || 0;
+    const payment = parseFloat(form.payment) || 0;
 
     if (paymentType === "cash") {
-      setChange(payment - formData.total);
+      setChange(payment - form.total);
     } else {
-      setDebt(formData.total - payment);
+      setDebt(form.total - payment);
     }
-  }, [formData.payment, paymentType, formData.total]);
+  }, [form.payment, paymentType, form.total]);
 
   return (
     <div>
@@ -129,7 +129,7 @@ const PaymentMethod = () => {
 
                 <div className="grid grid-cols-4 gap-4">
                   {paymentMethods.map((method) => {
-                    const active = formData.method === method.key;
+                    const active = form.method === method.key;
 
                     return (
                       <motion.button
@@ -138,7 +138,7 @@ const PaymentMethod = () => {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() =>
-                          setFormData((prev) => ({
+                          setform((prev) => ({
                             ...prev,
                             method: method.key,
                           }))
@@ -168,8 +168,8 @@ const PaymentMethod = () => {
                   name="customerSearch"
                   type="text"
                   placeholder="Buscar por DNI, nombre o apellido"
-                  value={formData.customerSearch}
-                  onChange={handleChange}
+                  value={form.customerSearch}
+                  onChange={onChange}
                 />
 
                 {showClientList && (
@@ -208,7 +208,7 @@ const PaymentMethod = () => {
                   label="Total"
                   name="total"
                   type="text"
-                  value={`S/ ${formData.total}`}
+                  value={`S/ ${form.total}`}
                   onChange={() => {}}
                   readOnly
                 />
@@ -217,8 +217,8 @@ const PaymentMethod = () => {
                   label="Pago"
                   name="payment"
                   type="number"
-                  value={formData.payment}
-                  onChange={handleChange}
+                  value={form.payment}
+                  onChange={onChange}
                 />
 
                 <BaseInput
@@ -235,21 +235,20 @@ const PaymentMethod = () => {
 
               {/* OBSERVACIONES */}
 
-              <textarea
-                name="observations"
-                rows={3}
-                value={formData.observations}
-                onChange={handleChange}
-                className="border rounded p-2 w-full"
-                placeholder="Observaciones"
+              <BaseTarea
+                label="Descripción"
+                name="atributo"
+                value={form.observaciones}
+                placeholder="Descripción breve del accesorio"
+                onChange={onChange}
               />
 
               <BaseInput
                 label="Responsable"
                 name="responsible"
                 type="text"
-                value={formData.responsible}
-                onChange={handleChange}
+                value={form.responsible}
+                onChange={onChange}
               />
 
               <button
@@ -271,48 +270,48 @@ const PaymentMethod = () => {
                 label="Orden ID"
                 name="orderId"
                 type="text"
-                value={formData.orderId}
-                onChange={handleChange}
+                value={form.orderId}
+                onChange={onChange}
               />
 
               <BaseInput
                 label="Óptica"
                 name="optica"
                 type="text"
-                value={formData.optica}
-                onChange={handleChange}
+                value={form.optica}
+                onChange={onChange}
               />
 
               <BaseInput
                 label="Celular"
                 name="celular"
                 type="text"
-                value={formData.celular}
-                onChange={handleChange}
+                value={form.celular}
+                onChange={onChange}
               />
 
               <BaseInput
                 label="Dirección"
                 name="direccion"
                 type="text"
-                value={formData.direccion}
-                onChange={handleChange}
+                value={form.direccion}
+                onChange={onChange}
               />
 
               <BaseInput
                 label="Marca"
                 name="marca"
                 type="text"
-                value={formData.marca}
-                onChange={handleChange}
+                value={form.marca}
+                onChange={onChange}
               />
 
               <BaseInput
                 label="Precio"
                 name="precio"
                 type="number"
-                value={formData.precio}
-                onChange={handleChange}
+                value={form.precio}
+                onChange={onChange}
               />
             </div>
           </div>

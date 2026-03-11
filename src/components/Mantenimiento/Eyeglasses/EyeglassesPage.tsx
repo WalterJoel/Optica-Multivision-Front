@@ -4,15 +4,15 @@ import { useState } from "react";
 import { List, CirclePlus } from "lucide-react";
 import { BaseTabs } from "@/components/Common/Inputs";
 
-import CreateClient from "./CreateClient";
-import ListClients from "./ListClients";
+import CreateEyeglass from "./CreateEyeglass";
+import ListEyeglasses from "./ListEyeglasses";
 
-export default function ClientsPage() {
+export default function EyeglassesPage() {
   const [tab, setTab] = useState("crear");
 
   const tabsData = [
-    { key: "crear", label: "Crear cliente", icon: <CirclePlus size={22} /> },
-    { key: "lista", label: "Lista de clientes", icon: <List size={22} /> },
+    { key: "crear", label: "Crear montura", icon: <CirclePlus size={22} /> },
+    { key: "lista", label: "Lista de monturas", icon: <List size={22} /> },
   ];
 
   return (
@@ -21,8 +21,8 @@ export default function ClientsPage() {
         <BaseTabs tabs={tabsData} activeTab={tab} onChange={setTab} />
       </div>
 
-      {tab === "crear" && <CreateClient />}
-      {tab === "lista" && <ListClients />}
+      {tab === "crear" && <CreateEyeglass />}
+      {tab === "lista" && <ListEyeglasses />}
     </div>
   );
 }

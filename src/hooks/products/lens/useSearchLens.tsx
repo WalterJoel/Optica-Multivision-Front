@@ -1,20 +1,20 @@
-import { useState, useRef } from 'react';
-import { ISearchClient } from '@/types/clients';
-import { searchClient } from '@/services/clients';
+import { useState, useRef } from "react";
+import { ILens } from "@/types/products/lens";
+import { searchLens } from "@/services/products/lens";
 
-export function useSearchClient() {
+export function useSearchLens() {
   const [loading, setLoading] = useState(false);
-  const [clients, setClients] = useState<ISearchClient[]>([]);
+  const [lens, setLens] = useState<ILens[]>([]);
   const [showList, setShowList] = useState(false);
 
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
-  const searchClients = (value: string) => {
+  const searchlens = (value: string) => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
     debounceRef.current = setTimeout(async () => {
       if (!value || value.length < 2) {
-        setClients([]);
+        setLens([]);
         setShowList(false);
         return;
       }
@@ -22,11 +22,11 @@ export function useSearchClient() {
       setLoading(true);
 
       try {
-        const data = await searchClient(value);
-        setClients(data);
+        const data = await searchLens(value);
+        setLens(data);
         setShowList(true);
       } catch (error) {
-        console.error('Error buscando clientes', error);
+        console.error("Error buscando lentes", error);
       } finally {
         setLoading(false);
       }
@@ -34,10 +34,10 @@ export function useSearchClient() {
   };
 
   return {
-    clients,
+    lens,
     loading,
     showList,
-    searchClients,
+    searchlens,
     setShowList,
   };
 }

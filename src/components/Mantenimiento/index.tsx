@@ -7,9 +7,18 @@ import Orders from "../Orders";
 import UsersTab from "./Usuarios/UsersPage";
 import SedesPage from "./Stores/StorePage";
 import KitPage from "./Kits/KitPage";
-import { LayoutDashboard, ScanEye, User, BoomBox } from "lucide-react";
+import {
+  LayoutDashboard,
+  ScanEye,
+  User,
+  BoomBox,
+  DollarSign,
+} from "lucide-react";
 import ClientsPage from "./Clients/ClientsPage";
 import AccesoriesPage from "./Accesories/AccesoriesPage";
+import EyeglassesPage from "./Eyeglasses/EyeglassesPage";
+import DiscountPage from "./Discounts/DiscountPage";
+
 const MyAccount = () => {
   const [activeTab, setActiveTab] = useState("clientes");
   const [addressModal, setAddressModal] = useState(false);
@@ -27,9 +36,9 @@ const MyAccount = () => {
       <Breadcrumb title={"My Account"} pages={["my account"]} />
 
       <section className="overflow-hidden py-20 bg-gray-2">
-        <div className="max-w-[1170px] w-full mx-auto px-4 sm:px-8 xl:px-0">
-          <div className="flex flex-col xl:flex-row gap-7.5">
-            <div className="xl:max-w-[370px] w-full bg-white rounded-xl shadow-1">
+        <div className="max-w-[1440px] w-full mx-auto px-4 sm:px-8 xl:px-10">
+          <div className="flex flex-col xl:flex-row gap-7.5 items-stretch">
+            <div className="xl:w-[350px] w-full bg-white rounded-xl shadow-1 flex-shrink-0">
               <div className="flex xl:flex-col">
                 <div className="hidden lg:flex flex-wrap items-center gap-5 py-6 px-4 sm:px-7.5 xl:px-9 border-r xl:border-r-0 xl:border-b border-gray-3">
                   <div className="max-w-[64px] w-full h-16 rounded-full overflow-hidden">
@@ -62,6 +71,7 @@ const MyAccount = () => {
                       <User size={25} />
                       Clientes
                     </button>
+
                     <button
                       onClick={() => setActiveTab("sedes")}
                       className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
@@ -80,6 +90,7 @@ const MyAccount = () => {
                       </svg>
                       Sedes
                     </button>
+
                     <button
                       onClick={() => setActiveTab("users")}
                       className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
@@ -88,7 +99,6 @@ const MyAccount = () => {
                           : "text-dark-2 bg-gray-1"
                       }`}
                     >
-                      {/* icono simple */}
                       <svg
                         className="fill-current"
                         width="22"
@@ -99,6 +109,7 @@ const MyAccount = () => {
                       </svg>
                       Usuarios
                     </button>
+
                     <button
                       onClick={() => setActiveTab("combos")}
                       className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
@@ -140,9 +151,9 @@ const MyAccount = () => {
                     </button>
 
                     <button
-                      onClick={() => setActiveTab("accesorios")}
+                      onClick={() => setActiveTab("accesories")}
                       className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
-                        activeTab === "accesorios"
+                        activeTab === "accesories"
                           ? "text-white bg-blue"
                           : "text-dark-2 bg-gray-1"
                       }`}
@@ -152,244 +163,98 @@ const MyAccount = () => {
                     </button>
 
                     <button
-                      onClick={() => setActiveTab("account-details")}
+                      onClick={() => setActiveTab("eyeglasses")}
                       className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
-                        activeTab === "account-details"
+                        activeTab === "eyeglasses"
                           ? "text-white bg-blue"
                           : "text-dark-2 bg-gray-1"
                       }`}
                     >
-                      <svg
-                        className="fill-current"
-                        width="22"
-                        height="22"
-                        viewBox="0 0 22 22"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          clipRule="evenodd"
-                          d="M10.9995 1.14581C8.59473 1.14581 6.64531 3.09524 6.64531 5.49998C6.64531 7.90472 8.59473 9.85415 10.9995 9.85415C13.4042 9.85415 15.3536 7.90472 15.3536 5.49998C15.3536 3.09524 13.4042 1.14581 10.9995 1.14581ZM8.02031 5.49998C8.02031 3.85463 9.35412 2.52081 10.9995 2.52081C12.6448 2.52081 13.9786 3.85463 13.9786 5.49998C13.9786 7.14533 12.6448 8.47915 10.9995 8.47915C9.35412 8.47915 8.02031 7.14533 8.02031 5.49998Z"
-                          fill=""
-                        />
-                        <path
-                          fillRule="evenodd"
-                          clipRule="evenodd"
-                          d="M10.9995 11.2291C8.87872 11.2291 6.92482 11.7112 5.47697 12.5256C4.05066 13.3279 2.97864 14.5439 2.97864 16.0416L2.97858 16.1351C2.97754 17.2001 2.97624 18.5368 4.14868 19.4916C4.7257 19.9614 5.53291 20.2956 6.6235 20.5163C7.71713 20.7377 9.14251 20.8541 10.9995 20.8541C12.8564 20.8541 14.2818 20.7377 15.3754 20.5163C16.466 20.2956 17.2732 19.9614 17.8503 19.4916C19.0227 18.5368 19.0214 17.2001 19.0204 16.1351L19.0203 16.0416C19.0203 14.5439 17.9483 13.3279 16.522 12.5256C15.0741 11.7112 13.1202 11.2291 10.9995 11.2291ZM4.35364 16.0416C4.35364 15.2612 4.92324 14.4147 6.15108 13.724C7.35737 13.0455 9.07014 12.6041 10.9995 12.6041C12.9288 12.6041 14.6416 13.0455 15.8479 13.724C17.0757 14.4147 17.6453 15.2612 17.6453 16.0416C17.6453 17.2405 17.6084 17.9153 16.982 18.4254C16.6424 18.702 16.0746 18.9719 15.1027 19.1686C14.1338 19.3648 12.8092 19.4791 10.9995 19.4791C9.18977 19.4791 7.86515 19.3648 6.89628 19.1686C5.92437 18.9719 5.35658 18.702 5.01693 18.4254C4.39059 17.9153 4.35364 17.2405 4.35364 16.0416Z"
-                          fill=""
-                        />
-                      </svg>
-                      Account Details
+                      <ScanEye size={25} />
+                      Eyeglasses
+                    </button>
+
+                    <button
+                      onClick={() => setActiveTab("discounts")}
+                      className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
+                        activeTab === "discounts"
+                          ? "text-white bg-blue"
+                          : "text-dark-2 bg-gray-1"
+                      }`}
+                    >
+                      <DollarSign size={25} />
+                      Descuentos
                     </button>
                   </div>
                 </div>
               </div>
             </div>
-            <div
-              className={`xl:max-w-[770px] w-full bg-white rounded-xl shadow-1 ${
-                activeTab === "sedes" ? "block" : "hidden"
-              }`}
-            >
-              <SedesPage />
+
+            <div className="flex-grow">
+              <div
+                className={`w-full bg-white rounded-xl shadow-1 ${
+                  activeTab === "sedes" ? "block" : "hidden"
+                }`}
+              >
+                <SedesPage />
+              </div>
+
+              <div
+                className={`w-full bg-white rounded-xl shadow-1 ${
+                  activeTab === "clientes" ? "block" : "hidden"
+                }`}
+              >
+                <ClientsPage />
+              </div>
+
+              <div
+                className={`w-full bg-white rounded-xl shadow-1 ${
+                  activeTab === "users" ? "block" : "hidden"
+                }`}
+              >
+                <UsersTab />
+              </div>
+
+              <div
+                className={`w-full bg-white rounded-xl shadow-1 ${
+                  activeTab === "combos" ? "block" : "hidden"
+                }`}
+              >
+                <KitPage />
+              </div>
+
+              <div
+                className={`w-full bg-white rounded-xl shadow-1 py-9.5 px-4 sm:px-7.5 xl:px-10 ${
+                  activeTab === "downloads" ? "block" : "hidden"
+                }`}
+              >
+                <p>You don&apos;t have any download</p>
+              </div>
+
+              <div
+                className={`w-full bg-white rounded-xl shadow-1 ${
+                  activeTab === "accesories" ? "block" : "hidden"
+                }`}
+              >
+                <AccesoriesPage />
+              </div>
+
+              <div
+                className={`w-full bg-white rounded-xl shadow-1 ${
+                  activeTab === "eyeglasses" ? "block" : "hidden"
+                }`}
+              >
+                <EyeglassesPage />
+              </div>
+
+              <div
+                className={`w-full bg-white rounded-xl shadow-1 ${
+                  activeTab === "discounts" ? "block" : "hidden"
+                }`}
+              >
+                <DiscountPage />
+              </div>
             </div>
-            {/* <!--== user dashboard menu end ==-->
-
-            
-          <!--== user dashboard content start ==--> */}
-            {/* <!-- dashboard tab content start --> */}
-
-            <div
-              className={`xl:max-w-[770px] w-full bg-white rounded-xl shadow-1 ${
-                activeTab === "clientes" ? "block" : "hidden"
-              }`}
-            >
-              <ClientsPage />
-            </div>
-            <div
-              className={`xl:max-w-[770px] w-full bg-white rounded-xl shadow-1 ${
-                activeTab === "users" ? "block" : "hidden"
-              }`}
-            >
-              <UsersTab />
-            </div>
-            {/* <!-- dashboard tab content end -->
-
-          <!-- orders tab content start --> */}
-            <div
-              className={`xl:max-w-[770px] w-full bg-white rounded-xl shadow-1 ${
-                activeTab === "combos" ? "block" : "hidden"
-              }`}
-            >
-              <KitPage />
-            </div>
-            {/* <!-- orders tab content end -->
-
-          <!-- downloads tab content start --> */}
-            <div
-              className={`xl:max-w-[770px] w-full bg-white rounded-xl shadow-1 py-9.5 px-4 sm:px-7.5 xl:px-10 ${
-                activeTab === "downloads" ? "block" : "hidden"
-              }`}
-            >
-              <p>You don&apos;t have any download</p>
-            </div>
-            {/* <!-- downloads tab content end -->
-
-          <!-- accesorios tab content start --> */}
-            <div
-              className={`xl:max-w-[770px] w-full bg-white rounded-xl shadow-1 ${
-                activeTab === "accesorios" ? "block" : "hidden"
-              }`}
-            >
-              <AccesoriesPage />
-            </div>
-            {/* <!-- accesorios tab content end -->
-
-          <!-- details tab content start --> */}
-            <div
-              className={`xl:max-w-[770px] w-full ${
-                activeTab === "account-details" ? "block" : "hidden"
-              }`}
-            >
-              <form>
-                <div className="bg-white shadow-1 rounded-xl p-4 sm:p-8.5">
-                  <div className="flex flex-col lg:flex-row gap-5 sm:gap-8 mb-5">
-                    <div className="w-full">
-                      <label htmlFor="firstName" className="block mb-2.5">
-                        First Name <span className="text-red">*</span>
-                      </label>
-
-                      <input
-                        type="text"
-                        name="firstName"
-                        id="firstName"
-                        placeholder="Jhon"
-                        defaultValue="Jhon"
-                        className="rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 w-full py-2.5 px-5 outline-none duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20"
-                      />
-                    </div>
-
-                    <div className="w-full">
-                      <label htmlFor="lastName" className="block mb-2.5">
-                        Last Name <span className="text-red">*</span>
-                      </label>
-
-                      <input
-                        type="text"
-                        name="lastName"
-                        id="lastName"
-                        defaultValue="Jhon"
-                        placeholder="Deo"
-                        className="rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 w-full py-2.5 px-5 outline-none duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="mb-5">
-                    <label htmlFor="countryName" className="block mb-2.5">
-                      Country/ Region <span className="text-red">*</span>
-                    </label>
-
-                    <div className="relative">
-                      <select className="w-full bg-gray-1 rounded-md border border-gray-3 text-dark-4 py-3 pl-5 pr-9 duration-200 appearance-none outline-none focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20">
-                        <option value="0">Australia</option>
-                        <option value="1">America</option>
-                        <option value="2">England</option>
-                      </select>
-
-                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-dark-4">
-                        <svg
-                          className="fill-current"
-                          width="16"
-                          height="16"
-                          viewBox="0 0 16 16"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M2.41469 5.03569L2.41467 5.03571L2.41749 5.03846L7.76749 10.2635L8.0015 10.492L8.23442 10.2623L13.5844 4.98735L13.5844 4.98735L13.5861 4.98569C13.6809 4.89086 13.8199 4.89087 13.9147 4.98569C14.0092 5.08024 14.0095 5.21864 13.9155 5.31345C13.9152 5.31373 13.915 5.31401 13.9147 5.31429L8.16676 10.9622L8.16676 10.9622L8.16469 10.9643C8.06838 11.0606 8.02352 11.0667 8.00039 11.0667C7.94147 11.0667 7.89042 11.0522 7.82064 10.9991L2.08526 5.36345C1.99127 5.26865 1.99154 5.13024 2.08609 5.03569C2.18092 4.94086 2.31986 4.94086 2.41469 5.03569Z"
-                            fill=""
-                            stroke=""
-                          />
-                        </svg>
-                      </span>
-                    </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="inline-flex font-medium text-white bg-blue py-3 px-7 rounded-md ease-out duration-200 hover:bg-blue-dark"
-                  >
-                    Save Changes
-                  </button>
-                </div>
-
-                <p className="text-custom-sm mt-5 mb-9">
-                  This will be how your name will be displayed in the account
-                  section and in reviews
-                </p>
-
-                <p className="font-medium text-xl sm:text-2xl text-dark mb-7">
-                  Password Change
-                </p>
-
-                <div className="bg-white shadow-1 rounded-xl p-4 sm:p-8.5">
-                  <div className="mb-5">
-                    <label htmlFor="oldPassword" className="block mb-2.5">
-                      Old Password
-                    </label>
-
-                    <input
-                      type="password"
-                      name="oldPassword"
-                      id="oldPassword"
-                      autoComplete="on"
-                      className="rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 w-full py-2.5 px-5 outline-none duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20"
-                    />
-                  </div>
-
-                  <div className="mb-5">
-                    <label htmlFor="newPassword" className="block mb-2.5">
-                      New Password
-                    </label>
-
-                    <input
-                      type="password"
-                      name="newPassword"
-                      id="newPassword"
-                      autoComplete="on"
-                      className="rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 w-full py-2.5 px-5 outline-none duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20"
-                    />
-                  </div>
-
-                  <div className="mb-5">
-                    <label
-                      htmlFor="confirmNewPassword"
-                      className="block mb-2.5"
-                    >
-                      Confirm New Password
-                    </label>
-
-                    <input
-                      type="password"
-                      name="confirmNewPassword"
-                      id="confirmNewPassword"
-                      autoComplete="on"
-                      className="rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 w-full py-2.5 px-5 outline-none duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20"
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="inline-flex font-medium text-white bg-blue py-3 px-7 rounded-md ease-out duration-200 hover:bg-blue-dark"
-                  >
-                    Change Password
-                  </button>
-                </div>
-              </form>
-            </div>
-            {/* <!-- details tab content end -->
-          <!--== user dashboard content end ==--> */}
           </div>
         </div>
       </section>

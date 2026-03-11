@@ -32,10 +32,12 @@ export const DetailModal: React.FC<DetailModalProps> = ({
 
     const itemToCart = {
       id: selected.id,
-      title: "Lente " + selected.cyl,
+      title: "Lente",
       discountedPrice: price, // usa el precio calculado
       price: price,
       quantity: 1,
+      cyl: selected.cyl,
+      isLens: true, //TODO: MEJORAR
       imgs: {
         thumbnails: [
           "https://www.flaticon.es/icono-gratis/anteojos-con-media-montura_27114",
@@ -47,6 +49,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({
     };
 
     dispatch(addItemToCart(itemToCart));
+    onClose();
   };
 
   useEffect(() => {
