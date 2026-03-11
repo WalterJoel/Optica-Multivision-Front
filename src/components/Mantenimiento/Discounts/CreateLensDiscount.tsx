@@ -10,18 +10,9 @@ import { ILens } from "@/types/products/lens";
 import { useSearchClient } from "@/hooks/clients";
 import { useCreateDiscount } from "@/hooks/discounts";
 import { ISearchClient } from "@/types/clients";
-import { ICreateDiscount } from "@/types/discounts";
+import { ICreateDiscount, ISeries } from "@/types/discounts";
 import { PRODUCTOS, STATUS_MODAL } from "@/commons/constants";
 import { LoadingModal, StatusModal } from "@/components/Common/modal";
-
-interface Series {
-  id: number;
-  nombre: string;
-  value: number;
-  precio: number;
-  descuento: number;
-  icono: string;
-}
 
 const emptyForm: ICreateDiscount = {
   clienteId: 0,
@@ -36,7 +27,7 @@ const SeriesDescuentos = () => {
   const [searchLensTerm, setSearchLensTerm] = useState("");
   const [searchClientTerm, setSearchClientTerm] = useState("");
   const [selectedId, setSelectedId] = useState<number>(1);
-  const [series, setSeries] = useState<Series[]>([
+  const [series, setSeries] = useState<ISeries[]>([
     {
       id: 1,
       nombre: "Serie 1",
