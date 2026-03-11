@@ -8,13 +8,7 @@ import { AddAccessoryModal } from './AddAccessoryModal';
 import { ICreateKit } from '@/types/kits';
 import { useCreateKit } from '@/hooks/kits/useCreateKit';
 import { Plus, Trash2 } from 'lucide-react';
-import { ICreateKitAccesory } from '@/types/kits';
-
-interface IKitAccesorio {
-  accesorioId: number;
-  nombre: string;
-  cantidad: number;
-}
+import { ICreateKitAccesory, IListKitAccesory } from '@/types/kits';
 
 const emptyForm: ICreateKit = {
   nombre: '',
@@ -29,9 +23,10 @@ export default function CreateKit() {
   const [typeModal, setTypeModal] = useState<string>('');
   const [openModal, setOpenModal] = useState<boolean>(false);
 
-  const [accesoriosKit, setAccesoriosKit] = useState<ICreateKitAccesory[]>([]);
+  const [accesoriosKit, setAccesoriosKit] = useState<IListKitAccesory[]>([]); //lista temp
 
   const [nuevoAccesorio, setNuevoAccesorio] = useState({
+    id: 0,
     nombre: '',
     cantidad: 1,
   });
@@ -49,9 +44,7 @@ export default function CreateKit() {
     if (!nuevoAccesorio.nombre.trim()) return;
 
     const existe = accesoriosKit.some(
-      (a) =>
-        a.nombre.toLowerCase().trim() ===
-        nuevoAccesorio.nombre.toLowerCase().trim(),
+      (a) => a.accesorioId === nuevoAccesorio.id,
     );
 
     if (existe) {
@@ -59,14 +52,14 @@ export default function CreateKit() {
       return;
     }
 
-    const nuevoItem: IKitAccesorio = {
-      accesorioId: Date.now(),
+    const nuevoItem: IListKitAccesory = {
+      accesorioId: nuevoAccesorio.id,
       nombre: nuevoAccesorio.nombre.trim(),
       cantidad: nuevoAccesorio.cantidad,
     };
 
     setAccesoriosKit((prev) => [...prev, nuevoItem]);
-    setNuevoAccesorio({ nombre: '', cantidad: 1 });
+    setNuevoAccesorio({ nombre: '', cantidad: 1, id: 0 });
     setOpenModal(false);
   };
 
@@ -100,6 +93,7 @@ export default function CreateKit() {
             placeholder="Kit de Limpieza Premium"
             required
             onChange={onChange}
+            pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
           />
 
           <BaseInput
@@ -110,6 +104,7 @@ export default function CreateKit() {
             placeholder="29.90"
             required
             onChange={onChange}
+            pattern="/^[0-9]*\.?[0-9]*$/"
           />
 
           <BaseInput

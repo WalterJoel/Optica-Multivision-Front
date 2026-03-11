@@ -1,20 +1,20 @@
 import { useState, useRef } from 'react';
-import { ISearchClient } from '@/types/clients';
-import { searchClient } from '@/services/clients';
+import { ISearchAccesory } from '@/types/products';
+import {} from '@/services/clients';
 
-export function useSearchClient() {
+export function useSearchAccesory() {
   const [loading, setLoading] = useState(false);
-  const [clients, setClients] = useState<ISearchClient[]>([]);
+  const [accesories, setAccesories] = useState<ISearchAccesory[]>([]);
   const [showList, setShowList] = useState(false);
 
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
-  const searchClients = (value: string) => {
+  const searchAccesories = (value: string) => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
     debounceRef.current = setTimeout(async () => {
       if (!value || value.length < 2) {
-        setClients([]);
+        setAccesories([]);
         setShowList(false);
         return;
       }
@@ -22,8 +22,8 @@ export function useSearchClient() {
       setLoading(true);
 
       try {
-        const data = await searchClient(value);
-        setClients(data);
+        const data = await searchAccesories(value);
+        setAccesories(data);
         setShowList(true);
       } catch (error) {
         console.error('Error buscando clientes', error);
@@ -33,11 +33,20 @@ export function useSearchClient() {
     }, 300);
   };
 
+  const selectAccesory = (client: ISearchAccesory) => {
+    const name = client.nombres
+      ? `${client.nombres} ${client.apellidos ?? ''}`
+      : client.numeroDoc;
+
+    setAccesories([]);
+    setShowList(false);
+  };
+
   return {
-    clients,
+    accesories,
     loading,
     showList,
-    searchClients,
-    setShowList,
+    searchAccesories,
+    selectAccesory,
   };
 }
