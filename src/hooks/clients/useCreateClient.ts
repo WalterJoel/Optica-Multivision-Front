@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { api } from '@/services/api';
-import { ICreateClient } from '@/types/clients';
+import { useState } from "react";
+import { api } from "@/services/api";
+import { ICreateClient } from "@/types/clients";
 
 export const useCreateClient = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [statusMessage, setStatusMessage] = useState('');
+  const [statusMessage, setStatusMessage] = useState("");
 
   const toNumberOrUndef = (v: any) => {
     if (v === null || v === undefined) return undefined;
     const s = String(v).trim();
-    if (s === '') return undefined;
+    if (s === "") return undefined;
     const n = Number(s);
     return Number.isFinite(n) ? n : undefined;
   };
@@ -20,77 +20,82 @@ export const useCreateClient = () => {
   const addClient = async (payload: ICreateClient) => {
     setLoading(true);
     setSuccess(false);
-    setStatusMessage('');
+    setStatusMessage("");
 
     try {
-      const tipoDoc = payload.tipoCliente === 'PERSONA' ? 'DNI' : 'RUC';
+      const tipoDoc = payload.tipoCliente === "PERSONA" ? "DNI" : "RUC";
 
       const body: any = {
         ...payload,
         tipoDoc,
         numeroDoc: payload.numeroDoc?.trim(),
 
-        // ✅ convertir medidas a number (o no enviarlas)
-        dip: toNumberOrUndef((payload as any).dip),
-        add: toNumberOrUndef((payload as any).add),
+        add: toNumberOrUndef(payload.add),
 
-        odEsf: toNumberOrUndef((payload as any).odEsf),
-        odCyl: toNumberOrUndef((payload as any).odCyl),
-        odEje: toNumberOrUndef((payload as any).odEje),
+        dipOd: toNumberOrUndef(payload.dipOd),
+        dipOi: toNumberOrUndef(payload.dipOi),
 
-        oiEsf: toNumberOrUndef((payload as any).oiEsf),
-        oiCyl: toNumberOrUndef((payload as any).oiCyl),
-        oiEje: toNumberOrUndef((payload as any).oiEje),
+        odEsf: toNumberOrUndef(payload.odEsf),
+        odCyl: toNumberOrUndef(payload.odCyl),
+        odEje: toNumberOrUndef(payload.odEje),
+
+        oiEsf: toNumberOrUndef(payload.oiEsf),
+        oiCyl: toNumberOrUndef(payload.oiCyl),
+        oiEje: toNumberOrUndef(payload.oiEje),
       };
 
-      // limpiar campos que no correspondan
-      if (payload.tipoCliente === 'PERSONA') {
+      if (payload.tipoCliente === "PERSONA") {
         delete body.razonSocial;
       } else {
         delete body.nombres;
         delete body.apellidos;
       }
 
-      // ✅ limpiar strings vacíos generales (opcional pero recomendado)
       const cleanEmpty = [
-        'telefono',
-        'correo',
-        'direccion',
-        'nombres',
-        'apellidos',
-        'razonSocial',
+        "telefono",
+        "correo",
+        "direccion",
+        "fechaNacimiento",
+        "antecedentes",
+        "nombres",
+        "apellidos",
+        "razonSocial",
       ];
+
       cleanEmpty.forEach((k) => {
-        if (body[k] !== undefined && String(body[k]).trim() === '')
+        if (body[k] !== undefined && String(body[k]).trim() === "") {
           delete body[k];
+        }
       });
 
-      // ✅ eliminar medidas si quedaron undefined (para no mandar "dip: undefined")
       const measureKeys = [
-        'dip',
-        'add',
-        'odEsf',
-        'odCyl',
-        'odEje',
-        'oiEsf',
-        'oiCyl',
-        'oiEje',
+        "add",
+        "dipOd",
+        "dipOi",
+        "odEsf",
+        "odCyl",
+        "odEje",
+        "oiEsf",
+        "oiCyl",
+        "oiEje",
       ];
+
       measureKeys.forEach((k) => {
         if (body[k] === undefined) delete body[k];
       });
 
-      await api.post('/clientes/crearCliente', body);
+      await api.post("/clientes/crearCliente", body);
 
       setSuccess(true);
-      setStatusMessage('Cliente creado correctamente');
+      setStatusMessage("Cliente creado correctamente");
     } catch (err: any) {
       const msg =
         err?.response?.data?.message ||
         err?.message ||
-        'Error al crear cliente';
+        "Error al crear cliente";
+
       setSuccess(false);
-      setStatusMessage(Array.isArray(msg) ? msg.join(', ') : msg);
+      setStatusMessage(Array.isArray(msg) ? msg.join(", ") : msg);
     } finally {
       setLoading(false);
     }

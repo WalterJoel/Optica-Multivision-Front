@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { BaseInput } from "@/components/Common/Inputs/BaseInput";
 import { BaseButton } from "@/components/Common/Buttons/BaseButton";
+import { BaseTarea } from "@/components/Common/Inputs/BaseTarea";
 import { StatusModal, LoadingModal } from "@/components/Common/modal";
 import { STATUS_MODAL } from "@/commons/constants";
 import { ClientType, ICreateClient } from "@/types/clients";
@@ -17,10 +18,13 @@ const emptyForm: ICreateClient = {
   telefono: "",
   correo: "",
   direccion: "",
+  fechaNacimiento: "",
+  antecedentes: "",
 
-  // ✅ MEDIDAS
-  dip: "",
   add: "",
+
+  dipOd: "",
+  dipOi: "",
 
   odEsf: "",
   odCyl: "",
@@ -43,16 +47,11 @@ export default function CreateClient() {
     [form.tipoCliente]
   );
 
-  // ✅ helper: permitir decimales con signo (-1.25, 2, 0.50, etc.)
   const normalizeDecimal = (value: string) => {
-    // deja: dígitos, -, +, punto
     let v = value.replace(/[^\d.+-]/g, "");
-    // solo 1 signo al inicio
     v = v.replace(/(?!^)[+-]/g, "");
-    // solo 1 punto
     const parts = v.split(".");
     if (parts.length > 2) v = parts[0] + "." + parts.slice(1).join("");
-    // limitar largo
     return v.slice(0, 8);
   };
 
@@ -61,32 +60,33 @@ export default function CreateClient() {
     return onlyDigits.slice(0, maxLen);
   };
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
 
-    // teléfono 9 dígitos
     if (name === "telefono") {
       const cut = normalizeInt(value, 9);
       setForm((p) => ({ ...p, telefono: cut }));
       return;
     }
 
-    // ejes (0-180)
     if (name === "odEje" || name === "oiEje") {
       const v = normalizeInt(value, 3);
       setForm((p) => ({ ...p, [name]: v }));
       return;
     }
 
-    // DIP/ADD/ESF/CYL (decimales)
     const decimalFields = [
-      "dip",
       "add",
+      "dipOd",
+      "dipOi",
       "odEsf",
       "odCyl",
       "oiEsf",
       "oiCyl",
     ];
+
     if (decimalFields.includes(name)) {
       setForm((p) => ({ ...p, [name]: normalizeDecimal(value) }));
       return;
@@ -110,24 +110,11 @@ export default function CreateClient() {
 
   const createClient = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // ✅ convertir strings a number donde toque (para el backend)
-    const payload: any = {
+    await addClient({
       ...form,
-      tipoDoc,
-      dip: form.dip ? Number(form.dip) : undefined,
-      add: form.add ? Number(form.add) : undefined,
-
-      odEsf: form.odEsf ? Number(form.odEsf) : undefined,
-      odCyl: form.odCyl ? Number(form.odCyl) : undefined,
-      odEje: form.odEje ? Number(form.odEje) : undefined,
-
-      oiEsf: form.oiEsf ? Number(form.oiEsf) : undefined,
-      oiCyl: form.oiCyl ? Number(form.oiCyl) : undefined,
-      oiEje: form.oiEje ? Number(form.oiEje) : undefined,
-    };
-
-    await addClient(payload);
+      tipoCliente: form.tipoCliente,
+      numeroDoc: form.numeroDoc,
+    });
   };
 
   useEffect(() => {
@@ -148,7 +135,6 @@ export default function CreateClient() {
         onSubmit={createClient}
         className="w-full rounded-xl border border-gray-3 bg-white p-6"
       >
-        {/* DATOS */}
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
           <div className="flex flex-col gap-2">
             <label className="text-sm font-medium text-dark">Tipo</label>
@@ -192,7 +178,6 @@ export default function CreateClient() {
                 name="apellidos"
                 value={form.apellidos || ""}
                 placeholder="Perez"
-                required
                 onChange={onChange}
               />
             </>
@@ -226,43 +211,55 @@ export default function CreateClient() {
           />
 
           <BaseInput
+            label="Fecha de nacimiento"
+            name="fechaNacimiento"
+            type="date"
+            value={form.fechaNacimiento || ""}
+            onChange={onChange}
+          />
+
+          <BaseInput
             label="Dirección"
             name="direccion"
             value={form.direccion || ""}
-            placeholder="Av..."
+            placeholder="Av. ..."
             onChange={onChange}
           />
         </div>
 
-        {/* MEDIDAS */}
+        <div className="mt-5">
+          <BaseTarea
+            label="Antecedentes"
+            name="antecedentes"
+            value={form.antecedentes || ""}
+            placeholder="Alergias, antecedentes visuales, observaciones..."
+            rows={4}
+            onChange={onChange}
+          />
+        </div>
+
         <div className="mt-8 rounded-xl border border-gray-3 bg-gray-1 p-5">
           <h3 className="mb-4 text-base font-semibold text-dark">
             Especificaciones de las Medidas
           </h3>
 
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-            <BaseInput
-              label="DIP"
-              name="dip"
-              value={form.dip || ""}
-              placeholder="63"
-              onChange={onChange}
-            />
-
-            <BaseInput
+<div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">            <BaseInput
               label="ADD"
               name="add"
               value={form.add || ""}
               placeholder="1.50"
               onChange={onChange}
             />
+
+           
           </div>
 
           <div className="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-2">
-            {/* OD */}
             <div className="rounded-xl border border-gray-3 bg-white p-4">
-              <h4 className="mb-3 text-sm font-semibold text-dark">Ojo Derecho (OD)</h4>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+              <h4 className="mb-3 text-sm font-semibold text-dark">
+                Ojo Derecho (OD)
+              </h4>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
                 <BaseInput
                   label="ESF"
                   name="odEsf"
@@ -284,13 +281,21 @@ export default function CreateClient() {
                   placeholder="90"
                   onChange={onChange}
                 />
+                <BaseInput
+                  label="DIP"
+                  name="dipOd"
+                  value={form.dipOd || ""}
+                  placeholder="31.5"
+                  onChange={onChange}
+                />
               </div>
             </div>
 
-            {/* OI */}
             <div className="rounded-xl border border-gray-3 bg-white p-4">
-              <h4 className="mb-3 text-sm font-semibold text-dark">Ojo Izquierdo (OI)</h4>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+              <h4 className="mb-3 text-sm font-semibold text-dark">
+                Ojo Izquierdo (OI)
+              </h4>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
                 <BaseInput
                   label="ESF"
                   name="oiEsf"
@@ -310,6 +315,13 @@ export default function CreateClient() {
                   name="oiEje"
                   value={form.oiEje || ""}
                   placeholder="80"
+                  onChange={onChange}
+                />
+                <BaseInput
+                  label="DIP"
+                  name="dipOi"
+                  value={form.dipOi || ""}
+                  placeholder="31.5"
                   onChange={onChange}
                 />
               </div>
