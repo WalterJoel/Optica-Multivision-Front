@@ -13,6 +13,6 @@ export type ICreateAccessory = Omit<IAccessory, 'id' | 'createdAt'> & {};
 
 export interface ISearchAccesory {
   id: number;
-  // nombres: string | null;
-  // cantidad: number;
+  nombre: string;
+  precio: number;
 }

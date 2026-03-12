@@ -23,11 +23,14 @@ export default function CreateAccessory() {
   const [openModal, setOpenModal] = useState<boolean>(false);
 
   const onChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const { name, value } = e.target;
-    setForm((p) => ({ ...p, [name]: value }));
-  };
+  e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+) => {
+  const { name, value } = e.target;
+  setForm((p) => ({
+    ...p,
+    [name]: name === "precio" ? Number(value) : value,
+  }));
+};
 
   const onChangeFile = async (file: File | null) => {
     if (!file) {
@@ -84,16 +87,15 @@ export default function CreateAccessory() {
         />
 
         <BaseInput
-          label="Precio"
-          name="precio"
-          type="number"
-          value={form.precio}
-          placeholder="0.00"
-          step="0.01"
-          required
-          onChange={onChange}
-          pattern="/^[0-9]*\.?[0-3]*$/"
-        />
+  label="Precio"
+  name="precio"
+  type="number"
+  value={form.precio}
+  placeholder="0.00"
+  step="0.01"
+  required
+  onChange={onChange}
+/>
         <div className="col-span-1 md:col-span-2">
           <BaseTarea
             label="Descripción"
