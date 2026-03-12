@@ -1,4 +1,4 @@
-import { PRODUCTOS } from "@/commons/constants";
+import { PRODUCTOS } from '@/commons/constants';
 
 export interface IAccessory {
   id: number;
@@ -9,4 +9,10 @@ export interface IAccessory {
   createdAt: string;
 }
 
-export type ICreateAccessory = Omit<IAccessory, "id" | "createdAt"> & {};
+export type ICreateAccessory = Omit<IAccessory, 'id' | 'createdAt'> & {};
+
+export interface ISearchAccesory {
+  id: number;
+  // nombres: string | null;
+  // cantidad: number;
+}
