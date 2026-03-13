@@ -7,6 +7,7 @@ export interface IAccessory {
   atributo: string;
   imagenUrl: string;
   createdAt: string;
+  basico: boolean;
 }
 
 export type ICreateAccessory = Omit<IAccessory, "id" | "createdAt"> & {};

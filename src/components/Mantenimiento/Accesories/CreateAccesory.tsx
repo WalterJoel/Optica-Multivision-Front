@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { BaseInput, BaseFile, BaseTarea } from "@/components/Common/Inputs";
 import { BaseButton } from "@/components/Common/Buttons/BaseButton";
+import { BaseCheckbox } from "@/components/Common/Inputs/BaseCheckbox";
 import { ICreateAccessory } from "@/types/products";
 import { useCreateAccessory } from "@/hooks/products/accesories/useCreateAccesory";
 import { StatusModal, LoadingModal } from "@/components/Common/modal";
@@ -13,6 +14,7 @@ const emptyForm: ICreateAccessory = {
   precio: 0,
   atributo: "",
   imagenUrl: "",
+  basico: false,
 };
 
 export default function CreateAccessory() {
@@ -23,14 +25,23 @@ export default function CreateAccessory() {
   const [openModal, setOpenModal] = useState<boolean>(false);
 
   const onChange = (
-  e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-) => {
-  const { name, value } = e.target;
-  setForm((p) => ({
-    ...p,
-    [name]: name === "precio" ? Number(value) : value,
-  }));
-};
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = e.target;
+    setForm((p) => ({
+      ...p,
+      [name]: name === "precio" ? (value === "" ? "" : Number(value)) : value,
+    }));
+  };
+
+  const onChangeCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, checked } = e.target;
+
+    setForm((p) => ({
+      ...p,
+      [name]: checked,
+    }));
+  };
 
   const onChangeFile = async (file: File | null) => {
     if (!file) {
@@ -41,12 +52,18 @@ export default function CreateAccessory() {
     // subir a S3
     const formData = new FormData();
     formData.append("file", file);
+
     const res = await fetch("/api/upload-s3", {
       method: "POST",
       body: formData,
     });
+
     const data = await res.json();
-    setForm((p) => ({ ...p, imagenUrl: data.url }));
+
+    setForm((p) => ({
+      ...p,
+      imagenUrl: data.url,
+    }));
   };
 
   const createAccessory = async (e: React.FormEvent) => {
@@ -83,19 +100,19 @@ export default function CreateAccessory() {
           type="string"
           required
           onChange={onChange}
-          pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
         />
 
         <BaseInput
-  label="Precio"
-  name="precio"
-  type="number"
-  value={form.precio}
-  placeholder="0.00"
-  step="0.01"
-  required
-  onChange={onChange}
-/>
+          label="Precio"
+          name="precio"
+          type="number"
+          value={form.precio}
+          placeholder="0.00"
+          step="0.01"
+          required
+          onChange={onChange}
+        />
+
         <div className="col-span-1 md:col-span-2">
           <BaseTarea
             label="Descripción"
@@ -103,6 +120,15 @@ export default function CreateAccessory() {
             value={form.atributo}
             placeholder="Descripción breve del accesorio"
             onChange={onChange}
+          />
+        </div>
+
+        <div className="col-span-1 md:col-span-2">
+          <BaseCheckbox
+            label="Mostrar al vender ?"
+            name="basico"
+            checked={form.basico}
+            onChange={onChangeCheckbox}
           />
         </div>
       </div>
@@ -121,6 +147,7 @@ export default function CreateAccessory() {
       </div>
 
       <LoadingModal isOpen={loading} />
+
       <StatusModal
         isOpen={openModal}
         type={typeModal}
