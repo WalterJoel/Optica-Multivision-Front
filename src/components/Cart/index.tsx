@@ -43,7 +43,7 @@ const Cart = () => {
             <div className="grid grid-cols-1 lg:grid-cols-[70%_30%] gap-10 items-start">
               {/* COLUMNA IZQUIERDA */}
               <div className="flex flex-col gap-8">
-                <h3 className="text-xl font-semibold text-dark">
+                <h3 className="text-xl font-semibold text-slate-800">
                   Tu Carrito de compras
                 </h3>
 
@@ -84,7 +84,7 @@ const Cart = () => {
                 <div className="flex flex-col md:flex-row gap-8 items-start mt-4">
                   {/* BLOQUE IZQUIERDO: KITS */}
                   <div className="flex-1 min-w-0 w-full">
-                    <h3 className="text-xl font-bold text-dark mb-6">
+                    <h3 className="text-xl font-semibold text-slate-800 mb-6">
                       ¡ Regala un Kit por su compra !
                     </h3>
                     <div className="bg-white rounded-[10px] shadow-1 border border-gray-3 h-[260px] relative overflow-hidden flex items-center">
@@ -94,7 +94,7 @@ const Cart = () => {
 
                   {/* BLOQUE DERECHO: DESCUENTO */}
                   <div className="w-full md:w-[380px] flex-shrink-0">
-                    <h3 className="text-xl font-bold text-dark mb-6">
+                    <h3 className="text-xl font-semibold text-slate-800 mb-6">
                       ¿ Tienes algún descuento ?
                     </h3>
                     <div className="bg-white rounded-[10px] shadow-1 border border-gray-3 h-[260px] overflow-hidden">

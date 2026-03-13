@@ -56,7 +56,7 @@ export default function KitCarousel({ kits }: Props) {
                     className={`relative w-32 h-32 sm:w-40 sm:h-40 transition-transform duration-300 ${isSelected ? "scale-105" : "scale-100"}`}
                   >
                     <Image
-                      src={kit.imagen}
+                      src="/images/icons/kit.webp"
                       alt={kit.nombre}
                       fill
                       className="object-contain"
