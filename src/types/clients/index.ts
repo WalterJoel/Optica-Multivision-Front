@@ -6,16 +6,18 @@ export interface ICreateClient {
 
   nombres?: string;
   apellidos?: string;
-
   razonSocial?: string;
 
   telefono?: string;
   correo?: string;
   direccion?: string;
+  fechaNacimiento?: string;
+  antecedentes?: string;
 
-  // ✅ medidas (en el form como string para inputs)
-  dip?: string;
   add?: string;
+
+  dipOd?: string;
+  dipOi?: string;
 
   odEsf?: string;
   odCyl?: string;
@@ -39,10 +41,13 @@ export interface IClient {
   telefono: string | null;
   correo: string | null;
   direccion: string | null;
+  fechaNacimiento: string | null;
+  antecedentes: string | null;
 
-  // ✅ MEDIDAS (vienen como number/null desde backend)
-  dip: number | null;
   add: number | null;
+
+  dipOd: number | null;
+  dipOi: number | null;
 
   odEsf: number | null;
   odCyl: number | null;
@@ -52,7 +57,6 @@ export interface IClient {
   oiCyl: number | null;
   oiEje: number | null;
 
-  // ✅ encargado y fecha de medición
   encargadoMedicionId: number | null;
   fechaMedicion: string | null;
 

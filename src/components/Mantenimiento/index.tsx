@@ -171,7 +171,7 @@ const MyAccount = () => {
                       }`}
                     >
                       <ScanEye size={25} />
-                      Eyeglasses
+                      Monturas
                     </button>
 
                     <button

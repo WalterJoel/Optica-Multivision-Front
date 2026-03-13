@@ -1,119 +1,123 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { api } from "@/services/api";
-import { IClient } from "@/types/clients";
+import { useEffect, useState } from "react";
+import { useAccessories } from "@/hooks/products/accesories/useAccessories";
+import { useUpdateAccessory } from "@/hooks/products/accesories/useUpdateAccesory";
+import { IAccessory } from "@/types/products";
+import { BaseInput, BaseFile, BaseTarea } from "@/components/Common/Inputs";
+import { BaseButton } from "@/components/Common/Buttons/BaseButton";
+import { LoadingModal, StatusModal } from "@/components/Common/modal";
+import { STATUS_MODAL } from "@/commons/constants";
 
-type FilterDoc = "ALL" | "DNI" | "RUC";
+const emptyForm = {
+  nombre: "",
+  precio: 0,
+  atributo: "",
+  imagenUrl: "",
+};
 
 export default function ListAccesories() {
-  const [clientes, setClientes] = useState<IClient[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<FilterDoc>("ALL");
+  const { accessories, loading, getAllAccessoriesData } = useAccessories();
+  const {
+    updateAccessory,
+    loading: updating,
+    statusMessage,
+    success,
+  } = useUpdateAccessory();
 
-  const [openMeasures, setOpenMeasures] = useState(false);
-  const [selected, setSelected] = useState<IClient | null>(null);
-
-  const loadClientes = async () => {
-    setLoading(true);
-    try {
-      const { data } = await api.get("/clientes");
-      setClientes(data);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [openEdit, setOpenEdit] = useState(false);
+  const [selected, setSelected] = useState<IAccessory | null>(null);
+  const [form, setForm] = useState(emptyForm);
+  const [typeModal, setTypeModal] = useState<string>("");
+  const [openStatusModal, setOpenStatusModal] = useState(false);
 
   useEffect(() => {
-    loadClientes();
+    getAllAccessoriesData();
   }, []);
 
-  const getNombre = (c: IClient) => {
-    if (c.tipoCliente === "PERSONA") {
-      return `${c.nombres ?? ""} ${c.apellidos ?? ""}`.trim() || "-";
+  useEffect(() => {
+    if (!updating && statusMessage) {
+      setTypeModal(success ? STATUS_MODAL.SUCCESS_MODAL : STATUS_MODAL.ERROR_MODAL);
+      setOpenStatusModal(true);
+
+      if (success) {
+        setOpenEdit(false);
+        getAllAccessoriesData();
+      }
     }
-    return c.razonSocial ?? "-";
+  }, [updating, success, statusMessage]);
+
+  const openEditModal = (item: IAccessory) => {
+    setSelected(item);
+    setForm({
+      nombre: item.nombre ?? "",
+      precio: Number(item.precio) ?? 0,
+      atributo: item.atributo ?? "",
+      imagenUrl: item.imagenUrl ?? "",
+    });
+    setOpenEdit(true);
   };
 
-  const filteredClientes = useMemo(() => {
-    if (filter === "ALL") return clientes;
-    if (filter === "DNI") return clientes.filter((c) => c.tipoDoc === "DNI");
-    return clientes.filter((c) => c.tipoDoc === "RUC");
-  }, [clientes, filter]);
-
-  const btnClass = (active: boolean) =>
-    `rounded-md px-4 py-2 text-sm font-medium duration-200 ${
-      active
-        ? "bg-blue text-white"
-        : "bg-gray-1 text-dark-2 hover:bg-blue hover:text-white"
-    }`;
-
-  const openModalMeasures = (c: IClient) => {
-    setSelected(c);
-    setOpenMeasures(true);
-  };
-
-  const closeModalMeasures = () => {
-    setOpenMeasures(false);
+  const closeEditModal = () => {
+    setOpenEdit(false);
     setSelected(null);
+    setForm(emptyForm);
   };
 
-  const fmt = (v: any) => (v === null || v === undefined ? "-" : String(v));
-  const hasMeasures = (c: IClient) => {
-    // si al menos uno existe, mostramos "✅"
-    return (
-      c.dip !== null ||
-      c.add !== null ||
-      c.odEsf !== null ||
-      c.odCyl !== null ||
-      c.odEje !== null ||
-      c.oiEsf !== null ||
-      c.oiCyl !== null ||
-      c.oiEje !== null
-    );
+  const onChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: name === "precio" ? Number(value) : value,
+    }));
+  };
+
+  const onChangeFile = async (file: File | null) => {
+    if (!file) {
+      setForm((prev) => ({ ...prev, imagenUrl: "" }));
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const res = await fetch("/api/upload-s3", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await res.json();
+
+    setForm((prev) => ({
+      ...prev,
+      imagenUrl: data.url,
+    }));
+  };
+
+  const submitEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selected) return;
+
+    await updateAccessory(selected.id, form);
   };
 
   return (
     <>
       <div className="w-full rounded-xl border border-gray-3 bg-white overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-3 flex items-center justify-between gap-4 flex-wrap">
-          <p className="font-medium text-dark">Lista de clientes</p>
-
-          {/* Filtros */}
-          <div className="flex gap-2">
-            <button
-              type="button"
-              className={btnClass(filter === "ALL")}
-              onClick={() => setFilter("ALL")}
-            >
-              Todos
-            </button>
-            <button
-              type="button"
-              className={btnClass(filter === "DNI")}
-              onClick={() => setFilter("DNI")}
-            >
-              DNI
-            </button>
-            <button
-              type="button"
-              className={btnClass(filter === "RUC")}
-              onClick={() => setFilter("RUC")}
-            >
-              RUC
-            </button>
-          </div>
+          <p className="font-medium text-dark">Lista de accesorios</p>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead className="bg-gray-1">
               <tr>
-                <th className="px-6 py-3">Documento</th>
-                <th className="px-6 py-3">Nombre / Razón Social</th>
-                <th className="px-6 py-3">Teléfono</th>
-                <th className="px-6 py-3">Medidas</th>
-                <th className="px-6 py-3">Activo</th>
+                <th className="px-6 py-3">Nombre</th>
+                <th className="px-6 py-3">Descripción</th>
+                <th className="px-6 py-3">Precio</th>
+                <th className="px-6 py-3">Imagen</th>
                 <th className="px-6 py-3 text-right">Acción</th>
               </tr>
             </thead>
@@ -121,36 +125,42 @@ export default function ListAccesories() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-6">
+                  <td colSpan={5} className="px-6 py-6">
                     Cargando...
                   </td>
                 </tr>
-              ) : filteredClientes.length === 0 ? (
+              ) : accessories.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-6">
-                    No hay clientes para este filtro
+                  <td colSpan={5} className="px-6 py-6">
+                    No hay accesorios registrados
                   </td>
                 </tr>
               ) : (
-                filteredClientes.map((c) => (
-                  <tr key={c.id} className="border-t border-gray-3">
+                accessories.map((item) => (
+                  <tr key={item.id} className="border-t border-gray-3">
+                    <td className="px-6 py-4">{item.nombre}</td>
+                    <td className="px-6 py-4">{item.atributo || "-"}</td>
                     <td className="px-6 py-4">
-                      {c.tipoDoc}: {c.numeroDoc}
+                      S/ {Number(item.precio).toFixed(2)}
                     </td>
-                    <td className="px-6 py-4">{getNombre(c)}</td>
-                    <td className="px-6 py-4">{c.telefono ?? "-"}</td>
-
-                    <td className="px-6 py-4">{hasMeasures(c) ? "✅" : "—"}</td>
-
-                    <td className="px-6 py-4">{c.activo ? "✅" : "❌"}</td>
-
+                    <td className="px-6 py-4">
+                      {item.imagenUrl ? (
+                        <img
+                          src={item.imagenUrl}
+                          alt={item.nombre}
+                          className="h-14 w-14 rounded-lg object-cover border border-gray-3"
+                        />
+                      ) : (
+                        "-"
+                      )}
+                    </td>
                     <td className="px-6 py-4 text-right">
                       <button
                         type="button"
+                        onClick={() => openEditModal(item)}
                         className="rounded-md bg-gray-1 px-3 py-2 text-sm font-medium text-dark-2 hover:bg-blue hover:text-white duration-200"
-                        onClick={() => openModalMeasures(c)}
                       >
-                        Ver medidas
+                        Editar
                       </button>
                     </td>
                   </tr>
@@ -161,137 +171,106 @@ export default function ListAccesories() {
         </div>
       </div>
 
-      {/* ✅ MODAL MEDIDAS */}
-      {openMeasures && selected && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          {/* overlay */}
+      {openEdit && selected && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pt-30">
           <div
             className="absolute inset-0 bg-black/40"
-            onClick={closeModalMeasures}
+            onClick={closeEditModal}
           />
 
-          {/* content */}
           <div className="relative w-full max-w-2xl rounded-xl bg-white p-6 shadow-lg">
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex items-start justify-between gap-4 mb-5">
               <div>
                 <h3 className="text-lg font-semibold text-dark">
-                  Medidas del cliente
+                  Editar accesorio
                 </h3>
                 <p className="mt-1 text-sm text-dark-5">
-                  {selected.tipoDoc}: {selected.numeroDoc} •{" "}
-                  {getNombre(selected)}
+                  Modifica nombre, precio o descripción
                 </p>
               </div>
 
               <button
                 type="button"
-                onClick={closeModalMeasures}
+                onClick={closeEditModal}
                 className="rounded-md px-3 py-2 text-sm font-medium bg-gray-1 text-dark-2 hover:bg-gray-2"
               >
                 Cerrar
               </button>
             </div>
 
-            <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
-              <div className="rounded-xl border border-gray-3 p-4">
-                <p className="text-sm font-semibold text-dark">Generales</p>
-                <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
-                  <div>
-                    <p className="text-dark-5">DIP</p>
-                    <p className="font-medium text-dark">{fmt(selected.dip)}</p>
-                  </div>
-                  <div>
-                    <p className="text-dark-5">ADD</p>
-                    <p className="font-medium text-dark">{fmt(selected.add)}</p>
-                  </div>
+            <form onSubmit={submitEdit} className="space-y-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <BaseInput
+                  label="Nombre"
+                  name="nombre"
+                  value={form.nombre}
+                  placeholder="Nombre del accesorio"
+                  type="string"
+                  required
+                  onChange={onChange}
+                />
+
+                <BaseInput
+                  label="Precio"
+                  name="precio"
+                  type="number"
+                  value={form.precio}
+                  placeholder="0.00"
+                  step="0.01"
+                  required
+                  onChange={onChange}
+                />
+
+                <div className="col-span-1 md:col-span-2">
+                  <BaseTarea
+                    label="Descripción"
+                    name="atributo"
+                    value={form.atributo}
+                    placeholder="Descripción breve del accesorio"
+                    onChange={onChange}
+                  />
                 </div>
               </div>
 
-              <div className="rounded-xl border border-gray-3 p-4">
-                <p className="text-sm font-semibold text-dark">
-                  Última medición
-                </p>
-                <div className="mt-3 text-sm">
-                  <p className="text-dark-5">Fecha</p>
-                  <p className="font-medium text-dark">
-                    {selected.fechaMedicion
-                      ? new Date(selected.fechaMedicion).toLocaleString()
-                      : "-"}
-                  </p>
-                  <p className="mt-2 text-dark-5">Encargado (ID)</p>
-                  <p className="font-medium text-dark">
-                    {fmt(selected.encargadoMedicionId)}
-                  </p>
-                </div>
-              </div>
-            </div>
+              <BaseFile
+                label="Imagen"
+                name="imagen"
+                onChange={onChangeFile}
+                currentUrl={form.imagenUrl || undefined}
+              />
 
-            <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-              <div className="rounded-xl border border-gray-3 p-4">
-                <p className="text-sm font-semibold text-dark">
-                  Ojo Derecho (OD)
-                </p>
-                <div className="mt-3 grid grid-cols-3 gap-3 text-sm">
-                  <div>
-                    <p className="text-dark-5">ESF</p>
-                    <p className="font-medium text-dark">
-                      {fmt(selected.odEsf)}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-dark-5">CYL</p>
-                    <p className="font-medium text-dark">
-                      {fmt(selected.odCyl)}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-dark-5">EJE</p>
-                    <p className="font-medium text-dark">
-                      {fmt(selected.odEje)}
-                    </p>
-                  </div>
-                </div>
-              </div>
+              <div className="flex justify-end gap-3">
+                <BaseButton
+                  type="button"
+                  variant="cancel"
+                  fullWidth={false}
+                  onClick={closeEditModal}
+                  className="min-w-[120px]"
+                >
+                  Cancelar
+                </BaseButton>
 
-              <div className="rounded-xl border border-gray-3 p-4">
-                <p className="text-sm font-semibold text-dark">
-                  Ojo Izquierdo (OI)
-                </p>
-                <div className="mt-3 grid grid-cols-3 gap-3 text-sm">
-                  <div>
-                    <p className="text-dark-5">ESF</p>
-                    <p className="font-medium text-dark">
-                      {fmt(selected.oiEsf)}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-dark-5">CYL</p>
-                    <p className="font-medium text-dark">
-                      {fmt(selected.oiCyl)}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-dark-5">EJE</p>
-                    <p className="font-medium text-dark">
-                      {fmt(selected.oiEje)}
-                    </p>
-                  </div>
-                </div>
+                <BaseButton
+                  type="submit"
+                  loading={updating}
+                  fullWidth={false}
+                  className="min-w-[160px]"
+                >
+                  Guardar cambios
+                </BaseButton>
               </div>
-            </div>
-
-            <div className="mt-6 flex justify-end gap-2">
-              <button
-                type="button"
-                onClick={closeModalMeasures}
-                className="rounded-md bg-gray-1 px-4 py-2 text-sm font-medium text-dark-2 hover:bg-gray-2"
-              >
-                Listo
-              </button>
-            </div>
+            </form>
           </div>
         </div>
       )}
+
+      <LoadingModal isOpen={updating} />
+      <StatusModal
+        isOpen={openStatusModal}
+        type={typeModal}
+        message={statusMessage}
+        onClose={() => setOpenStatusModal(false)}
+      />
     </>
   );
 }
