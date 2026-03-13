@@ -1,4 +1,4 @@
-export type ClientType = 'PERSONA' | 'EMPRESA';
+export type ClientType = "PERSONA" | "EMPRESA";
 
 export interface ICreateClient {
   tipoCliente: ClientType;
@@ -31,7 +31,7 @@ export interface ICreateClient {
 export interface IClient {
   id: number;
   tipoCliente: ClientType;
-  tipoDoc: 'DNI' | 'RUC';
+  tipoDoc: "DNI" | "RUC";
   numeroDoc: string;
 
   nombres: string | null;
@@ -71,7 +71,7 @@ export interface ISearchClient {
   apellidos: string | null;
 }
 
-export interface IResponseClient {
+export interface IResponseSearchClient {
   total: number;
   clientes: ISearchClient[];
 }

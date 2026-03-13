@@ -43,7 +43,7 @@ export default function BaseSelectCard({
 
         <h3 className="font-bold text-center text-xl mt-2">{title}</h3>
 
-        <p className="text-center text-lg">Precio: ${price}</p>
+        <p className="text-center text-lg">Precio: S/. {price}</p>
       </div>
     </motion.div>
   );

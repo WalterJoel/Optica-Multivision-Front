@@ -1,4 +1,4 @@
-import { IAccessory } from '@/types/products';
+import { IAccessory } from "@/types/products";
 
 export interface IKit {
   id: number;
@@ -10,20 +10,32 @@ export interface IKit {
   accesorios: IAccessory[];
 }
 
-export interface ICreateKitAccesory {
-  cantidad: number;
-  accesorioId: number;
+export interface IResponseKitAccesory {
+  id: number;
+  nombre: string;
+  productoId: number;
+  precio: number;
 }
-
-export interface IListKitAccesory {
-  accesorioId: number;
+export interface IKitAccesory {
+  id: number;
   nombre: string;
   cantidad: number;
+  productoId: number;
+  precio: number;
 }
 
 export interface ICreateKit {
   nombre: string;
   precio: number;
   descripcion: string;
-  accesorios: ICreateKitAccesory[];
+}
+export interface ICreateAccesory {
+  cantidad: number;
+  accesorioId: number;
+}
+export interface ICreateKitAccesory {
+  nombre: string;
+  precio: number;
+  descripcion: string;
+  accesorios: ICreateAccesory[];
 }

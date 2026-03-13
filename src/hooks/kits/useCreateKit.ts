@@ -1,27 +1,27 @@
-import { useState } from 'react';
-import { ICreateKit } from '@/types/kits';
-import { createKitService } from '@/services/kits';
+import { useState } from "react";
+import { ICreateKit } from "@/types/kits";
+import { createKitService } from "@/services/kits";
 
 export function useCreateKit() {
   const [loading, setLoading] = useState(false);
-  const [statusMessage, setMessage] = useState<string>('');
+  const [statusMessage, setMessage] = useState<string>("");
   const [success, setSuccess] = useState<boolean>(false);
 
   const addKit = async (payload: ICreateKit) => {
     setLoading(true);
     setSuccess(false);
-    setMessage('');
+    setMessage("");
 
     try {
       await createKitService(payload);
       setSuccess(true);
-      setMessage('Kit creado correctamente');
+      setMessage("Kit creado correctamente");
     } catch (err: any) {
       const backendMessage = err.response?.data?.message;
       setMessage(
         backendMessage
-          ? 'Error al registrar kit: ' + backendMessage
-          : 'Error al registrar kit',
+          ? "Error al registrar kit: " + backendMessage
+          : "Error al registrar kit",
       );
     } finally {
       setLoading(false);

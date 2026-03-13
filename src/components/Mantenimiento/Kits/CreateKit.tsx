@@ -1,82 +1,146 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { BaseInput } from '@/components/Common/Inputs/BaseInput';
-import { BaseButtonIcon } from '@/components/Common/Buttons/BaseButtonIcon';
-import { BaseButton } from '@/components/Common/Buttons/BaseButton';
-import { AddAccessoryModal } from './AddAccessoryModal';
-import { ICreateKit } from '@/types/kits';
-import { useCreateKit } from '@/hooks/kits/useCreateKit';
-import { Plus, Trash2 } from 'lucide-react';
-import { ICreateKitAccesory, IListKitAccesory } from '@/types/kits';
+import { useEffect, useState } from "react";
+import { BaseInput } from "@/components/Common/Inputs/BaseInput";
+import { BaseButton } from "@/components/Common/Buttons/BaseButton";
+import { BaseButtonIcon } from "@/components/Common/Buttons/BaseButtonIcon";
+import { BaseTarea } from "@/components/Common/Inputs";
+import { AddAccessoryModal } from "./AddAccessoryModal";
+import {
+  ICreateAccesory,
+  ICreateKit,
+  ICreateKitAccesory,
+  IKitAccesory,
+} from "@/types/kits";
+import { useCreateKit } from "@/hooks/kits/useCreateKit";
+import { Plus, Trash2 } from "lucide-react";
+import {
+  StatusModal,
+  LoadingModal,
+  InfoModal,
+} from "@/components/Common/modal";
+import { STATUS_MODAL } from "@/commons/constants";
 
 const emptyForm: ICreateKit = {
-  nombre: '',
-  descripcion: '',
+  nombre: "",
+  descripcion: "",
   precio: 0,
-  accesorios: [],
+};
+
+const emptyAccesory: IKitAccesory = {
+  id: 0,
+  nombre: "",
+  cantidad: 1,
+  productoId: 0,
+  precio: 0,
 };
 
 export default function CreateKit() {
   const [form, setForm] = useState<ICreateKit>(emptyForm);
-  const { addKit, success, statusMessage, loading } = useCreateKit();
-  const [typeModal, setTypeModal] = useState<string>('');
-  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [accesorios, setAccesorios] = useState<IKitAccesory[]>([]);
+  const [newAccesory, setNewAccesory] = useState<IKitAccesory>(emptyAccesory);
 
-  const [accesoriosKit, setAccesoriosKit] = useState<IListKitAccesory[]>([]); //lista temp
+  const [openModal, setOpenModal] = useState(false);
+  const [openModalAccesory, setOpenModalAccesory] = useState(false);
+  const [typeModal, setTypeModal] = useState("");
 
-  const [nuevoAccesorio, setNuevoAccesorio] = useState({
-    id: 0,
-    nombre: '',
-    cantidad: 1,
-  });
+  const [isInfoOpen, setIsInfoOpen] = useState(false);
+  const [infoConfig, setInfoConfig] = useState({ message: "", code: "" });
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const { addKit, loading, statusMessage, success } = useCreateKit();
+
+  const onChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
 
     setForm((prev) => ({
       ...prev,
-      [name]: name === 'precio' ? Number(value) : value,
+      [name]: name === "precio" ? Number(value) : value,
     }));
   };
 
-  const agregarAccesorio = () => {
-    if (!nuevoAccesorio.nombre.trim()) return;
-
-    const existe = accesoriosKit.some(
-      (a) => a.accesorioId === nuevoAccesorio.id,
-    );
-
-    if (existe) {
-      alert('Este accesorio ya fue agregado al kit.');
+  const addAccesory = () => {
+    if (!newAccesory.productoId) {
+      setInfoConfig({
+        message: "Debes seleccionar un accesorio válido",
+        code: "ACC_INV",
+      });
+      setIsInfoOpen(true);
       return;
     }
 
-    const nuevoItem: IListKitAccesory = {
-      accesorioId: nuevoAccesorio.id,
-      nombre: nuevoAccesorio.nombre.trim(),
-      cantidad: nuevoAccesorio.cantidad,
-    };
+    const existe = accesorios.some((a) => a.id === newAccesory.id);
 
-    setAccesoriosKit((prev) => [...prev, nuevoItem]);
-    setNuevoAccesorio({ nombre: '', cantidad: 1, id: 0 });
-    setOpenModal(false);
+    if (existe) {
+      setInfoConfig({
+        message: "Este accesorio ya fue agregado al kit.",
+        code: "DUPLICADO",
+      });
+      setIsInfoOpen(true);
+      return;
+    }
+
+    setAccesorios((prev) => [...prev, newAccesory]);
+
+    setNewAccesory(emptyAccesory);
+    setOpenModalAccesory(false);
   };
 
   const eliminarAccesorio = (id: number) => {
-    setAccesoriosKit((prev) => prev.filter((a) => a.accesorioId !== id));
+    setAccesorios((prev) => prev.filter((a) => a.id !== id));
   };
 
-  const createKit = (e: React.FormEvent) => {
+  const createKit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const payload: ICreateKit = {
-      ...form,
-      accesorios: accesoriosKit,
+    if (accesorios.length === 0) {
+      setInfoConfig({
+        message: "No ingresaste ningún accesorio aún",
+        code: "KIT VACIO",
+      });
+      setIsInfoOpen(true);
+      return;
+    }
+
+    const payload: ICreateKitAccesory = {
+      nombre: form.nombre,
+      descripcion: form.descripcion,
+      precio: form.precio,
+      accesorios: accesorios.map((a) => ({
+        accesorioId: a.id,
+        cantidad: a.cantidad,
+      })),
     };
 
-    console.log('Payload listo:', payload);
+    await addKit(payload);
   };
+
+  useEffect(() => {
+    const total = accesorios.reduce(
+      (sum, acc) => sum + acc.precio * acc.cantidad,
+      0,
+    );
+
+    setForm((prev) => ({
+      ...prev,
+      precio: total,
+    }));
+  }, [accesorios]);
+
+  useEffect(() => {
+    if (!loading && (success || statusMessage)) {
+      if (success) {
+        setTypeModal(STATUS_MODAL.SUCCESS_MODAL);
+        setForm(emptyForm);
+        setAccesorios([]);
+      } else {
+        setTypeModal(STATUS_MODAL.ERROR_MODAL);
+      }
+
+      setOpenModal(true);
+    }
+  }, [loading, success, statusMessage]);
 
   return (
     <>
@@ -84,7 +148,6 @@ export default function CreateKit() {
         onSubmit={createKit}
         className="w-full rounded-xl border border-gray-3 bg-white p-6"
       >
-        {/* DATOS DEL KIT */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <BaseInput
             label="Nombre del Kit"
@@ -93,7 +156,6 @@ export default function CreateKit() {
             placeholder="Kit de Limpieza Premium"
             required
             onChange={onChange}
-            pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$"
           />
 
           <BaseInput
@@ -101,100 +163,102 @@ export default function CreateKit() {
             name="precio"
             type="number"
             value={form.precio}
-            placeholder="29.90"
-            required
+            disabled
             onChange={onChange}
-            pattern="/^[0-9]*\.?[0-9]*$/"
           />
 
-          <BaseInput
+          <BaseTarea
             label="Descripción"
             name="descripcion"
             value={form.descripcion}
-            placeholder="Kit completo para limpieza de lentes"
+            placeholder="..."
             onChange={onChange}
+            required
+            className="md:col-span-3"
           />
         </div>
 
-        {/* ACCESORIOS */}
         <div className="mt-12">
-          <div className="flex justify-end items-center mb-6">
+          <div className="flex justify-end gap-2 mb-6">
             <BaseButtonIcon
               variant="primary"
-              onClick={() => setOpenModal(true)}
               center={false}
+              onClick={() => setOpenModalAccesory(true)}
             >
               <Plus size={20} />
             </BaseButtonIcon>
           </div>
 
           <div className="border border-gray-3 rounded-2xl overflow-hidden">
-            <div className="max-h-[320px] overflow-y-auto">
-              <table className="w-full text-sm border-collapse">
-                <thead className="bg-gray-3 sticky top-0 z-10">
-                  <tr>
-                    <th className="p-4 text-left font-semibold text-gray-600">
-                      Producto
-                    </th>
-                    <th className="p-4 text-center font-semibold text-gray-600">
-                      Cantidad
-                    </th>
-                    <th className="p-4 text-center font-semibold text-gray-600">
-                      Acciones
-                    </th>
-                  </tr>
-                </thead>
+            <table className="w-full text-sm">
+              <thead className="bg-gray-3">
+                <tr>
+                  <th className="p-4 text-left">Accesorio</th>
+                  <th className="p-4 text-center">Cantidad</th>
+                  <th className="p-4 text-center">Precio</th>
+                  <th className="p-4 text-center">Acciones</th>
+                </tr>
+              </thead>
 
-                <tbody>
-                  {accesoriosKit.length === 0 ? (
-                    <tr>
-                      <td
-                        colSpan={3}
-                        className="p-10 text-center text-gray-400"
-                      >
-                        No agregaste accesorios aún
+              <tbody>
+                {accesorios.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="p-10 text-center text-gray-400">
+                      No agregaste accesorios aún
+                    </td>
+                  </tr>
+                ) : (
+                  accesorios.map((acc) => (
+                    <tr key={acc.id} className="border-t hover:bg-gray-50">
+                      <td className="p-4">{acc.nombre}</td>
+                      <td className="p-4 text-center">{acc.cantidad}</td>
+                      <td className="p-4 text-center">{acc.precio}</td>
+
+                      <td className="p-4 text-center">
+                        <BaseButtonIcon
+                          type="button"
+                          variant="danger"
+                          onClick={() => eliminarAccesorio(acc.id)}
+                        >
+                          <Trash2 size={18} />
+                        </BaseButtonIcon>
                       </td>
                     </tr>
-                  ) : (
-                    accesoriosKit.map((acc) => (
-                      <tr
-                        key={acc.accesorioId}
-                        className="border-t hover:bg-gray-50 transition"
-                      >
-                        <td className="p-4">{acc.nombre}</td>
-                        <td className="p-4 text-center">{acc.cantidad}</td>
-                        <td className="p-4 text-center">
-                          <BaseButtonIcon
-                            type="button"
-                            variant="danger"
-                            onClick={() => eliminarAccesorio(acc.accesorioId)}
-                          >
-                            <Trash2 size={18} />
-                          </BaseButtonIcon>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
+                  ))
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
 
-        {/* BOTÓN CREAR */}
         <div className="mt-12 flex justify-center">
-          <BaseButton type="submit" className="min-w-[260px]">
-            Crear Kit
-          </BaseButton>
+          <BaseButton type="submit">Crear Kit</BaseButton>
         </div>
       </form>
 
       <AddAccessoryModal
+        isOpen={openModalAccesory}
+        onClose={() => setOpenModalAccesory(false)}
+        newAccesory={newAccesory}
+        setNewAccesory={setNewAccesory}
+        onAdd={addAccesory}
+      />
+
+      <LoadingModal isOpen={loading} />
+
+      <StatusModal
         isOpen={openModal}
+        type={typeModal}
+        message={statusMessage}
         onClose={() => setOpenModal(false)}
-        nuevoAccesorio={nuevoAccesorio}
-        setNuevoAccesorio={setNuevoAccesorio}
-        onAdd={agregarAccesorio}
+      />
+
+      <InfoModal
+        isOpen={isInfoOpen}
+        title="Aviso"
+        message={infoConfig.message}
+        code={infoConfig.code}
+        onClose={() => setIsInfoOpen(false)}
       />
     </>
   );

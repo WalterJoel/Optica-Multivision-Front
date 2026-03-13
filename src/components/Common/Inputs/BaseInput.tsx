@@ -7,6 +7,7 @@ interface InputProps {
   placeholder?: string;
   type?: React.HTMLInputTypeAttribute;
   readOnly?: boolean;
+  disabled?: boolean;
   required?: boolean;
   min?: number;
   max?: number;
@@ -25,6 +26,7 @@ export const BaseInput = ({
   placeholder,
   type = "text",
   readOnly = false,
+  disabled = false,
   required,
   min,
   max,
@@ -50,6 +52,7 @@ export const BaseInput = ({
         type={type}
         value={value}
         readOnly={readOnly}
+        disabled={disabled}
         required={required}
         placeholder={placeholder}
         min={type === "number" ? min : undefined}
@@ -63,7 +66,8 @@ export const BaseInput = ({
         className="w-full bg-white border border-gray-100 text-dark rounded-full py-2.5 px-5 
                    outline-none transition-all duration-200 text-sm shadow-sm shadow-gray-50/50
                    placeholder:text-gray-300
-                   focus:border-blue focus:ring-4 focus:ring-blue/10"
+                   focus:border-blue focus:ring-4 focus:ring-blue/10
+                   disabled:opacity-50 disabled:cursor-not-allowed"
       />
     </div>
   );

@@ -1,6 +1,6 @@
-import { useState, useRef } from 'react';
-import { ISearchClient } from '@/types/clients';
-import { searchClient } from '@/services/clients';
+import { useState, useRef } from "react";
+import { ISearchClient } from "@/types/clients";
+import { searchClient } from "@/services/clients";
 
 export function useSearchClient() {
   const [loading, setLoading] = useState(false);
@@ -26,7 +26,7 @@ export function useSearchClient() {
         setClients(data);
         setShowList(true);
       } catch (error) {
-        console.error('Error buscando clientes', error);
+        console.error("Error buscando clientes", error);
       } finally {
         setLoading(false);
       }

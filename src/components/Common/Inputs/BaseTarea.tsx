@@ -24,7 +24,10 @@ export const BaseTarea: React.FC<BaseTextareaProps> = ({
   return (
     <div className={`flex flex-col gap-2 ${className}`}>
       {label && (
-        <label className="text-sm font-medium text-gray-600">{label}</label>
+        <label htmlFor={name} className="text-sm font-medium text-gray-500">
+          {label}
+          {required && <span className="text-red ml-1">*</span>}
+        </label>
       )}
       <textarea
         name={name}
