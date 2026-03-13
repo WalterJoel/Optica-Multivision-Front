@@ -20,7 +20,7 @@ export default function AccessoryCards({ accesorios, onAdd }: Props) {
   return (
     <div className="w-[420px] flex flex-col h-full">
       {/* TITLE */}
-      <h3 className="text-xl font-semibold text-slate-800 mb-6">
+      <h3 className="text-xl font-bold text-dark mb-6">
         Añade un accesorio a tu compra
       </h3>
 

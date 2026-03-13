@@ -13,9 +13,7 @@ const OrderSummary = () => {
   return (
     <div className="lg:max-w-[455px] w-full flex flex-col">
       {/* TITLE */}
-      <h3 className="text-xl font-semibold text-slate-800 mb-8">
-        Resumen de la orden
-      </h3>
+      <h3 className="text-xl font-bold text-dark mb-8">Resumen de la orden</h3>
 
       {/* BOX */}
       <div className="bg-white shadow-1 rounded-[10px]">
