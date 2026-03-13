@@ -69,7 +69,7 @@ const SeriesDescuentos = () => {
   const handleSelectLens = (l: ILens) => {
     setSearchLensTerm(l.marca);
     setShowList(false);
-    setForm((prev) => ({ ...prev, productoId: l.id }));
+    setForm((prev) => ({ ...prev, productoId: l.productoId }));
     setSeries((prev) =>
       prev.map((s) => ({
         ...s,
@@ -180,7 +180,6 @@ const SeriesDescuentos = () => {
             )}
           />
         </div>
-
         <div className="flex flex-col gap-4">
           <label className="text-sm font-medium text-gray-500">
             Seleccione la Serie

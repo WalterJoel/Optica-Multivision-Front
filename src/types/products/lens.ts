@@ -3,11 +3,11 @@ import { PRODUCTOS } from "@/commons/constants";
 export interface ILens {
   id: number;
   marca: string;
+  productoId: number;
   material: string;
   precio_serie1: number;
   precio_serie2: number;
   precio_serie3: number;
-  imagenUrl: string;
 }
 
 export type CreateLens = Omit<ILens, "id"> & {

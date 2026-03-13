@@ -58,6 +58,7 @@ const config: Config = {
         "light-3": "#ADBCF2",
         "light-4": "#C3CEF6",
         "light-5": "#E1E8FF",
+        "light-6": "#f6f7ff",
       },
       red: {
         DEFAULT: "#F23030",

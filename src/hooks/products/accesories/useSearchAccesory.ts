@@ -1,6 +1,6 @@
-import { useState, useRef } from 'react';
-import { ISearchAccesory } from '@/types/products';
-import {} from '@/services/clients';
+import { useState, useRef } from "react";
+import { ISearchAccesory } from "@/types/products";
+import { searchAccesory } from "@/services/products/accesories";
 
 export function useSearchAccesory() {
   const [loading, setLoading] = useState(false);
@@ -22,24 +22,15 @@ export function useSearchAccesory() {
       setLoading(true);
 
       try {
-        const data = await searchAccesories(value);
+        const data = await searchAccesory(value);
         setAccesories(data);
         setShowList(true);
       } catch (error) {
-        console.error('Error buscando clientes', error);
+        console.error("Error buscando accesorios", error);
       } finally {
         setLoading(false);
       }
     }, 300);
-  };
-
-  const selectAccesory = (client: ISearchAccesory) => {
-    const name = client.nombres
-      ? `${client.nombres} ${client.apellidos ?? ''}`
-      : client.numeroDoc;
-
-    setAccesories([]);
-    setShowList(false);
   };
 
   return {
@@ -47,6 +38,6 @@ export function useSearchAccesory() {
     loading,
     showList,
     searchAccesories,
-    selectAccesory,
+    setShowList,
   };
 }
