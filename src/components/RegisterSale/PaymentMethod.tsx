@@ -584,6 +584,13 @@ const PaymentMethod = () => {
                   value={form.precio}
                   onChange={onChange}
                 />
+                <BaseTarea
+  label="Observaciones"
+  name="observaciones"
+  value={form.observaciones}
+  placeholder="Ingrese observaciones"
+  onChange={onChange}
+/>
 
                 <div>
                   <h4 className="mb-3 font-semibold">Bisel brillante</h4>
