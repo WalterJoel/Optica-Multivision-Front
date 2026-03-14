@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
+import { useReactToPrint } from "react-to-print";
 import { BaseInput, BaseTabs, BaseTarea } from "@/components/Common/Inputs";
 import { motion } from "framer-motion";
 import Image from "next/image";
@@ -183,37 +182,10 @@ const PaymentMethod = () => {
     tipoMontura: form.tipoMontura,
   };
 
-  const downloadOrderPdf = async () => {
-    const element = printRef.current;
-    if (!element) return;
-
-    await document.fonts.ready;
-    await new Promise((resolve) => requestAnimationFrame(() => resolve(true)));
-
-    const canvas = await html2canvas(element, {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: "#ffffff",
-      scrollX: 0,
-      scrollY: 0,
-      width: element.offsetWidth,
-      height: element.offsetHeight,
-      windowWidth: element.offsetWidth,
-      windowHeight: element.offsetHeight,
-    });
-
-    const imgData = canvas.toDataURL("image/png");
-
-    const pdf = new jsPDF({
-      orientation: "portrait",
-      unit: "mm",
-      format: "a4",
-      compress: true,
-    });
-
-    pdf.addImage(imgData, "PNG", 0, 0, 210, 297);
-    pdf.save(`orden-pedido-${form.orderId || "sin-codigo"}.pdf`);
-  };
+  const handlePrint = useReactToPrint({
+    contentRef: printRef,
+    documentTitle: `orden-pedido-${form.orderId || "sin-codigo"}`,
+  });
 
   return (
     <div className="w-full">
@@ -659,7 +631,7 @@ const PaymentMethod = () => {
 
                   <button
                     type="button"
-                    onClick={downloadOrderPdf}
+                    onClick={handlePrint}
                     className="w-full rounded-lg bg-blue py-3 font-semibold text-white"
                   >
                     Imprimir / Guardar PDF
@@ -671,30 +643,18 @@ const PaymentMethod = () => {
             <OrderPreviewModal
               open={openPreview}
               onClose={() => setOpenPreview(false)}
-              onDownloadPdf={downloadOrderPdf}
+              onDownloadPdf={handlePrint}
               form={orderFormData}
             />
 
             <div
-              aria-hidden="true"
               style={{
-                position: "fixed",
-                inset: 0,
-                opacity: 0,
-                pointerEvents: "none",
-                zIndex: -1,
-                overflow: "hidden",
+                position: "absolute",
+                left: "-9999px",
+                top: 0,
               }}
             >
-              <div
-                ref={printRef}
-                style={{
-                  width: "210mm",
-                  height: "297mm",
-                  background: "#fff",
-                  display: "block",
-                }}
-              >
+              <div ref={printRef}>
                 <OrderPrint form={orderFormData} />
               </div>
             </div>
