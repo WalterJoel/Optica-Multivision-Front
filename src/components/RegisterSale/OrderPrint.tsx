@@ -41,18 +41,21 @@ const pageStyle: React.CSSProperties = {
   margin: "0 auto",
   background: "#fff",
   color: "#111",
-  padding: "10mm 12mm",
+  padding: "14mm 14mm",
   fontFamily: "Arial, Helvetica, sans-serif",
   fontSize: "13px",
   lineHeight: 1.15,
-  overflow: "hidden",
+
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "flex-start",
 };
 
 const headerRowStyle: React.CSSProperties = {
   display: "flex",
   justifyContent: "space-between",
   alignItems: "flex-start",
-  marginBottom: "10px",
+  marginBottom: "14px",
 };
 
 const dataRowStyle: React.CSSProperties = {
@@ -313,8 +316,8 @@ const OrderPrint = ({ form }: Props) => {
               {form.biselBrillante === "SI"
                 ? "SI"
                 : form.biselBrillante === "NO"
-                  ? "NO"
-                  : ""}
+                ? "NO"
+                : ""}
             </div>
 
             <div>{form.observaciones}</div>

@@ -187,14 +187,19 @@ const PaymentMethod = () => {
     const element = printRef.current;
     if (!element) return;
 
+    await document.fonts.ready;
+    await new Promise((resolve) => requestAnimationFrame(() => resolve(true)));
+
     const canvas = await html2canvas(element, {
       scale: 2,
       useCORS: true,
       backgroundColor: "#ffffff",
       scrollX: 0,
       scrollY: 0,
-      windowWidth: element.scrollWidth,
-      windowHeight: element.scrollHeight,
+      width: element.offsetWidth,
+      height: element.offsetHeight,
+      windowWidth: element.offsetWidth,
+      windowHeight: element.offsetHeight,
     });
 
     const imgData = canvas.toDataURL("image/png");
@@ -203,6 +208,7 @@ const PaymentMethod = () => {
       orientation: "portrait",
       unit: "mm",
       format: "a4",
+      compress: true,
     });
 
     pdf.addImage(imgData, "PNG", 0, 0, 210, 297);
@@ -646,7 +652,7 @@ const PaymentMethod = () => {
                   <button
                     type="button"
                     onClick={() => setOpenPreview(true)}
-                    className="w-full rounded-lg bg-blue py-3 font-semibold text-black"
+                    className="w-full rounded-lg bg-blue py-3 font-semibold text-white"
                   >
                     Ver PDF
                   </button>
@@ -654,7 +660,7 @@ const PaymentMethod = () => {
                   <button
                     type="button"
                     onClick={downloadOrderPdf}
-                    className="w-full rounded-lg bg-blue py-3 font-semibold text-black"
+                    className="w-full rounded-lg bg-blue py-3 font-semibold text-white"
                   >
                     Imprimir / Guardar PDF
                   </button>
@@ -670,17 +676,27 @@ const PaymentMethod = () => {
             />
 
             <div
-              ref={printRef}
+              aria-hidden="true"
               style={{
                 position: "fixed",
-                top: 0,
-                left: "-10000px",
-                width: "210mm",
-                height: "297mm",
-                background: "#fff",
+                inset: 0,
+                opacity: 0,
+                pointerEvents: "none",
+                zIndex: -1,
+                overflow: "hidden",
               }}
             >
-              <OrderPrint form={orderFormData} />
+              <div
+                ref={printRef}
+                style={{
+                  width: "210mm",
+                  height: "297mm",
+                  background: "#fff",
+                  display: "block",
+                }}
+              >
+                <OrderPrint form={orderFormData} />
+              </div>
             </div>
           </div>
         )}
