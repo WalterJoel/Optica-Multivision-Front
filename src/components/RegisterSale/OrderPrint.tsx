@@ -103,20 +103,15 @@ const OrderPrint = ({ form }: Props) => {
     <div style={pageStyle}>
       <div style={headerRowStyle}>
         <div>
-          <div
-            style={{
-              fontSize: "22pt",
-              fontWeight: 700,
-              letterSpacing: "0.3px",
-              lineHeight: 1,
-            }}
-          >
-            MULTIVISIÓN
-          </div>
-
-          <div style={{ fontSize: "9pt", marginTop: "1mm" }}>
-            Tu visión, es nuestra misión
-          </div>
+          <img
+  src="/logo-multivision.jpeg"
+  alt="Logo Multivisión"
+  style={{
+    width: "55mm",
+    height: "auto",
+    objectFit: "contain",
+  }}
+/>
 
           <div style={{ fontSize: "9pt", marginTop: "3mm" }}>
             <strong>Dirección:</strong> Calle Santa Martha 218 Int. 2
