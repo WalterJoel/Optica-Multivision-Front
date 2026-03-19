@@ -39,5 +39,5 @@ export const searchEyeglasses = async (
   const { data } = await api.get("/productos/buscarMontura", {
     params: { busqueda },
   });
-  return data;
+  return data?.monturas || [];
 };

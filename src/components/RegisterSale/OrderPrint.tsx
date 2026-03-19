@@ -35,15 +35,15 @@ interface Props {
 }
 
 const pageStyle: React.CSSProperties = {
-  width: "210mm",
-  height: "297mm",
+  width: "190mm",
+  minHeight: "270mm",
   boxSizing: "border-box",
   margin: "0 auto",
   background: "#fff",
   color: "#111",
-  padding: "10mm 12mm",
+  padding: "8mm",
   fontFamily: "Arial, Helvetica, sans-serif",
-  fontSize: "13px",
+  fontSize: "10pt",
   lineHeight: 1.15,
   overflow: "hidden",
 };
@@ -57,35 +57,42 @@ const headerRowStyle: React.CSSProperties = {
 
 const dataRowStyle: React.CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "1fr 220px",
+  gridTemplateColumns: "1fr 52mm",
   borderBottom: "1px solid #222",
-  paddingBottom: "4px",
-  marginBottom: "6px",
-  columnGap: "12px",
+  paddingBottom: "2mm",
+  marginBottom: "2mm",
+  columnGap: "3mm",
 };
 
 const thStyle: React.CSSProperties = {
   border: "1px solid #222",
-  padding: "8px",
+  padding: "2mm",
   fontWeight: 700,
+  fontSize: "9pt",
 };
 
 const tdStyle: React.CSSProperties = {
   border: "1px solid #222",
-  padding: "10px 8px",
-  height: "38px",
+  padding: "2mm",
+  height: "10mm",
+  fontSize: "9pt",
 };
 
 const tdLabelStyle: React.CSSProperties = {
   ...tdStyle,
   fontWeight: 700,
-  width: "60px",
+  width: "12mm",
 };
 
 const sectionTitle: React.CSSProperties = {
   fontWeight: 700,
-  fontSize: "16px",
-  marginBottom: "8px",
+  fontSize: "11pt",
+  marginBottom: "2mm",
+};
+
+const boxTitle: React.CSSProperties = {
+  fontWeight: 700,
+  marginBottom: "2mm",
 };
 
 const OrderPrint = ({ form }: Props) => {
@@ -96,19 +103,21 @@ const OrderPrint = ({ form }: Props) => {
     <div style={pageStyle}>
       <div style={headerRowStyle}>
         <div>
-          <div style={{ fontSize: "34px", fontWeight: 700, letterSpacing: 1 }}>
-            MULTIVISIÓN
-          </div>
+          <img
+  src="/logo-multivision.jpeg"
+  alt="Logo Multivisión"
+  style={{
+    width: "55mm",
+    height: "auto",
+    objectFit: "contain",
+  }}
+/>
 
-          <div style={{ fontSize: "13px", marginTop: "4px" }}>
-            Tu visión, es nuestra misión
-          </div>
-
-          <div style={{ fontSize: "12px", marginTop: "10px" }}>
+          <div style={{ fontSize: "9pt", marginTop: "3mm" }}>
             <strong>Dirección:</strong> Calle Santa Martha 218 Int. 2
           </div>
 
-          <div style={{ fontSize: "12px", marginTop: "2px" }}>
+          <div style={{ fontSize: "9pt", marginTop: "1mm" }}>
             <strong>Cel.:</strong> 991 053 468 &nbsp;&nbsp;
             <strong>Telf.:</strong> 054 221 994
           </div>
@@ -117,9 +126,10 @@ const OrderPrint = ({ form }: Props) => {
         <div
           style={{
             border: "2px solid #222",
-            padding: "8px 14px",
-            fontWeight: 800,
-            fontSize: "24px",
+            padding: "3mm 5mm",
+            fontWeight: 700,
+            fontSize: "14pt",
+            lineHeight: 1,
             whiteSpace: "nowrap",
           }}
         >
@@ -127,7 +137,7 @@ const OrderPrint = ({ form }: Props) => {
         </div>
       </div>
 
-      <div style={{ marginTop: "14px" }}>
+      <div style={{ marginTop: "2mm", marginBottom: "3mm" }}>
         <div style={dataRowStyle}>
           <div>
             <strong>ÓPTICA:</strong> {form.optica}
@@ -149,8 +159,8 @@ const OrderPrint = ({ form }: Props) => {
         <div
           style={{
             borderBottom: "1px solid #222",
-            paddingBottom: "4px",
-            marginBottom: "10px",
+            paddingBottom: "2mm",
+            marginBottom: "3mm",
           }}
         >
           <strong>Dirección:</strong> {form.direccion}
@@ -161,7 +171,7 @@ const OrderPrint = ({ form }: Props) => {
         style={{
           width: "100%",
           borderCollapse: "collapse",
-          marginBottom: "12px",
+          marginBottom: "3mm",
           textAlign: "center",
           tableLayout: "fixed",
         }}
@@ -195,13 +205,13 @@ const OrderPrint = ({ form }: Props) => {
         </tbody>
       </table>
 
-      <div style={{ marginBottom: "10px" }}>
+      <div style={{ marginBottom: "3mm" }}>
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "1fr 280px",
-            gap: "12px",
-            marginBottom: "6px",
+            gridTemplateColumns: "1fr 58mm",
+            gap: "3mm",
+            marginBottom: "2mm",
           }}
         >
           <div style={{ borderBottom: "1px solid #222", fontWeight: 700 }}>
@@ -216,11 +226,10 @@ const OrderPrint = ({ form }: Props) => {
         <div
           style={{
             border: "1px solid #222",
-            padding: "10px",
+            padding: "3mm",
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
-            gap: "18px",
-            marginBottom: "10px",
+            gap: "3mm",
           }}
         >
           <div>
@@ -229,7 +238,7 @@ const OrderPrint = ({ form }: Props) => {
             <CheckLine checked={hasLens("Poly Blue Green")} label="Poly Blue Green" note="(Verde)" />
             <CheckLine checked={hasLens("Poly Blue")} label="Poly Blue" note="(Azul)" />
             <CheckLine checked={hasLens("Poly Chromic Blue AR Gris")} label="Poly Chromic Blue AR Gris" note="(Azul)" />
-            <div style={{ marginTop: "10px", fontWeight: 700 }}>OTROS:</div>
+            <div style={{ marginTop: "2mm", fontWeight: 700 }}>OTROS:</div>
           </div>
 
           <div>
@@ -239,7 +248,7 @@ const OrderPrint = ({ form }: Props) => {
             <CheckLine checked={hasLens("NK Chromic Ar Gris Verde")} label="NK Chromic Ar Gris" note="(Verde)" />
             <CheckLine checked={hasLens("NK Chromic Blue AR Gris Azul")} label="NK Chromic Blue AR Gris" note="(Azul)" />
 
-            <div style={{ ...sectionTitle, marginTop: "10px" }}>CRYSTAL BLUE</div>
+            <div style={{ ...sectionTitle, marginTop: "2mm" }}>CRYSTAL BLUE</div>
             <CheckLine checked={hasLens("Crystal Blue")} label="Crystal Blue" note="(Azul)" />
             <CheckLine checked={hasLens("Fotoblue Crystal Blue")} label="Fotoblue Crystal Blue" note="(Azul)" />
           </div>
@@ -249,18 +258,18 @@ const OrderPrint = ({ form }: Props) => {
       <div
         style={{
           border: "1px solid #222",
-          padding: "10px",
-          marginBottom: "10px",
+          padding: "3mm",
+          marginBottom: "3mm",
         }}
       >
-        <div style={{ fontWeight: 700, marginBottom: "8px" }}>Material de Montura</div>
+        <div style={boxTitle}>Material de Montura</div>
 
         <div
           style={{
             display: "flex",
             flexWrap: "wrap",
-            gap: "18px",
-            marginBottom: "10px",
+            gap: "4mm",
+            marginBottom: "3mm",
           }}
         >
           <MiniCheck checked={hasMontura("Carey")} label="Carey" />
@@ -270,9 +279,9 @@ const OrderPrint = ({ form }: Props) => {
           <MiniCheck checked={hasMontura("Aluminio")} label="Aluminio" />
         </div>
 
-        <div style={{ fontWeight: 700, marginBottom: "8px" }}>Montura</div>
+        <div style={boxTitle}>Montura</div>
 
-        <div style={{ display: "flex", gap: "24px", marginBottom: "10px" }}>
+        <div style={{ display: "flex", gap: "6mm", marginBottom: "3mm" }}>
           <MiniCheck checked={form.tipoMontura === "Nueva"} label="Nueva" />
           <MiniCheck checked={form.tipoMontura === "Usada"} label="Usada" />
         </div>
@@ -286,35 +295,35 @@ const OrderPrint = ({ form }: Props) => {
         style={{
           display: "grid",
           gridTemplateColumns: "2fr 1fr",
-          gap: "10px",
-          marginBottom: "10px",
+          gap: "3mm",
+          marginBottom: "3mm",
         }}
       >
         <div
           style={{
             border: "1px solid #222",
-            height: "110px",
+            height: "26mm",
             boxSizing: "border-box",
           }}
         >
           <div
             style={{
               borderBottom: "1px solid #222",
-              padding: "6px 10px",
+              padding: "2mm 3mm",
               fontWeight: 700,
             }}
           >
             OBSERVACIONES
           </div>
 
-          <div style={{ padding: "10px" }}>
-            <div style={{ marginBottom: "8px" }}>
+          <div style={{ padding: "3mm" }}>
+            <div style={{ marginBottom: "2mm" }}>
               <strong>Bisel brillante:</strong>{" "}
               {form.biselBrillante === "SI"
                 ? "SI"
                 : form.biselBrillante === "NO"
-                  ? "NO"
-                  : ""}
+                ? "NO"
+                : ""}
             </div>
 
             <div>{form.observaciones}</div>
@@ -324,27 +333,33 @@ const OrderPrint = ({ form }: Props) => {
         <div
           style={{
             border: "1px solid #222",
-            height: "110px",
+            height: "26mm",
             boxSizing: "border-box",
           }}
         >
           <div
             style={{
               borderBottom: "1px solid #222",
-              padding: "6px 10px",
+              padding: "2mm 3mm",
               fontWeight: 700,
             }}
           >
             PRECIO
           </div>
 
-          <div style={{ padding: "10px", fontSize: "20px", fontWeight: 700 }}>
+          <div
+            style={{
+              padding: "3mm",
+              fontSize: "13pt",
+              fontWeight: 700,
+            }}
+          >
             S/ {form.precio}
           </div>
         </div>
       </div>
 
-      <div style={{ fontSize: "12px", marginTop: "10px", lineHeight: 1.3 }}>
+      <div style={{ fontSize: "8.5pt", lineHeight: 1.25, marginTop: "1mm" }}>
         <div>1. Multivisión no se responsabiliza por el daño o deterioro de monturas usadas.</div>
         <div>2. La garantía por medida o eje solo es válida dentro de los 30 días.</div>
         <div>3. Al llenar esta orden de pedido, usted está aceptando los términos y condiciones.</div>
@@ -363,18 +378,25 @@ function CheckLine({
   note?: string;
 }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", marginBottom: "7px" }}>
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        marginBottom: "2mm",
+        fontSize: "8.8pt",
+      }}
+    >
       <span
         style={{
-          width: "18px",
-          height: "18px",
-          minWidth: "18px",
+          width: "4mm",
+          height: "4mm",
+          minWidth: "4mm",
           border: "1px solid #222",
           display: "inline-flex",
           alignItems: "center",
           justifyContent: "center",
-          marginRight: "6px",
-          fontSize: "12px",
+          marginRight: "2mm",
+          fontSize: "8pt",
           fontWeight: 700,
           boxSizing: "border-box",
         }}
@@ -387,9 +409,9 @@ function CheckLine({
       <span
         style={{
           flex: 1,
-          borderBottom: "1px dotted #444",
-          margin: "0 6px",
-          minWidth: "20px",
+          borderBottom: "1px dotted #555",
+          margin: "0 2mm",
+          minWidth: "4mm",
         }}
       />
 
@@ -406,17 +428,24 @@ function MiniCheck({
   label: string;
 }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "1.5mm",
+        fontSize: "8.8pt",
+      }}
+    >
       <span
         style={{
-          width: "18px",
-          height: "18px",
-          minWidth: "18px",
+          width: "4mm",
+          height: "4mm",
+          minWidth: "4mm",
           border: "1px solid #222",
           display: "inline-flex",
           alignItems: "center",
           justifyContent: "center",
-          fontSize: "12px",
+          fontSize: "8pt",
           fontWeight: 700,
           boxSizing: "border-box",
         }}

@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
+import { useReactToPrint } from "react-to-print";
 import { BaseInput, BaseTabs, BaseTarea } from "@/components/Common/Inputs";
 import { motion } from "framer-motion";
 import Image from "next/image";
@@ -183,39 +182,22 @@ const PaymentMethod = () => {
     tipoMontura: form.tipoMontura,
   };
 
-  const downloadOrderPdf = async () => {
-    const element = printRef.current;
-    if (!element) return;
-
-    const canvas = await html2canvas(element, {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: "#ffffff",
-      scrollX: 0,
-      scrollY: 0,
-      windowWidth: element.scrollWidth,
-      windowHeight: element.scrollHeight,
-    });
-
-    const imgData = canvas.toDataURL("image/png");
-
-    const pdf = new jsPDF({
-      orientation: "portrait",
-      unit: "mm",
-      format: "a4",
-    });
-
-    pdf.addImage(imgData, "PNG", 0, 0, 210, 297);
-    pdf.save(`orden-pedido-${form.orderId || "sin-codigo"}.pdf`);
-  };
+  const handlePrint = useReactToPrint({
+    contentRef: printRef,
+    documentTitle: `orden-pedido-${form.orderId || "sin-codigo"}`,
+  });
 
   return (
-    <div>
-      <div className="w-full flex flex-col lg:flex-row gap-8 xl:gap-11 items-start">
-        <div className="flex-1 w-full">
-          <div className="bg-white w-full rounded-xl shadow-lg p-6 space-y-5">
-            <div className="flex justify-between items-center mb-6">
-              <label className="flex items-center cursor-pointer gap-3 bg-gray-50 px-4 py-2 rounded-lg border border-gray-200 shadow-sm">
+    <div className="w-full">
+      <div className="flex w-full flex-col gap-8 lg:flex-row lg:items-stretch xl:gap-8">
+        <div
+          className={`w-full ${
+            showOrder ? "lg:w-[35%]" : "lg:max-w-[700px]"
+          }`}
+        >
+          <div className="flex h-full w-full flex-col rounded-xl bg-white p-5 shadow-lg xl:p-6">
+            <div className="mb-5 flex items-center">
+              <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-gray-200 bg-gray-50 px-4 py-2 shadow-sm">
                 <span className="text-sm font-semibold text-gray-600">
                   ¿Requiere Montaje?
                 </span>
@@ -228,7 +210,7 @@ const PaymentMethod = () => {
               </label>
             </div>
 
-            <div className="border-b border-gray-3 mb-6">
+            <div className="mb-5 border-b border-gray-3">
               <BaseTabs
                 tabs={paymentTabs}
                 activeTab={paymentType}
@@ -236,13 +218,13 @@ const PaymentMethod = () => {
               />
             </div>
 
-            <div className="space-y-5">
+            <div className="flex flex-1 flex-col space-y-5">
               <div>
-                <label className="text-sm font-medium text-gray-600 mb-3 block">
+                <label className="mb-3 block text-sm font-medium text-gray-600">
                   Método de Pago
                 </label>
 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 gap-3">
                   {paymentMethods.map((method) => {
                     const active = form.method === method.key;
 
@@ -250,23 +232,23 @@ const PaymentMethod = () => {
                       <motion.button
                         key={method.key}
                         type="button"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.97 }}
                         onClick={() =>
                           setForm((prev) => ({
                             ...prev,
                             method: method.key,
                           }))
                         }
-                        className={`p-4 rounded-xl border flex flex-col items-center gap-2 ${
+                        className={`flex flex-col items-center gap-2 rounded-xl border p-3.5 ${
                           active ? "border-blue bg-blue/5" : "border-gray-200"
                         }`}
                       >
                         <Image
                           src={method.icon}
                           alt={method.label}
-                          width={40}
-                          height={40}
+                          width={36}
+                          height={36}
                         />
                         <span className="text-sm">{method.label}</span>
                       </motion.button>
@@ -286,7 +268,7 @@ const PaymentMethod = () => {
                 />
 
                 {showClientList && (
-                  <div className="absolute z-50 bg-white border rounded-lg shadow w-full mt-1 max-h-60 overflow-auto">
+                  <div className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-lg border bg-white shadow">
                     {loading && (
                       <div className="p-3 text-sm text-gray-500">
                         Buscando...
@@ -303,7 +285,7 @@ const PaymentMethod = () => {
                       <div
                         key={client.id}
                         onClick={() => selectClient(client)}
-                        className="p-3 hover:bg-gray-100 cursor-pointer text-sm"
+                        className="cursor-pointer p-3 text-sm hover:bg-gray-100"
                       >
                         {client.nombres
                           ? `${client.nombres} ${client.apellidos ?? ""}`
@@ -314,7 +296,7 @@ const PaymentMethod = () => {
                 )}
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 <BaseInput
                   label="Total"
                   name="total"
@@ -362,317 +344,326 @@ const PaymentMethod = () => {
                 onChange={onChange}
               />
 
-              <button
-                type="submit"
-                className="w-full bg-blue text-white py-3 rounded"
-              >
-                Registrar Venta
-              </button>
+              <div className="mt-auto pt-2">
+                <button
+                  type="submit"
+                  className="w-full rounded bg-blue py-3 text-white"
+                >
+                  Registrar Venta
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
         {showOrder && (
-          <div className="lg:w-[42%] w-full space-y-6">
-            <div className="bg-white rounded-xl shadow-lg p-6 space-y-5">
-              <h3 className="text-lg font-semibold">
+          <div className="w-full lg:w-[65%]">
+            <div className="flex h-full flex-col rounded-xl bg-white p-5 shadow-lg xl:p-6">
+              <h3 className="mb-5 text-lg font-semibold">
                 Datos de Orden de Montaje
               </h3>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <BaseInput
-                  label="Orden ID"
-                  name="orderId"
-                  type="text"
-                  value={form.orderId}
-                  onChange={onChange}
-                />
-
-                <BaseInput
-                  label="Fecha"
-                  name="orderDate"
-                  type="date"
-                  value={form.orderDate}
-                  onChange={onChange}
-                />
-              </div>
-
-              <BaseInput
-                label="Óptica"
-                name="optica"
-                type="text"
-                value={form.optica}
-                onChange={onChange}
-              />
-
-              <BaseInput
-                label="Nombre"
-                name="customerName"
-                type="text"
-                value={form.customerName}
-                onChange={onChange}
-              />
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <BaseInput
-                  label="Celular"
-                  name="celular"
-                  type="text"
-                  value={form.celular}
-                  onChange={onChange}
-                />
-
-                <BaseInput
-                  label="Dirección"
-                  name="direccion"
-                  type="text"
-                  value={form.direccion}
-                  onChange={onChange}
-                />
-              </div>
-
-              <div>
-                <h4 className="font-semibold mb-3">Medidas</h4>
-
-                <div className="grid grid-cols-5 gap-2 text-sm font-semibold mb-2">
-                  <div></div>
-                  <div>ESF</div>
-                  <div>CIL</div>
-                  <div>EJE</div>
-                  <div>DIP</div>
-                </div>
-
-                <div className="grid grid-cols-5 gap-2 mb-2 items-center">
-                  <div className="font-semibold">OD</div>
+              <div className="flex flex-1 flex-col space-y-5">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <BaseInput
-                    name="odEsf"
+                    label="Orden ID"
+                    name="orderId"
                     type="text"
-                    value={form.odEsf}
+                    value={form.orderId}
                     onChange={onChange}
                   />
+
                   <BaseInput
-                    name="odCil"
-                    type="text"
-                    value={form.odCil}
-                    onChange={onChange}
-                  />
-                  <BaseInput
-                    name="odEje"
-                    type="text"
-                    value={form.odEje}
-                    onChange={onChange}
-                  />
-                  <BaseInput
-                    name="odDip"
-                    type="text"
-                    value={form.odDip}
+                    label="Fecha"
+                    name="orderDate"
+                    type="date"
+                    value={form.orderDate}
                     onChange={onChange}
                   />
                 </div>
 
-                <div className="grid grid-cols-5 gap-2 items-center">
-                  <div className="font-semibold">OI</div>
+                <BaseInput
+                  label="Óptica"
+                  name="optica"
+                  type="text"
+                  value={form.optica}
+                  onChange={onChange}
+                />
+
+                <BaseInput
+                  label="Nombre"
+                  name="customerName"
+                  type="text"
+                  value={form.customerName}
+                  onChange={onChange}
+                />
+
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <BaseInput
-                    name="oiEsf"
+                    label="Celular"
+                    name="celular"
                     type="text"
-                    value={form.oiEsf}
+                    value={form.celular}
                     onChange={onChange}
                   />
+
                   <BaseInput
-                    name="oiCil"
+                    label="Dirección"
+                    name="direccion"
                     type="text"
-                    value={form.oiCil}
-                    onChange={onChange}
-                  />
-                  <BaseInput
-                    name="oiEje"
-                    type="text"
-                    value={form.oiEje}
-                    onChange={onChange}
-                  />
-                  <BaseInput
-                    name="oiDip"
-                    type="text"
-                    value={form.oiDip}
+                    value={form.direccion}
                     onChange={onChange}
                   />
                 </div>
-              </div>
 
-              <BaseInput
-                label="ADD"
-                name="add"
-                type="text"
-                value={form.add}
-                onChange={onChange}
-              />
+                <div>
+                  <h4 className="mb-3 font-semibold">Medidas</h4>
 
-              <div>
-                <h4 className="font-semibold mb-3">Material del lente</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                  {lenteOptions.map((item) => (
-                    <label
-                      key={item}
-                      className="flex items-center gap-2 text-sm"
-                    >
+                  <div className="mb-2 grid grid-cols-5 gap-2 text-sm font-semibold">
+                    <div></div>
+                    <div>ESF</div>
+                    <div>CIL</div>
+                    <div>EJE</div>
+                    <div>DIP</div>
+                  </div>
+
+                  <div className="mb-2 grid grid-cols-5 items-center gap-2">
+                    <div className="font-semibold">OD</div>
+                    <BaseInput
+                      name="odEsf"
+                      type="text"
+                      value={form.odEsf}
+                      onChange={onChange}
+                    />
+                    <BaseInput
+                      name="odCil"
+                      type="text"
+                      value={form.odCil}
+                      onChange={onChange}
+                    />
+                    <BaseInput
+                      name="odEje"
+                      type="text"
+                      value={form.odEje}
+                      onChange={onChange}
+                    />
+                    <BaseInput
+                      name="odDip"
+                      type="text"
+                      value={form.odDip}
+                      onChange={onChange}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-5 items-center gap-2">
+                    <div className="font-semibold">OI</div>
+                    <BaseInput
+                      name="oiEsf"
+                      type="text"
+                      value={form.oiEsf}
+                      onChange={onChange}
+                    />
+                    <BaseInput
+                      name="oiCil"
+                      type="text"
+                      value={form.oiCil}
+                      onChange={onChange}
+                    />
+                    <BaseInput
+                      name="oiEje"
+                      type="text"
+                      value={form.oiEje}
+                      onChange={onChange}
+                    />
+                    <BaseInput
+                      name="oiDip"
+                      type="text"
+                      value={form.oiDip}
+                      onChange={onChange}
+                    />
+                  </div>
+                </div>
+
+                <BaseInput
+                  label="ADD"
+                  name="add"
+                  type="text"
+                  value={form.add}
+                  onChange={onChange}
+                />
+
+                <div>
+                  <h4 className="mb-3 font-semibold">Material del lente</h4>
+                  <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                    {lenteOptions.map((item) => (
+                      <label
+                        key={item}
+                        className="flex items-center gap-2 text-sm"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={form.lenteMateriales.includes(item)}
+                          onChange={() =>
+                            toggleArrayValue("lenteMateriales", item)
+                          }
+                        />
+                        <span>{item}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="mb-3 font-semibold">Material de montura</h4>
+                  <div className="flex flex-wrap gap-4">
+                    {monturaMaterialOptions.map((item) => (
+                      <label
+                        key={item}
+                        className="flex items-center gap-2 text-sm"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={form.monturaMateriales.includes(item)}
+                          onChange={() =>
+                            toggleArrayValue("monturaMateriales", item)
+                          }
+                        />
+                        <span>{item}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="mb-3 font-semibold">Montura</h4>
+                  <div className="flex gap-6">
+                    <label className="flex items-center gap-2 text-sm">
                       <input
-                        type="checkbox"
-                        checked={form.lenteMateriales.includes(item)}
+                        type="radio"
+                        name="tipoMontura"
+                        checked={form.tipoMontura === "Nueva"}
                         onChange={() =>
-                          toggleArrayValue("lenteMateriales", item)
+                          setForm((prev) => ({
+                            ...prev,
+                            tipoMontura: "Nueva",
+                          }))
                         }
                       />
-                      <span>{item}</span>
+                      Nueva
                     </label>
-                  ))}
-                </div>
-              </div>
 
-              <div>
-                <h4 className="font-semibold mb-3">Material de montura</h4>
-                <div className="flex flex-wrap gap-4">
-                  {monturaMaterialOptions.map((item) => (
-                    <label
-                      key={item}
-                      className="flex items-center gap-2 text-sm"
-                    >
+                    <label className="flex items-center gap-2 text-sm">
                       <input
-                        type="checkbox"
-                        checked={form.monturaMateriales.includes(item)}
+                        type="radio"
+                        name="tipoMontura"
+                        checked={form.tipoMontura === "Usada"}
                         onChange={() =>
-                          toggleArrayValue("monturaMateriales", item)
+                          setForm((prev) => ({
+                            ...prev,
+                            tipoMontura: "Usada",
+                          }))
                         }
                       />
-                      <span>{item}</span>
+                      Usada
                     </label>
-                  ))}
+                  </div>
                 </div>
-              </div>
 
-              <div>
-                <h4 className="font-semibold mb-3">Montura</h4>
-                <div className="flex gap-6">
-                  <label className="flex items-center gap-2 text-sm">
-                    <input
-                      type="radio"
-                      name="tipoMontura"
-                      checked={form.tipoMontura === "Nueva"}
-                      onChange={() =>
-                        setForm((prev) => ({
-                          ...prev,
-                          tipoMontura: "Nueva",
-                        }))
-                      }
-                    />
-                    Nueva
-                  </label>
+                <BaseInput
+                  label="Marca"
+                  name="marca"
+                  type="text"
+                  value={form.marca}
+                  onChange={onChange}
+                />
 
-                  <label className="flex items-center gap-2 text-sm">
-                    <input
-                      type="radio"
-                      name="tipoMontura"
-                      checked={form.tipoMontura === "Usada"}
-                      onChange={() =>
-                        setForm((prev) => ({
-                          ...prev,
-                          tipoMontura: "Usada",
-                        }))
-                      }
-                    />
-                    Usada
-                  </label>
+                <BaseInput
+                  label="Precio"
+                  name="precio"
+                  type="number"
+                  value={form.precio}
+                  onChange={onChange}
+                />
+                <BaseTarea
+  label="Observaciones"
+  name="observaciones"
+  value={form.observaciones}
+  placeholder="Ingrese observaciones"
+  onChange={onChange}
+/>
+
+                <div>
+                  <h4 className="mb-3 font-semibold">Bisel brillante</h4>
+                  <div className="flex gap-6">
+                    <label className="flex items-center gap-2 text-sm">
+                      <input
+                        type="radio"
+                        name="biselBrillante"
+                        checked={form.biselBrillante === "SI"}
+                        onChange={() =>
+                          setForm((prev) => ({
+                            ...prev,
+                            biselBrillante: "SI",
+                          }))
+                        }
+                      />
+                      SI
+                    </label>
+
+                    <label className="flex items-center gap-2 text-sm">
+                      <input
+                        type="radio"
+                        name="biselBrillante"
+                        checked={form.biselBrillante === "NO"}
+                        onChange={() =>
+                          setForm((prev) => ({
+                            ...prev,
+                            biselBrillante: "NO",
+                          }))
+                        }
+                      />
+                      NO
+                    </label>
+                  </div>
                 </div>
-              </div>
 
-              <BaseInput
-                label="Marca"
-                name="marca"
-                type="text"
-                value={form.marca}
-                onChange={onChange}
-              />
+                <div className="mt-auto grid grid-cols-1 gap-3 pt-2 md:grid-cols-2">
+                  <button
+                    type="button"
+                    onClick={() => setOpenPreview(true)}
+                    className="w-full rounded-lg bg-blue py-3 font-semibold text-white"
+                  >
+                    Ver PDF
+                  </button>
 
-              <BaseInput
-                label="Precio"
-                name="precio"
-                type="number"
-                value={form.precio}
-                onChange={onChange}
-              />
-
-              <div>
-                <h4 className="font-semibold mb-3">Bisel brillante</h4>
-                <div className="flex gap-6">
-                  <label className="flex items-center gap-2 text-sm">
-                    <input
-                      type="radio"
-                      name="biselBrillante"
-                      checked={form.biselBrillante === "SI"}
-                      onChange={() =>
-                        setForm((prev) => ({
-                          ...prev,
-                          biselBrillante: "SI",
-                        }))
-                      }
-                    />
-                    SI
-                  </label>
-
-                  <label className="flex items-center gap-2 text-sm">
-                    <input
-                      type="radio"
-                      name="biselBrillante"
-                      checked={form.biselBrillante === "NO"}
-                      onChange={() =>
-                        setForm((prev) => ({
-                          ...prev,
-                          biselBrillante: "NO",
-                        }))
-                      }
-                    />
-                    NO
-                  </label>
+                  <button
+                    type="button"
+                    onClick={handlePrint}
+                    className="w-full rounded-lg bg-blue py-3 font-semibold text-white"
+                  >
+                    Imprimir / Guardar PDF
+                  </button>
                 </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={() => setOpenPreview(true)}
-                  className="w-full bg-gray-800 text-black py-3 rounded-lg font-semibold"
-                >
-                  Ver PDF
-                </button>
-
-                <button
-                  type="button"
-                  onClick={downloadOrderPdf}
-                  className="w-full bg-blue-600 text-black py-3 rounded-lg font-semibold"
-                >
-                  Imprimir / Guardar PDF
-                </button>
               </div>
             </div>
 
             <OrderPreviewModal
               open={openPreview}
               onClose={() => setOpenPreview(false)}
-              onDownloadPdf={downloadOrderPdf}
+              onDownloadPdf={handlePrint}
               form={orderFormData}
             />
 
             <div
-              ref={printRef}
               style={{
-                position: "fixed",
+                position: "absolute",
+                left: "-9999px",
                 top: 0,
-                left: "-10000px",
-                width: "210mm",
-                height: "297mm",
-                background: "#fff",
               }}
             >
-              <OrderPrint form={orderFormData} />
+              <div ref={printRef}>
+                <OrderPrint form={orderFormData} />
+              </div>
             </div>
           </div>
         )}

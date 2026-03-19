@@ -6,6 +6,8 @@ import { BaseTabs } from "@/components/Common/Inputs";
 
 import CreateLensDiscount from "./CreateLensDiscount";
 // import ListClients from "./CreateAccesoryDiscount";
+import CreateAccessoryDiscount from "./CreateAccessoryDiscount";
+import CreateMonturaDiscount from "./CreateMonturaDiscount";
 
 export default function DiscountPage() {
   const [tab, setTab] = useState("lente");
@@ -25,6 +27,8 @@ export default function DiscountPage() {
       {tab === "lente" && <CreateLensDiscount />}
       {/* {tab === "accesorio" && <CreateClient />}
       {tab === "montura" && <ListClients />} */}
+       {tab === "accesorio" && <CreateAccessoryDiscount />}
+      {tab === "montura" && <CreateMonturaDiscount />}
     </div>
   );
 }
