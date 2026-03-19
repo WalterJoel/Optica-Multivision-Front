@@ -1,13 +1,10 @@
+import { ILensStockMatrixItem } from "@/types/products";
 import { api } from "../api";
 
-export type StockCell = {
-  id: number;
-  cantidad: number;
-  esf: number | null;
-  cyl: number | null;
-};
-
-export type StockMatrix = Record<"NEGATIVO" | "POSITIVO", StockCell[][]>;
+export type StockMatrix = Record<
+  "NEGATIVO" | "POSITIVO",
+  ILensStockMatrixItem[][]
+>;
 
 /**
  * Trae el stock para un lente y sede específicos.

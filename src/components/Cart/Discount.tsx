@@ -1,38 +1,50 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BaseSearchInput } from "@/components/Common/Inputs";
 import { useSearchClient } from "@/hooks/clients";
 import { ISearchClient } from "@/types/clients";
 import { useAppSelector } from "@/redux/store";
 import { useSearchDiscountByProducts } from "@/hooks/discounts";
 import { BaseButton } from "../Common/Buttons";
+import { InfoModal } from "../Common/modal";
+import { useDispatch } from "react-redux";
+import {
+  applyDiscountToItem,
+  removeDiscountFromItem,
+} from "@/redux/features/cart-slice";
+import { Check } from "lucide-react";
 
 const Discount = () => {
   const cartItems = useAppSelector((state) => state.cartReducer.items);
+  const dispatch = useDispatch();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedClientId, setSelectedClientId] = useState<number | null>(null);
 
+  const [isInfoOpen, setIsInfoOpen] = useState(false);
+  const [infoConfig, setInfoConfig] = useState({
+    message: "",
+    code: undefined as string | number | undefined,
+  });
+
   const { clients, searchClients, setShowList, showList } = useSearchClient();
-  const { discounts, searchDiscounts } = useSearchDiscountByProducts();
+  const { discounts, searchDiscounts, loading, statusMessage, setDiscounts } =
+    useSearchDiscountByProducts();
 
   const handleSelectClient = (client: ISearchClient) => {
     setSearchTerm(`${client.nombres} ${client.apellidos}`);
     setSelectedClientId(client.id);
     setShowList(false);
+    setDiscounts([]);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!selectedClientId) {
-      alert("Por favor selecciona un cliente de la lista");
-      return;
-    }
+    if (!selectedClientId) return;
 
     const productosPayload = cartItems.map((item) => ({
-      productoId: item.id,
+      productoId: item.productId,
       esLente: item.isLens,
       cyl: item.isLens ? item.cyl : null,
     }));
@@ -43,74 +55,138 @@ const Discount = () => {
     });
   };
 
+  useEffect(() => {
+    if (statusMessage.includes("No se encontraron descuentos")) {
+      setInfoConfig({ message: statusMessage, code: "NO_DISCOUNTS" });
+      setIsInfoOpen(true);
+    }
+  }, [statusMessage]);
+
+  // 🔥 TOGGLE DESCUENTO
+  const handleToggleDiscount = (productoId: number, monto: number) => {
+    const item = cartItems.find((item) => item.productId === productoId);
+
+    if (!item) return;
+
+    const alreadyApplied = item.discount && item.discount > 0;
+
+    if (alreadyApplied) {
+      dispatch(removeDiscountFromItem({ itemId: item.id }));
+    } else {
+      dispatch(
+        applyDiscountToItem({
+          itemId: item.id,
+          discount: monto,
+        }),
+      );
+    }
+  };
+
   return (
-    <div className="w-full h-full">
-      <form
-        onSubmit={handleSubmit}
-        className="h-full bg-white shadow-1 rounded-[10px] flex flex-col"
-      >
-        {/* Contenedor único de contenido con padding equilibrado */}
-        <div className="p-8 sm:p-10 flex flex-col h-full">
-          {/* 1. Buscador arriba con aire */}
-          <div className="mb-6">
-            <BaseSearchInput
-              label="Buscar Cliente"
-              value={searchTerm}
-              required
-              onChange={(val) => {
-                setSearchTerm(val);
-                searchClients(val);
-                if (selectedClientId) setSelectedClientId(null);
-              }}
-              results={clients}
-              showList={showList}
-              renderItem={(c: ISearchClient) => (
-                <div
-                  onMouseDown={() => handleSelectClient(c)}
-                  className="w-full flex items-center justify-between gap-4 cursor-pointer p-1"
-                >
-                  <span className="truncate text-sm font-medium">
-                    {c.nombres} {c.apellidos}
-                  </span>
-                  <span className="text-[10px] font-mono text-blue bg-blue-light/10 px-2 py-0.5 rounded border border-blue/20 shrink-0">
-                    DNI: {c.numeroDoc}
-                  </span>
-                </div>
-              )}
-            />
-          </div>
+    <>
+      <div className="w-full h-full">
+        <form
+          onSubmit={handleSubmit}
+          className="h-full bg-white shadow-1 rounded-[10px] flex flex-col"
+        >
+          <div className="p-8 sm:p-10 flex flex-col h-full">
+            {/* Buscador */}
+            <div className="mb-6">
+              <BaseSearchInput
+                label="Buscar Cliente"
+                value={searchTerm}
+                required
+                onChange={(val) => {
+                  setSearchTerm(val);
+                  searchClients(val);
 
-          {/* 2. Lista de descuentos detectados (espacio dinámico) */}
-          {discounts.length > 0 && (
-            <div className="mb-8 animate-fade-in">
-              <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3">
-                Descuentos Aplicables
-              </h4>
-              <ul className="space-y-2 max-h-[120px] overflow-y-auto pr-2 custom-scrollbar">
-                {discounts.map((d) => (
-                  <li
-                    key={`${d.productoId}-${d.serie ?? "no-serie"}`}
-                    className="flex justify-between items-center bg-blue-light-6 border border-blue/10 px-4 py-2.5 rounded-xl"
+                  if (selectedClientId) setSelectedClientId(null);
+                  setDiscounts([]);
+                }}
+                results={clients}
+                showList={showList}
+                renderItem={(c: ISearchClient) => (
+                  <div
+                    onMouseDown={() => handleSelectClient(c)}
+                    className="w-full flex items-center justify-between gap-4 cursor-pointer p-1"
                   >
-                    <span className="text-xs font-semibold text-slate-700">
-                      {d.nombreProducto}
+                    <span className="truncate text-sm font-medium">
+                      {c.nombres} {c.apellidos}
                     </span>
-                    <span className="text-sm font-bold text-blue">
-                      - S/ {d.montoDescuento}
+                    <span className="text-[10px] font-mono text-blue bg-blue-light/10 px-2 py-0.5 rounded border border-blue/20">
+                      DNI: {c.numeroDoc}
                     </span>
-                  </li>
-                ))}
-              </ul>
+                  </div>
+                )}
+              />
             </div>
-          )}
 
-          {/* 3. Botón normal (no ancho completo) alineado a la izquierda o centro según prefieras */}
-          <div className="mt-auto pt-4">
-            <BaseButton type="submit">Buscar</BaseButton>
+            {/* Descuentos */}
+            {!loading && discounts.length > 0 && (
+              <div className="mb-8">
+                <h4 className="text-[11px] font-bold text-slate-400 mb-3">
+                  Descuentos Aplicables
+                </h4>
+
+                <ul className="space-y-2">
+                  {discounts.map((d) => {
+                    const item = cartItems.find(
+                      (item) => item.productId === d.productoId,
+                    );
+
+                    const alreadyApplied = item?.discount && item.discount > 0;
+
+                    return (
+                      <li
+                        key={`${d.productoId}-${d.serie ?? "no-serie"}`}
+                        className="flex justify-between items-center bg-blue-light-6 px-4 py-2 rounded-xl"
+                      >
+                        <div>
+                          <div className="text-xs font-semibold">
+                            {d.nombreProducto}
+                          </div>
+                          <div className="text-sm text-blue font-bold">
+                            - S/ {d.montoDescuento}
+                          </div>
+                        </div>
+
+                        <BaseButton
+                          onClick={() =>
+                            handleToggleDiscount(d.productoId, d.montoDescuento)
+                          }
+                          fullWidth={false}
+                          className={`w-10 h-10 flex items-center justify-center transition-all duration-300 ${
+                            alreadyApplied
+                              ? "bg-green-50 text-green-500 border border-green-200"
+                              : "bg-blue text-white hover:bg-blue-dark"
+                          }`}
+                        >
+                          {alreadyApplied ? <Check size={18} /> : "OK"}
+                        </BaseButton>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )}
+
+            {selectedClientId && (
+              <BaseButton type="submit">
+                {loading ? "Buscando..." : "Buscar"}
+              </BaseButton>
+            )}
           </div>
-        </div>
-      </form>
-    </div>
+        </form>
+      </div>
+
+      <InfoModal
+        isOpen={isInfoOpen}
+        title="Aviso"
+        message={infoConfig.message}
+        code={infoConfig.code}
+        onClose={() => setIsInfoOpen(false)}
+      />
+    </>
   );
 };
 

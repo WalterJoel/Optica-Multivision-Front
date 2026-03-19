@@ -8,14 +8,11 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 
 import { addItemToCart } from "@/redux/features/cart-slice";
+import { ILensStockMatrixItem } from "@/types/products";
+import { CartItem } from "@/types/cart";
 
 type DetailModalProps = {
-  selected: {
-    id: number;
-    sph: number | string;
-    cyl: number;
-    stock: number;
-  };
+  selected: ILensStockMatrixItem;
   onClose: () => void;
 };
 
@@ -24,19 +21,23 @@ export const DetailModal: React.FC<DetailModalProps> = ({
   onClose,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { getInventoryByStores, loading, statusMessage, inventoryByStore } =
+  const { getInventoryByStores, loading, inventoryByStore } =
     useInventoryByStores();
 
   const handleAddToCart = () => {
+    console.log(selected, " ->>>>>>>>>>>>>>>> SELETED");
     const price = inventoryByStore?.precioCalculado || 0;
 
-    const itemToCart = {
+    const itemToCart: CartItem = {
       id: selected.id,
-      title: "Lente",
-      discountedPrice: price, // usa el precio calculado
+      productId: selected.productoId,
+      productName: "Lente " + selected.nombreProducto,
+      title: "Lente ",
+      discount: 0,
       price: price,
       quantity: 1,
       cyl: selected.cyl,
+      esf: selected.esf,
       isLens: true, //TODO: MEJORAR
       imgs: {
         thumbnails: [
@@ -67,7 +68,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({
             Graduación Seleccionada
           </p>
           <p className="text-2xl font-black text-blue">
-            ESF {selected.sph} / CYL {selected.cyl.toFixed(2)}
+            ESF {selected.esf} / CYL {selected.cyl.toFixed(2)}
           </p>
           <div className="mt-2 inline-block px-3 py-1 bg-white rounded-lg border border-blue/20 shadow-sm">
             <span className="text-xs font-bold text-blue/60 mr-1 text-[10px]">
@@ -85,9 +86,9 @@ export const DetailModal: React.FC<DetailModalProps> = ({
             Stock en Sede Actual:
           </span>
           <span
-            className={`text-xl font-black ${selected.stock > 0 ? "text-green" : "text-red"}`}
+            className={`text-xl font-black ${selected.cantidad > 0 ? "text-green" : "text-red"}`}
           >
-            {selected.stock}{" "}
+            {selected.cantidad}{" "}
             <small className="text-[10px] uppercase font-bold">Und</small>
           </span>
         </div>
@@ -117,7 +118,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({
       {/* Acciones */}
       <div className="mt-6 flex flex-col gap-2">
         <BaseButton
-          disabled={selected.stock <= 0 || !inventoryByStore}
+          disabled={selected.cantidad <= 0 || !inventoryByStore}
           onClick={handleAddToCart}
         >
           Agregar al carrito

@@ -1,43 +1,47 @@
-import { useState, useRef } from "react";
-// import { ILens } from "@/types/products/lens";
+import { useState } from "react";
 import { searchDiscountsByProducts } from "@/services/discounts";
 
 export function useSearchDiscountByProducts() {
   const [loading, setLoading] = useState(false);
-  const [discounts, setDiscounts] = useState([]);
-  const [showList, setShowList] = useState(false);
+  const [statusMessage, setMessage] = useState<string>("");
+  const [success, setSuccess] = useState<boolean>(false);
+  const [discounts, setDiscounts] = useState<IKit[]>([]);
 
-  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const searchDiscounts = async (payload) => {
+    setLoading(true);
+    setSuccess(false);
+    setDiscounts([]); // Limpiar resultados previos
 
-  const searchDiscounts = (value: string) => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
+    try {
+      const data = await searchDiscountsByProducts(payload);
+      setDiscounts(data);
+      setSuccess(true);
 
-    debounceRef.current = setTimeout(async () => {
-      if (!value || value.length < 2) {
-        setDiscounts([]);
-        setShowList(false);
-        return;
+      if (!data || data.length === 0) {
+        setMessage(
+          "No se encontraron descuentos aplicables para este cliente.",
+        );
+      } else {
+        setMessage("Listado de Descuentos correcto");
       }
-
-      setLoading(true);
-
-      try {
-        const data = await searchDiscountsByProducts(value);
-        setDiscounts(data);
-        setShowList(true);
-      } catch (error) {
-        console.error("Error buscando lentes", error);
-      } finally {
-        setLoading(false);
-      }
-    }, 300);
+    } catch (err: any) {
+      const backendMessage = err.response?.data?.message;
+      setMessage(
+        backendMessage
+          ? "Error al listar Discounts: " + backendMessage
+          : "Error al listar Discounts",
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return {
+    searchDiscounts,
     discounts,
     loading,
-    showList,
-    searchDiscounts,
-    setShowList,
+    statusMessage,
+    success,
+    setDiscounts,
   };
 }

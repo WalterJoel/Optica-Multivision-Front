@@ -32,10 +32,6 @@ const SingleGridItemProduct = ({ item }: { item: any }) => {
     const itemToCart = {
       id: item.id,
       title: item.title || item.producto?.nombre || "Producto",
-      // Si no hay discountedPrice, usamos el precio normal para no romper el cálculo
-      discountedPrice: Number(
-        item.discountedPrice || item.producto?.precio || item.precio || 0,
-      ),
       price: Number(item.price || item.producto?.precio || 0),
       quantity: 1,
       imgs: item.imgs || {

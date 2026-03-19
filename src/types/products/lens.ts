@@ -1,5 +1,4 @@
 import { PRODUCTOS } from "@/commons/constants";
-
 export interface ILens {
   id: number;
   marca: string;
@@ -27,3 +26,13 @@ export type ISearchLensResponse = {
   total: number;
   lentes: ILens[];
 };
+
+// Interface para los items de la matriz de combinaciones
+export interface ILensStockMatrixItem {
+  id: number;
+  productoId: number;
+  esf: number;
+  cyl: number;
+  cantidad: number;
+  nombreProducto: string;
+}

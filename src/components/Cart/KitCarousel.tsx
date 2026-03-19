@@ -119,7 +119,7 @@ export default function KitCarousel() {
                     <span className="text-xl sm:text-2xl font-bold mt-2 mr-1">
                       S/
                     </span>
-                    <span className="text-5xl sm:text-5xl font-black tracking-tighter">
+                    <span className="text-5xl sm:text-4xl font-black tracking-tighter">
                       {kit.precio}
                     </span>
                   </div>

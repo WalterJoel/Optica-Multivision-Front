@@ -27,28 +27,38 @@ const Cart = () => {
                 <div className="bg-white rounded-[10px] shadow-1 overflow-hidden border border-gray-3">
                   <div className="w-full overflow-x-auto">
                     <div className="min-w-[900px]">
-                      <div className="flex items-center py-5.5 px-7.5 border-b border-gray-3 bg-white">
-                        <div className="min-w-[300px]">
+                      {/* HEADER */}
+                      <div className="flex items-center py-5.5 px-7.5 border-b border-gray-3 bg-white text-sm">
+                        <div className="flex-[2]">
                           <p className="text-dark font-medium">Producto</p>
                         </div>
-                        <div className="min-w-[160px]">
-                          <p className="text-dark font-medium">Cilindro</p>
+
+                        <div className="flex-1 text-center">
+                          <p className="text-dark font-medium">Esf / Cyl</p>
                         </div>
-                        <div className="min-w-[140px]">
+
+                        <div className="flex-1 text-center">
                           <p className="text-dark font-medium">Precio</p>
                         </div>
-                        <div className="min-w-[200px]">
+
+                        <div className="flex-1 text-center">
+                          <p className="text-dark font-medium">Descuento</p>
+                        </div>
+
+                        <div className="flex-1 text-center">
                           <p className="text-dark font-medium">Cantidad</p>
                         </div>
-                        <div className="min-w-[160px]">
+
+                        <div className="flex-1 text-center">
                           <p className="text-dark font-medium">Subtotal</p>
                         </div>
-                        <div className="min-w-[80px]">
-                          <p className="text-dark text-right font-medium">
-                            Acción
-                          </p>
+
+                        <div className="w-12 text-right">
+                          <p className="text-dark font-medium">Acción</p>
                         </div>
                       </div>
+
+                      {/* ITEMS */}
                       {cartItems.map((item, key) => (
                         <SingleItem item={item} key={key} />
                       ))}
@@ -56,23 +66,25 @@ const Cart = () => {
                   </div>
                 </div>
 
-                {/* SECCIÓN KITS + DESCUENTO: ALINEACIÓN PERFECTA */}
+                {/* KITS + DESCUENTO */}
                 <div className="flex flex-col md:flex-row gap-8 items-start mt-4">
-                  {/* BLOQUE IZQUIERDO: KITS */}
+                  {/* KITS */}
                   <div className="flex-1 min-w-0 w-full">
                     <h3 className="text-xl font-bold text-dark mb-6">
                       ¡ Regala un Kit por su compra !
                     </h3>
+
                     <div className="bg-white rounded-[10px] shadow-1 border border-gray-3 h-[260px] relative overflow-hidden flex items-center">
                       <KitCarousel />
                     </div>
                   </div>
 
-                  {/* BLOQUE DERECHO: DESCUENTO */}
+                  {/* DESCUENTO */}
                   <div className="w-full md:w-[380px] flex-shrink-0">
                     <h3 className="text-xl font-bold text-dark mb-6">
                       ¿ Tienes algún descuento ?
                     </h3>
+
                     <div className="bg-white rounded-[10px] shadow-1 border border-gray-3 h-[260px] overflow-hidden">
                       <Discount />
                     </div>

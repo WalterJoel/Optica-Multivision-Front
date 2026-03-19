@@ -5,6 +5,7 @@ import Breadcrumb from "../Common/Breadcrumb";
 import { useLenteStock, useLenses } from "@/hooks/products";
 import { useSearchParams } from "next/navigation";
 import { DetailModal } from "./DetailModal";
+import { ILensStockMatrixItem } from "@/types/products";
 
 const cylValues = [
   0, -0.25, -0.5, -0.75, -1.0, -1.25, -1.5, -1.75, -2.0, -2.25, -2.5, -2.75,
@@ -61,12 +62,7 @@ export default function Matrix() {
   );
   const [changes, setChanges] = useState<Record<number, string>>({});
   const [hoveredCol, setHoveredCol] = useState<number | null>(null);
-  const [selected, setSelected] = useState<null | {
-    id: number;
-    sph: number | string;
-    cyl: number;
-    stock: number;
-  }>(null);
+  const [selected, setSelected] = useState<ILensStockMatrixItem>(null);
 
   if (!lenteId || !sedeId)
     return (
@@ -100,6 +96,7 @@ export default function Matrix() {
     }));
     try {
       await updateStock(payload);
+      s;
       alert("¡Stock actualizado correctamente!");
       setChanges({});
     } catch (err) {
@@ -178,12 +175,14 @@ export default function Matrix() {
                                 if (renderizarModal === "stock") {
                                   setSelected({
                                     id: cell.id,
-                                    sph:
+                                    esf:
                                       typeof esf === "number"
                                         ? esf.toFixed(2)
                                         : esf,
                                     cyl: cylValues[colIndex],
-                                    stock: Number(val),
+                                    cantidad: Number(val),
+                                    productoId: cell.productoId,
+                                    nombreProducto: cell.nombreProducto,
                                   });
                                 }
                               }}
