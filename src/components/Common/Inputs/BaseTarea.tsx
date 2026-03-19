@@ -7,10 +7,11 @@ interface BaseTextareaProps {
   placeholder?: string;
   rows?: number;
   required?: boolean;
+  minLength?: number;
+  maxLength?: number;
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   className?: string;
 }
-
 export const BaseTarea: React.FC<BaseTextareaProps> = ({
   label,
   name,
@@ -18,6 +19,8 @@ export const BaseTarea: React.FC<BaseTextareaProps> = ({
   placeholder,
   rows = 3,
   required = false,
+  minLength,
+  maxLength,
   onChange,
   className = "",
 }) => {
@@ -29,12 +32,15 @@ export const BaseTarea: React.FC<BaseTextareaProps> = ({
           {required && <span className="text-red ml-1">*</span>}
         </label>
       )}
+
       <textarea
         name={name}
         value={value}
         placeholder={placeholder}
         rows={rows}
         required={required}
+        minLength={minLength}
+        maxLength={maxLength}
         onChange={onChange}
         className="w-full
           rounded-md

@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { ISearchAccesory } from "@/types/products";
-import { searchAccesory } from "@/services/products/accesories";
+import { searchAccesoryService } from "@/services/products/accesories";
 
 export function useSearchAccesory() {
   const [loading, setLoading] = useState(false);
@@ -22,7 +22,7 @@ export function useSearchAccesory() {
       setLoading(true);
 
       try {
-        const data = await searchAccesory(value);
+        const data = await searchAccesoryService(value);
         setAccesories(data);
         setShowList(true);
       } catch (error) {

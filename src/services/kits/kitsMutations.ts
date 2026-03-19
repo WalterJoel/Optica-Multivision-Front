@@ -1,8 +1,8 @@
-import { api } from '../api';
-import { ICreateKit } from '@/types/kits';
+import { api } from "../api";
+import { ICreateKit } from "@/types/kits";
 
 export const createKitService = async (payload: ICreateKit) => {
-  const { data } = await api.post('/kits/crearKit', payload);
+  const { data } = await api.post("/kits/crearKit", payload);
   return data;
 };
 

@@ -5,35 +5,11 @@ import OrderSummary from "./OrderSummary";
 import { useAppSelector } from "@/redux/store";
 import SingleItem from "./SingleItem";
 import Link from "next/link";
-import AccessoryCards from "./AccesoryCards";
+import { AccessoryCards } from "./AccesoryCards";
 import KitCarousel from "./KitCarousel";
 
 const Cart = () => {
   const cartItems = useAppSelector((state) => state.cartReducer.items);
-
-  const mKits = [
-    {
-      id: 1,
-      nombre: "Kit Premium Plus",
-      descripcion:
-        "Incluye cristales con filtro azul, estuche rígido y líquido de limpieza profesional.",
-      imagen: "/kit-1.jpg",
-    },
-    {
-      id: 2,
-      nombre: "Kit Esencial",
-      descripcion:
-        "Lo básico para el cuidado de tus lentes: paño de microfibra y estuche de viaje.",
-      imagen: "/images/icons/kit.webp",
-    },
-    {
-      id: 3,
-      nombre: "Kit Deportivo",
-      descripcion:
-        "Sujetadores de silicona y protección extra para actividades de alto impacto.",
-      imagen: "/kit-3.jpg",
-    },
-  ];
 
   return (
     <>
@@ -88,7 +64,7 @@ const Cart = () => {
                       ¡ Regala un Kit por su compra !
                     </h3>
                     <div className="bg-white rounded-[10px] shadow-1 border border-gray-3 h-[260px] relative overflow-hidden flex items-center">
-                      <KitCarousel kits={mKits} />
+                      <KitCarousel />
                     </div>
                   </div>
 
@@ -107,29 +83,7 @@ const Cart = () => {
               {/* COLUMNA DERECHA */}
               <div className="flex flex-col gap-10">
                 <OrderSummary />
-                <AccessoryCards
-                  accesorios={[
-                    {
-                      id: 1,
-                      nombre: "Spray limpiador 50 ml",
-                      precio: 10,
-                      imagen: "/images/products/product-01.jpg",
-                    },
-                    {
-                      id: 2,
-                      nombre: "Optipack",
-                      precio: 25,
-                      imagen: "/images/products/product-02.jpg",
-                    },
-                    {
-                      id: 3,
-                      nombre: "Pack de 3 Sprays",
-                      precio: 30,
-                      imagen: "/images/products/product-03.jpg",
-                    },
-                  ]}
-                  onAdd={(id) => console.log(id)}
-                />
+                <AccessoryCards />
               </div>
             </div>
           </div>

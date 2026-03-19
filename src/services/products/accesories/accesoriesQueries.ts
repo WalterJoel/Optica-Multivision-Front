@@ -2,9 +2,10 @@ import { api } from "@/services/api";
 import {
   ISearchAccesory,
   IResponseSearchAccesory,
+  IAccessory,
 } from "@/types/products/accessory";
 
-export const searchAccesory = async (
+export const searchAccesoryService = async (
   nombre: string,
   limite: number = 50,
   desplazamiento: number = 0,
@@ -21,4 +22,11 @@ export const searchAccesory = async (
   );
 
   return data.accesorios;
+};
+
+export const getAllBasicAccessoriesService = async (): Promise<
+  IAccessory[]
+> => {
+  const { data } = await api.get("/productos/accesoriosBasicos");
+  return data;
 };

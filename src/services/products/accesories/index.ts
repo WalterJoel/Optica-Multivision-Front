@@ -1,3 +1,3 @@
-export * from "./accesories";
+export * from "./accesoriesMutations";
 
 export * from "./accesoriesQueries";

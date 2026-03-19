@@ -1,13 +1,25 @@
-import { IAccessory } from "@/types/products";
+interface ITableKitAccesories {
+  id: number; // Id de la tabla KIT_ACCESORIOS
+  cantidad: number;
+  createdAt: Date;
+  accesorio: {
+    id: number; // Id del accesorio
+    precio: number;
+    nombre: string;
+    atributo: string;
+    imagenUrl: string;
+    createdAt: string;
+  };
+}
 
 export interface IKit {
   id: number;
   nombre: string;
-  precio: number;
+  precio: number; //Precio total del kit
   activo: boolean;
-  createdAt: Date;
+  createdAt: string;
   descripcion: string;
-  accesorios: IAccessory[];
+  accesorios: ITableKitAccesories[];
 }
 
 export interface IResponseKitAccesory {
