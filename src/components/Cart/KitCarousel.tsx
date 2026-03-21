@@ -5,6 +5,9 @@ import Image from "next/image";
 import { ChevronLeft, ChevronRight, CheckCircle2 } from "lucide-react";
 import { BaseButton } from "../Common/Buttons";
 import { useKits } from "@/hooks/kits";
+// Redux
+import { useDispatch } from "react-redux";
+import { setKitRegaloId } from "@/redux/features/sale-slice";
 
 interface Kit {
   id: number;
@@ -14,6 +17,7 @@ interface Kit {
 }
 
 export default function KitCarousel() {
+  const dispatch = useDispatch();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [selectedKitId, setSelectedKitId] = useState<number | null>(null);
 
@@ -25,6 +29,12 @@ export default function KitCarousel() {
       const scrollAmount = direction === "left" ? -clientWidth : clientWidth;
       scrollRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
     }
+  };
+
+  // Seteo el KIT ID para la VENTA
+  const handleSelectKit = (kitId: number) => {
+    setSelectedKitId(kitId);
+    dispatch(setKitRegaloId(kitId));
   };
 
   useEffect(() => {
@@ -85,7 +95,7 @@ export default function KitCarousel() {
 
                     <div className="flex justify-center w-full">
                       <BaseButton
-                        onClick={() => setSelectedKitId(kit.id)}
+                        onClick={() => handleSelectKit(kit.id)}
                         className={`!h-11 !w-full !max-w-[190px] !p-0 transition-all duration-300 ${
                           isSelected
                             ? "!bg-blue !border-blue"

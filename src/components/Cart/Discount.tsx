@@ -14,6 +14,7 @@ import {
   removeDiscountFromItem,
 } from "@/redux/features/cart-slice";
 import { Check } from "lucide-react";
+import { IResponseDiscountByProduct } from "@/types/discounts";
 
 const Discount = () => {
   const cartItems = useAppSelector((state) => state.cartReducer.items);
@@ -62,8 +63,10 @@ const Discount = () => {
     }
   }, [statusMessage]);
 
-  // 🔥 TOGGLE DESCUENTO
-  const handleToggleDiscount = (productoId: number, monto: number) => {
+  //  TOGGLE DESCUENTO
+  const handleToggleDiscount = (discount: IResponseDiscountByProduct) => {
+    const { productoId, montoDescuento, id: idDescuento } = discount;
+
     const item = cartItems.find((item) => item.productId === productoId);
 
     if (!item) return;
@@ -76,7 +79,8 @@ const Discount = () => {
       dispatch(
         applyDiscountToItem({
           itemId: item.id,
-          discount: monto,
+          discount: montoDescuento,
+          discountId: idDescuento,
         }),
       );
     }
@@ -151,9 +155,7 @@ const Discount = () => {
                         </div>
 
                         <BaseButton
-                          onClick={() =>
-                            handleToggleDiscount(d.productoId, d.montoDescuento)
-                          }
+                          onClick={() => handleToggleDiscount(d)}
                           fullWidth={false}
                           className={`w-10 h-10 flex items-center justify-center transition-all duration-300 ${
                             alreadyApplied

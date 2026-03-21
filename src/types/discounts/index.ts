@@ -14,3 +14,12 @@ export interface ISeries {
   descuento: number;
   icono: string;
 }
+
+export interface IResponseDiscountByProduct {
+  id: number;
+  productoId: number;
+  nombreProducto: string;
+  esLente: boolean;
+  serie: number;
+  montoDescuento: number;
+}

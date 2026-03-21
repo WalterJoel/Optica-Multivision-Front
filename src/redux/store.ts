@@ -5,6 +5,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import quickViewReducer from "./features/quickView-slice";
 import cartReducer from "./features/cart-slice";
 import productDetailsReducer from "./features/product-details";
+import ventaReducer from "./features/sale-slice";
 
 import { TypedUseSelectorHook, useSelector } from "react-redux";
 
@@ -43,13 +44,14 @@ const storage =
 const rootReducer = combineReducers({
   quickViewReducer,
   cartReducer,
+  venta: ventaReducer,
   productDetailsReducer,
 });
 
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["cartReducer"],
+  whitelist: ["cartReducer", "venta"],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

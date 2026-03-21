@@ -34,15 +34,17 @@ export const cart = createSlice({
       action: PayloadAction<{
         itemId: number;
         discount: number;
+        discountId: number;
       }>,
     ) => {
-      const { itemId, discount } = action.payload;
+      const { itemId, discount, discountId } = action.payload;
 
       const item = state.items.find((item) => item.id === itemId);
 
       if (!item) return;
 
       item.discount = Math.max(0, discount);
+      item.discountId = discountId;
     },
 
     removeDiscountFromItem: (
@@ -56,8 +58,8 @@ export const cart = createSlice({
       if (!item) return;
 
       item.discount = 0;
+      item.discountId = null;
     },
-
     removeItemFromCart: (state, action: PayloadAction<number>) => {
       state.items = state.items.filter((item) => item.id !== action.payload);
     },

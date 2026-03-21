@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { searchDiscountsByProducts } from "@/services/discounts";
+import { IResponseDiscountByProduct } from "@/types/discounts";
 
 export function useSearchDiscountByProducts() {
   const [loading, setLoading] = useState(false);
   const [statusMessage, setMessage] = useState<string>("");
   const [success, setSuccess] = useState<boolean>(false);
-  const [discounts, setDiscounts] = useState<IKit[]>([]);
+  const [discounts, setDiscounts] = useState<IResponseDiscountByProduct[]>([]);
 
   const searchDiscounts = async (payload) => {
     setLoading(true);

@@ -32,7 +32,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({
       productId: selected.productoId,
       productName: "Lente " + selected.nombreProducto,
       discount: 0,
-      discountId: null,
+      discountId: null, //Inicializando descuento
       price: price,
       quantity: 1,
       cyl: selected.cyl,
@@ -53,6 +53,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({
   };
 
   //Calcula el precio y trae el stock
+
   useEffect(() => {
     if (selected?.id) {
       getInventoryByStores(selected.id);

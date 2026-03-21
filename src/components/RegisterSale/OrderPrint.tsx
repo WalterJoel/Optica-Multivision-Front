@@ -104,14 +104,14 @@ const OrderPrint = ({ form }: Props) => {
       <div style={headerRowStyle}>
         <div>
           <img
-  src="/logo-multivision.jpeg"
-  alt="Logo Multivisión"
-  style={{
-    width: "55mm",
-    height: "auto",
-    objectFit: "contain",
-  }}
-/>
+            src="/logo-multivision.jpegg"
+            alt="Logo Multivisión"
+            style={{
+              width: "55mm",
+              height: "auto",
+              objectFit: "contain",
+            }}
+          />
 
           <div style={{ fontSize: "9pt", marginTop: "3mm" }}>
             <strong>Dirección:</strong> Calle Santa Martha 218 Int. 2
@@ -234,23 +234,65 @@ const OrderPrint = ({ form }: Props) => {
         >
           <div>
             <div style={sectionTitle}>POLICARBONATOS</div>
-            <CheckLine checked={hasLens("Poly AR")} label="Poly AR" note="(Verde)" />
-            <CheckLine checked={hasLens("Poly Blue Green")} label="Poly Blue Green" note="(Verde)" />
-            <CheckLine checked={hasLens("Poly Blue")} label="Poly Blue" note="(Azul)" />
-            <CheckLine checked={hasLens("Poly Chromic Blue AR Gris")} label="Poly Chromic Blue AR Gris" note="(Azul)" />
+            <CheckLine
+              checked={hasLens("Poly AR")}
+              label="Poly AR"
+              note="(Verde)"
+            />
+            <CheckLine
+              checked={hasLens("Poly Blue Green")}
+              label="Poly Blue Green"
+              note="(Verde)"
+            />
+            <CheckLine
+              checked={hasLens("Poly Blue")}
+              label="Poly Blue"
+              note="(Azul)"
+            />
+            <CheckLine
+              checked={hasLens("Poly Chromic Blue AR Gris")}
+              label="Poly Chromic Blue AR Gris"
+              note="(Azul)"
+            />
             <div style={{ marginTop: "2mm", fontWeight: 700 }}>OTROS:</div>
           </div>
 
           <div>
             <div style={sectionTitle}>NK</div>
-            <CheckLine checked={hasLens("NK Blue Azul")} label="NK Blue" note="(Azul)" />
-            <CheckLine checked={hasLens("NK Blue Verde")} label="NK Blue" note="(Verde)" />
-            <CheckLine checked={hasLens("NK Chromic Ar Gris Verde")} label="NK Chromic Ar Gris" note="(Verde)" />
-            <CheckLine checked={hasLens("NK Chromic Blue AR Gris Azul")} label="NK Chromic Blue AR Gris" note="(Azul)" />
+            <CheckLine
+              checked={hasLens("NK Blue Azul")}
+              label="NK Blue"
+              note="(Azul)"
+            />
+            <CheckLine
+              checked={hasLens("NK Blue Verde")}
+              label="NK Blue"
+              note="(Verde)"
+            />
+            <CheckLine
+              checked={hasLens("NK Chromic Ar Gris Verde")}
+              label="NK Chromic Ar Gris"
+              note="(Verde)"
+            />
+            <CheckLine
+              checked={hasLens("NK Chromic Blue AR Gris Azul")}
+              label="NK Chromic Blue AR Gris"
+              note="(Azul)"
+            />
 
-            <div style={{ ...sectionTitle, marginTop: "2mm" }}>CRYSTAL BLUE</div>
-            <CheckLine checked={hasLens("Crystal Blue")} label="Crystal Blue" note="(Azul)" />
-            <CheckLine checked={hasLens("Fotoblue Crystal Blue")} label="Fotoblue Crystal Blue" note="(Azul)" />
+            <div style={{ ...sectionTitle, marginTop: "2mm" }}>
+              CRYSTAL BLUE
+            </div>
+            <CheckLine
+              checked={hasLens("Crystal Blue")}
+              label="Crystal Blue"
+              note="(Azul)"
+            />
+            <CheckLine
+              checked={hasLens("Fotoblue Crystal Blue")}
+              label="Fotoblue Crystal Blue"
+              note="(Azul)"
+            />
           </div>
         </div>
       </div>
@@ -322,8 +364,8 @@ const OrderPrint = ({ form }: Props) => {
               {form.biselBrillante === "SI"
                 ? "SI"
                 : form.biselBrillante === "NO"
-                ? "NO"
-                : ""}
+                  ? "NO"
+                  : ""}
             </div>
 
             <div>{form.observaciones}</div>
@@ -360,9 +402,17 @@ const OrderPrint = ({ form }: Props) => {
       </div>
 
       <div style={{ fontSize: "8.5pt", lineHeight: 1.25, marginTop: "1mm" }}>
-        <div>1. Multivisión no se responsabiliza por el daño o deterioro de monturas usadas.</div>
-        <div>2. La garantía por medida o eje solo es válida dentro de los 30 días.</div>
-        <div>3. Al llenar esta orden de pedido, usted está aceptando los términos y condiciones.</div>
+        <div>
+          1. Multivisión no se responsabiliza por el daño o deterioro de
+          monturas usadas.
+        </div>
+        <div>
+          2. La garantía por medida o eje solo es válida dentro de los 30 días.
+        </div>
+        <div>
+          3. Al llenar esta orden de pedido, usted está aceptando los términos y
+          condiciones.
+        </div>
       </div>
     </div>
   );
@@ -420,13 +470,7 @@ function CheckLine({
   );
 }
 
-function MiniCheck({
-  checked,
-  label,
-}: {
-  checked: boolean;
-  label: string;
-}) {
+function MiniCheck({ checked, label }: { checked: boolean; label: string }) {
   return (
     <div
       style={{
