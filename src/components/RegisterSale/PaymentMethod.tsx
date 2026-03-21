@@ -191,9 +191,7 @@ const PaymentMethod = () => {
     <div className="w-full">
       <div className="flex w-full flex-col gap-8 lg:flex-row lg:items-stretch xl:gap-8">
         <div
-          className={`w-full ${
-            showOrder ? "lg:w-[35%]" : "lg:max-w-[700px]"
-          }`}
+          className={`w-full ${showOrder ? "lg:w-[35%]" : "lg:max-w-[700px]"}`}
         >
           <div className="flex h-full w-full flex-col rounded-xl bg-white p-5 shadow-lg xl:p-6">
             <div className="mb-5 flex items-center">
@@ -257,46 +255,7 @@ const PaymentMethod = () => {
                 </div>
               </div>
 
-              <div className="relative">
-                <BaseInput
-                  label="Cliente"
-                  name="customerSearch"
-                  type="text"
-                  placeholder="Buscar por DNI, nombre o apellido"
-                  value={form.customerSearch}
-                  onChange={onChange}
-                />
-
-                {showClientList && (
-                  <div className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-lg border bg-white shadow">
-                    {loading && (
-                      <div className="p-3 text-sm text-gray-500">
-                        Buscando...
-                      </div>
-                    )}
-
-                    {!loading && clients.length === 0 && (
-                      <div className="p-3 text-sm text-gray-500">
-                        Sin resultados
-                      </div>
-                    )}
-
-                    {clients.map((client: any) => (
-                      <div
-                        key={client.id}
-                        onClick={() => selectClient(client)}
-                        className="cursor-pointer p-3 text-sm hover:bg-gray-100"
-                      >
-                        {client.nombres
-                          ? `${client.nombres} ${client.apellidos ?? ""}`
-                          : client.numeroDoc}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              <div className="grid grid-cols-1 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <BaseInput
                   label="Total"
                   name="total"
@@ -319,9 +278,7 @@ const PaymentMethod = () => {
                   name="result"
                   type="text"
                   value={`S/ ${
-                    paymentType === "cash"
-                      ? change.toFixed(2)
-                      : debt.toFixed(2)
+                    paymentType === "cash" ? change.toFixed(2) : debt.toFixed(2)
                   }`}
                   onChange={() => {}}
                   readOnly
@@ -329,7 +286,7 @@ const PaymentMethod = () => {
               </div>
 
               <BaseTarea
-                label="Descripción"
+                label="Observaciones"
                 name="observaciones"
                 value={form.observaciones}
                 placeholder="Descripción breve"
@@ -337,7 +294,7 @@ const PaymentMethod = () => {
               />
 
               <BaseInput
-                label="Responsable"
+                label="Responsable de la venta"
                 name="responsible"
                 type="text"
                 value={form.responsible}
@@ -585,12 +542,12 @@ const PaymentMethod = () => {
                   onChange={onChange}
                 />
                 <BaseTarea
-  label="Observaciones"
-  name="observaciones"
-  value={form.observaciones}
-  placeholder="Ingrese observaciones"
-  onChange={onChange}
-/>
+                  label="Observaciones"
+                  name="observaciones"
+                  value={form.observaciones}
+                  placeholder="Ingrese observaciones"
+                  onChange={onChange}
+                />
 
                 <div>
                   <h4 className="mb-3 font-semibold">Bisel brillante</h4>
