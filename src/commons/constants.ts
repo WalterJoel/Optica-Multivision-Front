@@ -13,3 +13,8 @@ export enum STATUS_MODAL {
 }
 
 export const SUCCESS_ICON = "/images/icons/success-modal.png";
+
+// DATOS DE LA EMPRESA
+export const LOGO_EMPRESA = "";
+export const DIRECCION_EMPRESA = "";
+export const CELULAR_EMPRESA = "";

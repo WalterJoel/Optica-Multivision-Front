@@ -65,21 +65,21 @@ const Header = () => {
   }, []);
 
   useEffect(() => {
-  const onAuth = () => {
-    const u = localStorage.getItem("user");
-    setUser(u ? JSON.parse(u) : null);
-  };
+    const onAuth = () => {
+      const u = localStorage.getItem("user");
+      setUser(u ? JSON.parse(u) : null);
+    };
 
-  onAuth(); // ✅ cargar al montar
+    onAuth(); // ✅ cargar al montar
 
-  window.addEventListener("auth-changed", onAuth);
-  window.addEventListener("storage", onAuth); // ✅ por si disparas storage
+    window.addEventListener("auth-changed", onAuth);
+    window.addEventListener("storage", onAuth); // ✅ por si disparas storage
 
-  return () => {
-    window.removeEventListener("auth-changed", onAuth);
-    window.removeEventListener("storage", onAuth);
-  };
-}, []);
+    return () => {
+      window.removeEventListener("auth-changed", onAuth);
+      window.removeEventListener("storage", onAuth);
+    };
+  }, []);
 
   // ✅ Cerrar dropdown al hacer click afuera + ESC
   useEffect(() => {
@@ -102,14 +102,10 @@ const Header = () => {
   }, [userMenuOpen]);
 
   const options = [
-    { label: "All Categories", value: "0" },
-    { label: "Desktop", value: "1" },
-    { label: "Laptop", value: "2" },
-    { label: "Monitor", value: "3" },
-    { label: "Phone", value: "4" },
-    { label: "Watch", value: "5" },
-    { label: "Mouse", value: "6" },
-    { label: "Tablet", value: "7" },
+    { label: "Categorias", value: "0" },
+    { label: "Lentes", value: "1" },
+    { label: "Accesorios", value: "2" },
+    { label: "Monturas", value: "3" },
   ];
 
   return (
@@ -129,7 +125,7 @@ const Header = () => {
           <div className="xl:w-auto flex-col sm:flex-row w-full flex sm:justify-between sm:items-center gap-5 sm:gap-10">
             <Link className="flex-shrink-0" href="/">
               <Image
-                src="/images/logo/logo.svg"
+                src="/images/logo/logo.webp"
                 alt="Logo"
                 width={219}
                 height={36}
