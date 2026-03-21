@@ -2,11 +2,10 @@ export interface CartItem {
   id: number;
   productId: number;
   productName: string;
-  discountId: number | null; // ID desde la tabla descuentos, null sino tiene
-  discount: number; // Un unico descuento por producto
-  title: string;
-  cyl: number;
-  esf: number;
+  discountId?: number | null; // ID desde la tabla descuentos, null sino tiene
+  discount?: number | null; // Un unico descuento por producto
+  cyl?: number;
+  esf?: number;
   isLens: boolean;
   price: number;
   quantity: number;

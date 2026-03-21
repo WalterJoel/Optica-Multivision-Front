@@ -25,15 +25,14 @@ export const DetailModal: React.FC<DetailModalProps> = ({
     useInventoryByStores();
 
   const handleAddToCart = () => {
-    console.log(selected, " ->>>>>>>>>>>>>>>> SELETED");
     const price = inventoryByStore?.precioCalculado || 0;
 
     const itemToCart: CartItem = {
       id: selected.id,
       productId: selected.productoId,
       productName: "Lente " + selected.nombreProducto,
-      title: "Lente ",
       discount: 0,
+      discountId: null,
       price: price,
       quantity: 1,
       cyl: selected.cyl,
@@ -53,6 +52,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({
     onClose();
   };
 
+  //Calcula el precio y trae el stock
   useEffect(() => {
     if (selected?.id) {
       getInventoryByStores(selected.id);
