@@ -5,6 +5,11 @@ const nextConfig = {
       "encrypted-tbn0.gstatic.com",
       "images.unsplash.com",
       "www.flaticon.es",
+      //agregue ya no me dejaba leer las fotos
+      
+      "ejemplo.com",
+      "via.placeholder.com",
+
     ],
     remotePatterns: [
       {
