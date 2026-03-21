@@ -4,9 +4,11 @@ export enum PRODUCTOS {
   MONTURA = "MONTURA",
 }
 
-export const IMG_LENTE =
-  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGnQPr3op1MGXxOFrwPtuxTYNQM_1H3ZLsGA&s";
-
+export const IMG_PRODUCTOS = {
+  [PRODUCTOS.LENTE]: "/images/products/lente-default.jpg",
+  [PRODUCTOS.MONTURA]: "/images/products/montura-default.png",
+  [PRODUCTOS.ACCESORIO]: "/images/products/accesorio-default.jpg",
+};
 export enum STATUS_MODAL {
   SUCCESS_MODAL = "success",
   ERROR_MODAL = "error",
