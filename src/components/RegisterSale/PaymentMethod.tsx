@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { BaseInput, BaseTabs, BaseTarea } from "@/components/Common/Inputs";
+// Hook
+import { useCreateSale } from "@/hooks/sales";
 
 // Redux
 import {
@@ -13,7 +15,15 @@ import {
   setObservaciones,
   setTotal,
 } from "@/redux/features/sale-slice";
-import { selectTotalPrice } from "@/redux/features/cart-slice";
+import { selectTotalPrice, selectCartItems } from "@/redux/features/cart-slice";
+
+import {
+  MetodoPago,
+  TipoVenta,
+  EstadoPago,
+  TipoProducto,
+} from "@/commons/constants";
+import { ICreateSale, VentaProducto } from "@/types/sales";
 
 type PaymentType = "cash" | "credit";
 
@@ -21,11 +31,20 @@ const PaymentMethod = () => {
   const dispatch = useDispatch();
   const venta = useSelector(selectVenta);
   const totalFromCart = useSelector(selectTotalPrice);
+  const cartItems = useSelector(selectCartItems);
 
-  const [paymentType, setPaymentType] = React.useState<PaymentType>("credit");
-  const [change, setChange] = React.useState(0);
-  const [debt, setDebt] = React.useState(0);
-  const [showOrder, setShowOrder] = React.useState(false);
+  const [paymentType, setPaymentType] = useState<PaymentType>("credit");
+  const [change, setChange] = useState(0);
+  const [debt, setDebt] = useState(0);
+  const [showOrder, setShowOrder] = useState(false);
+
+  // Inputs locales para payload
+  const [responsableVenta, setResponsableVenta] = useState("");
+  const [nroCuotas, setNroCuotas] = useState<number>(0);
+  const [observaciones, setObservacionesLocal] = useState("");
+
+  // Hook
+  const { addSale, loading, statusMessage, success } = useCreateSale();
 
   const paymentTabs = [
     { key: "cash", label: "Al Contado" },
@@ -43,7 +62,10 @@ const PaymentMethod = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
-    if (name === "observaciones") dispatch(setObservaciones(value));
+    if (name === "observaciones") {
+      dispatch(setObservaciones(value));
+      setObservacionesLocal(value);
+    }
     if (name === "payment") dispatch(setTotal(parseFloat(value) || 0));
   };
 
@@ -59,6 +81,47 @@ const PaymentMethod = () => {
       setChange(0);
     }
   }, [venta.total, totalFromCart, paymentType]);
+
+  const handleRegisterSale = () => {
+    const productos: VentaProducto[] = cartItems.map((item) => ({
+      productoId: item.productId,
+      tipoProducto: item.isLens
+        ? TipoProducto.LENTE
+        : item.stockProductoId
+          ? TipoProducto.MONTURA
+          : TipoProducto.ACCESORIO,
+      precioUnitario: item.price,
+      cantidad: item.quantity,
+      subtotal: item.price * item.quantity,
+      descuento: item.discount || 0,
+      stockId: item.isLens ? item.id : undefined,
+      cyl: item.cyl,
+      esf: item.esf,
+      stockProductoId: !item.isLens ? item.id : undefined,
+    }));
+
+    const payload: ICreateSale = {
+      sedeId: venta.sedeId || 1,
+      userId: venta.userId || 123,
+      responsableVenta,
+      metodoPago: venta.metodoPago,
+      tipoVenta: paymentType === "cash" ? TipoVenta.CONTADO : TipoVenta.CREDITO,
+      estadoPago:
+        venta.total && totalFromCart <= venta.total
+          ? EstadoPago.PAGADO
+          : EstadoPago.PENDIENTE,
+      montaje: showOrder,
+      nroCuotas,
+      observaciones,
+      kitId: venta.kitRegaloId,
+      productos,
+      total: totalFromCart,
+      montoPagado: venta.total || 0,
+      deuda: Math.max(0, totalFromCart - (venta.total || 0)),
+    };
+
+    addSale(payload);
+  };
 
   return (
     <section className="overflow-hidden pt-[200px] pb-20 bg-gray-2 min-h-screen">
@@ -91,11 +154,11 @@ const PaymentMethod = () => {
               <div className="flex flex-col space-y-5 flex-1">
                 <BaseInput
                   label="Responsable de la Venta"
-                  name="vendedor"
+                  name="responsableVenta"
                   type="text"
                   placeholder="Nombre del vendedor"
-                  value={""}
-                  onChange={onChange}
+                  value={responsableVenta}
+                  onChange={(e) => setResponsableVenta(e.target.value)}
                 />
 
                 <div>
@@ -150,21 +213,37 @@ const PaymentMethod = () => {
                     label={paymentType === "cash" ? "Cambio" : "Deuda"}
                     name="result"
                     type="text"
-                    value={`S/ ${paymentType === "cash" ? change.toFixed(2) : debt.toFixed(2)}`}
+                    value={`S/ ${
+                      paymentType === "cash"
+                        ? change.toFixed(2)
+                        : debt.toFixed(2)
+                    }`}
                     readOnly
                   />
                 </div>
 
+                <BaseInput
+                  label="Nro Cuotas"
+                  name="nroCuotas"
+                  type="number"
+                  value={nroCuotas}
+                  onChange={(e) => setNroCuotas(Number(e.target.value))}
+                />
+
                 <BaseTarea
                   label="Observaciones"
                   name="observaciones"
-                  value={venta.observaciones || ""}
+                  value={observaciones}
                   placeholder="Descripción breve"
-                  onChange={onChange}
+                  onChange={(e) => setObservacionesLocal(e.target.value)}
                 />
 
-                <button className="mt-auto w-full rounded-2xl bg-blue py-3 text-white font-bold hover:bg-blue-dark transition-all">
-                  Registrar Venta
+                <button
+                  onClick={handleRegisterSale}
+                  className="mt-auto w-full rounded-2xl bg-blue py-3 text-white font-bold hover:bg-blue-dark transition-all"
+                  disabled={loading}
+                >
+                  {loading ? "Registrando..." : "Registrar Venta"}
                 </button>
               </div>
             </div>

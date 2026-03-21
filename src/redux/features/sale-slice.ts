@@ -1,10 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
+import { MetodoPago } from "@/commons/constants";
 
 export interface VentaState {
   clienteId?: number | null;
   kitRegaloId?: number | null;
-  metodoPago?: "efectivo" | "tarjeta" | "transferencia" | null;
+  metodoPago?: MetodoPago;
   observaciones?: string;
   total?: number;
   fechaVenta?: string;
