@@ -1,50 +1,52 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { BaseInput, BaseTabs, BaseTarea } from "@/components/Common/Inputs";
-// Hook
-import { useCreateSale } from "@/hooks/sales";
 
-// Redux
+// Components
+import { BaseInput, BaseTabs, BaseTarea } from "@/components/Common/Inputs";
+
+// Hooks y Store
+import { useCreateSale } from "@/hooks/sales";
+import { useAppSelector } from "@/redux/store";
+
+// Selectores de Slices
+import { selectAuth } from "@/redux/features/auth-slice";
 import {
   selectVenta,
   setMetodoPago,
-  setObservaciones,
   setTotal,
 } from "@/redux/features/sale-slice";
 import { selectTotalPrice, selectCartItems } from "@/redux/features/cart-slice";
 
-import {
-  MetodoPago,
-  TipoVenta,
-  EstadoPago,
-  TipoProducto,
-} from "@/commons/constants";
+// Constants
+import { TipoVenta, EstadoPago, TipoProducto } from "@/commons/constants";
 import { ICreateSale, VentaProducto } from "@/types/sales";
 
 type PaymentType = "cash" | "credit";
 
 const PaymentMethod = () => {
   const dispatch = useDispatch();
-  const venta = useSelector(selectVenta);
-  const totalFromCart = useSelector(selectTotalPrice);
-  const cartItems = useSelector(selectCartItems);
+  const { addSale, loading } = useCreateSale();
 
+  // --- REFACTOR: EXTRACCIÓN POR STORES PARA TRAZABILIDAD ---
+  const authStore = useAppSelector(selectAuth);
+  const ventaStore = useAppSelector(selectVenta);
+  const cartStoreItems = useAppSelector(selectCartItems);
+  const cartStoreTotal = useAppSelector(selectTotalPrice);
+
+  // Estados locales de UI (Volátiles)
   const [paymentType, setPaymentType] = useState<PaymentType>("credit");
   const [change, setChange] = useState(0);
   const [debt, setDebt] = useState(0);
   const [showOrder, setShowOrder] = useState(false);
-
-  // Inputs locales para payload
-  const [responsableVenta, setResponsableVenta] = useState("");
+  const [responsableVenta, setResponsableVenta] = useState(
+    authStore.name || "",
+  );
   const [nroCuotas, setNroCuotas] = useState<number>(0);
-  const [observaciones, setObservacionesLocal] = useState("");
-
-  // Hook
-  const { addSale, loading, statusMessage, success } = useCreateSale();
+  const [observacionesLocal, setObservacionesLocal] = useState("");
 
   const paymentTabs = [
     { key: "cash", label: "Al Contado" },
@@ -58,32 +60,23 @@ const PaymentMethod = () => {
     { key: "plin", label: "Plin", icon: "/images/cart/plin.png" },
   ];
 
-  const onChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const { name, value } = e.target;
-    if (name === "observaciones") {
-      dispatch(setObservaciones(value));
-      setObservacionesLocal(value);
-    }
-    if (name === "payment") dispatch(setTotal(parseFloat(value) || 0));
-  };
-
+  // Sincronización de cálculos
   useEffect(() => {
-    const payment = venta.total || 0;
-    const total = totalFromCart || 0;
+    const payment = ventaStore.total || 0;
+    const total = cartStoreTotal || 0;
 
     if (paymentType === "cash") {
-      setChange(payment - total);
+      setChange(Math.max(0, payment - total));
       setDebt(0);
     } else {
-      setDebt(total - payment);
+      setDebt(Math.max(0, total - payment));
       setChange(0);
     }
-  }, [venta.total, totalFromCart, paymentType]);
+  }, [ventaStore.total, cartStoreTotal, paymentType]);
 
   const handleRegisterSale = () => {
-    const productos: VentaProducto[] = cartItems.map((item) => ({
+    // Mapeo lógico desde CART_STORE
+    const productosDesdeCart: VentaProducto[] = cartStoreItems.map((item) => ({
       productoId: item.productId,
       tipoProducto: item.isLens
         ? TipoProducto.LENTE
@@ -101,49 +94,58 @@ const PaymentMethod = () => {
     }));
 
     const payload: ICreateSale = {
-      sedeId: venta.sedeId || 1,
-      userId: venta.userId || 123,
+      // 1. DATA DESDE AUTH_STORE
+      sedeId: Number(authStore.sedeId) || 1,
+      userId: Number(authStore.userId) || 0,
+
+      // 2. DATA DESDE VENTA_STORE
+      metodoPago: ventaStore.metodoPago,
+      kitId: ventaStore.kitRegaloId,
+      montoPagado: ventaStore.total || 0,
+
+      // 3. DATA DESDE CART_STORE
+      productos: productosDesdeCart,
+      total: cartStoreTotal,
+
+      // 4. DATA DESDE UI / LÓGICA LOCAL
       responsableVenta,
-      metodoPago: venta.metodoPago,
       tipoVenta: paymentType === "cash" ? TipoVenta.CONTADO : TipoVenta.CREDITO,
       estadoPago:
-        venta.total && totalFromCart <= venta.total
+        (ventaStore.total || 0) >= cartStoreTotal
           ? EstadoPago.PAGADO
           : EstadoPago.PENDIENTE,
       montaje: showOrder,
       nroCuotas,
-      observaciones,
-      kitId: venta.kitRegaloId,
-      productos,
-      total: totalFromCart,
-      montoPagado: venta.total || 0,
-      deuda: Math.max(0, totalFromCart - (venta.total || 0)),
+      observaciones: observacionesLocal,
+      deuda: Math.max(0, cartStoreTotal - (ventaStore.total || 0)),
     };
 
+    console.log("🚀 Payload estructurado:", payload);
     addSale(payload);
   };
 
   return (
-    <section className="overflow-hidden pt-[200px] pb-20 bg-gray-2 min-h-screen">
+    <section className="overflow-hidden pt-[180px] pb-20 bg-gray-2 min-h-screen">
       <div className="max-w-[1740px] w-full mx-auto px-4 sm:px-8 xl:px-10">
         <div className="flex w-full gap-6">
-          {/* Panel Venta - Fijo 45% */}
+          {/* PANEL IZQUIERDO: GESTIÓN DE PAGO (45%) */}
           <div className="w-[45%] flex-shrink-0">
             <div className="flex flex-col rounded-xl bg-white p-6 shadow-lg h-full">
               <div className="mb-5 flex items-center justify-between">
-                <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-gray-200 bg-gray-50 px-4 py-2 shadow-sm">
-                  <span className="text-sm font-semibold text-gray-600">
+                <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-gray-100 bg-gray-50 px-4 py-2 hover:bg-gray-100 transition-colors">
+                  <span className="text-sm font-bold text-gray-700">
                     ¿Requiere Montaje?
                   </span>
                   <input
                     type="checkbox"
+                    className="w-4 h-4 text-blue border-gray-300 rounded focus:ring-blue"
                     checked={showOrder}
                     onChange={() => setShowOrder(!showOrder)}
                   />
                 </label>
               </div>
 
-              <div className="mb-5 border-b border-gray-300">
+              <div className="mb-6">
                 <BaseTabs
                   tabs={paymentTabs}
                   activeTab={paymentType}
@@ -154,111 +156,133 @@ const PaymentMethod = () => {
               <div className="flex flex-col space-y-5 flex-1">
                 <BaseInput
                   label="Responsable de la Venta"
-                  name="responsableVenta"
                   type="text"
-                  placeholder="Nombre del vendedor"
                   value={responsableVenta}
                   onChange={(e) => setResponsableVenta(e.target.value)}
                 />
 
                 <div>
-                  <label className="mb-3 block text-sm font-medium text-gray-600">
+                  <label className="mb-3 block text-sm font-bold text-gray-700">
                     Método de Pago
                   </label>
                   <div className="grid grid-cols-2 gap-3">
                     {paymentMethods.map((method) => {
-                      const active = venta.metodoPago === method.key;
+                      const isSelected = ventaStore.metodoPago === method.key;
                       return (
                         <motion.button
                           key={method.key}
-                          type="button"
-                          whileHover={{ scale: 1.03 }}
-                          whileTap={{ scale: 0.97 }}
+                          whileHover={{ y: -2 }}
+                          whileTap={{ scale: 0.98 }}
                           onClick={() =>
                             dispatch(setMetodoPago(method.key as any))
                           }
-                          className={`flex flex-col items-center gap-2 rounded-xl border p-3.5 transition-all duration-300 ${
-                            active ? "border-blue bg-blue/5" : "border-gray-200"
+                          className={`flex flex-col items-center gap-2 rounded-xl border p-4 transition-all ${
+                            isSelected
+                              ? "border-blue bg-blue/5 ring-1 ring-blue"
+                              : "border-gray-200 bg-white"
                           }`}
                         >
                           <Image
                             src={method.icon}
                             alt={method.label}
-                            width={36}
-                            height={36}
+                            width={32}
+                            height={32}
                           />
-                          <span className="text-sm">{method.label}</span>
+                          <span
+                            className={`text-xs font-bold ${isSelected ? "text-blue" : "text-gray-500"}`}
+                          >
+                            {method.label}
+                          </span>
                         </motion.button>
                       );
                     })}
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-3 gap-4">
                   <BaseInput
-                    label="Total"
-                    name="total"
-                    type="text"
-                    value={`S/ ${totalFromCart}`}
+                    label="Total Venta"
+                    value={`S/ ${cartStoreTotal.toFixed(2)}`}
                     readOnly
                   />
                   <BaseInput
-                    label="Pago"
-                    name="payment"
+                    label="Monto Recibido"
                     type="number"
-                    value={venta.total || 0}
-                    onChange={onChange}
+                    value={ventaStore.total || 0}
+                    onChange={(e) =>
+                      dispatch(setTotal(parseFloat(e.target.value) || 0))
+                    }
                   />
                   <BaseInput
-                    label={paymentType === "cash" ? "Cambio" : "Deuda"}
-                    name="result"
-                    type="text"
-                    value={`S/ ${
-                      paymentType === "cash"
-                        ? change.toFixed(2)
-                        : debt.toFixed(2)
-                    }`}
+                    label={paymentType === "cash" ? "Vuelto" : "Por Cobrar"}
+                    value={`S/ ${paymentType === "cash" ? change.toFixed(2) : debt.toFixed(2)}`}
                     readOnly
                   />
                 </div>
 
-                <BaseInput
-                  label="Nro Cuotas"
-                  name="nroCuotas"
-                  type="number"
-                  value={nroCuotas}
-                  onChange={(e) => setNroCuotas(Number(e.target.value))}
-                />
+                {paymentType === "credit" && (
+                  <BaseInput
+                    label="Número de Cuotas"
+                    type="number"
+                    value={nroCuotas}
+                    onChange={(e) => setNroCuotas(Number(e.target.value))}
+                  />
+                )}
 
                 <BaseTarea
-                  label="Observaciones"
-                  name="observaciones"
-                  value={observaciones}
-                  placeholder="Descripción breve"
+                  label="Notas de la Venta"
+                  value={observacionesLocal}
+                  placeholder="Ej: Cliente solicita entrega urgente..."
                   onChange={(e) => setObservacionesLocal(e.target.value)}
                 />
 
                 <button
                   onClick={handleRegisterSale}
-                  className="mt-auto w-full rounded-2xl bg-blue py-3 text-white font-bold hover:bg-blue-dark transition-all"
-                  disabled={loading}
+                  disabled={loading || cartStoreTotal === 0}
+                  className={`mt-auto w-full rounded-xl py-4 text-white font-bold text-lg shadow-lg transition-all ${
+                    loading
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-blue hover:bg-blue-dark active:scale-[0.99]"
+                  }`}
                 >
-                  {loading ? "Registrando..." : "Registrar Venta"}
+                  {loading ? "Procesando Venta..." : "REGISTRAR OPERACIÓN"}
                 </button>
               </div>
             </div>
           </div>
 
-          {/* Panel Montaje - Fijo 55% */}
+          {/* PANEL DERECHO: DETALLES DE MONTAJE (55%) */}
           <div className="w-[55%] flex-shrink-0">
-            {showOrder && (
-              <div className="flex flex-col rounded-xl bg-white p-6 shadow-lg h-full animate-in fade-in duration-500">
-                <h2 className="text-lg font-bold mb-4">Detalles de Montaje</h2>
-                <div className="flex-1 border-2 border-dashed border-gray-200 rounded-lg flex items-center justify-center">
-                  <p className="text-gray-400">
-                    Panel de configuración de montaje
+            {showOrder ? (
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="flex flex-col rounded-xl bg-white p-8 shadow-lg h-full border border-blue/10"
+              >
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-2 h-8 bg-blue rounded-full" />
+                  <h2 className="text-xl font-extrabold text-gray-800">
+                    Orden de Laboratorio / Montaje
+                  </h2>
+                </div>
+                <div className="flex-1 border-2 border-dashed border-gray-100 rounded-2xl flex flex-col items-center justify-center bg-gray-50/50">
+                  <Image
+                    src="/images/cart/montaje-placeholder.png"
+                    alt="Montaje"
+                    width={80}
+                    height={80}
+                    className="opacity-20 mb-4"
+                  />
+                  <p className="text-gray-400 font-medium">
+                    Configure los parámetros del cristal aquí
                   </p>
                 </div>
+              </motion.div>
+            ) : (
+              <div className="h-full rounded-xl border-2 border-dashed border-gray-200 flex items-center justify-center">
+                <p className="text-gray-400 italic text-sm">
+                  El panel de montaje se activará al marcar el check
+                </p>
               </div>
             )}
           </div>

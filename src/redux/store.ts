@@ -6,6 +6,7 @@ import quickViewReducer from "./features/quickView-slice";
 import cartReducer from "./features/cart-slice";
 import productDetailsReducer from "./features/product-details";
 import ventaReducer from "./features/sale-slice";
+import authReducer from "./features/auth-slice"; // <-- Importamos el nuevo slice
 
 import { TypedUseSelectorHook, useSelector } from "react-redux";
 
@@ -46,12 +47,13 @@ const rootReducer = combineReducers({
   cartReducer,
   venta: ventaReducer,
   productDetailsReducer,
+  auth: authReducer, // <-- Agregado al rootReducer
 });
 
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["cartReducer", "venta"],
+  whitelist: ["cartReducer", "venta", "auth"],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
