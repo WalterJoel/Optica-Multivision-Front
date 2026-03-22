@@ -7,6 +7,7 @@ import SizeDropdown from "./SizeDropdown";
 import ColorsDropdwon from "./ColorsDropdwon";
 import PriceDropdown from "./PriceDropdown";
 import SingleGridItemProduct from "../Shop/SingleGridItemProduct";
+import ProductDetailModal from "./ProductDetailModal";
 
 import { useAccessories } from "@/hooks/products/accesories/useAccessories";
 import { useEyeglasses } from "@/hooks/products/eyeglasses";
@@ -18,7 +19,11 @@ const ShopProducts = () => {
   const [productSidebar, setProductSidebar] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("Monturas");
 
-  // Hooks
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [openDetailModal, setOpenDetailModal] = useState(false);
+  const [stockData, setStockData] = useState<any[]>([]);
+  const [loadingStock, setLoadingStock] = useState(false);
+
   const { lenses, loading: loadingLenses } = useLenses();
 
   const {
@@ -33,11 +38,10 @@ const ShopProducts = () => {
     getAllAccessoriesData,
   } = useAccessories();
 
-  // Mapa de productos
-  const productMap = {
-    Lentes: { data: lenses, loading: loadingLenses },
-    Monturas: { data: eyeglasses, loading: loadingFrames },
-    Accesorios: { data: accessories, loading: loadingAcc },
+  const productMap: Record<string, { data: any[]; loading: boolean }> = {
+    Lentes: { data: lenses || [], loading: loadingLenses },
+    Monturas: { data: eyeglasses || [], loading: loadingFrames },
+    Accesorios: { data: accessories || [], loading: loadingAcc },
   };
 
   const current = productMap[selectedCategory] || {
@@ -48,7 +52,6 @@ const ShopProducts = () => {
   const currentProducts = current.data;
   const isLoading = current.loading;
 
-  // 🔥 MAPEO SEGURO DE CATEGORÍA → TIPO
   const getTipoProducto = () => {
     switch (selectedCategory) {
       case "Lentes":
@@ -62,37 +65,83 @@ const ShopProducts = () => {
     }
   };
 
-  // 🔥 NORMALIZADOR FINAL
- const normalizeProduct = (item: any) => {
+const normalizeProduct = (item: any) => {
   const tipo = getTipoProducto();
+  const isLente = selectedCategory === "Lentes";
 
   let safeImage = IMG_PRODUCTOS[tipo];
 
-  // Solo los lentes usan imagen dinámica si existe
-  if (
-    selectedCategory === "Lentes" &&
-    item.imagenUrl &&
-    item.imagenUrl.startsWith("http")
-  ) {
+  if (item?.imagenUrl && String(item.imagenUrl).startsWith("http")) {
     safeImage = item.imagenUrl;
   }
 
+  const precioSerie1 = Number(item?.precio_serie1 ?? item?.precioSerie1 ?? 0);
+  const precioSerie2 = Number(item?.precio_serie2 ?? item?.precioSerie2 ?? 0);
+  const precioSerie3 = Number(item?.precio_serie3 ?? item?.precioSerie3 ?? 0);
+
+  const precioNormal = Number(item?.precio ?? 0);
+
   return {
-    id: item.id,
-    producto: {
-      nombre: item.nombre || item.marca || "Producto",
-      precio: item.precio || 0,
-      descripcion: item.descripcion || "",
-    },
+    id: item?.id,
+    tipo,
+    categoria: selectedCategory,
+
+    nombre: item?.nombre || item?.marca || "Producto",
+    marca: item?.marca || "Sin marca",
+    material: item?.material || "",
+    descripcion: item?.descripcion || "Sin descripción disponible",
+
     imagenUrl: safeImage,
     imgs: {
       thumbnails: [safeImage],
       previews: [safeImage],
     },
+
+    // precio principal que usa la card normal
+    precio: isLente ? precioSerie1 : precioNormal,
+
+    // solo lentes usan series
+    precio_serie1: precioSerie1,
+    precio_serie2: precioSerie2,
+    precio_serie3: precioSerie3,
+
+    // stock base local si existiera
+    stock: Number(item?.stock ?? item?.cantidad ?? 0),
+
+    producto: {
+      nombre: item?.nombre || item?.marca || "Producto",
+      precio: isLente ? precioSerie1 : precioNormal,
+      descripcion: item?.descripcion || "Sin descripción disponible",
+      stock: Number(item?.stock ?? item?.cantidad ?? 0),
+      marca: item?.marca || "Sin marca",
+      tipo,
+    },
+
+    rawData: item,
   };
 };
 
-  // Categorías
+  const handleOpenDetail = async (product: any) => {
+    setSelectedProduct(product);
+    setOpenDetailModal(true);
+    setLoadingStock(true);
+    setStockData([]);
+
+    try {
+      // CAMBIA ESTA URL SEGÚN TU BACKEND REAL
+      const res = await fetch(`http://localhost:3001/stock/producto/${product.id}`);
+      if (!res.ok) throw new Error("No se pudo obtener el stock");
+
+      const data = await res.json();
+      setStockData(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Error cargando stock:", error);
+      setStockData([]);
+    } finally {
+      setLoadingStock(false);
+    }
+  };
+
   const categories = [
     { name: "Monturas", products: eyeglasses?.length || 0 },
     { name: "Lentes", products: lenses?.length || 0 },
@@ -114,8 +163,6 @@ const ShopProducts = () => {
       <section className="overflow-hidden relative pb-20 pt-5 lg:pt-20 xl:pt-28 bg-[#f3f4f6]">
         <div className="max-w-[1170px] w-full mx-auto px-4 sm:px-8 xl:px-0">
           <div className="flex gap-7.5">
-            
-            {/* Sidebar */}
             <div
               className={`sidebar-content fixed xl:z-1 z-9999 left-0 top-0 xl:translate-x-0 xl:static max-w-[310px] xl:max-w-[270px] w-full ease-out duration-200 ${
                 productSidebar
@@ -143,14 +190,10 @@ const ShopProducts = () => {
               </form>
             </div>
 
-            {/* Main */}
             <div className="xl:max-w-[870px] w-full">
               <div className="rounded-lg bg-white shadow-1 pl-3 pr-2.5 py-2.5 mb-6 flex justify-between">
                 <p>
-                  Mostrando{" "}
-                  <span className="font-bold">
-                    {currentProducts.length}
-                  </span>{" "}
+                  Mostrando <span className="font-bold">{currentProducts.length}</span>{" "}
                   {selectedCategory}
                 </p>
               </div>
@@ -164,20 +207,37 @@ const ShopProducts = () => {
                   No hay productos en {selectedCategory}
                 </div>
               ) : (
-                <div className="grid grid-cols-3 gap-6">
-                  {currentProducts.map((item) => (
-                    <SingleGridItemProduct
-                      key={item.id}
-                      item={normalizeProduct(item)}
-                    />
-                  ))}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {currentProducts.map((item) => {
+                    const normalized = normalizeProduct(item);
+
+                    return (
+                      <SingleGridItemProduct
+                        key={item.id}
+                        item={normalized}
+                        onQuickView={handleOpenDetail}
+                      />
+                    );
+                  })}
                 </div>
               )}
             </div>
-
           </div>
         </div>
       </section>
+
+      <ProductDetailModal
+        open={openDetailModal}
+        onClose={() => {
+          setOpenDetailModal(false);
+          setSelectedProduct(null);
+          setStockData([]);
+        }}
+        product={selectedProduct}
+        stockData={stockData}
+        loadingStock={loadingStock}
+        selectedCategory={selectedCategory}
+      />
     </>
   );
 };
