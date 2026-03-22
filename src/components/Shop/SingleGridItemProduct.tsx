@@ -115,10 +115,26 @@ const SingleGridItemProduct = ({ item, onQuickView }: Props) => {
       </h3>
 
       <div className="flex flex-col gap-1">
-        <span className="flex items-center gap-2 font-medium text-lg">
-          <span className="text-dark">S/. {item.precio || item.producto?.precio || 0}</span>
-        </span>
-      </div>
+  {isLente ? (
+    <div className="flex flex-wrap gap-2 text-custom-sm font-medium">
+      <span className="text-blue bg-blue/5 px-2 py-1 rounded">
+        S1: S/. {Number(item.precio_serie1 || 0)}
+      </span>
+      <span className="text-blue bg-blue/5 px-2 py-1 rounded">
+        S2: S/. {Number(item.precio_serie2 || 0)}
+      </span>
+      <span className="text-blue bg-blue/5 px-2 py-1 rounded">
+        S3: S/. {Number(item.precio_serie3 || 0)}
+      </span>
+    </div>
+  ) : (
+    <span className="flex items-center gap-2 font-medium text-lg">
+      <span className="text-dark">
+        S/. {Number(item.precio || item.producto?.precio || 0)}
+      </span>
+    </span>
+  )}
+</div>
     </div>
   );
 };

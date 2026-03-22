@@ -129,11 +129,16 @@ const normalizeProduct = (item: any) => {
 
     try {
       // CAMBIA ESTA URL SEGÚN TU BACKEND REAL
-      const res = await fetch(`http://localhost:3001/stock/producto/${product.id}`);
-      if (!res.ok) throw new Error("No se pudo obtener el stock");
+      const productId = product?.rawData?.productoId || product?.productoId;
 
-      const data = await res.json();
-      setStockData(Array.isArray(data) ? data : []);
+const res = await fetch(
+  `http://localhost:3001/productos/obtenerStockProductoPorSede/${productId}`
+);
+
+if (!res.ok) throw new Error("No se pudo obtener el stock");
+
+const data = await res.json();
+setStockData(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error cargando stock:", error);
       setStockData([]);
