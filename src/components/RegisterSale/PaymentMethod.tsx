@@ -78,25 +78,23 @@ const PaymentMethod = () => {
     // Mapeo lógico desde CART_STORE
     const productosDesdeCart: VentaProducto[] = cartStoreItems.map((item) => ({
       productoId: item.productId,
-      tipoProducto: item.isLens
-        ? TipoProducto.LENTE
-        : item.stockProductoId
-          ? TipoProducto.MONTURA
-          : TipoProducto.ACCESORIO,
+      tipoProducto: item.productType,
       precioUnitario: item.price,
       cantidad: item.quantity,
-      subtotal: item.price * item.quantity,
-      descuento: item.discount || 0,
-      stockId: item.isLens ? item.id : undefined,
-      cyl: item.cyl,
-      esf: item.esf,
-      stockProductoId: !item.isLens ? item.id : undefined,
+      subtotal: Number(
+        ((item.price - (item.discount || 0)) * item.quantity).toFixed(2),
+      ),
+      descuento: item.discount || null,
+      stockId: item.isLens ? item.id : null,
+      cyl: item.cyl || null,
+      esf: item.esf || null,
+      stockProductoId: !item.isLens ? item.id : null,
     }));
 
     const payload: ICreateSale = {
       // 1. DATA DESDE AUTH_STORE
-      sedeId: Number(authStore.sedeId) || 1,
-      userId: Number(authStore.userId) || 0,
+      sedeId: Number(authStore.sedeId),
+      userId: Number(authStore.userId),
 
       // 2. DATA DESDE VENTA_STORE
       metodoPago: ventaStore.metodoPago,

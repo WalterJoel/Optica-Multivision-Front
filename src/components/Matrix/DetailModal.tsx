@@ -10,6 +10,7 @@ import { AppDispatch } from "@/redux/store";
 import { addItemToCart } from "@/redux/features/cart-slice";
 import { ILensStockMatrixItem } from "@/types/products";
 import { CartItem } from "@/types/cart";
+import { TipoProducto } from "@/commons/constants";
 
 type DetailModalProps = {
   selected: ILensStockMatrixItem;
@@ -31,8 +32,8 @@ export const DetailModal: React.FC<DetailModalProps> = ({
       id: selected.id,
       productId: selected.productoId,
       productName: "Lente " + selected.nombreProducto,
+      productType: TipoProducto.LENTE,
       discount: 0,
-      discountId: null, //Inicializando descuento
       price: price,
       quantity: 1,
       cyl: selected.cyl,

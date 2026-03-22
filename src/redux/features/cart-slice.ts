@@ -44,7 +44,6 @@ export const cart = createSlice({
       if (!item) return;
 
       item.discount = Math.max(0, discount);
-      item.discountId = discountId;
     },
 
     removeDiscountFromItem: (
@@ -58,7 +57,6 @@ export const cart = createSlice({
       if (!item) return;
 
       item.discount = 0;
-      item.discountId = null;
     },
     removeItemFromCart: (state, action: PayloadAction<number>) => {
       state.items = state.items.filter((item) => item.id !== action.payload);

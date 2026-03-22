@@ -14,6 +14,7 @@ const SingleGridItemProduct = ({ item }: { item: any }) => {
 
   // Identificamos si es un lente por la propiedad 'precio_serie1'
   const isLente = item.precio_serie1 !== undefined;
+  console.log(item, " ITEM");
 
   // Normalización de datos para que el componente no explote
   const displayImage = item.imagenUrl || item.imgs?.previews[0];
@@ -136,7 +137,6 @@ const SingleGridItemProduct = ({ item }: { item: any }) => {
       <h3 className="font-medium text-dark ease-out duration-200 hover:text-blue mb-1.5 line-clamp-1">
         {displayTitle}
       </h3>
-
       {/* Precios */}
       <div className="flex flex-col gap-1">
         {isLente ? (
