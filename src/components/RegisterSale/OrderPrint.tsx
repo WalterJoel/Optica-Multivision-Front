@@ -104,7 +104,7 @@ const OrderPrint = ({ form }: Props) => {
       <div style={headerRowStyle}>
         <div>
           <img
-            src="/logo-multivision.jpegg"
+            src="/logo-multivision.jpeg"
             alt="Logo Multivisión"
             style={{
               width: "55mm",

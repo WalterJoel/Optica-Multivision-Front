@@ -40,7 +40,7 @@ const SingleItem = ({ item }) => {
             width={80}
             height={80}
             src={item.imgs?.thumbnails[0] || "/placeholder.png"}
-            alt={item.title}
+            alt={"nidea"}
             className="object-contain p-1"
           />
         </div>

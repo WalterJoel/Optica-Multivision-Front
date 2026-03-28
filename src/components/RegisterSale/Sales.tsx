@@ -1,13 +1,11 @@
-'use client';
+"use client";
 
-import SingleItem from '@/components/Cart/SingleItem';
+import SingleItem from "@/components/Cart/otro";
 
-const Sales = ({ items }: { items: any[] }) => {
+const Sales = () => {
   return (
     <div>
-      {items.map((item) => (
-        <SingleItem key={item.id} item={item} />
-      ))}
+      <SingleItem />
     </div>
   );
 };

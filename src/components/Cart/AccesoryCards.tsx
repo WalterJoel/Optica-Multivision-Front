@@ -10,6 +10,7 @@ import { addItemToCart } from "@/redux/features/cart-slice";
 import { useEffect } from "react";
 import { IAccessory } from "@/types/products";
 import { CartItem } from "@/types/cart";
+import { TipoProducto } from "@/commons/constants";
 
 export function AccessoryCards() {
   const { basicAccessories, getAllBasicAccessories } = useBasicAccessories();
@@ -24,13 +25,14 @@ export function AccessoryCards() {
 
     const itemToCart: CartItem = {
       id: acc.id,
-      title: acc.nombre,
+      productId: acc.productoId,
       price: acc.precio,
+      productName: acc.nombre,
+      productType: TipoProducto.ACCESORIO,
       quantity: 1,
       discount: 0,
-      esf: 0,
-      productName: acc.nombre,
-      cyl: 0,
+      esf: null,
+      cyl: null,
       isLens: false,
       imgs: {
         thumbnails: [acc.imagenUrl],

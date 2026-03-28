@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { LoadingModal, StatusModal } from "@/components/Common/modal";
 
 // Components
 import { BaseInput, BaseTabs, BaseTarea } from "@/components/Common/Inputs";
@@ -22,16 +23,20 @@ import {
 import { selectTotalPrice, selectCartItems } from "@/redux/features/cart-slice";
 
 // Constants
-import { TipoVenta, EstadoPago, TipoProducto } from "@/commons/constants";
+import {
+  TipoVenta,
+  EstadoPago,
+  TipoProducto,
+  STATUS_MODAL,
+} from "@/commons/constants";
 import { ICreateSale, VentaProducto } from "@/types/sales";
 
 type PaymentType = "cash" | "credit";
 
 const PaymentMethod = () => {
   const dispatch = useDispatch();
-  const { addSale, loading } = useCreateSale();
+  const { addSale, loading, statusMessage, success } = useCreateSale();
 
-  // --- REFACTOR: EXTRACCIÓN POR STORES PARA TRAZABILIDAD ---
   const authStore = useAppSelector(selectAuth);
   const ventaStore = useAppSelector(selectVenta);
   const cartStoreItems = useAppSelector(selectCartItems);
@@ -45,8 +50,13 @@ const PaymentMethod = () => {
   const [responsableVenta, setResponsableVenta] = useState(
     authStore.name || "",
   );
+
+  const [openModal, setOpenModal] = useState<boolean>(false);
+
   const [nroCuotas, setNroCuotas] = useState<number>(0);
   const [observacionesLocal, setObservacionesLocal] = useState("");
+  const [montoRecibido, setMontoRecibido] = useState("");
+  const [typeModal, setTypeModal] = useState<string>("");
 
   const paymentTabs = [
     { key: "cash", label: "Al Contado" },
@@ -60,9 +70,8 @@ const PaymentMethod = () => {
     { key: "plin", label: "Plin", icon: "/images/cart/plin.png" },
   ];
 
-  // Sincronización de cálculos
   useEffect(() => {
-    const payment = ventaStore.total || 0;
+    const payment = parseFloat(montoRecibido) || 0;
     const total = cartStoreTotal || 0;
 
     if (paymentType === "cash") {
@@ -72,7 +81,7 @@ const PaymentMethod = () => {
       setDebt(Math.max(0, total - payment));
       setChange(0);
     }
-  }, [ventaStore.total, cartStoreTotal, paymentType]);
+  }, [montoRecibido, cartStoreTotal, paymentType]);
 
   const handleRegisterSale = () => {
     // Mapeo lógico desde CART_STORE
@@ -99,7 +108,7 @@ const PaymentMethod = () => {
       // 2. DATA DESDE VENTA_STORE
       metodoPago: ventaStore.metodoPago,
       kitId: ventaStore.kitRegaloId,
-      montoPagado: ventaStore.total || 0,
+      montoPagado: Number(montoRecibido),
 
       // 3. DATA DESDE CART_STORE
       productos: productosDesdeCart,
@@ -113,14 +122,25 @@ const PaymentMethod = () => {
           ? EstadoPago.PAGADO
           : EstadoPago.PENDIENTE,
       montaje: showOrder,
-      nroCuotas,
+      nroCuotas: null,
       observaciones: observacionesLocal,
-      deuda: Math.max(0, cartStoreTotal - (ventaStore.total || 0)),
+      deuda: 0, //TODO CASH AHORA MISMO
     };
 
     console.log("🚀 Payload estructurado:", payload);
     addSale(payload);
   };
+
+  useEffect(() => {
+    if (!loading && (success || statusMessage)) {
+      if (success) {
+        setTypeModal(STATUS_MODAL.SUCCESS_MODAL);
+      } else {
+        setTypeModal(STATUS_MODAL.ERROR_MODAL);
+      }
+      setOpenModal(true);
+    }
+  }, [loading, success, statusMessage]);
 
   return (
     <section className="overflow-hidden pt-[180px] pb-20 bg-gray-2 min-h-screen">
@@ -206,10 +226,8 @@ const PaymentMethod = () => {
                   <BaseInput
                     label="Monto Recibido"
                     type="number"
-                    value={ventaStore.total || 0}
-                    onChange={(e) =>
-                      dispatch(setTotal(parseFloat(e.target.value) || 0))
-                    }
+                    value={montoRecibido}
+                    onChange={(e) => setMontoRecibido(e.target.value)}
                   />
                   <BaseInput
                     label={paymentType === "cash" ? "Vuelto" : "Por Cobrar"}
@@ -286,6 +304,13 @@ const PaymentMethod = () => {
           </div>
         </div>
       </div>
+      <LoadingModal isOpen={loading} />
+      <StatusModal
+        isOpen={openModal}
+        type={typeModal}
+        message={statusMessage}
+        onClose={() => setOpenModal(false)}
+      />
     </section>
   );
 };
