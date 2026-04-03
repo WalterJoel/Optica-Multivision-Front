@@ -22,11 +22,14 @@ const Signin = () => {
     setLoading(true);
 
     try {
-      const res = await fetch("http://13.220.123.61:3001/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+      const res = await fetch(
+        "https://apiv2.multivisionproductos.com/auth/login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        },
+      );
 
       const data = await res.json();
 
