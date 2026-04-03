@@ -19,7 +19,6 @@ export default function InventarioMultivision() {
   const [typeModal, setTypeModal] = useState<string>("");
   const [openModal, setOpenModal] = useState<boolean>(false);
 
-  // AHORA LA KEY ES EL ID DEL STOCK (number convertido a string)
   const [dictStocks, setDictStocks] = useState<{ [key: string]: string }>({});
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -30,7 +29,7 @@ export default function InventarioMultivision() {
     useUpdateStockProductos();
 
   const procesarProductoEncontrado = (data: IEyeglassQrResponse) => {
-    const stockId = String(data.stock.id); // Usamos el ID del stock como referencia única
+    const stockId = String(data.stock.id);
     const existeEnLote = lote.find((item) => item.stock.id === data.stock.id);
 
     if (existeEnLote) {
@@ -47,16 +46,23 @@ export default function InventarioMultivision() {
     setContador((c) => c + 1);
   };
 
-  const handleScan = (e: React.KeyboardEvent) => {
+  // --- MEJORA DE VELOCIDAD AQUÍ ---
+  const handleScan = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key !== "Enter") return;
-    const codigo = busqueda.trim();
+
+    // Captura directa para evitar el lag del estado asíncrono
+    const codigo = e.currentTarget.value.trim();
     if (!codigo) return;
 
     searchEyeglassByQr(codigo, 1);
+
+    // Limpieza inmediata para el siguiente escaneo
     setBusqueda("");
+    if (inputRef.current) {
+      inputRef.current.value = "";
+    }
   };
 
-  // Ajustado para recibir stockId
   const updateManual = (stockId: string, valor: string) => {
     setDictStocks((prev) => ({ ...prev, [stockId]: valor }));
   };
@@ -75,8 +81,6 @@ export default function InventarioMultivision() {
       })),
     };
     await updateStockProductos(payload);
-
-    console.log("Enviando al backend:", payload);
     setIsModalOpen(false);
   };
 
@@ -132,7 +136,7 @@ export default function InventarioMultivision() {
                     value={busqueda}
                     onChange={(e) => setBusqueda(e.target.value)}
                     onKeyDown={handleScan}
-                    disabled={loading}
+                    // disabled={loading} <-- Removido para permitir ráfagas de escaneo
                     placeholder={
                       loading ? "BUSCANDO..." : "ESCANEE CÓDIGO DE QR ..."
                     }

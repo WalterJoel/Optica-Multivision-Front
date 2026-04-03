@@ -7,39 +7,27 @@ export function useSearchEyeglassByQr() {
   const [loading, setLoading] = useState(false);
   const [statusMessage, setMessage] = useState<string>("");
 
-  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  // Eliminamos el debounceRef y el setTimeout
+  const searchEyeglassByQr = async (qr: string, idSede: number) => {
+    if (!qr || qr.length < 2) {
+      setEyeglass(null);
+      return;
+    }
 
-  const searchEyeglassByQr = (qr: string, idSede: number) => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
+    setLoading(true);
+    setMessage(""); // Limpiamos mensajes previos
 
-    debounceRef.current = setTimeout(async () => {
-      if (!qr || qr.length < 2) {
-        setEyeglass(null);
-        return;
-      }
-
-      setLoading(true);
-
-      try {
-        const data = await searchEyeglassByQrService(qr, idSede);
-        setEyeglass(data);
-      } catch (err) {
-        const backendMessage = err.response?.data?.message;
-        setMessage(
-          backendMessage
-            ? "Error al registrar accesorio: " + backendMessage
-            : "Error al registrar accesorio",
-        );
-      } finally {
-        setLoading(false);
-      }
-    }, 300);
+    try {
+      const data = await searchEyeglassByQrService(qr, idSede);
+      setEyeglass(data);
+    } catch (err: any) {
+      const backendMessage = err.response?.data?.message;
+      setMessage(backendMessage || "Error al buscar producto");
+      setEyeglass(null);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  return {
-    eyeglass,
-    loading,
-    statusMessage,
-    searchEyeglassByQr,
-  };
+  return { eyeglass, loading, statusMessage, searchEyeglassByQr };
 }
