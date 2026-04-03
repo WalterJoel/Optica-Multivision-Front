@@ -1,76 +1,76 @@
-import { Menu } from '@/types/Menu';
+import { Menu } from "@/types/Menu";
 
 export const menuData: Menu[] = [
   {
     id: 0,
-    title: 'Home',
+    title: "Home",
     newTab: false,
-    path: '/',
+    path: "/",
   },
   {
     id: 1,
-    title: 'Vender',
+    title: "Vender",
     newTab: false,
-    path: '/shop-products',
+    path: "/shop-products",
   },
   {
     id: 10,
-    title: 'Ventas',
+    title: "Ventas",
     newTab: false,
-    path: '/sell-products',
+    path: "/sell-products",
   },
   {
     id: 2,
-    title: 'Mantenimiento',
+    title: "Mantenimiento",
     newTab: false,
-    path: '/my-account',
+    path: "/my-account",
   },
   //vista de seguimiento de pedidos
   {
     id: 3,
-    title: 'Seguimiento de Pedidos',
+    title: "Seguimiento de Pedidos",
     newTab: false,
-    path: '/seguimiento-pedidos',
+    path: "/seguimiento-pedidos",
   },
 
   {
     id: 4,
-    title: 'Productos',
+    title: "Productos",
     newTab: false,
-    path: '/products/list',
+    path: "/products/list",
   },
   {
     id: 5,
-    title: 'pages',
+    title: "pages",
     newTab: false,
-    path: '/',
+    path: "/",
     submenu: [
       {
         id: 64,
-        title: 'Checkout',
+        title: "Inventario Monturas",
         newTab: false,
-        path: '/checkout',
+        path: "/checkout",
       },
-      {
-        id: 65,
-        title: 'Cart',
-        newTab: false,
-        path: '/cart',
-      },
+      // {
+      //   id: 65,
+      //   title: "Cart",
+      //   newTab: false,
+      //   path: "/cart",
+      // },
 
-      {
-        id: 68,
-        title: 'Sign up',
-        newTab: false,
-        path: '/signup',
-      },
+      // {
+      //   id: 68,
+      //   title: "Sign up",
+      //   newTab: false,
+      //   path: "/signup",
+      // },
 
-      {
-        id: 88,
-        title: 'Añadir Productos',
-        newTab: false,
-        path: '/products',
-      },
+      // {
+      //   id: 88,
+      //   title: "Añadir Productos",
+      //   newTab: false,
+      //   path: "/products",
+      // },
     ],
   },
 ];

@@ -2,6 +2,7 @@ import { api } from "../../api";
 import {
   ICreateEyeglass,
   IEyeglass,
+  IEyeglassQrResponse,
   IUpdateEyeglass,
 } from "@/types/products";
 
@@ -15,8 +16,8 @@ export const getAllEyeglasses = async (): Promise<IEyeglass[]> => {
   return data;
 };
 
-export const getEyeglassById = async (id: number): Promise<IEyeglass> => {
-  const { data } = await api.get(`/productos/montura/${id}`);
+export const getEyeglassById = async (id: string): Promise<IEyeglass> => {
+  const { data } = await api.get(`/productos/montura/qr/${id}/`);
   return data;
 };
 
@@ -40,4 +41,12 @@ export const searchEyeglasses = async (
     params: { busqueda },
   });
   return data?.monturas || [];
+};
+
+export const searchEyeglassByQrService = async (
+  qr: string,
+  idSede: number,
+): Promise<IEyeglassQrResponse> => {
+  const { data } = await api.get(`/productos/montura/qr/${qr}/${idSede}`);
+  return data;
 };

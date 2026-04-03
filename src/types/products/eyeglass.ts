@@ -29,3 +29,20 @@ export type ICreateEyeglass = Omit<
 };
 
 export type IUpdateEyeglass = Partial<ICreateEyeglass>;
+
+export interface IEyeglassQrResponse {
+  montura: {
+    id: number;
+    codigo: string;
+    codigoQr: string;
+    productoId: number;
+    precio: number;
+    marca: string;
+  };
+  stock: {
+    id: number;
+    cantidad: number;
+    ubicacion: string;
+    updateAt: string;
+  };
+}
