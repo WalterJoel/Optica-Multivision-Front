@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { Lens, CreateLens } from "@/types/products";
+import { ILens, CreateLens } from "@/types/products";
 import { createLens, getLenses, UpdateLensStock } from "@/services/products";
 
 export function useLenses() {
-  const [lenses, setLenses] = useState<Lens[]>([]);
+  const [lenses, setLenses] = useState<ILens[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [stockVersion, setStockVersion] = useState(0); // <--- versión para refrescar stock

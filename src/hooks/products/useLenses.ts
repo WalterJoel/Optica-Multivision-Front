@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Lens, InventoryByStoreResponse } from "@/types/products";
+import { ILens, InventoryByStoreResponse } from "@/types/products";
 import {
   createLens,
   getLenses,
@@ -8,7 +8,7 @@ import {
 } from "@/services/products";
 
 export function useLenses() {
-  const [lenses, setLenses] = useState<Lens[]>([]);
+  const [lenses, setLenses] = useState<ILens[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [stockVersion, setStockVersion] = useState(0); // <--- versión para refrescar stock

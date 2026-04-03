@@ -96,7 +96,7 @@ export default function Matrix() {
     }));
     try {
       await updateStock(payload);
-      s;
+
       alert("¡Stock actualizado correctamente!");
       setChanges({});
     } catch (err) {
@@ -175,10 +175,14 @@ export default function Matrix() {
                                 if (renderizarModal === "stock") {
                                   setSelected({
                                     id: cell.id,
+                                    // esf:
+                                    //   typeof esf === "number"
+                                    //     ? esf.toFixed(2)
+                                    //     : esf,
                                     esf:
                                       typeof esf === "number"
-                                        ? esf.toFixed(2)
-                                        : esf,
+                                        ? Number(esf.toFixed(2))
+                                        : Number(esf),
                                     cyl: cylValues[colIndex],
                                     cantidad: Number(val),
                                     productoId: cell.productoId,

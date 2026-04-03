@@ -27,7 +27,7 @@ const SalesTable = () => {
       </div>
 
       {/* BODY */}
-      {Sales.map((venta) =>
+      {/* {Sales.map((venta) =>
         venta.productos.map((prod, index) => {
           const price = Number(prod.precioUnitario);
           const discount = Number(prod.descuento || 0);
@@ -38,41 +38,33 @@ const SalesTable = () => {
               key={prod.id}
               className="grid grid-cols-8 px-6 py-3 border-t text-sm items-center"
             >
-              {/* ID VENTA (solo en primer producto) */}
               <div>{index === 0 ? venta.id : ""}</div>
 
-              {/* FECHA */}
               <div>
                 {index === 0
                   ? new Date(venta.createdAt).toLocaleDateString()
                   : ""}
               </div>
 
-              {/* RESPONSABLE */}
               <div>{venta.responsableVenta}</div>
 
-              {/* PRODUCTO */}
               <div>
                 #{prod.productoId} ({prod.tipoProducto})
               </div>
 
-              {/* PRECIO */}
               <div>S/. {price.toFixed(2)}</div>
 
-              {/* CANTIDAD */}
               <div>{quantity}</div>
 
-              {/* DESCUENTO */}
               <div>S/. {discount.toFixed(2)}</div>
 
-              {/* SUBTOTAL */}
               <div className="font-bold text-blue">
                 S/. {(price * quantity - discount).toFixed(2)}
               </div>
             </div>
           );
         }),
-      )}
+      )} */}
     </div>
   );
 };

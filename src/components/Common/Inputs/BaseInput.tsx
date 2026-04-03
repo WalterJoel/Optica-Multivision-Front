@@ -2,7 +2,7 @@ import React from "react";
 
 interface InputProps {
   label?: string;
-  name: string;
+  name?: string;
   value: string | number;
   placeholder?: string;
   type?: React.HTMLInputTypeAttribute;
@@ -12,7 +12,7 @@ interface InputProps {
   min?: number;
   max?: number;
   step?: number | string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
   onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
   pattern?: string;

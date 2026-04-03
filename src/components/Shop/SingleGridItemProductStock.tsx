@@ -21,7 +21,7 @@ const SingleGridItemProduct = ({ item }: { item: Product }) => {
   return (
     <div className="group">
       <div className="relative overflow-hidden flex items-center justify-center rounded-lg bg-white shadow-1 min-h-[270px] mb-4">
-        <Image src={item.imagenUrl} alt={item.marca} width={250} height={250} />
+        {/* <Image src={item.imagenUrl} alt={item.marca} width={250} height={250} /> */}
 
         <div className="absolute left-0 bottom-0 translate-y-full w-full flex items-center justify-center gap-2.5 pb-5 ease-linear duration-200 group-hover:translate-y-0">
           <Link
@@ -50,7 +50,7 @@ const SingleGridItemProduct = ({ item }: { item: Product }) => {
         </div>
       </div>
 
-      <h3 className="font-medium text-dark ease-out duration-200 hover:text-blue mb-1.5">
+      {/* <h3 className="font-medium text-dark ease-out duration-200 hover:text-blue mb-1.5">
         {item.marca} - {item.material}
       </h3>
 
@@ -58,7 +58,7 @@ const SingleGridItemProduct = ({ item }: { item: Product }) => {
         <span className="text-dark-4">S/. {item.precio_serie1}</span>
         <span className="text-dark-4">S/. {item.precio_serie2}</span>
         <span className="text-dark-4">S/. {item.precio_serie3}</span>
-      </span>
+      </span> */}
     </div>
   );
 };

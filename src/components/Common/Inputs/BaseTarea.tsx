@@ -2,7 +2,7 @@ import React from "react";
 
 interface BaseTextareaProps {
   label?: string;
-  name: string;
+  name?: string;
   value: string;
   placeholder?: string;
   rows?: number;

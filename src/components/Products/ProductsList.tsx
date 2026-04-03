@@ -76,7 +76,7 @@ export default function ProductList({ stock }: ProductListProps) {
                 {!loading && lenses.length === 0 && (
                   <p className="text-dark-5">No hay lentes registrados</p>
                 )}
-                {!loading &&
+                {/* {!loading &&
                   lenses.map((lens) =>
                     productStyle === "grid" ? (
                       stock ? (
@@ -89,7 +89,7 @@ export default function ProductList({ stock }: ProductListProps) {
                     ) : (
                       <SingleListItem key={lens.id} item={lens} />
                     ),
-                  )}
+                  )} */}
               </div>
 
               {/* Paginación (opcional) */}

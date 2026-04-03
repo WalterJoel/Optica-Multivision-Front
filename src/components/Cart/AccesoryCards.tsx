@@ -25,7 +25,8 @@ export function AccessoryCards() {
 
     const itemToCart: CartItem = {
       id: acc.id,
-      productId: acc.productoId,
+      // productId: acc.productoId, //Ojo revisar
+      productId: acc.id, //TODO:Ojo revisar se cambio a la mala por temas de COMPILACION
       price: acc.precio,
       productName: acc.nombre,
       productType: TipoProducto.ACCESORIO,

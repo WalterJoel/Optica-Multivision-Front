@@ -8,7 +8,7 @@ import ColorsDropdwon from "./ColorsDropdwon";
 import PriceDropdown from "./PriceDropdown";
 import SingleGridItemProduct from "../Shop/SingleGridItemProduct";
 import SingleListItem from "../Shop/SingleListItem";
-import { Lens } from "@/types/products";
+// import { Lens } from "@/types/products";
 
 // Importación de tus 3 hooks
 import { useLenses } from "@/hooks/products/useLenses";

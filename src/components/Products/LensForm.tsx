@@ -13,7 +13,8 @@ const initialForm: CreateLens = {
   precio_serie1: 0,
   precio_serie2: 0,
   precio_serie3: 0,
-  imagenUrl: IMG_LENTE,
+  // imagenUrl: IMG_LENTE,
+  productoId: 0, //TODO CAMBIE POR EL BUILD
   tipo: PRODUCTOS.LENTE,
 };
 

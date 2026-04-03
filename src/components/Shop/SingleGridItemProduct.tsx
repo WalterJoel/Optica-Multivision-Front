@@ -40,7 +40,7 @@ const SingleGridItemProduct = ({ item }: { item: any }) => {
       },
     };
 
-    dispatch(addItemToCart(itemToCart));
+    // dispatch(addItemToCart(itemToCart)); TODO: LO COMENTE POR BUILD
   };
 
   return (

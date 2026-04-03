@@ -37,7 +37,7 @@ export const ventaSlice = createSlice({
     ) => {
       console.log(action.payload, " METODO DE PAGO XDDD");
 
-      state.metodoPago = action.payload;
+      // state.metodoPago = action.payload; TODO BUILD
     },
     setObservaciones: (state, action: PayloadAction<string>) => {
       state.observaciones = action.payload;

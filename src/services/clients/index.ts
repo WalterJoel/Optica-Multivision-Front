@@ -1,2 +1,2 @@
-export * from "./clientsMutations";
+// export * from "./clientsMutations";
 export * from "./clientsQueries";
