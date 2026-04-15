@@ -13,6 +13,51 @@
 }
 
 @layer components {
+  /* 
+    *Estilos para las tablas de los modales
+    *
+    *
+  */
+  .mv-table-container {
+    @apply bg-blue-light-6 rounded-xl border border-blue-light-5 overflow-hidden shadow-inner;
+  }
+
+  .mv-table-scroll {
+    @apply max-h-64 overflow-y-auto min-h-[150px] flex flex-col;
+  }
+
+  /* Estilos de la Tabla */
+  .mv-table {
+    @apply w-full text-left border-separate border-spacing-0;
+  }
+
+  .mv-thead {
+    @apply sticky top-0 z-20;
+  }
+
+  .mv-th {
+    @apply bg-blue-light-5 py-2.5 px-4 text-[9px] font-black text-blue-dark uppercase border-b border-blue-light-4;
+  }
+
+  .mv-tr {
+    @apply bg-white hover:bg-yellow-light-4 transition-colors;
+  }
+
+  .mv-td {
+    @apply py-2.5 px-4 border-b border-blue-light-6/30;
+  }
+
+  /* Helpers de texto */
+  .mv-text-main {
+    @apply font-bold uppercase  transition-colors leading-tight;
+  }
+
+  /*
+   * Otros estilos
+   *
+   *
+  */
+
   .dropdown {
     @apply flex-col gap-0 min-w-max xl:w-[193px] mt-2 lg:mt-0 bg-white shadow-2 ease-in duration-200 py-2.5 rounded-md border border-gray-3 left-0 hidden
     xl:translate-y-10 xl:opacity-0 xl:invisible xl:absolute xl:flex

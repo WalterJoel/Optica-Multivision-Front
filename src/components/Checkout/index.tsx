@@ -3,11 +3,18 @@
 import React, { useState, useRef, useEffect } from "react";
 import { CheckCircle2, Search } from "lucide-react";
 import { useSearchEyeglassByQr } from "@/hooks/products/eyeglasses/useSearchEyeGlassByQr";
-import { IEyeglassQrResponse } from "@/types/products/eyeglass";
 import { useUpdateStockProductos } from "@/hooks/products/stock/useUpdateStockProductos";
-import { IUpdateStockProductos } from "@/types/products";
-import { StatusModal, LoadingModal } from "@/components/Common/modal";
+import { IEyeglassQrResponse, IUpdateStockProductos } from "@/types/products";
+import {
+  StatusModal,
+  LoadingModal,
+  ModalFrameWrapper,
+} from "@/components/Common/modal";
 import { STATUS_MODAL } from "@/commons/constants";
+import { BaseButton } from "../Common/Buttons";
+
+// Modales
+import { OutdatedProductsModal } from "./OutdatedProductsModal";
 
 export default function InventarioMultivision() {
   const [busqueda, setBusqueda] = useState("");
@@ -18,6 +25,9 @@ export default function InventarioMultivision() {
 
   const [typeModal, setTypeModal] = useState<string>("");
   const [openModal, setOpenModal] = useState<boolean>(false);
+
+  //Modales
+  const [isOpenModalOutdated, setOpenModalOutdated] = useState<boolean>(false);
 
   const [dictStocks, setDictStocks] = useState<{ [key: string]: string }>({});
 
@@ -144,12 +154,19 @@ export default function InventarioMultivision() {
                   />
                 </div>
 
-                <button
+                <BaseButton
+                  fullWidth={false}
                   onClick={() => setIsModalOpen(true)}
-                  className="bg-blue hover:bg-blue-dark text-white px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all active:scale-95 shadow-md shadow-blue/20 shrink-0"
                 >
                   Finalizar
-                </button>
+                </BaseButton>
+                <BaseButton
+                  variant="secondary"
+                  fullWidth={false}
+                  onClick={() => setOpenModalOutdated(true)}
+                >
+                  Por Actualizar
+                </BaseButton>
               </header>
 
               {/* BOX ITEM ACTUAL */}
@@ -258,59 +275,84 @@ export default function InventarioMultivision() {
           </div>
 
           {/* MODAL DE FINALIZACIÓN */}
+          {/* MODAL DE FINALIZACIÓN */}
           {isModalOpen && (
-            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-              <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border-t-8 border-blue">
-                <div className="p-6">
-                  <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tighter">
-                    Revise sus cambios antes de guardar
+            <ModalFrameWrapper size="md">
+              <div className="pt-4 pb-8">
+                {/* Cabecera unificada */}
+                <header className="flex flex-col items-center text-center mb-6">
+                  <div className="w-14 h-14 bg-blue-light-6 rounded-2xl flex items-center justify-center mb-3 shadow-sm border border-blue-light-5">
+                    <span className="text-2xl">📋</span>
+                  </div>
+                  <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tighter leading-none">
+                    Confirmar <span className="text-blue">Inventario</span>
                   </h3>
-                  <div className="bg-slate-50 rounded-xl p-4 my-6 max-h-60 overflow-y-auto shadow-inner">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+                    Revise los cambios antes de guardar
+                  </p>
+                </header>
+
+                {/* Contenedor de Tabla con clases de style.css */}
+                <div className="mv-table-container my-6">
+                  <div className="mv-table-scroll max-h-60">
                     {productosModificados.length > 0 ? (
-                      <table className="w-full">
-                        <thead>
-                          <tr className="text-[9px] font-black text-blue uppercase border-b border-slate-200">
-                            <th className="text-left pb-2">MODELO</th>
-                            <th className="text-center pb-2">NUEVO STOCK</th>
+                      <table className="mv-table">
+                        <thead className="mv-thead">
+                          <tr>
+                            <th className="mv-th">Modelo / Marca</th>
+                            <th className="mv-th">Código</th>
+                            <th className="mv-th text-center">Nuevo Stock</th>
                           </tr>
                         </thead>
                         <tbody>
                           {productosModificados.map((p) => (
-                            <tr key={p.stock.id}>
-                              <td className="py-2 text-[11px] font-bold text-slate-700 uppercase">
-                                {p.montura.marca} {p.montura.codigo}
+                            <tr key={p.stock.id} className="mv-tr">
+                              <td className="mv-td">
+                                <span className="mv-text-main text-slate-700">
+                                  {p.montura.marca}
+                                </span>
                               </td>
-                              <td className="py-2 text-center font-black text-blue">
-                                {dictStocks[String(p.stock.id)]}
+                              <td className="mv-td">
+                                <span className="font-mono text-[10px] font-bold text-slate-500">
+                                  {p.montura.codigo}
+                                </span>
+                              </td>
+                              <td className="mv-td text-center">
+                                <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue text-white font-black text-[10px]">
+                                  {dictStocks[String(p.stock.id)]}
+                                </span>
                               </td>
                             </tr>
                           ))}
                         </tbody>
                       </table>
                     ) : (
-                      <p className="text-center text-slate-400 font-bold text-xs uppercase py-4">
-                        Sin cambios
-                      </p>
+                      <div className="flex flex-col items-center justify-center py-8">
+                        <p className="text-slate-400 font-black text-[10px] uppercase tracking-widest">
+                          Sin cambios detectados
+                        </p>
+                      </div>
                     )}
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <button
-                      onClick={() => setIsModalOpen(false)}
-                      className="py-4 font-black text-[10px] uppercase text-slate-400"
-                    >
-                      Regresar
-                    </button>
-                    <button
-                      onClick={guardarInventario}
-                      disabled={productosModificados.length === 0}
-                      className="py-4 bg-blue text-white rounded-xl font-black text-[10px] uppercase shadow-lg shadow-blue/20"
-                    >
-                      Confirmar
-                    </button>
-                  </div>
+                </div>
+
+                {/* Acciones del Footer */}
+                <div className="grid grid-cols-2 gap-4">
+                  <BaseButton
+                    variant="cancel"
+                    onClick={() => setIsModalOpen(false)}
+                  >
+                    Cancelar
+                  </BaseButton>
+                  <BaseButton
+                    onClick={guardarInventario}
+                    disabled={productosModificados.length === 0}
+                  >
+                    Guardar
+                  </BaseButton>
                 </div>
               </div>
-            </div>
+            </ModalFrameWrapper>
           )}
         </div>
       </section>
@@ -321,6 +363,10 @@ export default function InventarioMultivision() {
         type={typeModal}
         message={statusMessage}
         onClose={() => setOpenModal(false)}
+      />
+      <OutdatedProductsModal
+        isOpenModalOutdated={isOpenModalOutdated}
+        onCloseModalOutdated={() => setOpenModalOutdated(false)}
       />
     </>
   );

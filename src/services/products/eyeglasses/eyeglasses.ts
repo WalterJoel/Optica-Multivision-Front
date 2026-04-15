@@ -1,3 +1,4 @@
+import { TipoProducto } from "@/commons/constants";
 import { api } from "../../api";
 import {
   ICreateEyeglass,
@@ -44,9 +45,9 @@ export const searchEyeglasses = async (
 };
 
 export const searchEyeglassByQrService = async (
-  qr: string,
+  codigo: string,
   idSede: number,
 ): Promise<IEyeglassQrResponse> => {
-  const { data } = await api.get(`/productos/montura/qr/${qr}/${idSede}`);
+  const { data } = await api.get(`/productos/montura/qr/${codigo}/${idSede}`);
   return data;
 };

@@ -1,5 +1,10 @@
+import { TipoProducto } from "@/commons/constants";
 import { api } from "../../api";
-import { IUpdateStockProductos } from "@/types/products";
+import {
+  IEyeglassQrResponse,
+  IOutdatedProductStockResponse,
+  IUpdateStockProductos,
+} from "@/types/products";
 
 export const updateStockProductosService = async (
   payload: Partial<IUpdateStockProductos>,
