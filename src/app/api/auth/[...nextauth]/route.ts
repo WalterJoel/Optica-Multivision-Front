@@ -18,7 +18,7 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Credenciales requeridas");
         }
         const res = await fetch(
-          "https://master.d2ygexviux9rer.amplifyapp.com/auth/login",
+          "https://apiv2.multivisionproductos.com/auth/login",
           {
             // const res = await fetch("http://localhost:3001/auth/login", {
             method: "POST",
