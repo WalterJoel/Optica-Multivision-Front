@@ -1,10 +1,12 @@
-export type IUser = {
+export interface IUser {
   id: number;
   email: string;
+  nombre: string;
+  apellido: string;
   role: string;
   sedeId: number;
   activo: boolean;
-};
+}
 
 export type CreateUser = {
   email: string;

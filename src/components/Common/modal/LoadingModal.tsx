@@ -8,7 +8,7 @@ export function LoadingModal({ isOpen }: { isOpen: boolean }) {
 
   return (
     <ModalFrameWrapper variant="blue" size="xs">
-      <div className="flex flex-col items-center text-center">
+      <div className="flex flex-col items-center text-center pb-10">
         <div className="relative w-40 h-40 animate-side-to-side mb-2">
           <Image
             src="/images/icons/loading-spiner.png"

@@ -96,7 +96,7 @@
   /* Input de edición corregido */
   .matrix-input {
     /* Hereda el tamaño 14px y centramos perfectamente */
-    @apply w-full h-full bg-transparent text-center font-bold outline-none border-none !important;
+    @apply w-full h-full bg-transparent text-center outline-none border-none !important;
     color: inherit;
     font-size: inherit;
   }

@@ -56,7 +56,6 @@ export default function InventarioMultivision() {
     setContador((c) => c + 1);
   };
 
-  // --- MEJORA DE VELOCIDAD AQUÍ ---
   const handleScan = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key !== "Enter") return;
 

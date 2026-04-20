@@ -17,8 +17,18 @@ export default function ListUsers() {
   const [loadingList, setLoadingList] = useState(true);
   const [selectedSede, setSelectedSede] = useState<number | "ALL">("ALL");
 
-  const { updateUser, loading: updating, success: upOk, statusMessage: upMsg } = useUpdateUser();
-  const { toggleStatus, loading: toggling, success: tgOk, statusMessage: tgMsg } = useToggleUserStatus();
+  const {
+    updateUser,
+    loading: updating,
+    success: upOk,
+    statusMessage: upMsg,
+  } = useUpdateUser();
+  const {
+    toggleStatus,
+    loading: toggling,
+    success: tgOk,
+    statusMessage: tgMsg,
+  } = useToggleUserStatus();
 
   const [openEdit, setOpenEdit] = useState(false);
   const [selected, setSelected] = useState<IUser | null>(null);
@@ -50,7 +60,9 @@ export default function ListUsers() {
 
   useEffect(() => {
     if (!updating && (upOk || upMsg)) {
-      setTypeModal(upOk ? STATUS_MODAL.SUCCESS_MODAL : STATUS_MODAL.ERROR_MODAL);
+      setTypeModal(
+        upOk ? STATUS_MODAL.SUCCESS_MODAL : STATUS_MODAL.ERROR_MODAL,
+      );
       setModalMsg(upOk ? "Usuario actualizado correctamente" : upMsg);
       setOpenModal(true);
       if (upOk) loadData();
@@ -59,7 +71,9 @@ export default function ListUsers() {
 
   useEffect(() => {
     if (!toggling && (tgOk || tgMsg)) {
-      setTypeModal(tgOk ? STATUS_MODAL.SUCCESS_MODAL : STATUS_MODAL.ERROR_MODAL);
+      setTypeModal(
+        tgOk ? STATUS_MODAL.SUCCESS_MODAL : STATUS_MODAL.ERROR_MODAL,
+      );
       setModalMsg(tgMsg);
       setOpenModal(true);
       if (tgOk) loadData();
@@ -71,7 +85,12 @@ export default function ListUsers() {
     setOpenEdit(true);
   };
 
-  const onSave = async (payload: { email?: string; role?: string; sedeId?: number; password?: string }) => {
+  const onSave = async (payload: {
+    email?: string;
+    role?: string;
+    sedeId?: number;
+    password?: string;
+  }) => {
     if (!selected) return;
     await updateUser(selected.id, payload as any);
     setOpenEdit(false);
@@ -91,12 +110,18 @@ export default function ListUsers() {
         <div className="flex items-center gap-3">
           <select
             value={selectedSede}
-            onChange={(e) => setSelectedSede(e.target.value === "ALL" ? "ALL" : Number(e.target.value))}
+            onChange={(e) =>
+              setSelectedSede(
+                e.target.value === "ALL" ? "ALL" : Number(e.target.value),
+              )
+            }
             className="h-11 rounded-lg border border-gray-3 bg-white px-4 text-sm outline-none focus:border-primary"
           >
             <option value="ALL">Todas las sedes</option>
             {sedes.map((s) => (
-              <option key={s.id} value={s.id}>{s.nombre}</option>
+              <option key={s.id} value={s.id}>
+                {s.nombre}
+              </option>
             ))}
           </select>
 
@@ -125,9 +150,17 @@ export default function ListUsers() {
 
           <tbody>
             {loadingList ? (
-              <tr><td colSpan={6} className="px-6 py-6">Cargando...</td></tr>
+              <tr>
+                <td colSpan={6} className="px-6 py-6">
+                  Cargando...
+                </td>
+              </tr>
             ) : filteredUsers.length === 0 ? (
-              <tr><td colSpan={6} className="px-6 py-6">No hay usuarios en esta sede</td></tr>
+              <tr>
+                <td colSpan={6} className="px-6 py-6">
+                  No hay usuarios en esta sede
+                </td>
+              </tr>
             ) : (
               filteredUsers.map((u) => (
                 <tr key={u.id} className="border-t border-gray-3">

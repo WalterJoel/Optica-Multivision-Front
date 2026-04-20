@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { IAccessory } from "@/types/products/accessory";
 import { getAllVentasService } from "@/services/sales";
+import { IResponseSale } from "@/types/sales";
 
 export function useSales() {
   const [loading, setLoading] = useState(false);
   const [statusMessage, setMessage] = useState<string>("");
   const [success, setSuccess] = useState<boolean>(false);
-  const [Sales, setSales] = useState<IAccessory[]>([]);
+  const [Sales, setSales] = useState<IResponseSale[]>([]);
 
   const getAllSales = async () => {
     setLoading(true);

@@ -2,8 +2,17 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import Image from "next/image";
+import { CartItem } from "@/types/cart";
 
-const SingleItem = ({ item, removeItemFromCart }) => {
+interface SingleItemProps {
+  item: CartItem;
+  removeItemFromCart: (id: number) => any;
+}
+
+const SingleItem: React.FC<SingleItemProps> = ({
+  item,
+  removeItemFromCart,
+}) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const handleRemoveFromCart = () => {
@@ -14,19 +23,16 @@ const SingleItem = ({ item, removeItemFromCart }) => {
     <div className="flex items-center justify-between gap-5">
       <div className="w-full flex items-center gap-6">
         <div className="flex items-center justify-center rounded-[10px] bg-gray-3 max-w-[90px] w-full h-22.5">
-          <Image
-            src={item.imgs?.thumbnails[0]}
-            alt="product"
-            width={100}
-            height={100}
-          />
+          <div className="w-16 h-16 bg-yellow-light-4 rounded-xl flex items-center justify-center border border-yellow-light-2">
+            <span className="text-4xl">👓</span>
+          </div>
         </div>
 
         <div>
           <h3 className="font-medium text-dark mb-1 ease-out duration-200 hover:text-blue">
-            <a href="#"> {item.title} </a>
+            <a href="#"> {item.productName} </a>
           </h3>
-          <p className="text-custom-sm">Price: S/. {item.discountedPrice}</p>
+          <p className="text-custom-sm">Price: S/. {item.price}</p>
         </div>
       </div>
 

@@ -7,7 +7,6 @@ export interface CartItem {
   productType: TipoProducto;
   discount?: number | null; // Un unico descuento por producto
   cyl?: number | null;
-
   esf?: number | null;
   isLens: boolean;
   price: number;

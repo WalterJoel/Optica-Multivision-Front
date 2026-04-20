@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Breadcrumb from "@/components/Common/Breadcrumb";
 import { useLenses } from "@/hooks/products/useLenses";
 import CustomSelect from "@/components/ShopWithSidebar/CustomSelect";
-import SingleGridItemProduct from "@/components/Shop/SingleGridItemProduct";
+import SingleGridItemProduct from "@/components/Shop/ListEyeGlasses";
 import SingleGridItemProductStock from "@/components/Shop/SingleGridItemProductStock";
 import SingleListItem from "@/components/Shop/SingleListItem"; // podemos crear uno
 

@@ -47,7 +47,8 @@ const esfValuesPositivo = [
 export default function Matrix() {
   const searchParams = useSearchParams();
   const lenteId = Number(searchParams.get("lenteId"));
-  const renderizarModal = searchParams.get("type");
+  const mode = searchParams.get("mode");
+  console.log(mode, "  MODE<<<<<<<<<<<<<<<<<");
   const sedeId = 1;
 
   const { updateStock, stockVersion } = useLenses();
@@ -172,7 +173,7 @@ export default function Matrix() {
                               onMouseEnter={() => setHoveredCol(colIndex)}
                               onMouseLeave={() => setHoveredCol(null)}
                               onClick={() => {
-                                if (renderizarModal === "stock") {
+                                if (mode === "stock") {
                                   setSelected({
                                     id: cell.id,
                                     // esf:
@@ -202,7 +203,7 @@ export default function Matrix() {
                               }`}
                             >
                               <div className="w-full h-full flex items-center justify-center">
-                                {renderizarModal === "stock" ? (
+                                {mode === "stock" ? (
                                   val
                                 ) : (
                                   <input
@@ -229,8 +230,8 @@ export default function Matrix() {
             </div>
           </div>
         </div>
-        {renderizarModal !== "stock" && (
-          <div className="mt-4 flex justify-end">
+        {mode !== "stock" && (
+          <div className="mt-4 flex justify-center">
             <button
               onClick={handleSave}
               className="rounded-lg bg-blue px-8 py-2 text-sm text-white font-bold hover:bg-opacity-90 transition-all shadow-lg"
@@ -240,7 +241,7 @@ export default function Matrix() {
           </div>
         )}
         {/* Modal de Detalle con campo Precio */}
-        {renderizarModal === "stock" && selected && (
+        {mode === "stock" && selected && (
           <DetailModal selected={selected} onClose={() => setSelected(null)} />
         )}{" "}
       </section>

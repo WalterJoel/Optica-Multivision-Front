@@ -38,7 +38,6 @@ const PaymentMethod = () => {
   const [showOrder, setShowOrder] = useState(false);
   const [change, setChange] = useState(0);
   const [debt, setDebt] = useState(0);
-  const [showClientList, setShowClientList] = useState(false);
 
   const printRef = useRef<HTMLDivElement | null>(null);
 
@@ -104,7 +103,6 @@ const PaymentMethod = () => {
 
     if (name === "customerSearch") {
       searchClients(value);
-      setShowClientList(true);
     }
   };
 
@@ -120,8 +118,6 @@ const PaymentMethod = () => {
       celular: client.telefono ?? "",
       direccion: client.direccion ?? "",
     }));
-
-    setShowClientList(false);
   };
 
   useEffect(() => {

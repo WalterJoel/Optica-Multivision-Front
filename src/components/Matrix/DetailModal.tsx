@@ -63,15 +63,17 @@ export const DetailModal: React.FC<DetailModalProps> = ({
 
   return (
     <ModalFrameWrapper>
-      <div className="space-y-4">
-        {/* Header con Graduación y Precio */}
+      <div className="pt-4 pb-10 max-h-[75vh] overflow-y-auto">
+        {/* Header */}
         <div className="bg-blue/5 p-4 rounded-xl border border-blue/10 text-center relative overflow-hidden">
           <p className="text-[10px] text-blue font-bold uppercase tracking-widest">
             Graduación Seleccionada
           </p>
+
           <p className="text-2xl font-black text-blue">
             ESF {selected.esf} / CYL {selected.cyl.toFixed(2)}
           </p>
+
           <div className="mt-2 inline-block px-3 py-1 bg-white rounded-lg border border-blue/20 shadow-sm">
             <span className="text-xs font-bold text-blue/60 mr-1 text-[10px]">
               PRECIO:
@@ -82,49 +84,53 @@ export const DetailModal: React.FC<DetailModalProps> = ({
           </div>
         </div>
 
-        {/* Stock Sede Actual */}
-        <div className="flex justify-between items-center px-2">
+        {/* Stock */}
+        <div className="flex justify-between items-center px-2 mt-4">
           <span className="text-gray-500 font-medium">
             Stock en Sede Actual:
           </span>
+
           <span
-            className={`text-xl font-black ${selected.cantidad > 0 ? "text-green" : "text-red"}`}
+            className={`text-xl font-black ${
+              selected.cantidad > 0 ? "text-green" : "text-red"
+            }`}
           >
-            {selected.cantidad}{" "}
-            <small className="text-[10px] uppercase font-bold">Und</small>
+            {selected.cantidad}
+            <small className="text-[10px] uppercase font-bold ml-1">Und</small>
           </span>
         </div>
 
-        {/* Otras Sedes */}
-        <div className="rounded-xl bg-gray-1 p-3 text-[11px] space-y-2 border border-gray-2">
+        {/* Sedes */}
+        <div className="rounded-xl bg-gray-1 p-3 text-[11px] space-y-2 border border-gray-2 mt-4">
           <p className="font-bold text-gray-6 uppercase text-[9px] opacity-70">
             Disponibilidad otras sedes
           </p>
+
           {loading && <p>Cargando stock...</p>}
-          {/* {statusMessage && !loading && <p>{statusMessage}</p>} */}
-          {inventoryByStore &&
-            inventoryByStore.sedes.map((s) => (
-              <div
-                key={s.id}
-                className="flex justify-between items-center text-gray-7"
-              >
-                <span className="italic">📍 {s.nombre}</span>
-                <span className="font-bold bg-gray-2 px-2 py-0.5 rounded text-[10px]">
-                  {s.unidades}
-                </span>
-              </div>
-            ))}
+
+          {inventoryByStore?.sedes.map((s) => (
+            <div
+              key={s.id}
+              className="flex justify-between items-center text-gray-7"
+            >
+              <span className="italic">📍 {s.nombre}</span>
+              <span className="font-bold bg-gray-2 px-2 py-0.5 rounded text-[10px]">
+                {s.unidades}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* Acciones */}
-      <div className="mt-6 flex flex-col gap-2">
+      {/* FOOTER FIJO (esto era el problema) */}
+      <div className="flex flex-col gap-2 pb-6">
         <BaseButton
           disabled={selected.cantidad <= 0 || !inventoryByStore}
           onClick={handleAddToCart}
         >
           Agregar al carrito
         </BaseButton>
+
         <BaseButton variant="cancel" onClick={onClose}>
           Cancelar
         </BaseButton>

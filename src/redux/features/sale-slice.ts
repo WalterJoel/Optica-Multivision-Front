@@ -31,13 +31,9 @@ export const ventaSlice = createSlice({
       console.log(action.payload, " KIT ID XDDD");
       state.kitRegaloId = action.payload;
     },
-    setMetodoPago: (
-      state,
-      action: PayloadAction<"efectivo" | "tarjeta" | "transferencia">,
-    ) => {
+    setMetodoPago: (state, action: PayloadAction<MetodoPago>) => {
       console.log(action.payload, " METODO DE PAGO XDDD");
-
-      // state.metodoPago = action.payload; TODO BUILD
+      state.metodoPago = action.payload;
     },
     setObservaciones: (state, action: PayloadAction<string>) => {
       state.observaciones = action.payload;

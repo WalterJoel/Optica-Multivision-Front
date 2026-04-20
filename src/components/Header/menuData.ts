@@ -33,30 +33,30 @@ export const menuData: Menu[] = [
     path: "/seguimiento-pedidos",
   },
 
-  {
-    id: 4,
-    title: "Productos",
-    newTab: false,
-    path: "/products/list",
-  },
+  // {
+  //   id: 4,
+  //   title: "Ma",
+  //   newTab: false,
+  //   path: "/matrix",
+  // },
   {
     id: 5,
-    title: "pages",
+    title: "Inventarios",
     newTab: false,
     path: "/",
     submenu: [
       {
         id: 64,
-        title: "Inventario Monturas",
+        title: "Monturas",
         newTab: false,
         path: "/checkout",
       },
-      // {
-      //   id: 65,
-      //   title: "Cart",
-      //   newTab: false,
-      //   path: "/cart",
-      // },
+      {
+        id: 65,
+        title: "Lentes",
+        newTab: false,
+        path: "/lentes",
+      },
 
       // {
       //   id: 68,

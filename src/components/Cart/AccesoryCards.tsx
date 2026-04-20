@@ -88,7 +88,7 @@ export function AccessoryCards() {
                 onClick={() => handleAddToCart(acc)}
                 fullWidth={false}
                 disabled={alreadyAdded}
-                className={`group relative flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-300 ${
+                className={`group relative flex items-center justify-center rounded-xl  ${
                   alreadyAdded
                     ? "bg-gray-400 cursor-not-allowed"
                     : "bg-blue text-white hover:bg-blue-dark active:scale-95"

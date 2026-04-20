@@ -27,7 +27,7 @@ const SalesTable = () => {
       </div>
 
       {/* BODY */}
-      {/* {Sales.map((venta) =>
+      {Sales.map((venta) =>
         venta.productos.map((prod, index) => {
           const price = Number(prod.precioUnitario);
           const discount = Number(prod.descuento || 0);
@@ -64,7 +64,7 @@ const SalesTable = () => {
             </div>
           );
         }),
-      )} */}
+      )}
     </div>
   );
 };
