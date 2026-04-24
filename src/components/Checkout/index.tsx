@@ -363,6 +363,7 @@ export default function InventarioMultivision() {
         message={statusMessage}
         onClose={() => setOpenModal(false)}
       />
+
       <OutdatedProductsModal
         isOpenModalOutdated={isOpenModalOutdated}
         onCloseModalOutdated={() => setOpenModalOutdated(false)}

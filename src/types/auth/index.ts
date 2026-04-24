@@ -34,5 +34,6 @@ declare module "next-auth/jwt" {
 export interface LoginResponse {
   ok: boolean;
   access_token: string;
+  message: string;
   user: IUser;
 }

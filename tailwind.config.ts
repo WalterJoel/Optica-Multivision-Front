@@ -33,6 +33,9 @@ const config: Config = {
         4: "#8D93A5",
         5: "#BBBEC9",
       },
+      beige: {
+        DEFAULT: "#f5f6f8",
+      },
       dark: {
         DEFAULT: "#1C274C",
         2: "#495270",

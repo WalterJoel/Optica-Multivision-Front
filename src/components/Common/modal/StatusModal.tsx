@@ -1,9 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect } from "react";
-import { createPortal } from "react-dom";
-import { SUCCESS_ICON, STATUS_MODAL } from "@/commons/constants";
+import { STATUS_MODAL } from "@/commons/constants";
+import { ModalFrameWrapper } from "./ModalFrameWrapper";
 
 type StatusModalProps = {
   isOpen: boolean;
@@ -33,52 +32,73 @@ export function StatusModal({
 
   const isSuccess = type === STATUS_MODAL.SUCCESS_MODAL;
 
-  const config = {
-    title: isSuccess ? "¡Éxito!" : "Ocurrió un error",
-    textColor: isSuccess ? "text-blue" : "text-red-vino",
-    buttonBg: isSuccess ? "bg-blue" : "bg-red-vino",
-    ringClass: isSuccess ? "ring-blue-light" : "ring-red-vinolight",
-    icon: isSuccess ? SUCCESS_ICON : "/images/icons/error-modal.png",
-  };
-
-  return createPortal(
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center px-4">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-
-      <div
-        className={`relative z-10 w-full max-w-[360px] bg-white rounded-xl shadow-2xl ring-8 ring-opacity-50 ${config.ringClass} px-6 py-8 text-center animate-in fade-in zoom-in duration-300`}
-      >
-        {/* Icono PNG */}
-        <div className="w-44 h-44 mx-auto relative -mt-6 mb-2">
-          <Image
-            src={config.icon}
-            alt={type}
-            fill
-            className="object-contain"
-            priority
-          />
+  return (
+    <ModalFrameWrapper variant={isSuccess ? "yellow" : "blue"} size="xs">
+      <div className="flex flex-col items-center text-center pb-6 pt-4 px-2">
+        {/* ICONO VECTORIAL PREMIUM */}
+        <div className="mb-8 relative">
+          {/* Círculo de fondo con pulso */}
+          <div
+            className={`flex items-center justify-center w-24 h-24 rounded-full ${isSuccess ? "bg-yellow/10" : "bg-red-vino/10"} animate-pulse`}
+          >
+            <div
+              className={`flex items-center justify-center w-16 h-16 rounded-full shadow-sm ${isSuccess ? "bg-yellow-dark" : "bg-red"}`}
+            >
+              {isSuccess ? (
+                // Icono de Check (Éxito)
+                <svg
+                  className="w-8 h-8 text-dark"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="4"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              ) : (
+                // Icono de X (Error)
+                <svg
+                  className="w-8 h-8 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="4"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              )}
+            </div>
+          </div>
         </div>
 
-        {/* Título*/}
+        {/* Título  */}
         <h2
-          className={`font-extrabold text-3xl mb-3 tracking-tight ${config.textColor}`}
+          className={`font-[1000] text-3xl mb-3 tracking-tighter uppercase text-yellow-dark`}
         >
-          {config.title}
+          {isSuccess ? "¡Éxito!" : "Error !"}
         </h2>
 
-        {/* Mensaje  */}
-        <p className="text-gray-600 text-base leading-relaxed mb-8 px-2">
+        {/* Mensaje */}
+        <p className="text-dark-3 font-medium text-sm leading-relaxed mb-10 px-4">
           {message}
         </p>
 
+        {/* Botón Principal */}
         <button
           onClick={onClose}
-          className={`w-full py-4 px-5 rounded-xl font-bold text-white text-lg transition-all active:scale-95 shadow-md hover:brightness-110 ${config.buttonBg}`}
+          className="w-full py-4 rounded-2xl font-black text-dark uppercase tracking-[0.2em] text-[11px] bg-yellow-dark hover:bg-yellow shadow-xl shadow-yellow-dark/20 transition-all active:scale-95 mb-3"
         >
           {isSuccess ? "Continuar" : "Entendido"}
         </button>
       </div>
-    </div>,
-    document.body,
+    </ModalFrameWrapper>
   );
 }

@@ -33,12 +33,6 @@ export const menuData: Menu[] = [
     path: "/seguimiento-pedidos",
   },
 
-  // {
-  //   id: 4,
-  //   title: "Ma",
-  //   newTab: false,
-  //   path: "/matrix",
-  // },
   {
     id: 5,
     title: "Inventarios",
@@ -57,20 +51,12 @@ export const menuData: Menu[] = [
         newTab: false,
         path: "/lentes",
       },
-
-      // {
-      //   id: 68,
-      //   title: "Sign up",
-      //   newTab: false,
-      //   path: "/signup",
-      // },
-
-      // {
-      //   id: 88,
-      //   title: "Añadir Productos",
-      //   newTab: false,
-      //   path: "/products",
-      // },
+      {
+        id: 66,
+        title: "Accesorios",
+        newTab: false,
+        path: "/lentes",
+      },
     ],
   },
 ];

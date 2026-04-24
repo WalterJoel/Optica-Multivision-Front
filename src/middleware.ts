@@ -1,3 +1,4 @@
+//TODO: REFACTORIZAR CODE LLEVAR A CONSTANTS
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
 
@@ -21,6 +22,12 @@ const ROLE_PERMISSIONS: Record<Role, string[]> = {
   ALMACEN: ["/products", "/profile"],
 };
 
+/*
+ * Rutas Publicas
+ * PARA TODOS LOS ROLES
+ */
+const PUBLIC_ROUTES = ["/", "/signin"];
+
 export default withAuth(
   function middleware(req) {
     const token = req.nextauth.token;
@@ -28,17 +35,17 @@ export default withAuth(
 
     const userRole = token?.role as Role | undefined;
 
-    // ✅ SIEMPRE permitir signin
-    if (path === "/signin") {
+    // ✅ siempre permitir públicas
+    if (PUBLIC_ROUTES.includes(path)) {
       return NextResponse.next();
     }
 
-    // ❌ si no hay token → solo aquí redirigimos
+    // ❌ sin login → signin
     if (!token) {
       return NextResponse.redirect(new URL("/signin", req.url));
     }
 
-    // 🔐 proteger rol solo si existe token
+    // ❌ sin role → bloquear
     if (!userRole) {
       return NextResponse.redirect(new URL("/signin", req.url));
     }
@@ -46,8 +53,15 @@ export default withAuth(
     const allowedPages = ROLE_PERMISSIONS[userRole] || [];
     const hasAccess = allowedPages.some((page) => path.startsWith(page));
 
+    // ❌ sin acceso → redirect inteligente por rol
     if (!hasAccess) {
-      return NextResponse.redirect(new URL("/products", req.url));
+      const fallbackByRole: Record<Role, string> = {
+        ADMIN: "/dashboard",
+        VENDEDOR: "/products",
+        ALMACEN: "/products",
+      };
+
+      return NextResponse.redirect(new URL(fallbackByRole[userRole], req.url));
     }
 
     return NextResponse.next();
@@ -56,8 +70,10 @@ export default withAuth(
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
       authorized: ({ req, token }) => {
-        //  IMPORTANTE: signin siempre libre
-        if (req.nextUrl.pathname === "/signin") return true;
+        const path = req.nextUrl.pathname;
+
+        // pública siempre accesible
+        if (path === "/" || path === "/signin") return true;
 
         return !!token;
       },
@@ -66,5 +82,5 @@ export default withAuth(
 );
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|images).*)"],
 };

@@ -2,8 +2,28 @@ import { LoginResponse } from "@/types/auth";
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
+async function loginUser(
+  email: string,
+  password: string,
+): Promise<LoginResponse> {
+  const res = await fetch(process.env.LOGIN_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
+
+  const data: LoginResponse = await res.json();
+
+  if (!res.ok || !data.ok) {
+    throw new Error(data?.message || "AUTH_API_ERROR");
+  }
+
+  return data;
+}
+
 export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
+
   providers: [
     CredentialsProvider({
       name: "Multivision",
@@ -14,35 +34,24 @@ export const authOptions: NextAuthOptions = {
       },
 
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          throw new Error("Credenciales requeridas");
+        try {
+          if (!credentials?.email || !credentials?.password) {
+            throw new Error("EMAIL_OR_PASSWORD_NO_INGRESADO_EN_FORMULARIO");
+          }
+
+          const data = await loginUser(credentials.email, credentials.password);
+
+          return {
+            id: data.user.id,
+            name: `${data.user.nombre} ${data.user.apellido}`,
+            email: data.user.email,
+            role: data.user.role,
+            sedeId: data.user.sedeId,
+            accessToken: data.access_token,
+          };
+        } catch (err: any) {
+          throw new Error(err.message || "API_ERROR");
         }
-        const res = await fetch(
-          "https://apiv2.multivisionproductos.com/auth/login",
-          {
-            // const res = await fetch("http://localhost:3001/auth/login", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(credentials),
-          },
-        );
-
-        const data: LoginResponse = await res.json();
-
-        if (!res.ok || !data.user) {
-          throw new Error("Error al iniciar sesión");
-        }
-
-        return {
-          id: data.user.id,
-          name: `${data.user.nombre} ${data.user.apellido}`,
-          email: data.user.email,
-          role: data.user.role,
-          sedeId: data.user.sedeId,
-          accessToken: data.access_token,
-        };
       },
     }),
   ],
@@ -55,7 +64,6 @@ export const authOptions: NextAuthOptions = {
         token.sedeId = user.sedeId as number;
         token.accessToken = user.accessToken as string;
       }
-
       return token;
     },
 
@@ -67,7 +75,6 @@ export const authOptions: NextAuthOptions = {
       }
 
       session.accessToken = token.accessToken as string;
-
       return session;
     },
   },
@@ -79,6 +86,8 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },
+
+  debug: process.env.NODE_ENV === "development",
 };
 
 const handler = NextAuth(authOptions);
