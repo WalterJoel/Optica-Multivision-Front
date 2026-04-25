@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { useNotify } from "@/providers/NotifyProvider";
+import { LogoMultivision } from "@/components/Common/LogoMultivision";
 
 const LoginForm = () => {
   const router = useRouter();
@@ -41,27 +42,7 @@ const LoginForm = () => {
         <div className="absolute -top-32 -left-32 w-64 h-64 bg-white rounded-full blur-[120px] opacity-60 pointer-events-none" />
 
         {/* LOGO CENTRADO Y ANCHO */}
-        <div className="flex flex-col items-center mb-10 select-none group">
-          {/* Isotipo: Barras más anchas (w-4) */}
-          <div className="flex gap-2 items-end mb-4">
-            <div className="w-4 h-14 bg-blue rounded-lg transition-all duration-500 group-hover:h-12 shadow-[0_4px_20px_rgba(var(--blue-rgb),0.4)]" />
-            <div className="w-4 h-14 bg-yellow-dark rounded-lg transition-all duration-500 group-hover:h-8 shadow-[0_4px_20px_rgba(var(--yellow-rgb),0.4)]" />
-          </div>
-
-          {/* Logotipo: Tipografía grande*/}
-          <div className="text-center">
-            <h1 className="text-[42px] font-[1000] text-dark tracking-[-0.06em] uppercase leading-none ">
-              Multivision
-            </h1>
-            <div className="flex items-center justify-center gap-3 mt-2">
-              <div className="h-[2px] w-12 bg-dark/10" />
-              <span className="text-[12px] font-black text-dark-3 tracking-[0.6em] uppercase opacity-40">
-                Ópticas
-              </span>
-              <div className="h-[2px] w-12 bg-dark/10" />
-            </div>
-          </div>
-        </div>
+        <LogoMultivision margin="mb-10" />
 
         {/* FORMULARIO */}
         <form onSubmit={handleLogin} className="space-y-6 relative z-10">
@@ -74,7 +55,7 @@ const LoginForm = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full rounded-2xl border border-gray-3 bg-white p-4.5 outline-none focus:border-blue focus:ring-4 focus:ring-blue/5 transition-all duration-300 placeholder:text-gray-4 text-dark shadow-sm"
-              placeholder="nombre@empresa.com"
+              placeholder="correo@empresa.com"
               required
             />
           </div>

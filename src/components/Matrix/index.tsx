@@ -6,6 +6,7 @@ import { useLenteStock, useLenses } from "@/hooks/products";
 import { useSearchParams } from "next/navigation";
 import { DetailModal } from "./DetailModal";
 import { ILensStockMatrixItem } from "@/types/products";
+import { useSessionUser } from "@/hooks/session";
 
 const cylValues = [
   0, -0.25, -0.5, -0.75, -1.0, -1.25, -1.5, -1.75, -2.0, -2.25, -2.5, -2.75,
@@ -46,10 +47,10 @@ const esfValuesPositivo = [
 
 export default function Matrix() {
   const searchParams = useSearchParams();
+  const { sedeId } = useSessionUser(); //Sede automatica
   const lenteId = Number(searchParams.get("lenteId"));
   const mode = searchParams.get("mode");
   console.log(mode, "  MODE<<<<<<<<<<<<<<<<<");
-  const sedeId = 1;
 
   const { updateStock, stockVersion } = useLenses();
   const { stock, loading, error } = useLenteStock(

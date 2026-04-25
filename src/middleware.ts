@@ -2,12 +2,12 @@
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
 
-type Role = "ADMIN" | "VENDEDOR" | "ALMACEN";
+type Role = "ADMIN" | "VENDEDOR" | "ALMACEN" | "TALLER";
 
 const ROLE_PERMISSIONS: Record<Role, string[]> = {
   ADMIN: [
     "/products",
-    "/dashboard",
+    "/my-account",
     "/admin",
     "/profile",
     "/checkout",
@@ -20,6 +20,7 @@ const ROLE_PERMISSIONS: Record<Role, string[]> = {
   ],
   VENDEDOR: ["/products", "/dashboard", "/profile"],
   ALMACEN: ["/products", "/profile"],
+  TALLER: ["/products"],
 };
 
 /*
@@ -56,9 +57,10 @@ export default withAuth(
     // ❌ sin acceso → redirect inteligente por rol
     if (!hasAccess) {
       const fallbackByRole: Record<Role, string> = {
-        ADMIN: "/dashboard",
+        ADMIN: "/products",
         VENDEDOR: "/products",
         ALMACEN: "/products",
+        TALLER: "/products",
       };
 
       return NextResponse.redirect(new URL(fallbackByRole[userRole], req.url));

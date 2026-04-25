@@ -112,10 +112,10 @@ export default function InventarioMultivision() {
 
   return (
     <>
-      <section className="overflow-hidden pt-[200px] pb-20 bg-gray-2 min-h-screen">
+      <section className="overflow-hidden pt-[200px] pb-20 bg-beige min-h-screen">
         <div className="max-w-[1740px] w-full mx-auto px-4 sm:px-8 xl:px-10">
           <div className="max-w-[1400px] mx-auto">
-            <div className="sticky top-0 z-40 bg-[#F8FAFC] pb-4">
+            <div className="sticky top-0 z-40 bg-beige pb-4">
               <header className="bg-white p-4 rounded-2xl border border-blue-light-4 shadow-sm flex items-center gap-6">
                 <div className="flex items-center gap-3 pr-5 border-r border-slate-100 min-w-[240px] shrink-0">
                   <div

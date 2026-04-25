@@ -1,4 +1,4 @@
-import Mantemiento from "@/components/Mantenimiento";
+import Mantenimiento from "@/components/Mantenimiento";
 import React from "react";
 
 import { Metadata } from "next";
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 const MyAccountPage = () => {
   return (
     <main>
-      <Mantemiento />
+      <Mantenimiento />
     </main>
   );
 };

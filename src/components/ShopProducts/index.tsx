@@ -42,8 +42,8 @@ const ShopProducts = () => {
         pages={["shop", "/", "productos"]}
       />
 
-      <section className="overflow-hidden relative pb-20 pt-5 lg:pt-20 xl:pt-28 bg-[#f3f4f6]">
-        <div className="max-w-[1170px] w-full mx-auto px-4 sm:px-8 xl:px-0">
+      <section className="overflow-hidden relative pb-20 pt-5 lg:pt-10 xl:pt-18 bg-beige">
+        <div className="max-w-[1600px] w-full mx-auto px-4 sm:px-8 xl:px-0">
           <div className="flex gap-7.5">
             {/* Sidebar */}
             <div
@@ -77,18 +77,7 @@ const ShopProducts = () => {
             </div>
 
             {/* Main Content */}
-            <div className="xl:max-w-[870px] w-full">
-              <div className="rounded-lg bg-white shadow-1 pl-3 pr-2.5 py-2.5 mb-6 flex items-center justify-between">
-                <div className="flex flex-wrap items-center gap-4">
-                  <p>
-                    Mostrando{" "}
-                    <span className="text-dark font-bold">
-                      {/* {currentProducts.length} */}
-                    </span>{" "}
-                    {selectedCategory}
-                  </p>
-                </div>
-              </div>
+            <div className="xl:max-w-full  w-full">
               {selectedCategory === TipoProducto.MONTURA && <ListEyeGlasses />}
               {selectedCategory === TipoProducto.LENTE && <ListLens />}
             </div>

@@ -36,17 +36,20 @@ export const BaseButton = ({
 
   const variants: Record<ButtonVariant, string> = {
     primary: `
-      bg-blue
-      hover:bg-blue-dark
-      text-white
-      px-8
-      py-4
+      w-full
+      rounded-2xl
+      py-5
       font-black
-      text-xs
+      text-dark
       uppercase
-      tracking-widest
-      shadow-md
-      shadow-blue/20
+      tracking-[0.2em]
+      text-[13px]
+      transition-all
+      transform
+      active:scale-[0.97]
+      shadow-xl
+      bg-yellow-dark hover:bg-yellow hover:shadow-yellow/20 
+      
     `,
     secondary: `
       bg-yellow

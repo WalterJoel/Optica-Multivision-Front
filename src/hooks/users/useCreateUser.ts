@@ -22,8 +22,8 @@ export function useCreateUser() {
         typeof data === "string"
           ? data
           : Array.isArray(data?.message)
-          ? data.message.join(", ")
-          : data?.message || err?.message;
+            ? data.message.join(", ")
+            : data?.message || err?.message;
 
       setMessage(
         backendMessage

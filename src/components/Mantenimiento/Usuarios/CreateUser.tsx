@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { BaseInput } from "@/components/Common/Inputs/BaseInput";
 import { BaseButton } from "@/components/Common/Buttons/BaseButton";
 import { StatusModal, LoadingModal } from "@/components/Common/modal";
-import { STATUS_MODAL } from "@/commons/constants";
+import { ROLE_OPTIONS, STATUS_MODAL } from "@/commons/constants";
 import type { CreateUser } from "@/types/users";
 import { useCreateUser } from "@/hooks/users";
 import { api } from "@/services/api";
@@ -15,17 +15,13 @@ type Sede = {
   activo?: boolean;
 };
 
-export const ROLE_OPTIONS = [
-  { value: "admin", label: "Administrador" },
-  { value: "vendedor", label: "Vendedor" },
-  { value: "almacen", label: "Almacén" },
-] as const;
-
 const emptyForm: CreateUser = {
   email: "",
   password: "",
-  role: "vendedor",
-  sedeId: 0, // se setea automáticamente cuando carguen las sedes
+  nombre: "",
+  apellido: "",
+  role: "",
+  sedeId: 0,
 };
 
 export default function CreateUser() {
@@ -40,7 +36,6 @@ export default function CreateUser() {
   const [loadingSedes, setLoadingSedes] = useState<boolean>(true);
 
   const activeSedes = useMemo(() => {
-    // si tu backend no manda "activo", igual funciona
     return sedes.filter((s) => s.activo !== false);
   }, [sedes]);
 
@@ -60,9 +55,12 @@ export default function CreateUser() {
     loadSedes();
   }, []);
 
-  // si aún no hay sedeId seleccionado, setear el primero que exista
   useEffect(() => {
-    if (!loadingSedes && activeSedes.length > 0 && (!form.sedeId || form.sedeId === 0)) {
+    if (
+      !loadingSedes &&
+      activeSedes.length > 0 &&
+      (!form.sedeId || form.sedeId === 0)
+    ) {
       setForm((p) => ({ ...p, sedeId: activeSedes[0].id }));
     }
   }, [loadingSedes, activeSedes, form.sedeId]);
@@ -101,7 +99,7 @@ export default function CreateUser() {
         // reset pero conserva defaults (role) y si hay sedes, setea la primera
         setForm((p) => ({
           ...emptyForm,
-          role: p.role || emptyForm.role,
+          role: form.role || emptyForm.role,
           sedeId: activeSedes[0]?.id ?? 0,
         }));
       } else {
@@ -115,15 +113,30 @@ export default function CreateUser() {
     <>
       <form
         onSubmit={createUser}
-        className="w-full rounded-xl border border-gray-3 bg-white p-6"
+        className="w-full rounded-xl border border-gray-3 bg-beige p-6"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+          <BaseInput
+            label="Nombre"
+            name="nombre"
+            value={form.nombre}
+            required
+            onChange={onChangeInput}
+          />
+          <BaseInput
+            label="Apellido"
+            name="apellido"
+            value={form.apellido}
+            required
+            onChange={onChangeInput}
+          />
           <BaseInput
             label="Email"
             name="email"
             value={form.email}
             placeholder="correo@ejemplo.com"
             required
+            pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
             onChange={onChangeInput}
           />
 
@@ -133,8 +146,10 @@ export default function CreateUser() {
             value={form.password}
             placeholder="******"
             required
+            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$"
             onChange={onChangeInput}
             type="password"
+            title="Mínimo 8 caracteres, incluyendo mayúscula, minúscula y número"
           />
 
           {/* Rol (select) */}

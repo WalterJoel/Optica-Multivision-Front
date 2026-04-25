@@ -57,3 +57,10 @@ export enum EstadoPedido {
   TRANSITO = "TRANSITO",
   ENTREGADO = "ENTREGADO",
 }
+
+export const ROLE_OPTIONS = [
+  { value: "ADMIN", label: "Administrador" },
+  { value: "VENDEDOR", label: "Vendedor" },
+  { value: "ALMACEN", label: "Almacén" },
+  { value: "TALLER", label: "Taller" },
+];

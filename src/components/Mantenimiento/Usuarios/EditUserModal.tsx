@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { BaseInput } from "@/components/Common/Inputs/BaseInput";
 import { BaseButton } from "@/components/Common/Buttons/BaseButton";
 import { IUser } from "@/types/users";
-import { ROLE_OPTIONS } from "./CreateUser";
+import { ROLE_OPTIONS } from "@/commons/constants";
 
 type Sede = { id: number; nombre: string; activo?: boolean };
 
@@ -20,7 +20,12 @@ export default function EditUserModal({
   user: IUser | null;
   sedes: Sede[];
   onClose: () => void;
-  onSave: (payload: { email?: string; role?: string; sedeId?: number; password?: string }) => void;
+  onSave: (payload: {
+    email?: string;
+    role?: string;
+    sedeId?: number;
+    password?: string;
+  }) => void;
   loading: boolean;
 }) {
   const [email, setEmail] = useState("");
@@ -57,7 +62,12 @@ export default function EditUserModal({
       <div className="relative w-full max-w-[720px] rounded-xl bg-white border border-gray-3 p-6">
         <div className="flex items-center justify-between gap-3">
           <p className="font-semibold text-dark">Editar usuario #{user.id}</p>
-          <button onClick={onClose} className="text-sm text-dark-4 hover:text-dark">✕</button>
+          <button
+            onClick={onClose}
+            className="text-sm text-dark-4 hover:text-dark"
+          >
+            ✕
+          </button>
         </div>
 
         <form onSubmit={submit} className="mt-5">
@@ -78,7 +88,9 @@ export default function EditUserModal({
                 className="h-12 rounded-lg border border-gray-3 bg-white px-4 text-sm outline-none focus:border-primary"
               >
                 {ROLE_OPTIONS.map((r) => (
-                  <option key={r.value} value={r.value}>{r.label}</option>
+                  <option key={r.value} value={r.value}>
+                    {r.label}
+                  </option>
                 ))}
               </select>
             </div>

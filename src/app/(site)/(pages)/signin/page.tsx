@@ -1,4 +1,4 @@
-import Signin from "@/components/Auth/Signin";
+import SignIn from "@/components/Auth/Signin";
 import React from "react";
 import { Metadata } from "next";
 export const metadata: Metadata = {
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 const SigninPage = () => {
   return (
     <main>
-      <Signin />
+      <SignIn />
     </main>
   );
 };

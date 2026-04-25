@@ -91,13 +91,14 @@ export default function ListEyeglasses() {
   const [page, setPage] = useState(1);
 
   const handleAddToCart = (eyeGlass: IEyeglass) => {
+    console.log(eyeGlass, " EYEGLASS");
     const itemToCart: CartItem = {
       id: eyeGlass.id,
       productName: (TipoProducto.MONTURA + " " + eyeGlass.marca).toUpperCase(),
-      productId: eyeGlass?.producto?.id,
+      productId: eyeGlass.productoId,
       price: eyeGlass.precio,
       quantity: 1,
-      productType: TipoProducto.LENTE,
+      productType: TipoProducto.MONTURA,
       discount: 0,
       cyl: null,
       esf: null,

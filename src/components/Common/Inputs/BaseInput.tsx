@@ -63,11 +63,7 @@ export const BaseInput = ({
         onChange={onChange}
         onFocus={onFocus}
         onBlur={onBlur}
-        className="w-full bg-white border border-gray-100 text-dark rounded-full py-2.5 px-5 
-                   outline-none transition-all duration-200 text-sm shadow-sm shadow-gray-50/50
-                   placeholder:text-gray-300
-                   focus:border-blue focus:ring-4 focus:ring-blue/10
-                   disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full rounded-2xl border border-gray-3 bg-white p-4.5 outline-none focus:border-blue focus:ring-4 focus:ring-blue/5 transition-all duration-300 placeholder:text-gray-4 text-dark shadow-sm"
       />
     </div>
   );

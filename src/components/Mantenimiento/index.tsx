@@ -33,10 +33,10 @@ const MyAccount = () => {
 
   return (
     <>
-      <Breadcrumb title={"My Account"} pages={["my account"]} />
+      <Breadcrumb title={"Mantenimiento"} pages={["my account"]} />
 
       <section className="overflow-hidden py-20 bg-gray-2">
-        <div className="max-w-[1440px] w-full mx-auto px-4 sm:px-8 xl:px-10">
+        <div className="max-w-[1600px] w-full mx-auto px-4 sm:px-8 xl:px-10">
           <div className="flex flex-col xl:flex-row gap-7.5 items-stretch">
             <div className="xl:w-[350px] w-full bg-white rounded-xl shadow-1 flex-shrink-0">
               <div className="flex xl:flex-col">

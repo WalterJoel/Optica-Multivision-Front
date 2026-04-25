@@ -23,7 +23,7 @@ export function BaseTabs({ tabs, activeTab, onChange }: BaseTabsProps) {
           className={`flex-1 flex items-center justify-center gap-2 py-4 text-sm border-b-2 transition
             ${
               activeTab === tab.key
-                ? "border-blue text-blue font-semibold"
+                ? "border-blue  text-blue font-bold"
                 : "border-transparent text-gray-500 hover:text-blue"
             }`}
         >
