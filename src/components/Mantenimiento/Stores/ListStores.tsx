@@ -1,142 +1,153 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { api } from "@/services/api";
+import { useEffect, useState, useCallback } from "react";
 import { StatusModal, LoadingModal } from "@/components/Common/modal";
 import { STATUS_MODAL } from "@/commons/constants";
 import EditStoreModal from "./EditStoreModal";
-import { useUpdateStore } from "@/hooks/stores/useUpdateStore";
 import { useToggleStoreStatus } from "@/hooks/stores/useToggleStoreStatus";
 import { IStore } from "@/types/stores";
+import { Edit3, Power, Store, Phone } from "lucide-react";
+import { useStores } from "@/hooks/stores";
 
 export default function ListStores() {
-  const [sedes, setSedes] = useState<IStore[]>([]);
-  const [loadingList, setLoadingList] = useState(true);
-
-  const { updateStore, loading: updating, success: upOk, statusMessage: upMsg } = useUpdateStore();
-  const { toggleStatus, loading: toggling, success: tgOk, statusMessage: tgMsg } = useToggleStoreStatus();
-
+  const { sedes, loading, getAllStores } = useStores();
   const [openEdit, setOpenEdit] = useState(false);
   const [selected, setSelected] = useState<IStore | null>(null);
-
   const [openModal, setOpenModal] = useState(false);
   const [typeModal, setTypeModal] = useState("");
   const [modalMsg, setModalMsg] = useState("");
 
-  const loadSedes = async () => {
-    setLoadingList(true);
-    try {
-      const { data } = await api.get("/sedes");
-      setSedes(data);
-    } finally {
-      setLoadingList(false);
-    }
-  };
+  const {
+    updateToggleStatus,
+    loading: toggling,
+    success: toggleOk,
+    statusMessage: updateToggleMessage,
+  } = useToggleStoreStatus();
 
-  useEffect(() => {
-    loadSedes();
-  }, []);
-
-  // feedback update
-  useEffect(() => {
-    if (!updating && (upOk || upMsg)) {
-      setTypeModal(upOk ? STATUS_MODAL.SUCCESS_MODAL : STATUS_MODAL.ERROR_MODAL);
-      setModalMsg(upOk ? "Sede actualizada correctamente" : upMsg);
-      setOpenModal(true);
-      if (upOk) loadSedes();
-    }
-  }, [updating, upOk, upMsg]);
-
-  // feedback status
-  useEffect(() => {
-    if (!toggling && (tgOk || tgMsg)) {
-      setTypeModal(tgOk ? STATUS_MODAL.SUCCESS_MODAL : STATUS_MODAL.ERROR_MODAL);
-      setModalMsg(tgOk ? tgMsg : tgMsg);
-      setOpenModal(true);
-      if (tgOk) loadSedes();
-    }
-  }, [toggling, tgOk, tgMsg]);
-
+  //Functions
   const onEdit = (s: IStore) => {
     setSelected(s);
     setOpenEdit(true);
   };
 
-  const onSave = async (payload: Partial<IStore>) => {
-    if (!selected) return;
-    await updateStore(selected.id, payload);
-    setOpenEdit(false);
-  };
-
   const onToggle = async (s: IStore) => {
-    await toggleStatus(s.id, !s.activo);
+    await updateToggleStatus(s.id, !s.activo);
   };
 
-  const busy = loadingList || updating || toggling;
+  //Show Loading Modal
+  const busy = loading || toggling;
+
+  //Use Effects
+  useEffect(() => {
+    if (!toggling && (toggleOk || updateToggleMessage)) {
+      setTypeModal(
+        toggleOk ? STATUS_MODAL.SUCCESS_MODAL : STATUS_MODAL.ERROR_MODAL,
+      );
+      setModalMsg(updateToggleMessage);
+      setOpenModal(true);
+      if (toggleOk) getAllStores();
+    }
+  }, [toggling, toggleOk, updateToggleMessage, getAllStores]);
 
   return (
-    <div className="w-full rounded-xl border border-gray-3 bg-white overflow-hidden">
-      <div className="px-6 py-4 border-b border-gray-3 flex items-center justify-between">
-        <p className="font-medium text-dark">Lista de sedes</p>
-        <button
-          onClick={loadSedes}
-          className="text-sm font-semibold text-blue hover:underline"
-          type="button"
-        >
-          Refrescar
-        </button>
-      </div>
-
+    <div className="w-full rounded-2xl border border-gray-3 bg-beige shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-gray-1">
-            <tr>
-              <th className="px-6 py-3">ID</th>
-              <th className="px-6 py-3">Nombre</th>
-              <th className="px-6 py-3">RUC</th>
-              <th className="px-6 py-3">Teléfono</th>
-              <th className="px-6 py-3">Activo</th>
-              <th className="px-6 py-3">Acciones</th>
+        <table className="w-full text-left text-sm border-spacing-0">
+          <thead>
+            <tr className="bg-white/50 backdrop-blur-sm">
+              <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3">
+                Nombre
+              </th>
+              <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3">
+                Dirección
+              </th>
+              <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3">
+                RUC
+              </th>
+              <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3">
+                Contacto
+              </th>
+              <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3 text-center">
+                Estado
+              </th>
+              <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3 text-right">
+                Acciones
+              </th>
             </tr>
           </thead>
 
-          <tbody>
-            {loadingList ? (
+          <tbody className="divide-y divide-gray-2">
+            {sedes.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-6 py-6">Cargando...</td>
-              </tr>
-            ) : sedes.length === 0 ? (
-              <tr>
-                <td colSpan={6} className="px-6 py-6">No hay sedes aún</td>
+                <td
+                  colSpan={5}
+                  className="px-6 py-24 text-center text-dark-5 font-bold uppercase text-[10px] tracking-widest"
+                >
+                  No se encontraron sedes activas
+                </td>
               </tr>
             ) : (
               sedes.map((s) => (
-                <tr key={s.id} className="border-t border-gray-3">
-                  <td className="px-6 py-4">{s.id}</td>
-                  <td className="px-6 py-4">{s.nombre}</td>
-                  <td className="px-6 py-4">{s.ruc}</td>
-                  <td className="px-6 py-4">{s.telefono}</td>
-                  <td className="px-6 py-4">{s.activo ? "✅" : "❌"}</td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
+                <tr
+                  key={s.id}
+                  className="group hover:bg-white transition-all duration-300"
+                >
+                  <td className="px-6 py-5">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 flex items-center justify-center bg-blue-light/20 rounded-xl text-blue shadow-sm group-hover:scale-110 transition-transform">
+                        <Store size={20} strokeWidth={2.5} />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="font-black text-dark uppercase text-xs tracking-tight">
+                          {s.nombre}
+                        </span>
+                        <span className="text-[10px] text-dark-5 font-bold uppercase tracking-tighter">
+                          Multivisión Sucursal
+                        </span>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-5  text-dark-2">{s.direccion}</td>
+                  <td className="px-6 py-5  text-dark-2">{s.ruc}</td>
+                  <td className="px-6 py-5">
+                    <div className="flex items-center gap-2 text-dark-3 text-xs ">
+                      <Phone size={14} className="text-yellow-dark" />
+                      {s.telefono}
+                    </div>
+                  </td>
+                  <td className="px-6 py-5">
+                    <div className="flex justify-center">
+                      <span
+                        className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.1em] border shadow-sm ${
+                          s.activo
+                            ? "bg-green-light-6 text-green-dark border-green-light-5"
+                            : "bg-red-light-6 text-red-dark border-red-light-5"
+                        }`}
+                      >
+                        {s.activo ? "Activo" : "Inactivo"}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-5 text-right">
+                    <div className="flex items-center justify-end gap-2.5">
                       <button
                         type="button"
                         onClick={() => onEdit(s)}
-                        className="px-3 py-1.5 rounded-lg border border-gray-3 hover:bg-gray-1 text-xs font-semibold"
+                        className="p-2.5 rounded-xl bg-yellow-dark text-white hover:scale-110 active:scale-95 transition-all shadow-md shadow-yellow-dark/20 border border-yellow-dark"
+                        title="Editar Configuración"
                       >
-                        ✏️ Editar
+                        <Edit3 size={16} strokeWidth={3} />
                       </button>
-
                       <button
                         type="button"
                         onClick={() => onToggle(s)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold border ${
+                        className={`p-2.5 rounded-xl transition-all shadow-sm border ${
                           s.activo
-                            ? "border-red-200 text-red-700 hover:bg-red-50"
-                            : "border-green-200 text-green-700 hover:bg-green-50"
+                            ? "bg-white border-red-light-4 text-red hover:bg-red hover:text-white"
+                            : "bg-white border-green-light-4 text-green hover:bg-green hover:text-white"
                         }`}
                       >
-                        {s.activo ? " Suspender" : " Activar"}
+                        <Power size={16} strokeWidth={3} />
                       </button>
                     </div>
                   </td>
@@ -151,8 +162,7 @@ export default function ListStores() {
         isOpen={openEdit}
         store={selected}
         onClose={() => setOpenEdit(false)}
-        onSave={onSave}
-        loading={updating}
+        onRefresh={getAllStores}
       />
 
       <LoadingModal isOpen={busy} />

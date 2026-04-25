@@ -17,7 +17,11 @@ export function useUpdateStore() {
       setMessage("Sede actualizada correctamente");
     } catch (err: any) {
       const backendMessage = err.response?.data?.message;
-      setMessage(backendMessage ? String(backendMessage) : "Error al actualizar sede");
+      setMessage(
+        backendMessage
+          ? "Error al actualizar sede: " + backendMessage
+          : "Error al actualizar sede",
+      );
     } finally {
       setLoading(false);
     }

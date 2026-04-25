@@ -10,6 +10,8 @@ export interface IStore {
 
 export type ICreateStore = Omit<IStore, "id" | "activo">;
 
+export type IUpdateStore = Omit<IStore, "id" | "activo" | "logoUrl">;
+
 // export interface CreateStoreResponse {
 //   success: boolean;
 //   data: Store;

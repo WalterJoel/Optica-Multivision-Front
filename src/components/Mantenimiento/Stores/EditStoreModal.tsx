@@ -3,60 +3,80 @@
 import { useEffect, useState } from "react";
 import { BaseInput } from "@/components/Common/Inputs/BaseInput";
 import { BaseButton } from "@/components/Common/Buttons/BaseButton";
-import { IStore } from "@/types/stores";
+import { IStore, IUpdateStore } from "@/types/stores";
+
+import { ModalFrameWrapper } from "@/components/Common/modal";
+import { useUpdateStore } from "@/hooks/stores/useUpdateStore";
+
+const emptyForm: IUpdateStore = {
+  nombre: "",
+  ruc: "",
+  direccion: "",
+  telefono: "",
+};
 
 export default function EditStoreModal({
   isOpen,
   store,
   onClose,
-  onSave,
-  loading,
+  onRefresh,
 }: {
   isOpen: boolean;
   store: IStore | null;
   onClose: () => void;
-  onSave: (payload: Partial<IStore>) => void;
-  loading: boolean;
+  onRefresh: () => void;
 }) {
-  const [form, setForm] = useState<Partial<IStore>>({});
+  const [form, setForm] = useState<IUpdateStore>(emptyForm);
+  const { updateStore, loading } = useUpdateStore();
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
+  };
+
+  const edit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await updateStore(store.id, form);
+
+    onRefresh();
+    onClose();
+  };
 
   useEffect(() => {
     if (store) {
+      const { nombre, ruc, direccion, telefono } = store;
+
       setForm({
-        nombre: store.nombre,
-        ruc: store.ruc,
-        direccion: store.direccion,
-        telefono: store.telefono,
-        logoUrl: store.logoUrl,
+        nombre,
+        ruc,
+        direccion,
+        telefono,
       });
     }
   }, [store]);
 
   if (!isOpen || !store) return null;
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
-  };
-
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSave(form);
-  };
-
   return (
-    <div className="fixed inset-0 z-[99999] flex items-center justify-center px-4">
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-      <div className="relative w-full max-w-[720px] rounded-xl bg-white border border-gray-3 p-6">
-        <div className="flex items-center justify-between gap-3">
-          <p className="font-semibold text-dark">Editar sede #{store.id}</p>
-          <button onClick={onClose} className="text-sm text-dark-4 hover:text-dark">
-            ✕
-          </button>
+    <ModalFrameWrapper>
+      <div className="w-full">
+        {/* HEADER MÁS LIMPIO */}
+        <div className="mb-4 text-center">
+          <p className="font-semibold text-dark text-sm tracking-wide">
+            Editar sede <span className="text-yellow-dark">{store.nombre}</span>
+          </p>
         </div>
 
-        <form onSubmit={submit} className="mt-5">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <BaseInput label="Nombre" name="nombre" value={form.nombre ?? ""} onChange={onChange} required />
+        <form onSubmit={edit} className="space-y-6 pb-12">
+          {/* GRID */}
+          <div className="grid grid-cols-1 gap-4">
+            <BaseInput
+              label="Nombre"
+              name="nombre"
+              value={form.nombre ?? ""}
+              onChange={onChange}
+              required
+            />
+
             <BaseInput
               label="RUC"
               name="ruc"
@@ -66,7 +86,15 @@ export default function EditStoreModal({
               pattern="^\d{11}$"
               title="El RUC debe tener 11 dígitos"
             />
-            <BaseInput label="Dirección" name="direccion" value={form.direccion ?? ""} onChange={onChange} required />
+
+            <BaseInput
+              label="Dirección"
+              name="direccion"
+              value={form.direccion ?? ""}
+              onChange={onChange}
+              required
+            />
+
             <BaseInput
               label="Teléfono"
               name="telefono"
@@ -76,23 +104,31 @@ export default function EditStoreModal({
               pattern="^\d{9}$"
               title="El teléfono debe tener 9 dígitos"
             />
-            <BaseInput label="Logo URL" name="logoUrl" value={form.logoUrl ?? ""} onChange={onChange} />
           </div>
 
-          <div className="mt-6 flex justify-end gap-3">
-            <button
-  type="button"
-  onClick={onClose}
-  className="px-4 py-2 rounded-lg border border-gray-3 hover:bg-gray-1 text-sm font-semibold"
->
-  Cancelar
-</button>
-            <BaseButton type="submit" loading={loading}>
-              Guardar cambios
+          {/* BOTONES CENTRADOS */}
+          <div className="flex justify-center gap-3 pt-2 flex-col sm:flex-row mt-8">
+            <BaseButton
+              type="button"
+              onClick={onClose}
+              size="md"
+              variant="cancel"
+              className="w-full sm:w-auto"
+            >
+              Cancelar
+            </BaseButton>
+
+            <BaseButton
+              loading={loading}
+              type="submit"
+              size="md"
+              className="w- full sm:w-auto"
+            >
+              Guardar
             </BaseButton>
           </div>
         </form>
       </div>
-    </div>
+    </ModalFrameWrapper>
   );
 }

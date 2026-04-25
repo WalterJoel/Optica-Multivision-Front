@@ -6,7 +6,7 @@ export function useToggleStoreStatus() {
   const [statusMessage, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
 
-  const toggleStatus = async (id: number, activo: boolean) => {
+  const updateToggleStatus = async (id: number, activo: boolean) => {
     setLoading(true);
     setSuccess(false);
 
@@ -16,11 +16,15 @@ export function useToggleStoreStatus() {
       setMessage(activo ? "Sede activada" : "Sede suspendida");
     } catch (err: any) {
       const backendMessage = err.response?.data?.message;
-      setMessage(backendMessage ? String(backendMessage) : "Error al cambiar estado");
+      setMessage(
+        backendMessage
+          ? "Error al cambiar estado: " + backendMessage
+          : "Error al cambiar estado",
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  return { toggleStatus, loading, statusMessage, success };
+  return { updateToggleStatus, loading, statusMessage, success };
 }

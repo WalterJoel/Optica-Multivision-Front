@@ -15,8 +15,8 @@ export default function UsersPage() {
   ];
 
   return (
-    <div className="h-screen overflow-y-auto px-4 sm:px-6 xl:px-8 my-auto">
-      <div className="border-b border-gray-3 mb-6 ">
+    <div className="m-tab-container">
+      <div className="m-tab">
         <BaseTabs tabs={tabsData} activeTab={tab} onChange={setTab} />
       </div>
 

@@ -1,6 +1,7 @@
 import React from "react";
 
 type ButtonVariant = "primary" | "cancel" | "secondary";
+type ButtonSize = "sm" | "md" | "lg";
 
 interface ButtonProps {
   children: React.ReactNode;
@@ -10,6 +11,7 @@ interface ButtonProps {
   loading?: boolean;
   fullWidth?: boolean;
   variant?: ButtonVariant;
+  size?: ButtonSize;
   className?: string;
 }
 
@@ -21,54 +23,58 @@ export const BaseButton = ({
   loading = false,
   fullWidth = true,
   variant = "primary",
+  size = "md",
   className = "",
 }: ButtonProps) => {
   const baseStyles = `
-    ${fullWidth ? "w-full" : ""}
-      rounded-xl
-      transition-all
-      duration-200
-      disabled:opacity-50
-      disabled:cursor-not-allowed
-      active:scale-95
-      shrink-0
+    ${fullWidth ? "w-full" : "w-auto"}
+    transition-all
+    disabled:opacity-50
+    disabled:cursor-not-allowed
+    active:scale-95
+    shrink-0
   `;
+
+  const sizes: Record<ButtonSize, string> = {
+    sm: "px-3 py-2 text-xs",
+    md: "px-6 py-3 text-[13px]",
+    lg: "px-8 py-5 text-[13px]",
+  };
 
   const variants: Record<ButtonVariant, string> = {
     primary: `
-      w-full
       rounded-2xl
-      py-5
       font-black
       text-dark
       uppercase
       tracking-[0.2em]
-      text-[13px]
       transition-all
       transform
-      active:scale-[0.97]
       shadow-xl
-      bg-yellow-dark hover:bg-yellow hover:shadow-yellow/20 
-      
+      bg-yellow-dark
+      hover:bg-yellow
+      hover:shadow-yellow/20
     `,
     secondary: `
-      bg-yellow
-      hover:bg-yellow-dark
-      text-white
-      px-8
-      py-4
+      rounded-xl
       font-black
-      text-xs
       uppercase
       tracking-widest
-      shadow-md
-      shadow-blue/20
+      text-white
+      bg-yellow
+      hover:bg-yellow-dark
+      transition-all
     `,
     cancel: `
-        w-full py-[9px] rounded-xl 
-        bg-gray-1 border border-gray-3 
-        text-gray-6 font-medium 
-        hover:bg-gray-2 hover:text-gray-7 transition-all
+      rounded-2xl
+      bg-gray-1
+      border border-gray-3
+      text-gray-6
+      uppercase
+      font-bold
+      hover:bg-gray-2
+      hover:text-gray-7
+      transition-all
     `,
   };
 
@@ -77,7 +83,7 @@ export const BaseButton = ({
       type={type}
       onClick={onClick}
       disabled={disabled || loading}
-      className={`${baseStyles} ${variants[variant]} ${className}`}
+      className={`${baseStyles} ${sizes[size]} ${variants[variant]} ${className}`}
     >
       {loading ? "Cargando..." : children}
     </button>
