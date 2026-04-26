@@ -11,15 +11,18 @@ export default function SeguimientoPedidos() {
   const [selected, setSelected] = useState<IPedidoSeguimiento | null>(null);
 
   return (
-    <section className="max-w-[1170px] mx-auto px-4 sm:px-8 xl:px-0 py-10">
-      {selected ? (
-        <SeguimientoPedidoDetalle
-          pedido={selected}
-          onBack={() => setSelected(null)}
-        />
-      ) : (
-        <ListSeguimientoPedidos pedidos={pedidos} onSelect={setSelected} />
-      )}
+    // <section className="max-w-[1170px] mx-auto px-4 sm:px-8 xl:px-0 py-10">
+    <section className="overflow-hidden relative pb-20 pt-5 lg:pt-10 xl:pt-18 bg-beige">
+      <div className="max-w-[1600px] w-full mx-auto px-4 sm:px-8 xl:px-0">
+        {selected ? (
+          <SeguimientoPedidoDetalle
+            pedido={selected}
+            onBack={() => setSelected(null)}
+          />
+        ) : (
+          <ListSeguimientoPedidos pedidos={pedidos} onSelect={setSelected} />
+        )}
+      </div>
     </section>
   );
 }
