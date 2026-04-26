@@ -5,6 +5,7 @@ import Image from "next/image";
 import AddressModal from "./AddressModal";
 import Orders from "../Orders";
 import UsersTab from "./Usuarios/UsersPage";
+import CajaPage from "./Caja/CajaPage";
 import SedesPage from "./Stores/StorePage";
 import KitPage from "./Kits/KitPage";
 import {
@@ -71,7 +72,6 @@ const MyAccount = () => {
                       <User size={25} />
                       Clientes
                     </button>
-
                     <button
                       onClick={() => setActiveTab("sedes")}
                       className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
@@ -90,7 +90,6 @@ const MyAccount = () => {
                       </svg>
                       Sedes
                     </button>
-
                     <button
                       onClick={() => setActiveTab("users")}
                       className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
@@ -109,7 +108,25 @@ const MyAccount = () => {
                       </svg>
                       Usuarios
                     </button>
-
+                    {/* Caja */}
+                    <button
+                      onClick={() => setActiveTab("abrir-caja")}
+                      className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
+                        activeTab === "users"
+                          ? "text-white bg-blue"
+                          : "text-dark-2 bg-gray-1"
+                      }`}
+                    >
+                      <svg
+                        className="fill-current"
+                        width="22"
+                        height="22"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M12 12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4zm0 2c-3.3 0-8 1.7-8 5v1h16v-1c0-3.3-4.7-5-8-5z" />
+                      </svg>
+                      Caja
+                    </button>
                     <button
                       onClick={() => setActiveTab("combos")}
                       className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
@@ -121,7 +138,6 @@ const MyAccount = () => {
                       <ScanEye size={25} />
                       Combos
                     </button>
-
                     <button
                       onClick={() => setActiveTab("downloads")}
                       className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
@@ -149,7 +165,6 @@ const MyAccount = () => {
                       </svg>
                       Downloads
                     </button>
-
                     <button
                       onClick={() => setActiveTab("accesories")}
                       className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
@@ -161,7 +176,6 @@ const MyAccount = () => {
                       <BoomBox size={25} />
                       Accesorios
                     </button>
-
                     <button
                       onClick={() => setActiveTab("eyeglasses")}
                       className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
@@ -173,7 +187,6 @@ const MyAccount = () => {
                       <ScanEye size={25} />
                       Monturas
                     </button>
-
                     <button
                       onClick={() => setActiveTab("discounts")}
                       className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
@@ -198,7 +211,6 @@ const MyAccount = () => {
               >
                 <SedesPage />
               </div>
-
               <div
                 className={`w-full bg-white rounded-xl shadow-1 ${
                   activeTab === "clientes" ? "block" : "hidden"
@@ -206,7 +218,6 @@ const MyAccount = () => {
               >
                 <ClientsPage />
               </div>
-
               <div
                 className={`w-full bg-white rounded-xl shadow-1 ${
                   activeTab === "users" ? "block" : "hidden"
@@ -214,7 +225,14 @@ const MyAccount = () => {
               >
                 <UsersTab />
               </div>
-
+              {/* Caja */}
+              <div
+                className={`w-full bg-white rounded-xl shadow-1 ${
+                  activeTab === "abrir-caja" ? "block" : "hidden"
+                }`}
+              >
+                <CajaPage />
+              </div>
               <div
                 className={`w-full bg-white rounded-xl shadow-1 ${
                   activeTab === "combos" ? "block" : "hidden"
@@ -222,7 +240,6 @@ const MyAccount = () => {
               >
                 <KitPage />
               </div>
-
               <div
                 className={`w-full bg-white rounded-xl shadow-1 py-9.5 px-4 sm:px-7.5 xl:px-10 ${
                   activeTab === "downloads" ? "block" : "hidden"
@@ -230,7 +247,6 @@ const MyAccount = () => {
               >
                 <p>You don&apos;t have any download</p>
               </div>
-
               <div
                 className={`w-full bg-white rounded-xl shadow-1 ${
                   activeTab === "accesories" ? "block" : "hidden"
@@ -238,7 +254,6 @@ const MyAccount = () => {
               >
                 <AccesoriesPage />
               </div>
-
               <div
                 className={`w-full bg-white rounded-xl shadow-1 ${
                   activeTab === "eyeglasses" ? "block" : "hidden"
@@ -246,7 +261,6 @@ const MyAccount = () => {
               >
                 <EyeglassesPage />
               </div>
-
               <div
                 className={`w-full bg-white rounded-xl shadow-1 ${
                   activeTab === "discounts" ? "block" : "hidden"
