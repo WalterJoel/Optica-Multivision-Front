@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { ICrearMovimientoCaja } from '@/types/caja';
-import { crearMovimientoCajaService } from '@/services/caja';
+import { ICrearMovimientoCaja } from '@/types/caja-movimiento';
+import { crearMovimientoCajaService } from '@/services/caja-movimiento';
 
 export function useCrearMovimientoCaja() {
   const [loading, setLoading] = useState(false);

@@ -4,7 +4,7 @@ export interface ICreateCaja {
   saldoInicial: number;
 }
 
-export type IEstadoCaja = "ABIERTA" | "CERRADA";
+export type IEstadoCaja = 'ABIERTA' | 'CERRADA';
 
 export type ICaja = {
   id: number;
@@ -24,17 +24,4 @@ export type IValidarCajaAbiertaResponse = {
 export interface ICerrarCaja {
   cajaId: number;
   saldoFinal: number;
-}
-
-export enum TipoMovimiento {
-  INGRESO = "INGRESO",
-  EGRESO = "EGRESO",
-}
-export interface ICrearMovimientoCaja {
-  cajaId: number;
-  tipo: TipoMovimiento;
-  monto: number;
-  descripcion?: string;
-  ventaId?: number;
-  metodoPago?: string;
 }
