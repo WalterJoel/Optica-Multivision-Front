@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { ICrearMovimientoCaja } from '@/types/caja';
 import { crearMovimientoCajaService } from '@/services/caja';
+
 export function useCrearMovimientoCaja() {
   const [loading, setLoading] = useState(false);
   const [statusMessage, setMessage] = useState<string>('');
   const [success, setSuccess] = useState<boolean>(false);
 
-  const addCaja = async (payload: ICrearMovimientoCaja) => {
+  const crearMovimientoCaja = async (payload: ICrearMovimientoCaja) => {
     setLoading(true);
     setSuccess(false);
     setMessage('');
@@ -27,5 +28,5 @@ export function useCrearMovimientoCaja() {
     }
   };
 
-  return { addCaja, loading, statusMessage, success };
+  return { crearMovimientoCaja, loading, statusMessage, success };
 }
