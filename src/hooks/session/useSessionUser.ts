@@ -25,11 +25,11 @@ export const useSessionUser = () => {
     isUnauthenticated: status === "unauthenticated",
 
     // datos base (NextAuth session)
-    id: user?.id as number | undefined,
+    userId: user?.id as number | undefined,
     email: user?.email ?? undefined,
     name: user?.name ?? undefined,
 
-    // 👇 custom fields del JWT (los que agregaste tú)
+    // custom fields del JWT (los que agregaste tú)
     role: (user as any)?.role as string | undefined,
     sedeId: (user as any)?.sedeId as number | undefined,
 

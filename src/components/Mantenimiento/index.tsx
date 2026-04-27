@@ -112,7 +112,7 @@ const MyAccount = () => {
                     <button
                       onClick={() => setActiveTab("abrir-caja")}
                       className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
-                        activeTab === "users"
+                        activeTab === "abrir-caja"
                           ? "text-white bg-blue"
                           : "text-dark-2 bg-gray-1"
                       }`}

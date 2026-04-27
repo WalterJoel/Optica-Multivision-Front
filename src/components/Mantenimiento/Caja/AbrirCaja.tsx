@@ -4,9 +4,10 @@ import { useState, useEffect } from "react";
 import { BaseInput } from "@/components/Common/Inputs/BaseInput";
 import { BaseButton } from "@/components/Common/Buttons/BaseButton";
 import { ICreateCaja } from "@/types/caja";
-import { useCreateCaja } from "@/hooks/stores";
+import { useCreateCaja, useValidarCajaAbierta } from "@/hooks/caja";
 import { StatusModal, LoadingModal } from "@/components/Common/modal";
 import { STATUS_MODAL } from "@/commons/constants";
+import { useSessionUser } from "@/hooks/session";
 
 const emptyForm: ICreateCaja = {
   saldoInicial: 0,
@@ -16,9 +17,13 @@ const emptyForm: ICreateCaja = {
 
 export default function CreateCaja() {
   const [form, setForm] = useState<ICreateCaja>(emptyForm);
-  const { addStore, success, statusMessage, loading } = useCreateCaja();
-  const [typeModal, setTypeModal] = useState<string>("");
-  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [typeModal, setTypeModal] = useState("");
+  const [openModal, setOpenModal] = useState(false);
+
+  // Hooks
+  const { addCaja, success, statusMessage, loading } = useCreateCaja();
+  const { validarCajaAbierta, caja, existe } = useValidarCajaAbierta();
+  const { sedeId, userId, fullName, user } = useSessionUser();
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((p) => ({
@@ -27,17 +32,17 @@ export default function CreateCaja() {
     }));
   };
 
-  const CreateCaja = async (e: React.FormEvent) => {
+  const createCaja = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    await addStore(form);
+    await addCaja(form);
   };
 
   useEffect(() => {
     if (!loading && (success || statusMessage)) {
       if (success) {
         setTypeModal(STATUS_MODAL.SUCCESS_MODAL);
-        setForm(emptyForm);
+        setForm((p) => ({ ...p, saldoInicial: 0 }));
       } else {
         setTypeModal(STATUS_MODAL.ERROR_MODAL);
       }
@@ -45,34 +50,59 @@ export default function CreateCaja() {
     }
   }, [loading, success, statusMessage]);
 
+  // Agrego data desde mi session al formulario
+  useEffect(() => {
+    if (sedeId && userId) {
+      setForm({
+        saldoInicial: 0,
+        sedeId,
+        userId,
+      });
+
+      validarCajaAbierta(sedeId);
+    }
+  }, [sedeId, userId]);
+
   return (
     <>
       <form
-        onSubmit={CreateCaja}
+        onSubmit={createCaja}
         className="w-full rounded-xl border border-gray-3 bg-beige p-6"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
           <BaseInput
             label="Saldo Inicial"
-            name="saldo"
+            name="saldoInicial"
             value={form.saldoInicial}
             placeholder="140.00"
             required
+            type="number"
             onChange={onChange}
           />
         </div>
 
         <div className="mt-8 flex justify-center">
-          <BaseButton type="submit" loading={loading}>
-            Crear sede
+          <BaseButton type="submit" loading={loading} disabled={existe}>
+            Crear caja
           </BaseButton>
         </div>
-        {/* Aviso  */}
-        <p className="mt-4 text-center text-sm text-red-500">
-          Abriendo caja para la sede y el usuario logueado ...
-        </p>
+
+        {existe ? (
+          <p className="mt-4 text-center text-sm text-red-500">
+            Ya existe una caja abierta (ID: {caja?.id}). Debes cerrarla antes de
+            abrir otra.
+          </p>
+        ) : (
+          <p className="mt-4 text-center text-sm text-green-600">
+            No hay caja abierta. Puedes abrir una nueva para la sede{" "}
+            {user?.sedeNombre} y el usuario {fullName}.
+          </p>
+        )}
       </form>
+
+      {/* MODALS */}
       <LoadingModal isOpen={loading} />
+
       <StatusModal
         isOpen={openModal}
         type={typeModal}

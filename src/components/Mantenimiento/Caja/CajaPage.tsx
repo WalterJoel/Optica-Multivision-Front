@@ -8,7 +8,7 @@ import AbrirCaja from "./AbrirCaja";
 import CerrarCaja from "./CerrarCaja";
 
 export default function ClientsPage() {
-  const [tab, setTab] = useState("crear");
+  const [tab, setTab] = useState("abrir-caja");
 
   const tabsData = [
     { key: "abrir-caja", label: "Abrir Caja", icon: <CirclePlus size={22} /> },
