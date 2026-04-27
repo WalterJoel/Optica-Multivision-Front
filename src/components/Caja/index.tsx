@@ -1,249 +1,287 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
-import { CheckCircle2, Search } from "lucide-react";
-import { useSearchEyeglassByQr } from "@/hooks/products/eyeglasses/useSearchEyeGlassByQr";
-import { useUpdateStockProductos } from "@/hooks/products/stock/useUpdateStockProductos";
-import { IEyeglassQrResponse, IUpdateStockProductos } from "@/types/products";
+import React from "react";
 import {
-  StatusModal,
-  LoadingModal,
-  ModalFrameWrapper,
-} from "@/components/Common/modal";
-import { STATUS_MODAL } from "@/commons/constants";
-import { BaseButton } from "../Common/Buttons";
+  TrendingUp,
+  TrendingDown,
+  Wallet,
+  CreditCard,
+  Search,
+  ChevronLeft,
+  ChevronRight,
+  Plus,
+  FileText,
+  ArrowUpRight,
+  ArrowDownLeft,
+} from "lucide-react";
 
-// Modales
-// import { OutdatedProductsModal } from "./OutdatedProductsModal";
+const MiniTable = ({
+  titulo,
+  data,
+  type,
+}: {
+  titulo: string;
+  data: any[];
+  type: "ingreso" | "egreso";
+}) => (
+  <div className="bg-white rounded-[24px] border border-blue-light-5 shadow-testimonial overflow-hidden flex flex-col transition-all hover:shadow-2">
+    {/* Header Sutil con acento Blue Light */}
+    <div className="px-6 py-5 flex justify-between items-center border-b border-gray-2 bg-white">
+      <div className="flex items-center gap-3">
+        <div
+          className={`w-2 h-2 rounded-full ${type === "ingreso" ? "bg-green" : "bg-red"} animate-pulse`}
+        />
+        <h3 className="text-[12px] font-black text-dark-2 uppercase tracking-[2px]">
+          {titulo}
+        </h3>
+      </div>
+      <div className="flex items-center bg-beige-dark/40 rounded-xl px-3 py-1.5 border border-transparent focus-within:border-blue-light-3 transition-all">
+        <Search size={14} className="text-blue-light-2" />
+        <input
+          type="text"
+          placeholder="Filtrar historial..."
+          className="bg-transparent text-[11px] ml-2 outline-none w-28 text-dark-3 font-medium placeholder:text-gray-5"
+        />
+      </div>
+    </div>
 
-export default function InventarioMultivision() {
-  const [busqueda, setBusqueda] = useState("");
-  const [lote, setLote] = useState<IEyeglassQrResponse[]>([]);
-  const [boxItem, setBoxItem] = useState<IEyeglassQrResponse | null>(null);
-  const [contador, setContador] = useState(0);
+    <div className="overflow-x-auto">
+      <table className="w-full text-left">
+        <thead>
+          <tr className="bg-blue-light-6/50 text-[10px] font-black text-blue uppercase tracking-widest">
+            <th className="py-4 px-7">Concepto / Responsable</th>
+            <th className="py-4 px-6 text-center">Metodo</th>
+            <th className="py-4 px-7 text-right">Monto Neto</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-gray-2 text-[12px]">
+          {data.map((m) => (
+            <tr
+              key={m.id}
+              className="hover:bg-blue-light-6/30 transition-colors group"
+            >
+              <td className="py-5 px-7">
+                <div className="flex flex-col">
+                  <span className="font-bold text-dark group-hover:text-blue transition-colors">
+                    {m.descripcion}
+                  </span>
+                  <span className="text-[10px] font-bold text-gray-5 mt-1 uppercase tracking-tighter">
+                    {m.createdAt}{" "}
+                    <span className="mx-1 text-blue-light-4">•</span>
+                    <span className="text-blue-light font-black italic underline decoration-blue-light-4 underline-offset-2">
+                      @{m.usuario}
+                    </span>
+                  </span>
+                </div>
+              </td>
+              <td className="py-5 px-6 text-center">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-blue-light-5 shadow-sm">
+                  {m.metodo === "EFECTIVO" ? (
+                    <Wallet size={12} className="text-yellow-dark" />
+                  ) : (
+                    <CreditCard size={12} className="text-blue-light" />
+                  )}
+                  <span className="text-[10px] font-black text-dark-4 uppercase">
+                    {m.metodo}
+                  </span>
+                </div>
+              </td>
+              <td className="py-5 px-7 text-right">
+                <div className="flex flex-col items-end">
+                  <span
+                    className={`text-[15px] font-black tracking-tighter ${type === "ingreso" ? "text-green" : "text-red"}`}
+                  >
+                    S/ {m.monto.toFixed(2)}
+                  </span>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
 
-  const [typeModal, setTypeModal] = useState<string>("");
-  const [openModal, setOpenModal] = useState<boolean>(false);
+    {/* Footer Fino */}
+    <div className="px-7 py-4 bg-white border-t border-gray-2 flex justify-between items-center">
+      <span className="text-[10px] font-bold text-gray-4 uppercase tracking-[2px]">
+        Página <span className="text-dark">01</span> de 12
+      </span>
+      <div className="flex items-center gap-2">
+        <button className="p-2 rounded-lg text-blue-light-2 hover:bg-blue-light-6 transition-all">
+          <ChevronLeft size={16} />
+        </button>
+        <button className="p-2 rounded-lg text-blue-light-2 hover:bg-blue-light-6 transition-all">
+          <ChevronRight size={16} />
+        </button>
+      </div>
+    </div>
+  </div>
+);
 
-  //Modales
-
-  const [dictStocks, setDictStocks] = useState<{ [key: string]: string }>({});
-
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  // Hooks
-  const { eyeglass, searchEyeglassByQr } = useSearchEyeglassByQr();
-  const { loading, statusMessage, success, updateStockProductos } =
-    useUpdateStockProductos();
-
-  const procesarProductoEncontrado = (data: IEyeglassQrResponse) => {
-    const stockId = String(data.stock.id);
-    const existeEnLote = lote.find((item) => item.stock.id === data.stock.id);
-
-    if (existeEnLote) {
-      const valorActual = dictStocks[stockId] || "0";
-      const nuevoValor = String(Number(valorActual) + 1);
-
-      setDictStocks((prev) => ({ ...prev, [stockId]: nuevoValor }));
-      setBoxItem(existeEnLote);
-    } else {
-      setLote((prev) => [data, ...prev]);
-      setDictStocks((prev) => ({ ...prev, [stockId]: "1" }));
-      setBoxItem(data);
-    }
-    setContador((c) => c + 1);
-  };
-
-  const handleScan = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key !== "Enter") return;
-
-    // Captura directa para evitar el lag del estado asíncrono
-    const codigo = e.currentTarget.value.trim();
-    if (!codigo) return;
-
-    searchEyeglassByQr(codigo, 1);
-
-    // Limpieza inmediata para el siguiente escaneo
-    setBusqueda("");
-    if (inputRef.current) {
-      inputRef.current.value = "";
-    }
-  };
-
-  const updateManual = (stockId: string, valor: string) => {
-    setDictStocks((prev) => ({ ...prev, [stockId]: valor }));
-  };
-
-  const productosModificados = lote.filter((p) => {
-    const stockId = String(p.stock.id);
-    const stockNuevo = dictStocks[stockId];
-    return stockNuevo !== "" && Number(stockNuevo) !== p.stock.cantidad;
-  });
-
-  const guardarInventario = async () => {
-    const payload: IUpdateStockProductos = {
-      items: productosModificados.map((p) => ({
-        stockId: p.stock.id,
-        cantidad: Number(dictStocks[String(p.stock.id)]),
-      })),
-    };
-    await updateStockProductos(payload);
-    setIsModalOpen(false);
-  };
-
-  useEffect(() => {
-    if (eyeglass && eyeglass.montura) {
-      procesarProductoEncontrado(eyeglass);
-    }
-  }, [eyeglass]);
-
-  useEffect(() => {
-    if (!loading && (success || statusMessage)) {
-      if (success) {
-        setTypeModal(STATUS_MODAL.SUCCESS_MODAL);
-      } else {
-        setTypeModal(STATUS_MODAL.ERROR_MODAL);
-      }
-      setOpenModal(true);
-    }
-  }, [loading, success, statusMessage]);
+export default function CajaPremiumFino() {
+  const mockData = [
+    {
+      id: 1,
+      monto: 1250.0,
+      metodo: "EFECTIVO",
+      descripcion: "Lunas High Index + Montura Boss",
+      createdAt: "10:30 AM",
+      usuario: "jorge.v",
+    },
+    {
+      id: 2,
+      monto: 420.5,
+      metodo: "TARJETA",
+      descripcion: "Tratamiento Antireflex Blue",
+      createdAt: "11:15 AM",
+      usuario: "admin.m",
+    },
+  ];
 
   return (
-    <>
-      <section className="overflow-hidden pt-[200px] pb-20 bg-beige min-h-screen">
-        <div className="max-w-[1740px] w-full mx-auto px-4 sm:px-8 xl:px-10">
-          <div className="max-w-[1400px] mx-auto">
-            <div className="sticky top-0 z-40 bg-beige pb-4">
-              <header className="bg-white p-4 rounded-2xl border border-blue-light-4 shadow-sm flex items-center gap-6">
-                <div className="flex items-center gap-3 pr-5 border-r border-slate-100 min-w-[240px] shrink-0">
-                  <div
-                    className={`w-12 h-12 rounded-xl flex items-center justify-center text-white font-black text-xl shadow-md transition-colors ${loading ? "bg-orange-400 animate-pulse" : "bg-blue"}`}
-                  >
-                    {contador}
-                  </div>
-                  <div className="flex flex-col justify-center">
-                    <h1 className="text-[9px] font-black text-blue uppercase tracking-widest leading-none mb-1">
-                      Inventario
-                    </h1>
-                    <span className="text-slate-900 text-xl font-black tracking-tighter leading-none uppercase">
-                      <span className="text-blue">Monturas</span>
-                    </span>
-                  </div>
+    <div className="min-h-screen bg-[#FDFDFD] pt-32 pb-16 px-8 font-euclid-circular-a text-dark">
+      <div className="max-w-[1400px] mx-auto">
+        {/* HEADER MINIMALISTA PREMIUM */}
+        <header className="flex flex-col md:flex-row justify-between items-center mb-14 gap-8">
+          <div className="flex items-center gap-6">
+            <div className="relative">
+              <div className="absolute inset-0 bg-blue-light blur-2xl opacity-10 rounded-full" />
+              <div className="w-16 h-16 rounded-[24px] bg-white border border-blue-light-5 shadow-testimonial flex items-center justify-center relative z-10 group hover:border-blue-light transition-all">
+                <TrendingUp
+                  size={30}
+                  className="text-blue-light group-hover:scale-110 transition-transform"
+                />
+              </div>
+            </div>
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="w-8 h-[2px] bg-yellow-dark" />
+                <p className="text-[11px] font-black text-blue-light uppercase tracking-[4px]">
+                  Financial Core
+                </p>
+              </div>
+              <h1 className="text-4xl font-black text-dark tracking-tighter uppercase leading-none">
+                Flujo de <span className="text-blue-light italic">Caja</span>
+              </h1>
+            </div>
+          </div>
+
+          <div className="flex gap-3">
+            <button className="flex items-center gap-2 px-6 py-3.5 rounded-[18px] bg-white border border-gray-3 text-dark-2 font-bold text-[11px] hover:border-blue-light transition-all shadow-sm uppercase tracking-widest">
+              <FileText size={15} className="text-blue-light" /> Exportar
+            </button>
+            <button className="flex items-center gap-3 px-8 py-3.5 rounded-[18px] bg-blue-light text-white font-black text-[11px] shadow-2 shadow-blue-light/20 hover:bg-blue transition-all active:scale-95 uppercase tracking-widest">
+              <Plus size={18} strokeWidth={3} /> Nuevo Registro
+            </button>
+          </div>
+        </header>
+
+        {/* BALANCE CARDS - Glassmorphism & Soft Colors */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+          {/* Main Balance con Yellow Dark accent */}
+          <div className="bg-white rounded-[35px] p-9 border border-blue-light-5 shadow-testimonial relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-dark/5 rounded-full -mr-16 -mt-16 blur-3xl transition-all group-hover:bg-yellow-dark/10" />
+
+            <div className="relative z-10 flex flex-col h-full justify-between">
+              <div>
+                <p className="text-[11px] font-black text-blue-light-2 uppercase tracking-[3px] mb-3">
+                  Balance Consolidado
+                </p>
+                <h2 className="text-5xl font-black text-dark tracking-tighter mb-8">
+                  <span className="text-blue-light-3 text-3xl font-medium mr-1">
+                    S/
+                  </span>
+                  2,840.50
+                </h2>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-beige-dark/30 rounded-[20px] p-4 border border-white">
+                  <p className="text-[9px] font-black text-gray-5 uppercase mb-1">
+                    Efectivo
+                  </p>
+                  <p className="text-[16px] font-black text-yellow-dark tracking-tight">
+                    S/ 1,200.00
+                  </p>
                 </div>
-
-                <BaseButton
-                  fullWidth={false}
-                  onClick={() => setIsModalOpen(true)}
-                >
-                  Finalizar
-                </BaseButton>
-                <BaseButton
-                  variant="secondary"
-                  fullWidth={false}
-                  onClick={() => setOpenModalOutdated(true)}
-                >
-                  Por Actualizar
-                </BaseButton>
-              </header>
-
-              {/* BOX ITEM ACTUAL */}
-              <div
-                className={`transition-all duration-300 overflow-hidden ${boxItem ? "mt-4 opacity-100 max-h-24" : "opacity-0 max-h-0"}`}
-              >
-                <div className="mx-auto max-w-2xl grid grid-cols-[80px_1fr_120px] bg-blue border border-blue-dark rounded-xl p-2 items-center gap-3 shadow-lg shadow-blue/20">
-                  <div className="flex justify-center text-4xl">👓</div>
-                  <div className="flex flex-col justify-center min-w-0">
-                    <h2 className="text-white font-black text-2xl uppercase tracking-tighter leading-none truncate">
-                      {boxItem?.montura?.marca}
-                    </h2>
-                    <p className="text-blue-light-5 font-bold font-mono text-[10px] uppercase mt-0.5">
-                      Egresos
-                    </p>
-                  </div>
+                <div className="bg-blue-light-6/50 rounded-[20px] p-4 border border-white">
+                  <p className="text-[9px] font-black text-gray-5 uppercase mb-1">
+                    Bancos
+                  </p>
+                  <p className="text-[16px] font-black text-blue-light tracking-tight">
+                    S/ 1,640.50
+                  </p>
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* TABLAS */}
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-              {[
-                lote.slice(0, Math.ceil(lote.length / 2)),
-                lote.slice(Math.ceil(lote.length / 2)),
-              ].map((col, cIdx) => (
-                <div
-                  key={cIdx}
-                  className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm"
-                >
-                  <table className="w-full text-left">
-                    <thead className="bg-slate-50 border-b border-slate-100">
-                      <tr className="text-[10px] font-black text-blue uppercase tracking-widest">
-                        <th className="py-4 px-6 w-12 text-center">#</th>
-                        <th className="py-4 px-6">MONTURA / MODELO</th>
-                        <th className="py-4 px-6 text-center">STOCK SISTEMA</th>
-                        <th className="py-4 px-6 text-center">NUEVO STOCK</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-50">
-                      {col.map((item, i) => {
-                        const stockId = String(item.stock.id);
-                        const isSelected = item.stock.id === boxItem?.stock?.id;
-                        return (
-                          <tr
-                            key={stockId}
-                            className={`transition-colors ${isSelected ? "bg-blue-light-6" : "hover:bg-slate-50"}`}
-                          >
-                            <td className="py-3 px-6 text-[10px] font-bold text-slate-300 text-center">
-                              {cIdx === 0
-                                ? i + 1
-                                : Math.ceil(lote.length / 2) + i + 1}
-                            </td>
-                            <td className="py-3 px-6">
-                              <p
-                                className={`font-bold text-sm uppercase ${isSelected ? "text-blue" : "text-slate-800"}`}
-                              >
-                                {item.montura.marca} {item.montura.codigo}
-                              </p>
-                              <p className="text-[9px] font-mono font-bold text-slate-400 uppercase leading-none">
-                                {item.montura.codigoQr}
-                              </p>
-                            </td>
-                            <td className="py-3 px-6 text-center text-sm font-bold text-slate-500">
-                              {item.stock.cantidad}
-                            </td>
-                            <td className="py-3 px-6 text-center">
-                              <input
-                                type="text"
-                                value={dictStocks[stockId] || ""}
-                                onChange={(e) =>
-                                  updateManual(stockId, e.target.value)
-                                }
-                                className={`w-12 py-1.5 border-2 rounded-lg text-center font-black text-sm ${isSelected ? "border-blue text-blue bg-white" : "border-slate-100 text-slate-400 bg-slate-50"}`}
-                              />
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              ))}
+          {/* Ingresos Card */}
+          <div className="bg-white rounded-[35px] p-9 border border-blue-light-5 shadow-testimonial flex flex-col justify-between hover:border-green-light-3 transition-all">
+            <div className="flex justify-between items-center">
+              <div className="w-12 h-12 rounded-2xl bg-green-light-6 flex items-center justify-center text-green">
+                <ArrowUpRight size={24} />
+              </div>
+              <div className="text-right">
+                <p className="text-[9px] font-black text-green uppercase px-2 py-1 bg-green-light-6 rounded-lg">
+                  +2.4%
+                </p>
+              </div>
+            </div>
+            <div className="mt-6">
+              <p className="text-[11px] font-black text-gray-4 uppercase tracking-[2px] mb-1">
+                Ingresos de Hoy
+              </p>
+              <p className="text-3xl font-black text-dark tracking-tighter">
+                S/ 4,120.00
+              </p>
+            </div>
+          </div>
+
+          {/* Egresos Card */}
+          <div className="bg-white rounded-[35px] p-9 border border-blue-light-5 shadow-testimonial flex flex-col justify-between hover:border-red-light-3 transition-all">
+            <div className="flex justify-between items-center">
+              <div className="w-12 h-12 rounded-2xl bg-red-light-6 flex items-center justify-center text-red">
+                <ArrowDownLeft size={24} />
+              </div>
+              <div className="text-right">
+                <p className="text-[9px] font-black text-red uppercase px-2 py-1 bg-red-light-6 rounded-lg">
+                  -1.1%
+                </p>
+              </div>
+            </div>
+            <div className="mt-6">
+              <p className="text-[11px] font-black text-gray-4 uppercase tracking-[2px] mb-1">
+                Egresos de Hoy
+              </p>
+              <p className="text-3xl font-black text-dark tracking-tighter">
+                S/ 1,280.00
+              </p>
             </div>
           </div>
         </div>
-      </section>
-      <LoadingModal isOpen={loading} />
 
-      <StatusModal
-        isOpen={openModal}
-        type={typeModal}
-        message={statusMessage}
-        onClose={() => setOpenModal(false)}
-      />
+        {/* HISTORIAL SECCION */}
+        <div className="flex items-center gap-4 mb-8">
+          <h2 className="text-[13px] font-black text-dark uppercase tracking-[4px]">
+            Operaciones <span className="text-blue-light">Recientes</span>
+          </h2>
+          <div className="h-[1px] flex-grow bg-gray-2" />
+        </div>
 
-      {/* <OutdatedProductsModal
-        isOpenModalOutdated={isOpenModalOutdated}
-        onCloseModalOutdated={() => setOpenModalOutdated(false)}
-      /> */}
-    </>
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
+          <MiniTable
+            titulo="Historial de Ingresos"
+            data={mockData}
+            type="ingreso"
+          />
+          <MiniTable
+            titulo="Historial de Egresos"
+            data={mockData}
+            type="egreso"
+          />
+        </div>
+      </div>
+    </div>
   );
 }
