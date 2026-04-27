@@ -76,7 +76,11 @@ const MyAccount = () => {
                     {menuButton("users", "Usuarios", Users)}
 
                     {menuButton("abrir-caja", "Caja", CreditCard)}
-                    {menuButton("movimiento", "Movimientos", MoveUpRight)}
+                    {menuButton(
+                      "movimiento",
+                      "Movimientos de Caja",
+                      MoveUpRight,
+                    )}
 
                     {menuButton("combos", "Combos", Boxes)}
 

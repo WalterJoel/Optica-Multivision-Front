@@ -7,7 +7,7 @@ export function useValidarCajaAbierta() {
   const [loading, setLoading] = useState(false);
   const [statusMessage, setMessage] = useState("");
 
-  const existe = !!caja;
+  const existe = caja?.estado === "ABIERTA";
 
   const validarCajaAbierta = async (sedeId: number) => {
     setLoading(true);

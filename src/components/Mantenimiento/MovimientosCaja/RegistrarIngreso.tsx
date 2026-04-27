@@ -3,39 +3,60 @@
 import { useState, useEffect } from "react";
 import { BaseInput } from "@/components/Common/Inputs/BaseInput";
 import { BaseButton } from "@/components/Common/Buttons/BaseButton";
-import { ICreateCaja } from "@/types/caja";
-import { useCreateCaja, useValidarCajaAbierta } from "@/hooks/caja";
+import { ICrearMovimientoCaja, TipoMovimiento } from "@/types/caja";
+import { useValidarCajaAbierta } from "@/hooks/caja";
+import { useCrearMovimientoCaja } from "@/hooks/caja-movimiento";
 import { StatusModal, LoadingModal } from "@/components/Common/modal";
-import { STATUS_MODAL } from "@/commons/constants";
+import { MetodoPago, STATUS_MODAL } from "@/commons/constants";
 import { useSessionUser } from "@/hooks/session";
+import { BaseTarea } from "@/components/Common/Inputs";
+import { BaseSelect } from "@/components/Common/Inputs/BaseSelect";
 
-const emptyForm: ICreateCaja = {
-  saldoInicial: 0,
-  sedeId: 0,
-  userId: 0,
+const emptyForm: ICrearMovimientoCaja = {
+  cajaId: 0,
+  tipo: TipoMovimiento.INGRESO,
+  monto: 0,
+  descripcion: "",
+  metodoPago: MetodoPago.EFECTIVO,
 };
 
 export default function RegistrarIngreso() {
-  const [form, setForm] = useState<ICreateCaja>(emptyForm);
+  const [form, setForm] = useState<ICrearMovimientoCaja>(emptyForm);
   const [typeModal, setTypeModal] = useState("");
   const [openModal, setOpenModal] = useState(false);
 
   // Hooks
-  const { addCaja, success, statusMessage, loading } = useCreateCaja();
-  const { validarCajaAbierta, caja, existe } = useValidarCajaAbierta();
-  const { sedeId, userId, fullName, user } = useSessionUser();
+  const { crearMovimientoCaja, success, statusMessage, loading } =
+    useCrearMovimientoCaja();
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const { caja } = useValidarCajaAbierta();
+  const { user } = useSessionUser();
+
+  const cajaActiva = caja?.estado === "ABIERTA";
+
+  const onChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => {
     setForm((p) => ({
       ...p,
       [e.target.name]: e.target.value,
     }));
   };
 
-  const createCaja = async (e: React.FormEvent) => {
+  const crear = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    await addCaja(form);
+    if (!cajaActiva || !caja?.id) return;
+
+    const payload: ICrearMovimientoCaja = {
+      ...form,
+      cajaId: caja.id,
+      monto: Number(form.monto),
+    };
+
+    await crearMovimientoCaja(payload);
 
     if (success) {
       setForm(emptyForm);
@@ -46,7 +67,7 @@ export default function RegistrarIngreso() {
     if (!loading && (success || statusMessage)) {
       if (success) {
         setTypeModal(STATUS_MODAL.SUCCESS_MODAL);
-        setForm((p) => ({ ...p, saldoInicial: 0 }));
+        setForm(emptyForm);
       } else {
         setTypeModal(STATUS_MODAL.ERROR_MODAL);
       }
@@ -54,57 +75,60 @@ export default function RegistrarIngreso() {
     }
   }, [loading, success, statusMessage]);
 
-  // Agrego data desde mi session al formulario
-  useEffect(() => {
-    if (sedeId && userId) {
-      setForm({
-        saldoInicial: 0,
-        sedeId,
-        userId,
-      });
-
-      validarCajaAbierta(sedeId);
-    }
-  }, [sedeId, userId]);
-
   return (
     <>
       <form
-        onSubmit={createCaja}
+        onSubmit={crear}
         className="w-full rounded-xl border border-gray-3 bg-beige p-6"
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <BaseInput
-            label="Saldo Inicial"
-            name="saldoInicial"
-            value={form.saldoInicial}
-            placeholder="140.00"
+            label="Monto"
+            name="monto"
+            value={form.monto}
+            placeholder="100.00"
             required
-            disabled={existe}
             type="number"
+            onChange={onChange}
+          />
+
+          <BaseSelect
+            label="Método de Pago"
+            name="metodoPago"
+            value={form.metodoPago}
+            placeholder="Selecciona método"
+            required
+            options={[
+              { label: "Efectivo", value: MetodoPago.EFECTIVO },
+              { label: "Yape", value: MetodoPago.YAPE },
+              { label: "Plin", value: MetodoPago.PLIN },
+              { label: "Transferencia", value: MetodoPago.TRANSFERENCIA },
+            ]}
+            onChange={onChange}
+          />
+
+          <BaseTarea
+            label="Descripción"
+            name="descripcion"
+            value={form.descripcion}
+            placeholder="Ingreso por venta..."
             onChange={onChange}
           />
         </div>
 
         <div className="mt-8 flex justify-center">
-          <BaseButton type="submit" loading={loading} disabled={existe}>
-            Crear caja
+          <BaseButton type="submit" loading={loading} disabled={!cajaActiva}>
+            Registrar ingreso
           </BaseButton>
         </div>
 
-        {existe ? (
+        {!cajaActiva && (
           <p className="mt-4 text-center text-sm text-red-500">
-            Ya existe una caja abierta. Debes cerrarla antes de abrir otra.
-          </p>
-        ) : (
-          <p className="mt-4 text-center text-sm text-green-600">
-            No hay caja abierta. Puedes abrir una nueva para la sede{" "}
-            {user?.sedeNombre} y el usuario {fullName}.
+            No puedes registrar movimientos porque no hay una caja abierta.
           </p>
         )}
       </form>
 
-      {/* MODALS */}
       <LoadingModal isOpen={loading} />
 
       <StatusModal

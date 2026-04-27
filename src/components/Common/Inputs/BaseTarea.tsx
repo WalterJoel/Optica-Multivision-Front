@@ -42,19 +42,7 @@ export const BaseTarea: React.FC<BaseTextareaProps> = ({
         minLength={minLength}
         maxLength={maxLength}
         onChange={onChange}
-        className="w-full
-          rounded-md
-          border border-gray-3
-          bg-gray-1
-          placeholder:text-gray-400
-          px-4 py-3
-          outline-none
-          duration-200
-          focus:border-transparent
-          focus:shadow-input
-          focus:ring-2
-          focus:ring-blue-light
-          resize-none"
+        className="w-full rounded-2xl border border-gray-3 bg-white p-4.5 outline-none focus:border-blue focus:ring-4 focus:ring-blue/5 transition-all duration-300 placeholder:text-gray-4 text-dark shadow-sm"
       />
     </div>
   );
