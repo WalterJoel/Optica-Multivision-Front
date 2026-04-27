@@ -25,9 +25,13 @@ import AccesoriesPage from "./Accesories/AccesoriesPage";
 import EyeglassesPage from "./Eyeglasses/EyeglassesPage";
 import DiscountPage from "./Discounts/DiscountPage";
 import MovimientoCajaPage from "./MovimientosCaja/MovimientoCajaPage";
+import { useSessionUser } from "@/hooks/session";
 
 const MyAccount = () => {
   const [activeTab, setActiveTab] = useState("clientes");
+
+  //Hooks
+  const { fullName, user } = useSessionUser();
 
   const menuButton = (id: string, label: string, Icon: any) => (
     <button
@@ -62,10 +66,10 @@ const MyAccount = () => {
                   </div>
 
                   <div>
-                    <p className="font-medium text-dark mb-0.5">
-                      James Septimus
+                    <p className="font-medium text-dark mb-0.5">{fullName}</p>
+                    <p className="text-custom-xs">
+                      Miembro con rol {user?.role}
                     </p>
-                    <p className="text-custom-xs">Member Since Sep 2020</p>
                   </div>
                 </div>
 
