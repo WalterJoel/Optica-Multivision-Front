@@ -23,6 +23,7 @@ export type IValidarCajaAbiertaResponse = {
 };
 export interface ICerrarCaja {
   cajaId: number;
+  saldoFinal: number;
 }
 
 export enum TipoMovimiento {

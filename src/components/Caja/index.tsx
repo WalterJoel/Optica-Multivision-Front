@@ -1,267 +1,249 @@
-// "use client";
-// import React, { useState } from "react";
-// import Breadcrumb from "../Common/Breadcrumb";
-// import Image from "next/image";
-// import AddressModal from "./AddressModal";
-// import Orders from "../Orders";
-// import UsersTab from "./Usuarios/UsersPage";
-// import SedesPage from "./Stores/StorePage";
-// import KitPage from "./Kits/KitPage";
-// import {
-//   LayoutDashboard,
-//   ScanEye,
-//   User,
-//   BoomBox,
-//   DollarSign,
-// } from "lucide-react";
-// import ClientsPage from "./Clients/ClientsPage";
-// import AccesoriesPage from "./Accesories/AccesoriesPage";
-// import EyeglassesPage from "./Eyeglasses/EyeglassesPage";
-// import DiscountPage from "./Discounts/DiscountPage";
+"use client";
 
-// const Caja = () => {
-//   const [activeTab, setActiveTab] = useState("clientes");
-//   const [addressModal, setAddressModal] = useState(false);
+import React, { useState, useRef, useEffect } from "react";
+import { CheckCircle2, Search } from "lucide-react";
+import { useSearchEyeglassByQr } from "@/hooks/products/eyeglasses/useSearchEyeGlassByQr";
+import { useUpdateStockProductos } from "@/hooks/products/stock/useUpdateStockProductos";
+import { IEyeglassQrResponse, IUpdateStockProductos } from "@/types/products";
+import {
+  StatusModal,
+  LoadingModal,
+  ModalFrameWrapper,
+} from "@/components/Common/modal";
+import { STATUS_MODAL } from "@/commons/constants";
+import { BaseButton } from "../Common/Buttons";
 
-//   const openAddressModal = () => {
-//     setAddressModal(true);
-//   };
+// Modales
+// import { OutdatedProductsModal } from "./OutdatedProductsModal";
 
-//   const closeAddressModal = () => {
-//     setAddressModal(false);
-//   };
+export default function InventarioMultivision() {
+  const [busqueda, setBusqueda] = useState("");
+  const [lote, setLote] = useState<IEyeglassQrResponse[]>([]);
+  const [boxItem, setBoxItem] = useState<IEyeglassQrResponse | null>(null);
+  const [contador, setContador] = useState(0);
 
-//   return (
-//     <>
-//       <Breadcrumb title={"Mantenimiento"} pages={["Caja"]} />
+  const [typeModal, setTypeModal] = useState<string>("");
+  const [openModal, setOpenModal] = useState<boolean>(false);
 
-//       <section className="overflow-hidden py-20 bg-gray-2">
-//         <div className="max-w-[1600px] w-full mx-auto px-4 sm:px-8 xl:px-10">
-//           <div className="flex flex-col xl:flex-row gap-7.5 items-stretch">
-//             <div className="xl:w-[350px] w-full bg-white rounded-xl shadow-1 flex-shrink-0">
-//               <div className="flex xl:flex-col">
-//                 <div className="hidden lg:flex flex-wrap items-center gap-5 py-6 px-4 sm:px-7.5 xl:px-9 border-r xl:border-r-0 xl:border-b border-gray-3">
-//                   <div className="max-w-[64px] w-full h-16 rounded-full overflow-hidden">
-//                     <Image
-//                       src="/images/users/user-04.jpg"
-//                       alt="user"
-//                       width={64}
-//                       height={64}
-//                     />
-//                   </div>
+  //Modales
 
-//                   <div>
-//                     <p className="font-medium text-dark mb-0.5">
-//                       James Septimus
-//                     </p>
-//                     <p className="text-custom-xs">Member Since Sep 2020</p>
-//                   </div>
-//                 </div>
+  const [dictStocks, setDictStocks] = useState<{ [key: string]: string }>({});
 
-//                 <div className="p-4 sm:p-7.5 xl:p-9">
-//                   <div className="flex flex-wrap xl:flex-nowrap xl:flex-col gap-4">
-//                     <button
-//                       onClick={() => setActiveTab("clientes")}
-//                       className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
-//                         activeTab === "clientes"
-//                           ? "text-white bg-blue"
-//                           : "text-dark-2 bg-gray-1"
-//                       }`}
-//                     >
-//                       <User size={25} />
-//                       Clientes
-//                     </button>
+  const inputRef = useRef<HTMLInputElement>(null);
 
-//                     <button
-//                       onClick={() => setActiveTab("sedes")}
-//                       className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
-//                         activeTab === "sedes"
-//                           ? "text-white bg-blue"
-//                           : "text-dark-2 bg-gray-1"
-//                       }`}
-//                     >
-//                       <svg
-//                         width="22"
-//                         height="22"
-//                         viewBox="0 0 24 24"
-//                         className="fill-current"
-//                       >
-//                         <path d="M12 2L2 7v13h20V7L12 2zm0 2.2L19.6 8H4.4L12 4.2z" />
-//                       </svg>
-//                       Sedes
-//                     </button>
+  // Hooks
+  const { eyeglass, searchEyeglassByQr } = useSearchEyeglassByQr();
+  const { loading, statusMessage, success, updateStockProductos } =
+    useUpdateStockProductos();
 
-//                     <button
-//                       onClick={() => setActiveTab("users")}
-//                       className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
-//                         activeTab === "users"
-//                           ? "text-white bg-blue"
-//                           : "text-dark-2 bg-gray-1"
-//                       }`}
-//                     >
-//                       <svg
-//                         className="fill-current"
-//                         width="22"
-//                         height="22"
-//                         viewBox="0 0 24 24"
-//                       >
-//                         <path d="M12 12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4zm0 2c-3.3 0-8 1.7-8 5v1h16v-1c0-3.3-4.7-5-8-5z" />
-//                       </svg>
-//                       Usuarios
-//                     </button>
+  const procesarProductoEncontrado = (data: IEyeglassQrResponse) => {
+    const stockId = String(data.stock.id);
+    const existeEnLote = lote.find((item) => item.stock.id === data.stock.id);
 
-//                     <button
-//                       onClick={() => setActiveTab("combos")}
-//                       className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
-//                         activeTab === "combos"
-//                           ? "text-white bg-blue"
-//                           : "text-dark-2 bg-gray-1"
-//                       }`}
-//                     >
-//                       <ScanEye size={25} />
-//                       Combos
-//                     </button>
+    if (existeEnLote) {
+      const valorActual = dictStocks[stockId] || "0";
+      const nuevoValor = String(Number(valorActual) + 1);
 
-//                     <button
-//                       onClick={() => setActiveTab("downloads")}
-//                       className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
-//                         activeTab === "downloads"
-//                           ? "text-white bg-blue"
-//                           : "text-dark-2 bg-gray-1"
-//                       }`}
-//                     >
-//                       <svg
-//                         className="fill-current"
-//                         width="22"
-//                         height="22"
-//                         viewBox="0 0 22 22"
-//                         fill="none"
-//                         xmlns="http://www.w3.org/2000/svg"
-//                       >
-//                         <path
-//                           d="M11.5074 15.1306C11.3772 15.273 11.193 15.3542 11 15.3542C10.807 15.3542 10.6229 15.273 10.4926 15.1306L6.82594 11.1202C6.56973 10.8399 6.5892 10.4051 6.86943 10.1489C7.14966 9.89265 7.58452 9.91212 7.84073 10.1923L10.3125 12.8958V2.75C10.3125 2.3703 10.6203 2.0625 11 2.0625C11.3797 2.0625 11.6875 2.3703 11.6875 2.75V12.8958L14.1593 10.1923C14.4155 9.91212 14.8503 9.89265 15.1306 10.1489C15.4108 10.4051 15.4303 10.8399 15.1741 11.1202L11.5074 15.1306Z"
-//                           fill=""
-//                         />
-//                         <path
-//                           d="M3.4375 13.75C3.4375 13.3703 3.1297 13.0625 2.75 13.0625C2.37031 13.0625 2.0625 13.3703 2.0625 13.75V13.8003C2.06248 15.0539 2.06247 16.0644 2.16931 16.8591C2.28025 17.6842 2.51756 18.3789 3.06932 18.9307C3.62108 19.4824 4.3158 19.7198 5.1409 19.8307C5.93562 19.9375 6.94608 19.9375 8.1997 19.9375H13.8003C15.0539 19.9375 16.0644 19.9375 16.8591 19.8307C17.6842 19.7198 18.3789 19.4824 18.9307 18.9307C19.4824 18.3789 19.7198 17.6842 19.8307 16.8591C19.9375 16.0644 19.9375 15.0539 19.9375 13.8003V13.75C19.9375 13.3703 19.6297 13.0625 19.25 13.0625C18.8703 13.0625 18.5625 13.3703 18.5625 13.75C18.5625 15.0658 18.561 15.9835 18.468 16.6759C18.3775 17.3485 18.2121 17.7047 17.9584 17.9584C17.7047 18.2121 17.3485 18.3775 16.6759 18.4679C15.9835 18.561 15.0658 18.5625 13.75 18.5625H8.25C6.9342 18.5625 6.01652 18.561 5.32411 18.4679C4.65148 18.3775 4.29529 18.2121 4.04159 17.9584C3.78789 17.7047 3.62249 17.3485 3.53205 16.6759C3.43896 15.9835 3.4375 15.0658 3.4375 13.75Z"
-//                           fill=""
-//                         />
-//                       </svg>
-//                       Downloads
-//                     </button>
+      setDictStocks((prev) => ({ ...prev, [stockId]: nuevoValor }));
+      setBoxItem(existeEnLote);
+    } else {
+      setLote((prev) => [data, ...prev]);
+      setDictStocks((prev) => ({ ...prev, [stockId]: "1" }));
+      setBoxItem(data);
+    }
+    setContador((c) => c + 1);
+  };
 
-//                     <button
-//                       onClick={() => setActiveTab("accesories")}
-//                       className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
-//                         activeTab === "accesories"
-//                           ? "text-white bg-blue"
-//                           : "text-dark-2 bg-gray-1"
-//                       }`}
-//                     >
-//                       <BoomBox size={25} />
-//                       Accesorios
-//                     </button>
+  const handleScan = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key !== "Enter") return;
 
-//                     <button
-//                       onClick={() => setActiveTab("eyeglasses")}
-//                       className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
-//                         activeTab === "eyeglasses"
-//                           ? "text-white bg-blue"
-//                           : "text-dark-2 bg-gray-1"
-//                       }`}
-//                     >
-//                       <ScanEye size={25} />
-//                       Monturas
-//                     </button>
+    // Captura directa para evitar el lag del estado asíncrono
+    const codigo = e.currentTarget.value.trim();
+    if (!codigo) return;
 
-//                     <button
-//                       onClick={() => setActiveTab("discounts")}
-//                       className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
-//                         activeTab === "discounts"
-//                           ? "text-white bg-blue"
-//                           : "text-dark-2 bg-gray-1"
-//                       }`}
-//                     >
-//                       <DollarSign size={25} />
-//                       Descuentos
-//                     </button>
-//                   </div>
-//                 </div>
-//               </div>
-//             </div>
+    searchEyeglassByQr(codigo, 1);
 
-//             <div className="flex-grow">
-//               <div
-//                 className={`w-full bg-white rounded-xl shadow-1 ${
-//                   activeTab === "sedes" ? "block" : "hidden"
-//                 }`}
-//               >
-//                 <SedesPage />
-//               </div>
+    // Limpieza inmediata para el siguiente escaneo
+    setBusqueda("");
+    if (inputRef.current) {
+      inputRef.current.value = "";
+    }
+  };
 
-//               <div
-//                 className={`w-full bg-white rounded-xl shadow-1 ${
-//                   activeTab === "clientes" ? "block" : "hidden"
-//                 }`}
-//               >
-//                 <ClientsPage />
-//               </div>
+  const updateManual = (stockId: string, valor: string) => {
+    setDictStocks((prev) => ({ ...prev, [stockId]: valor }));
+  };
 
-//               <div
-//                 className={`w-full bg-white rounded-xl shadow-1 ${
-//                   activeTab === "users" ? "block" : "hidden"
-//                 }`}
-//               >
-//                 <UsersTab />
-//               </div>
+  const productosModificados = lote.filter((p) => {
+    const stockId = String(p.stock.id);
+    const stockNuevo = dictStocks[stockId];
+    return stockNuevo !== "" && Number(stockNuevo) !== p.stock.cantidad;
+  });
 
-//               <div
-//                 className={`w-full bg-white rounded-xl shadow-1 ${
-//                   activeTab === "combos" ? "block" : "hidden"
-//                 }`}
-//               >
-//                 <KitPage />
-//               </div>
+  const guardarInventario = async () => {
+    const payload: IUpdateStockProductos = {
+      items: productosModificados.map((p) => ({
+        stockId: p.stock.id,
+        cantidad: Number(dictStocks[String(p.stock.id)]),
+      })),
+    };
+    await updateStockProductos(payload);
+    setIsModalOpen(false);
+  };
 
-//               <div
-//                 className={`w-full bg-white rounded-xl shadow-1 py-9.5 px-4 sm:px-7.5 xl:px-10 ${
-//                   activeTab === "downloads" ? "block" : "hidden"
-//                 }`}
-//               >
-//                 <p>You don&apos;t have any download</p>
-//               </div>
+  useEffect(() => {
+    if (eyeglass && eyeglass.montura) {
+      procesarProductoEncontrado(eyeglass);
+    }
+  }, [eyeglass]);
 
-//               <div
-//                 className={`w-full bg-white rounded-xl shadow-1 ${
-//                   activeTab === "accesories" ? "block" : "hidden"
-//                 }`}
-//               >
-//                 <AccesoriesPage />
-//               </div>
+  useEffect(() => {
+    if (!loading && (success || statusMessage)) {
+      if (success) {
+        setTypeModal(STATUS_MODAL.SUCCESS_MODAL);
+      } else {
+        setTypeModal(STATUS_MODAL.ERROR_MODAL);
+      }
+      setOpenModal(true);
+    }
+  }, [loading, success, statusMessage]);
 
-//               <div
-//                 className={`w-full bg-white rounded-xl shadow-1 ${
-//                   activeTab === "eyeglasses" ? "block" : "hidden"
-//                 }`}
-//               >
-//                 <EyeglassesPage />
-//               </div>
+  return (
+    <>
+      <section className="overflow-hidden pt-[200px] pb-20 bg-beige min-h-screen">
+        <div className="max-w-[1740px] w-full mx-auto px-4 sm:px-8 xl:px-10">
+          <div className="max-w-[1400px] mx-auto">
+            <div className="sticky top-0 z-40 bg-beige pb-4">
+              <header className="bg-white p-4 rounded-2xl border border-blue-light-4 shadow-sm flex items-center gap-6">
+                <div className="flex items-center gap-3 pr-5 border-r border-slate-100 min-w-[240px] shrink-0">
+                  <div
+                    className={`w-12 h-12 rounded-xl flex items-center justify-center text-white font-black text-xl shadow-md transition-colors ${loading ? "bg-orange-400 animate-pulse" : "bg-blue"}`}
+                  >
+                    {contador}
+                  </div>
+                  <div className="flex flex-col justify-center">
+                    <h1 className="text-[9px] font-black text-blue uppercase tracking-widest leading-none mb-1">
+                      Inventario
+                    </h1>
+                    <span className="text-slate-900 text-xl font-black tracking-tighter leading-none uppercase">
+                      <span className="text-blue">Monturas</span>
+                    </span>
+                  </div>
+                </div>
 
-//               <div
-//                 className={`w-full bg-white rounded-xl shadow-1 ${
-//                   activeTab === "discounts" ? "block" : "hidden"
-//                 }`}
-//               >
-//                 <DiscountPage />
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </section>
+                <BaseButton
+                  fullWidth={false}
+                  onClick={() => setIsModalOpen(true)}
+                >
+                  Finalizar
+                </BaseButton>
+                <BaseButton
+                  variant="secondary"
+                  fullWidth={false}
+                  onClick={() => setOpenModalOutdated(true)}
+                >
+                  Por Actualizar
+                </BaseButton>
+              </header>
 
-//       <AddressModal isOpen={addressModal} closeModal={closeAddressModal} />
-//     </>
-//   );
-// };
+              {/* BOX ITEM ACTUAL */}
+              <div
+                className={`transition-all duration-300 overflow-hidden ${boxItem ? "mt-4 opacity-100 max-h-24" : "opacity-0 max-h-0"}`}
+              >
+                <div className="mx-auto max-w-2xl grid grid-cols-[80px_1fr_120px] bg-blue border border-blue-dark rounded-xl p-2 items-center gap-3 shadow-lg shadow-blue/20">
+                  <div className="flex justify-center text-4xl">👓</div>
+                  <div className="flex flex-col justify-center min-w-0">
+                    <h2 className="text-white font-black text-2xl uppercase tracking-tighter leading-none truncate">
+                      {boxItem?.montura?.marca}
+                    </h2>
+                    <p className="text-blue-light-5 font-bold font-mono text-[10px] uppercase mt-0.5">
+                      Egresos
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-// export default Caja;
+            {/* TABLAS */}
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+              {[
+                lote.slice(0, Math.ceil(lote.length / 2)),
+                lote.slice(Math.ceil(lote.length / 2)),
+              ].map((col, cIdx) => (
+                <div
+                  key={cIdx}
+                  className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm"
+                >
+                  <table className="w-full text-left">
+                    <thead className="bg-slate-50 border-b border-slate-100">
+                      <tr className="text-[10px] font-black text-blue uppercase tracking-widest">
+                        <th className="py-4 px-6 w-12 text-center">#</th>
+                        <th className="py-4 px-6">MONTURA / MODELO</th>
+                        <th className="py-4 px-6 text-center">STOCK SISTEMA</th>
+                        <th className="py-4 px-6 text-center">NUEVO STOCK</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-50">
+                      {col.map((item, i) => {
+                        const stockId = String(item.stock.id);
+                        const isSelected = item.stock.id === boxItem?.stock?.id;
+                        return (
+                          <tr
+                            key={stockId}
+                            className={`transition-colors ${isSelected ? "bg-blue-light-6" : "hover:bg-slate-50"}`}
+                          >
+                            <td className="py-3 px-6 text-[10px] font-bold text-slate-300 text-center">
+                              {cIdx === 0
+                                ? i + 1
+                                : Math.ceil(lote.length / 2) + i + 1}
+                            </td>
+                            <td className="py-3 px-6">
+                              <p
+                                className={`font-bold text-sm uppercase ${isSelected ? "text-blue" : "text-slate-800"}`}
+                              >
+                                {item.montura.marca} {item.montura.codigo}
+                              </p>
+                              <p className="text-[9px] font-mono font-bold text-slate-400 uppercase leading-none">
+                                {item.montura.codigoQr}
+                              </p>
+                            </td>
+                            <td className="py-3 px-6 text-center text-sm font-bold text-slate-500">
+                              {item.stock.cantidad}
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <input
+                                type="text"
+                                value={dictStocks[stockId] || ""}
+                                onChange={(e) =>
+                                  updateManual(stockId, e.target.value)
+                                }
+                                className={`w-12 py-1.5 border-2 rounded-lg text-center font-black text-sm ${isSelected ? "border-blue text-blue bg-white" : "border-slate-100 text-slate-400 bg-slate-50"}`}
+                              />
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+      <LoadingModal isOpen={loading} />
+
+      <StatusModal
+        isOpen={openModal}
+        type={typeModal}
+        message={statusMessage}
+        onClose={() => setOpenModal(false)}
+      />
+
+      {/* <OutdatedProductsModal
+        isOpenModalOutdated={isOpenModalOutdated}
+        onCloseModalOutdated={() => setOpenModalOutdated(false)}
+      /> */}
+    </>
+  );
+}

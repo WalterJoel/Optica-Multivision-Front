@@ -1,28 +1,29 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ICerrarCaja } from "@/types/caja";
-import { useCerrarCaja, useValidarCajaAbierta } from "@/hooks/caja";
+import { BaseInput } from "@/components/Common/Inputs/BaseInput";
+import { BaseButton } from "@/components/Common/Buttons/BaseButton";
+import { ICreateCaja } from "@/types/caja";
+import { useCreateCaja, useValidarCajaAbierta } from "@/hooks/caja";
 import { StatusModal, LoadingModal } from "@/components/Common/modal";
 import { STATUS_MODAL } from "@/commons/constants";
-import { BaseButton } from "@/components/Common/Buttons";
 import { useSessionUser } from "@/hooks/session";
-import { BaseInput } from "@/components/Common/Inputs";
 
-const emptyForm: ICerrarCaja = {
-  cajaId: 0,
-  saldoFinal: 0,
+const emptyForm: ICreateCaja = {
+  saldoInicial: 0,
+  sedeId: 0,
+  userId: 0,
 };
 
-export default function CerrarCaja() {
-  const [form, setForm] = useState<ICerrarCaja>(emptyForm);
+export default function RegistrarIngreso() {
+  const [form, setForm] = useState<ICreateCaja>(emptyForm);
   const [typeModal, setTypeModal] = useState("");
   const [openModal, setOpenModal] = useState(false);
 
   // Hooks
-  const { cerrarCaja, success, statusMessage, loading } = useCerrarCaja();
+  const { addCaja, success, statusMessage, loading } = useCreateCaja();
   const { validarCajaAbierta, caja, existe } = useValidarCajaAbierta();
-  const { sedeId } = useSessionUser();
+  const { sedeId, userId, fullName, user } = useSessionUser();
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((p) => ({
@@ -31,12 +32,10 @@ export default function CerrarCaja() {
     }));
   };
 
-  const cerrar = async (e: React.FormEvent) => {
+  const createCaja = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!form.cajaId) return;
-
-    await cerrarCaja(form);
+    await addCaja(form);
 
     if (success) {
       setForm(emptyForm);
@@ -45,64 +44,67 @@ export default function CerrarCaja() {
 
   useEffect(() => {
     if (!loading && (success || statusMessage)) {
-      setTypeModal(
-        success ? STATUS_MODAL.SUCCESS_MODAL : STATUS_MODAL.ERROR_MODAL,
-      );
+      if (success) {
+        setTypeModal(STATUS_MODAL.SUCCESS_MODAL);
+        setForm((p) => ({ ...p, saldoInicial: 0 }));
+      } else {
+        setTypeModal(STATUS_MODAL.ERROR_MODAL);
+      }
       setOpenModal(true);
     }
   }, [loading, success, statusMessage]);
 
+  // Agrego data desde mi session al formulario
   useEffect(() => {
-    if (sedeId) {
+    if (sedeId && userId) {
+      setForm({
+        saldoInicial: 0,
+        sedeId,
+        userId,
+      });
+
       validarCajaAbierta(sedeId);
     }
-  }, [sedeId]);
-
-  useEffect(() => {
-    if (caja?.id) {
-      setForm((p) => ({
-        ...p,
-        cajaId: caja.id,
-      }));
-    }
-  }, [caja]);
+  }, [sedeId, userId]);
 
   return (
     <>
       <form
-        onSubmit={cerrar}
+        onSubmit={createCaja}
         className="w-full rounded-xl border border-gray-3 bg-beige p-6"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
           <BaseInput
-            label="Saldo Final"
-            name="saldoFinal"
-            value={form.saldoFinal}
+            label="Saldo Inicial"
+            name="saldoInicial"
+            value={form.saldoInicial}
             placeholder="140.00"
-            min={1}
-            disabled={!existe}
-            type="decimal"
+            required
+            disabled={existe}
+            type="number"
             onChange={onChange}
           />
         </div>
 
         <div className="mt-8 flex justify-center">
-          <BaseButton type="submit" loading={loading} disabled={!existe}>
-            Cerrar caja
+          <BaseButton type="submit" loading={loading} disabled={existe}>
+            Crear caja
           </BaseButton>
         </div>
 
         {existe ? (
           <p className="mt-4 text-center text-sm text-red-500">
-            Hay una caja abierta. Puedes cerrarla.
+            Ya existe una caja abierta. Debes cerrarla antes de abrir otra.
           </p>
         ) : (
           <p className="mt-4 text-center text-sm text-green-600">
-            No hay caja abierta.
+            No hay caja abierta. Puedes abrir una nueva para la sede{" "}
+            {user?.sedeNombre} y el usuario {fullName}.
           </p>
         )}
       </form>
 
+      {/* MODALS */}
       <LoadingModal isOpen={loading} />
 
       <StatusModal

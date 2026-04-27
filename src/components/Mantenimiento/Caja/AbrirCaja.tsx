@@ -36,6 +36,10 @@ export default function CreateCaja() {
     e.preventDefault();
 
     await addCaja(form);
+
+    if (success) {
+      setForm(emptyForm);
+    }
   };
 
   useEffect(() => {
@@ -76,6 +80,7 @@ export default function CreateCaja() {
             value={form.saldoInicial}
             placeholder="140.00"
             required
+            disabled={existe}
             type="number"
             onChange={onChange}
           />
@@ -89,8 +94,7 @@ export default function CreateCaja() {
 
         {existe ? (
           <p className="mt-4 text-center text-sm text-red-500">
-            Ya existe una caja abierta (ID: {caja?.id}). Debes cerrarla antes de
-            abrir otra.
+            Ya existe una caja abierta. Debes cerrarla antes de abrir otra.
           </p>
         ) : (
           <p className="mt-4 text-center text-sm text-green-600">
