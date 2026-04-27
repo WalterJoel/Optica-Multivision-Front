@@ -19,53 +19,48 @@ export default function CerrarCaja() {
   const [typeModal, setTypeModal] = useState("");
   const [openModal, setOpenModal] = useState(false);
 
-  // Hooks
-  const { cerrarCaja, success, statusMessage, loading } = useCerrarCaja();
+  // 🔥 hooks
+  const { cerrarCaja, statusMessage, loading } = useCerrarCaja();
   const { validarCajaAbierta, caja, existe } = useValidarCajaAbierta();
   const { sedeId } = useSessionUser();
 
+  // 🔥 validar caja al entrar
+  useEffect(() => {
+    if (sedeId) validarCajaAbierta(sedeId);
+  }, [sedeId]);
+
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
     setForm((p) => ({
       ...p,
-      [e.target.name]: e.target.value,
+      [name]: name === "saldoFinal" ? Number(value) : value,
     }));
   };
 
   const cerrar = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!form.cajaId) return;
+    if (!existe || !caja?.id) return;
 
-    await cerrarCaja(form);
+    const payload: ICerrarCaja = {
+      cajaId: caja.id,
+      saldoFinal: Number(form.saldoFinal),
+    };
 
-    if (success) {
+    const result = await cerrarCaja(payload);
+
+    if (result?.success) {
       setForm(emptyForm);
+      await validarCajaAbierta(sedeId);
+
+      setTypeModal(STATUS_MODAL.SUCCESS_MODAL);
+    } else {
+      setTypeModal(STATUS_MODAL.ERROR_MODAL);
     }
+
+    setOpenModal(true);
   };
-
-  useEffect(() => {
-    if (!loading && (success || statusMessage)) {
-      setTypeModal(
-        success ? STATUS_MODAL.SUCCESS_MODAL : STATUS_MODAL.ERROR_MODAL,
-      );
-      setOpenModal(true);
-    }
-  }, [loading, success, statusMessage]);
-
-  useEffect(() => {
-    if (sedeId) {
-      validarCajaAbierta(sedeId);
-    }
-  }, [sedeId]);
-
-  useEffect(() => {
-    if (caja?.id) {
-      setForm((p) => ({
-        ...p,
-        cajaId: caja.id,
-      }));
-    }
-  }, [caja]);
 
   return (
     <>
@@ -80,8 +75,9 @@ export default function CerrarCaja() {
             value={form.saldoFinal}
             placeholder="140.00"
             min={1}
+            required
             disabled={!existe}
-            type="decimal"
+            type="number"
             onChange={onChange}
           />
         </div>

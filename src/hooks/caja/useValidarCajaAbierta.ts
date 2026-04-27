@@ -11,23 +11,41 @@ export function useValidarCajaAbierta() {
 
   const validarCajaAbierta = async (sedeId: number) => {
     setLoading(true);
-    setCaja(null);
 
     try {
       const res = await validarCajaAbiertaService(sedeId);
 
-      setCaja(res.caja);
+      const data = res?.caja || null;
 
-      setMessage(res.caja ? "Caja abierta" : "No hay caja abierta");
+      setCaja(data);
+
+      setMessage(
+        data?.estado === "ABIERTA" ? "Caja abierta" : "No hay caja abierta",
+      );
+
+      return data;
     } catch (err: any) {
-      setMessage(err.response?.data?.message || "Error al validar caja");
+      setCaja(null);
+
+      const msg = err.response?.data?.message || "Error al validar caja";
+
+      setMessage(msg);
+
+      return null;
     } finally {
       setLoading(false);
     }
   };
 
+  // 🔥 helper opcional para refrescar sin sedeId externo
+  const refresh = async (sedeId?: number) => {
+    if (!sedeId) return null;
+    return await validarCajaAbierta(sedeId);
+  };
+
   return {
     validarCajaAbierta,
+    refresh,
     caja,
     existe,
     loading,

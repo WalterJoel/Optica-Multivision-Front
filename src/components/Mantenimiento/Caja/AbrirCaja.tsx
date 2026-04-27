@@ -21,48 +21,47 @@ export default function CreateCaja() {
   const [openModal, setOpenModal] = useState(false);
 
   // Hooks
-  const { createCaja, success, statusMessage, loading } = useCreateCaja();
-  const { validarCajaAbierta, caja, existe } = useValidarCajaAbierta();
+  const { createCaja, statusMessage, loading } = useCreateCaja();
+  const { validarCajaAbierta, existe } = useValidarCajaAbierta();
   const { sedeId, userId, fullName, user } = useSessionUser();
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
     setForm((p) => ({
       ...p,
-      [e.target.name]: e.target.value,
+      [name]: name === "saldoInicial" ? Number(value) : value,
     }));
   };
 
+  // CREAR CAJA
   const create = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    await createCaja(form);
+    const result = await createCaja(form);
 
-    if (success) {
+    if (result?.success) {
+      await validarCajaAbierta(sedeId);
       setForm(emptyForm);
+
+      setTypeModal(STATUS_MODAL.SUCCESS_MODAL);
+    } else {
+      setTypeModal(STATUS_MODAL.ERROR_MODAL);
     }
+
+    setOpenModal(true);
   };
 
-  useEffect(() => {
-    if (!loading && (success || statusMessage)) {
-      if (success) {
-        setTypeModal(STATUS_MODAL.SUCCESS_MODAL);
-        setForm((p) => ({ ...p, saldoInicial: 0 }));
-      } else {
-        setTypeModal(STATUS_MODAL.ERROR_MODAL);
-      }
-      setOpenModal(true);
-    }
-  }, [loading, success, statusMessage]);
-
-  // Agrego data desde mi session al formulario
+  // INIT + VALIDACIÓN CAJA
   useEffect(() => {
     if (sedeId && userId) {
-      setForm({
+      const init = {
         saldoInicial: 0,
         sedeId,
         userId,
-      });
+      };
 
+      setForm(init);
       validarCajaAbierta(sedeId);
     }
   }, [sedeId, userId]);

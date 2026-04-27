@@ -1,6 +1,6 @@
 export enum TipoMovimiento {
-  INGRESO = 'INGRESO',
-  EGRESO = 'EGRESO',
+  INGRESO = "INGRESO",
+  EGRESO = "EGRESO",
 }
 export interface ICrearMovimientoCaja {
   cajaId: number;

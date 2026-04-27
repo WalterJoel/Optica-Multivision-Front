@@ -1,32 +1,47 @@
-import { useState } from 'react';
-import { ICreateCaja } from '@/types/caja';
-import { createCajaService } from '@/services/caja';
+import { useState } from "react";
+import { ICreateCaja } from "@/types/caja";
+import { createCajaService } from "@/services/caja";
 
 export function useCreateCaja() {
   const [loading, setLoading] = useState(false);
-  const [statusMessage, setMessage] = useState<string>('');
-  const [success, setSuccess] = useState<boolean>(false);
+  const [statusMessage, setMessage] = useState<string>("");
 
   const createCaja = async (payload: ICreateCaja) => {
     setLoading(true);
-    setSuccess(false);
-    setMessage('');
+    setMessage("");
 
     try {
-      await createCajaService(payload);
-      setSuccess(true);
-      setMessage('Caja creada correctamente');
+      const res = await createCajaService(payload);
+
+      const data = res;
+
+      setMessage("Caja creada correctamente");
+
+      return {
+        success: true,
+        data,
+      };
     } catch (err: any) {
       const backendMessage = err.response?.data?.message;
-      setMessage(
-        backendMessage
-          ? 'Error al registrar caja: ' + backendMessage
-          : 'Error al registrar caja',
-      );
+
+      const msg = backendMessage
+        ? "Error al registrar caja: " + backendMessage
+        : "Error al registrar caja";
+
+      setMessage(msg);
+
+      return {
+        success: false,
+        error: err,
+      };
     } finally {
       setLoading(false);
     }
   };
 
-  return { createCaja, loading, statusMessage, success };
+  return {
+    createCaja,
+    loading,
+    statusMessage,
+  };
 }
