@@ -21,7 +21,7 @@ export default function CreateCaja() {
   const [openModal, setOpenModal] = useState(false);
 
   // Hooks
-  const { addCaja, success, statusMessage, loading } = useCreateCaja();
+  const { createCaja, success, statusMessage, loading } = useCreateCaja();
   const { validarCajaAbierta, caja, existe } = useValidarCajaAbierta();
   const { sedeId, userId, fullName, user } = useSessionUser();
 
@@ -32,10 +32,10 @@ export default function CreateCaja() {
     }));
   };
 
-  const createCaja = async (e: React.FormEvent) => {
+  const create = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    await addCaja(form);
+    await createCaja(form);
 
     if (success) {
       setForm(emptyForm);
@@ -70,7 +70,7 @@ export default function CreateCaja() {
   return (
     <>
       <form
-        onSubmit={createCaja}
+        onSubmit={create}
         className="w-full rounded-xl border border-gray-3 bg-beige p-6"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">

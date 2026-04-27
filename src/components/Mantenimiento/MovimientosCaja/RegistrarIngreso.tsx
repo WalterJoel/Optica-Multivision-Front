@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { BaseInput } from "@/components/Common/Inputs/BaseInput";
 import { BaseButton } from "@/components/Common/Buttons/BaseButton";
-import { ICrearMovimientoCaja, TipoMovimiento } from "@/types/caja";
+import { ICrearMovimientoCaja, TipoMovimiento } from "@/types/caja-movimiento";
 import { useValidarCajaAbierta } from "@/hooks/caja";
 import { useCrearMovimientoCaja } from "@/hooks/caja-movimiento";
 import { StatusModal, LoadingModal } from "@/components/Common/modal";
@@ -89,6 +89,7 @@ export default function RegistrarIngreso() {
             placeholder="100.00"
             required
             type="number"
+            disabled={!cajaActiva}
             onChange={onChange}
           />
 
@@ -98,6 +99,7 @@ export default function RegistrarIngreso() {
             value={form.metodoPago}
             placeholder="Selecciona método"
             required
+            disabled={!cajaActiva}
             options={[
               { label: "Efectivo", value: MetodoPago.EFECTIVO },
               { label: "Yape", value: MetodoPago.YAPE },
@@ -113,6 +115,7 @@ export default function RegistrarIngreso() {
             value={form.descripcion}
             placeholder="Ingreso por venta..."
             onChange={onChange}
+            disabled={!cajaActiva}
           />
         </div>
 
