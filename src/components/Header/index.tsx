@@ -139,13 +139,6 @@ const Header = () => {
                   <div className="h-full w-full rounded-full bg-gradient-to-br from-blue to-blue-dark flex items-center justify-center text-white text-xs font-black shadow-md overflow-hidden ring-2 ring-white">
                     {foto || fullName?.charAt(0)}
                   </div>
-                  <div className="absolute -bottom-0.5 -right-0.5 bg-yellow-dark rounded-full p-1 border-2 border-white shadow-sm">
-                    <ShieldCheck
-                      size={10}
-                      className="text-dark"
-                      strokeWidth={3}
-                    />
-                  </div>
                 </div>
                 <div className="hidden lg:flex flex-col items-start leading-none ml-1">
                   <span className="text-[11px] font-black text-slate-800 uppercase tracking-tight">
