@@ -9,7 +9,15 @@ import { BaseButton } from "@/components/Common/Buttons/BaseButton";
 import { LoadingModal, StatusModal } from "@/components/Common/modal";
 import { STATUS_MODAL } from "@/commons/constants";
 
-const emptyForm = {
+/* TIPADO LIMPIO */
+type AccessoryForm = {
+  nombre: string;
+  precio: number;
+  atributo: string;
+  imagenUrl: string;
+};
+
+const emptyForm: AccessoryForm = {
   nombre: "",
   precio: 0,
   atributo: "",
@@ -18,6 +26,7 @@ const emptyForm = {
 
 export default function ListAccesories() {
   const { accessories, loading, getAllAccessoriesData } = useAccessories();
+
   const {
     updateAccessory,
     loading: updating,
@@ -25,78 +34,85 @@ export default function ListAccesories() {
     success,
   } = useUpdateAccessory();
 
-  const [openEdit, setOpenEdit] = useState(false);
   const [selected, setSelected] = useState<IAccessory | null>(null);
-  const [form, setForm] = useState(emptyForm);
-  const [typeModal, setTypeModal] = useState<string>("");
-  const [openStatusModal, setOpenStatusModal] = useState(false);
+  const [form, setForm] = useState<AccessoryForm>(emptyForm);
 
+  const [statusOpen, setStatusOpen] = useState(false);
+  const [statusType, setStatusType] = useState<string>("");
+
+  /* LOAD DATA */
   useEffect(() => {
     getAllAccessoriesData();
   }, []);
 
+  /* STATUS HANDLER */
   useEffect(() => {
     if (!updating && statusMessage) {
-      setTypeModal(success ? STATUS_MODAL.SUCCESS_MODAL : STATUS_MODAL.ERROR_MODAL);
-      setOpenStatusModal(true);
+      setStatusType(
+        success ? STATUS_MODAL.SUCCESS_MODAL : STATUS_MODAL.ERROR_MODAL,
+      );
+
+      setStatusOpen(true);
 
       if (success) {
-        setOpenEdit(false);
+        setSelected(null);
         getAllAccessoriesData();
       }
     }
   }, [updating, success, statusMessage]);
 
-  const openEditModal = (item: IAccessory) => {
+  /* OPEN EDIT */
+  const openEdit = (item: IAccessory) => {
     setSelected(item);
+
     setForm({
       nombre: item.nombre ?? "",
-      precio: Number(item.precio) ?? 0,
+      precio: Number(item.precio) || 0,
       atributo: item.atributo ?? "",
       imagenUrl: item.imagenUrl ?? "",
     });
-    setOpenEdit(true);
   };
 
-  const closeEditModal = () => {
-    setOpenEdit(false);
+  /* CLOSE EDIT */
+  const closeEdit = () => {
     setSelected(null);
     setForm(emptyForm);
   };
 
-  const onChange = (
+  /* CHANGE INPUTS */
+  const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
+
     setForm((prev) => ({
       ...prev,
       [name]: name === "precio" ? Number(value) : value,
     }));
   };
 
-  const onChangeFile = async (file: File | null) => {
+  /* IMAGE UPLOAD */
+  const handleFile = async (file: File | null) => {
     if (!file) {
-      setForm((prev) => ({ ...prev, imagenUrl: "" }));
+      setForm((p) => ({ ...p, imagenUrl: "" }));
       return;
     }
 
-    const formData = new FormData();
-    formData.append("file", file);
+    const fd = new FormData();
+    fd.append("file", file);
 
     const res = await fetch("/api/upload-s3", {
       method: "POST",
-      body: formData,
+      body: fd,
     });
 
     const data = await res.json();
 
-    setForm((prev) => ({
-      ...prev,
-      imagenUrl: data.url,
-    }));
+    setForm((p) => ({ ...p, imagenUrl: data.url }));
   };
 
-  const submitEdit = async (e: React.FormEvent) => {
+  /* SUBMIT */
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selected) return;
 
@@ -106,16 +122,20 @@ export default function ListAccesories() {
   return (
     <>
       <div className="w-full rounded-xl border border-gray-3 bg-white overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-3 flex items-center justify-between gap-4 flex-wrap">
-          <p className="font-medium text-dark">Lista de accesorios</p>
+        {/* HEADER */}
+        <div className="px-6 py-4 border-b border-gray-3">
+          <p className="font-medium text-dark">
+            Accesorios ({accessories.length})
+          </p>
         </div>
 
+        {/* TABLE */}
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
+          <table className="w-full text-sm">
             <thead className="bg-gray-1">
               <tr>
                 <th className="px-6 py-3">Nombre</th>
-                <th className="px-6 py-3">Descripción</th>
+                <th className="px-6 py-3">Detalle</th>
                 <th className="px-6 py-3">Precio</th>
                 <th className="px-6 py-3">Imagen</th>
                 <th className="px-6 py-3 text-right">Acción</th>
@@ -132,33 +152,37 @@ export default function ListAccesories() {
               ) : accessories.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-6 py-6">
-                    No hay accesorios registrados
+                    Sin accesorios
                   </td>
                 </tr>
               ) : (
                 accessories.map((item) => (
                   <tr key={item.id} className="border-t border-gray-3">
-                    <td className="px-6 py-4">{item.nombre}</td>
-                    <td className="px-6 py-4">{item.atributo || "-"}</td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 font-medium">{item.nombre}</td>
+
+                    <td className="px-6 py-4 text-gray-500">
+                      {item.atributo || "-"}
+                    </td>
+
+                    <td className="px-6 py-4 font-bold text-blue">
                       S/ {Number(item.precio).toFixed(2)}
                     </td>
+
                     <td className="px-6 py-4">
                       {item.imagenUrl ? (
                         <img
                           src={item.imagenUrl}
-                          alt={item.nombre}
-                          className="h-14 w-14 rounded-lg object-cover border border-gray-3"
+                          className="h-12 w-12 rounded-lg object-cover border"
                         />
                       ) : (
                         "-"
                       )}
                     </td>
+
                     <td className="px-6 py-4 text-right">
                       <button
-                        type="button"
-                        onClick={() => openEditModal(item)}
-                        className="rounded-md bg-gray-1 px-3 py-2 text-sm font-medium text-dark-2 hover:bg-blue hover:text-white duration-200"
+                        onClick={() => openEdit(item)}
+                        className="px-3 py-2 text-xs font-bold bg-gray-1 rounded-md hover:bg-blue hover:text-white transition"
                       >
                         Editar
                       </button>
@@ -171,92 +195,56 @@ export default function ListAccesories() {
         </div>
       </div>
 
-      {openEdit && selected && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pt-30">
-          <div
-            className="absolute inset-0 bg-black/40"
-            onClick={closeEditModal}
-          />
+      {/* MODAL EDIT */}
+      {selected && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40" onClick={closeEdit} />
 
-          <div className="relative w-full max-w-2xl rounded-xl bg-white p-6 shadow-lg">
-            <div className="flex items-start justify-between gap-4 mb-5">
-              <div>
-                <h3 className="text-lg font-semibold text-dark">
-                  Editar accesorio
-                </h3>
-                <p className="mt-1 text-sm text-dark-5">
-                  Modifica nombre, precio o descripción
-                </p>
-              </div>
-
-              <button
-                type="button"
-                onClick={closeEditModal}
-                className="rounded-md px-3 py-2 text-sm font-medium bg-gray-1 text-dark-2 hover:bg-gray-2"
-              >
-                Cerrar
-              </button>
+          <div className="relative w-full max-w-2xl bg-white rounded-xl p-6">
+            <div className="mb-5">
+              <h3 className="text-lg font-bold">Editar accesorio</h3>
+              <p className="text-sm text-gray-500">
+                Actualiza información del producto
+              </p>
             </div>
 
-            <form onSubmit={submitEdit} className="space-y-5">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <BaseInput
-                  label="Nombre"
-                  name="nombre"
-                  value={form.nombre}
-                  placeholder="Nombre del accesorio"
-                  type="string"
-                  required
-                  onChange={onChange}
-                />
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <BaseInput
+                label="Nombre"
+                name="nombre"
+                value={form.nombre}
+                onChange={handleChange}
+              />
 
-                <BaseInput
-                  label="Precio"
-                  name="precio"
-                  type="number"
-                  value={form.precio}
-                  placeholder="0.00"
-                  step="0.01"
-                  required
-                  onChange={onChange}
-                />
+              <BaseInput
+                label="Precio"
+                name="precio"
+                type="number"
+                value={form.precio}
+                onChange={handleChange}
+              />
 
-                <div className="col-span-1 md:col-span-2">
-                  <BaseTarea
-                    label="Descripción"
-                    name="atributo"
-                    value={form.atributo}
-                    placeholder="Descripción breve del accesorio"
-                    onChange={onChange}
-                  />
-                </div>
-              </div>
+              <BaseTarea
+                label="Descripción"
+                name="atributo"
+                value={form.atributo}
+                onChange={handleChange}
+              />
 
               <BaseFile
                 label="Imagen"
                 name="imagen"
-                onChange={onChangeFile}
-                currentUrl={form.imagenUrl || undefined}
+                onChange={handleFile}
+                currentUrl={form.imagenUrl}
               />
 
               <div className="flex justify-end gap-3">
-                <BaseButton
-                  type="button"
-                  variant="cancel"
-                  fullWidth={false}
-                  onClick={closeEditModal}
-                  className="min-w-[120px]"
-                >
+                <BaseButton type="button" onClick={closeEdit}>
                   Cancelar
                 </BaseButton>
 
-                <BaseButton
-                  type="submit"
-                  loading={updating}
-                  fullWidth={false}
-                  className="min-w-[160px]"
-                >
-                  Guardar cambios
+                <BaseButton type="submit" loading={updating}>
+                  Guardar
                 </BaseButton>
               </div>
             </form>
@@ -265,11 +253,12 @@ export default function ListAccesories() {
       )}
 
       <LoadingModal isOpen={updating} />
+
       <StatusModal
-        isOpen={openStatusModal}
-        type={typeModal}
+        isOpen={statusOpen}
+        type={statusType}
         message={statusMessage}
-        onClose={() => setOpenStatusModal(false)}
+        onClose={() => setStatusOpen(false)}
       />
     </>
   );

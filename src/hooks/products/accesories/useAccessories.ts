@@ -5,25 +5,21 @@ import { getAllAccessories } from "@/services/products/accesories";
 export function useAccessories() {
   const [loading, setLoading] = useState(false);
   const [statusMessage, setMessage] = useState<string>("");
-  const [success, setSuccess] = useState<boolean>(false);
   const [accessories, setAccessories] = useState<IAccessory[]>([]);
 
   const getAllAccessoriesData = async () => {
+    if (loading) return; // evita doble request
+
     setLoading(true);
-    setSuccess(false);
+    setMessage("");
 
     try {
       const data = await getAllAccessories();
-      setAccessories(data);
-      setSuccess(true);
+
+      setAccessories(data || []);
       setMessage("Accesorios obtenidos correctamente");
     } catch (err: any) {
-      const backendMessage = err.response?.data?.message;
-      setMessage(
-        backendMessage
-          ? "Error al obtener accesorios: " + backendMessage
-          : "Error al obtener accesorios",
-      );
+      setMessage(err?.response?.data?.message ?? "Error al obtener accesorios");
     } finally {
       setLoading(false);
     }
@@ -34,6 +30,5 @@ export function useAccessories() {
     accessories,
     loading,
     statusMessage,
-    success,
   };
 }
