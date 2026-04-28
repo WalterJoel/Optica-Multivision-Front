@@ -12,7 +12,7 @@ const ROLE_PERMISSIONS: Record<Role, string[]> = {
     "/profile",
     "/checkout",
     "/matrix",
-    "/shop-products",
+    "/vender",
     "/lentes",
     "/cart",
     "/register-sale",

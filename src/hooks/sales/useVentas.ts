@@ -7,7 +7,7 @@ export function useSales() {
   const [loading, setLoading] = useState(false);
   const [statusMessage, setMessage] = useState<string>("");
   const [success, setSuccess] = useState<boolean>(false);
-  const [Sales, setSales] = useState<IResponseSale[]>([]);
+  const [sales, setSales] = useState<IResponseSale[]>([]);
 
   const getAllSales = async () => {
     setLoading(true);
@@ -32,7 +32,7 @@ export function useSales() {
 
   return {
     getAllSales,
-    Sales,
+    sales,
     loading,
     statusMessage,
     success,

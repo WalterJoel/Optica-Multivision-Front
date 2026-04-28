@@ -11,7 +11,7 @@ import { TipoProducto } from "@/commons/constants";
 import ListLens from "../Shop/ListLens";
 // import { Lens } from "@/types/products";
 
-const ShopProducts = () => {
+const Vender = () => {
   const [productSidebar, setProductSidebar] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(TipoProducto.LENTE);
   useEffect(() => {
@@ -88,4 +88,4 @@ const ShopProducts = () => {
   );
 };
 
-export default ShopProducts;
+export default Vender;

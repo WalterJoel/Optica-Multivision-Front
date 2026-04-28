@@ -1,32 +1,48 @@
-import { useState } from 'react';
-import { IMovimientosCaja } from '@/types/caja-movimiento';
-import { movimientosCajaService } from '@/services/caja-movimiento';
+import { useState } from "react";
+import { IMovimientosCaja } from "@/types/caja-movimiento";
+import { movimientosCajaService } from "@/services/caja-movimiento";
 
 export function useMovimientosCaja() {
+  const [movimientos, setMovimientos] = useState<IMovimientosCaja[]>([]);
   const [loading, setLoading] = useState(false);
-  const [statusMessage, setMessage] = useState<string>('');
+  const [statusMessage, setMessage] = useState<string>("");
   const [success, setSuccess] = useState<boolean>(false);
 
-  const movimientosCaja = async (payload: IMovimientosCaja) => {
+  const getMovimientosCaja = async (sedeId: number) => {
     setLoading(true);
     setSuccess(false);
-    setMessage('');
+    setMessage("");
 
     try {
-      await movimientosCajaService(payload);
+      const res = await movimientosCajaService(sedeId);
+
+      setMovimientos(res || []);
+
       setSuccess(true);
-      setMessage('Movimientos de Caja');
+      setMessage("Movimientos cargados correctamente");
+
+      return { success: true, data: res };
     } catch (err: any) {
       const backendMessage = err.response?.data?.message;
-      setMessage(
-        backendMessage
-          ? 'Error al mostrar movimientos de caja: ' + backendMessage
-          : 'Error al mostrar movimientos de caja',
-      );
+
+      const message = backendMessage
+        ? "Error al obtener movimientos: " + backendMessage
+        : "Error al obtener movimientos";
+
+      setMessage(message);
+      setSuccess(false);
+
+      return { success: false, data: [] };
     } finally {
       setLoading(false);
     }
   };
 
-  return { movimientosCaja, loading, statusMessage, success };
+  return {
+    movimientos,
+    getMovimientosCaja,
+    loading,
+    statusMessage,
+    success,
+  };
 }

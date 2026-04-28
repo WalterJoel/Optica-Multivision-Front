@@ -2,32 +2,32 @@
 
 import React, { useEffect, useState } from "react";
 import { TrendingUp, Calendar, Building2 } from "lucide-react";
-import { useMovimientosCaja } from "@/hooks/caja-movimiento/useMovimientosCaja";
 import { MiniTable } from "./MiniTable";
-import CajaResumenCard from "./CajaResumenCard";
+
+import { useSales } from "@/hooks/sales";
 
 export default function CajaPremiumFino() {
-  const { movimientos, getMovimientosCaja } = useMovimientosCaja();
+  const { getAllSales, sales, loading } = useSales();
 
-  const [sedeId, setSedeId] = useState<number>(1);
-  const [fecha, setFecha] = useState<string>("");
+  const [fecha, setFecha] = useState("");
 
   useEffect(() => {
-    getMovimientosCaja(sedeId);
-  }, [sedeId]);
+    getAllSales();
+  }, []);
 
-  const movimientosFiltrados = fecha
-    ? movimientos.filter(
-        (m) => new Date(m.createdAt).toISOString().slice(0, 10) === fecha,
+  const ventasFiltradas = fecha
+    ? sales.filter(
+        (v) => new Date(v.createdAt).toISOString().slice(0, 10) === fecha,
       )
-    : movimientos;
+    : sales;
 
-  const ingresos = movimientosFiltrados.filter((m) => m.tipo === "INGRESO");
-  const egresos = movimientosFiltrados.filter((m) => m.tipo === "EGRESO");
-
-  const totalIngresos = ingresos.reduce((acc, m) => acc + Number(m.monto), 0);
-  const totalEgresos = egresos.reduce((acc, m) => acc + Number(m.monto), 0);
-  const balance = totalIngresos - totalEgresos;
+  if (loading) {
+    return (
+      <div className="p-6 text-[12px] font-bold text-gray-5 uppercase tracking-widest">
+        Cargando ventas...
+      </div>
+    );
+  }
 
   return (
     <div className="bg-beige pt-32 pb-16 px-4 sm:px-6 lg:px-8 min-h-screen mt-15">
@@ -52,14 +52,14 @@ export default function CajaPremiumFino() {
               </div>
 
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-dark tracking-tighter uppercase leading-none">
-                Flujo de <span className="text-blue-light italic">Caja</span>
+                Resumen de{" "}
+                <span className="text-blue-light italic">Ventas</span>
               </h1>
             </div>
           </div>
 
           {/* RIGHT CONTROLS */}
-          <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-            {/* SEDE */}
+          {/* <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
             <div className="flex items-center gap-3 bg-white border-2 border-blue-light-4 rounded-2xl px-4 py-3 shadow-md hover:shadow-lg transition-all w-full sm:w-auto">
               <Building2 size={18} className="text-blue-light" />
               <select
@@ -73,7 +73,6 @@ export default function CajaPremiumFino() {
               </select>
             </div>
 
-            {/* FECHA */}
             <div className="flex items-center gap-3 bg-white border-2 border-blue-light-4 rounded-2xl px-4 py-3 shadow-md hover:shadow-lg transition-all w-full sm:w-auto">
               <Calendar size={18} className="text-blue-light" />
               <input
@@ -83,30 +82,12 @@ export default function CajaPremiumFino() {
                 className="bg-transparent outline-none text-[13px] font-bold text-dark w-full cursor-pointer"
               />
             </div>
-          </div>
+          </div> */}
         </header>
 
-        {/* CARDS */}
-        <div className="mb-10">
-          <CajaResumenCard
-            balance={balance}
-            totalIngresos={totalIngresos}
-            totalEgresos={totalEgresos}
-          />
-        </div>
-
         {/* TABLAS */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 sm:gap-8">
-          <MiniTable
-            titulo="Historial de Ingresos"
-            data={ingresos}
-            type="ingreso"
-          />
-          <MiniTable
-            titulo="Historial de Egresos"
-            data={egresos}
-            type="egreso"
-          />
+        <div className="grid grid-cols-1 xl:grid-cols-1 gap-6 sm:gap-8">
+          <MiniTable titulo="Ventas" data={sales} />
         </div>
       </div>
     </div>

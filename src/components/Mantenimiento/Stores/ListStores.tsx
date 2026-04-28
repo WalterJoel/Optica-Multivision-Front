@@ -50,11 +50,11 @@ export default function ListStores() {
   }, [toggling, toggleOk, updateToggleMessage, getAllStores]);
 
   return (
-    <div className="w-full rounded-2xl border border-gray-3 bg-beige shadow-sm overflow-hidden">
+    <div className="w-full rounded-2xl border border-gray-3 bg-white shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm border-spacing-0">
           <thead>
-            <tr className="bg-white/50 backdrop-blur-sm">
+            <tr className="bg-beige backdrop-blur-sm">
               <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3">
                 Nombre
               </th>
@@ -76,7 +76,7 @@ export default function ListStores() {
             </tr>
           </thead>
 
-          <tbody className="divide-y divide-gray-2">
+          <tbody className="divide-y-4 divide-beige">
             {sedes.length === 0 ? (
               <tr>
                 <td
@@ -90,7 +90,7 @@ export default function ListStores() {
               sedes.map((s) => (
                 <tr
                   key={s.id}
-                  className="group hover:bg-white transition-all duration-300"
+                  className="group hover:bg-white  transition-all duration-300"
                 >
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-3">
