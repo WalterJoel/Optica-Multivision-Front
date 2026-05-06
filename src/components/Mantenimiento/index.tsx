@@ -26,6 +26,7 @@ import EyeglassesPage from "./Eyeglasses/EyeglassesPage";
 import DiscountPage from "./Discounts/DiscountPage";
 import MovimientoCajaPage from "./MovimientosCaja/MovimientoCajaPage";
 import { useSessionUser } from "@/hooks/session";
+import LensesPage from "./Lenses/LensesPage";
 
 const MyAccount = () => {
   const [activeTab, setActiveTab] = useState("clientes");
@@ -91,6 +92,7 @@ const MyAccount = () => {
                     {menuButton("accesories", "Accesorios", Package)}
                     {menuButton("eyeglasses", "Monturas", ScanEye)}
                     {menuButton("discounts", "Descuentos", Tags)}
+                    {menuButton("lens", "Lentes", Tags)}
                   </div>
                 </div>
               </div>
@@ -150,6 +152,12 @@ const MyAccount = () => {
                 className={`w-full bg-white rounded-xl shadow-1 ${activeTab === "discounts" ? "block" : "hidden"}`}
               >
                 <DiscountPage />
+              </div>
+
+              <div
+                className={`w-full bg-white rounded-xl shadow-1 ${activeTab === "lens" ? "block" : "hidden"}`}
+              >
+                <LensesPage />
               </div>
             </div>
           </div>

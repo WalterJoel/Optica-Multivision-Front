@@ -63,7 +63,7 @@ export default function LensForm() {
   return (
     <>
       <form onSubmit={handleSubmit}>
-        <div className="w-full max-w-4xl mx-auto rounded-xl border border-gray-200 bg-white p-6 shadow-md space-y-6">
+        <div className="flex flex-col lg:flex-row gap-5 mb-5">
           <BaseInput
             label="Marca"
             name="marca"

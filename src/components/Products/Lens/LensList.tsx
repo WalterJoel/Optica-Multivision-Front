@@ -91,7 +91,7 @@ export default function ListLens() {
 
   return (
     <>
-      <Breadcrumb title="Lentes" pages={["productos", "nuevo"]} />
+      {/* <Breadcrumb title="Lentes" pages={["productos", "nuevo"]} /> */}
 
       <section className="py-12 bg-gray-2">
         <div className="max-w-[1740px] mx-auto px-4 sm:px-8">
