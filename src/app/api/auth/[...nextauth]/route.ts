@@ -6,11 +6,11 @@ async function loginUser(
   email: string,
   password: string,
 ): Promise<LoginResponse> {
-  if (!process.env.NEXTAUTH_URL) {
-    throw new Error("NEXTAUTH_URL no está definido");
+  if (!process.env.NEXT_PUBLIC_API_URL) {
+    throw new Error("NEXT_PUBLIC_API_URL no está definido");
   }
 
-  const res = await fetch(process.env.NEXTAUTH_URL + "/auth/login", {
+  const res = await fetch(process.env.NEXT_PUBLIC_API_URLL + "/auth/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
