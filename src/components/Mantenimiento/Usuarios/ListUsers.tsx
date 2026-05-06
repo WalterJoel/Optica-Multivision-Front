@@ -55,7 +55,7 @@ export default function ListUsers() {
 
   const filteredUsers = useMemo(() => {
     if (selectedSede === "ALL") return users;
-    return users.filter((u) => u.sedeId === selectedSede);
+    return users.filter((u) => u.sede?.id === selectedSede);
   }, [users, selectedSede]);
 
   useEffect(() => {
@@ -167,7 +167,7 @@ export default function ListUsers() {
                   <td className="px-6 py-4">{u.id}</td>
                   <td className="px-6 py-4">{u.email}</td>
                   <td className="px-6 py-4">{u.role}</td>
-                  <td className="px-6 py-4">{u.sedeId}</td>
+                  <td className="px-6 py-4">{u.sede?.id}</td>
                   <td className="px-6 py-4">{u.activo ? "✅" : "❌"}</td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">

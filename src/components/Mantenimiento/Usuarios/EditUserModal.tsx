@@ -37,7 +37,7 @@ export default function EditUserModal({
     if (user) {
       setEmail(user.email);
       setRole(user.role);
-      setSedeId(user.sedeId ?? 0);
+      setSedeId(user.sede?.id ?? 0); //todo
       setPassword("");
     }
   }, [user]);

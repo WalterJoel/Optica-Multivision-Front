@@ -96,7 +96,7 @@ export default function ListAccessories() {
     const itemToCart: CartItem = {
       id: item.id,
       productName: (TipoProducto.ACCESORIO + " " + item.nombre).toUpperCase(),
-      productId: item.productoId,
+      productId: item.id, //todo
       price: item.precio,
       quantity: 1,
       productType: TipoProducto.ACCESORIO,

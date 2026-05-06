@@ -3,10 +3,6 @@
 import React, { useState } from "react";
 import Breadcrumb from "@/components/Common/Breadcrumb";
 import { useLenses } from "@/hooks/products/useLenses";
-import CustomSelect from "@/components/ShopWithSidebar/CustomSelect";
-import SingleGridItemProduct from "@/components/Shop/ListEyeGlasses";
-import SingleGridItemProductStock from "@/components/Shop/SingleGridItemProductStock";
-import SingleListItem from "@/components/Shop/SingleListItem"; // podemos crear uno
 
 interface ProductListProps {
   stock?: boolean;
@@ -32,7 +28,7 @@ export default function ProductList({ stock }: ProductListProps) {
               {/* Barra superior */}
               <div className="rounded-lg bg-white shadow-1 pl-3 pr-2.5 py-2.5 mb-6 flex items-center justify-between">
                 <div className="flex flex-wrap items-center gap-4">
-                  <CustomSelect options={options} />
+                  {/* <CustomSelect options={options} /> */}
                   <p>
                     Mostrando{" "}
                     <span className="text-dark">
