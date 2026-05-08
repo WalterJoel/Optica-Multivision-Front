@@ -20,7 +20,7 @@ const emptyForm: CreateUser = {
   password: "",
   nombre: "",
   apellido: "",
-  role: "",
+  role: ROLE_OPTIONS[0].value,
   sedeId: 0,
 };
 
@@ -89,6 +89,7 @@ export default function CreateUser() {
 
   const createUser = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log(form, " FORM");
     await addUser(form);
   };
 

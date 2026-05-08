@@ -101,10 +101,10 @@ const CartSidebarModal = () => {
             <div className="flex items-center gap-4">
               <Link
                 onClick={() => closeCartModal()}
-                href="/cart"
-                className="w-full flex justify-center font-medium text-white bg-blue py-[13px] px-6 rounded-md ease-out duration-200 hover:bg-blue-dark"
+                href="/register-sale"
+                className="w-full flex justify-center font-medium text-white bg-blue py-3 px-6 rounded-md ease-out duration-200 hover:bg-blue-dark mt-7.5"
               >
-                Ver Detalles
+                Pagar
               </Link>
             </div>
           </div>

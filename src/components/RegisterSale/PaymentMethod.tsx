@@ -7,7 +7,12 @@ import Image from "next/image";
 
 // Components
 import { LoadingModal, StatusModal } from "@/components/Common/modal";
-import { BaseInput, BaseTabs, BaseTarea } from "@/components/Common/Inputs";
+import {
+  BaseInput,
+  BaseSearchInput,
+  BaseTabs,
+  BaseTarea,
+} from "@/components/Common/Inputs";
 
 // Hooks y Store
 import { useCreateSale } from "@/hooks/sales";
@@ -22,6 +27,9 @@ import { selectTotalPrice, selectCartItems } from "@/redux/features/cart-slice";
 import { TipoVenta, EstadoPago, STATUS_MODAL } from "@/commons/constants";
 import { ICreateSale, VentaProducto } from "@/types/sales";
 import PaymentMethodSelector from "./PaymentMethodSelector";
+import { ISearchClient } from "@/types/clients";
+import { useSearchClient } from "@/hooks/clients";
+import { useSessionUser } from "@/hooks/session";
 
 type PaymentType = "cash" | "credit";
 
@@ -29,7 +37,8 @@ const PaymentMethod = () => {
   const dispatch = useDispatch();
   const { addSale, loading, statusMessage, success } = useCreateSale();
 
-  const authStore = useAppSelector(selectAuth);
+  const { sedeId, userId } = useSessionUser();
+
   const ventaStore = useAppSelector(selectVenta); // Escuchamos el store de venta
   console.log(ventaStore, " CENTA STORE -->>>>>>>>>>");
   const cartStoreItems = useAppSelector(selectCartItems);
@@ -40,9 +49,6 @@ const PaymentMethod = () => {
   const [change, setChange] = useState(0);
   const [debt, setDebt] = useState(0);
   const [showOrder, setShowOrder] = useState(false);
-  const [responsableVenta, setResponsableVenta] = useState(
-    authStore.name || "",
-  );
 
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [nroCuotas, setNroCuotas] = useState<number>(0);
@@ -50,10 +56,20 @@ const PaymentMethod = () => {
   const [montoRecibido, setMontoRecibido] = useState("");
   const [typeModal, setTypeModal] = useState<string>("");
 
+  //Cliente
+  const [searchClientTerm, setSearchClientTerm] = useState("");
+
   const paymentTabs = [
     { key: "cash", label: "Al Contado" },
     { key: "credit", label: "Al Crédito" },
   ];
+
+  const {
+    searchClients,
+    clients,
+    showList: showListClient,
+    setShowList: setShowListClient,
+  } = useSearchClient();
 
   useEffect(() => {
     const payment = parseFloat(montoRecibido) || 0;
@@ -85,14 +101,13 @@ const PaymentMethod = () => {
     }));
 
     const payload: ICreateSale = {
-      sedeId: Number(authStore.sedeId),
-      userId: Number(authStore.userId),
+      sedeId: sedeId,
+      userId: userId,
       metodoPago: ventaStore.metodoPago,
       kitId: ventaStore.kitRegaloId,
       montoPagado: Number(montoRecibido),
       productos: productosDesdeCart,
       total: cartStoreTotal,
-      responsableVenta,
       tipoVenta: paymentType === "cash" ? TipoVenta.CONTADO : TipoVenta.CREDITO,
       estadoPago:
         Number(montoRecibido) >= cartStoreTotal
@@ -105,6 +120,12 @@ const PaymentMethod = () => {
     };
 
     addSale(payload);
+  };
+
+  const handleSelectClient = (c: ISearchClient) => {
+    setSearchClientTerm(`${c.nombres} ${c.apellidos}`);
+    setShowListClient(false);
+    // setForm((prev) => ({ ...prev, clienteId: c.id }));
   };
 
   useEffect(() => {
@@ -128,6 +149,7 @@ const PaymentMethod = () => {
                   <span className="text-sm font-bold text-gray-700">
                     ¿Requiere Montaje?
                   </span>
+
                   <input
                     type="checkbox"
                     className="w-4 h-4 text-blue border-gray-300 rounded"
@@ -146,19 +168,39 @@ const PaymentMethod = () => {
               </div>
 
               <div className="flex flex-col space-y-5 flex-1">
-                <BaseInput
-                  label="Responsable de la Venta"
-                  value={responsableVenta}
-                  onChange={(e) => setResponsableVenta(e.target.value)}
-                />
-
+                {/* Buscar Cliente */}
+                <div>
+                  <BaseSearchInput
+                    label="Buscar Cliente"
+                    value={searchClientTerm}
+                    required
+                    onChange={(val) => {
+                      setSearchClientTerm(val);
+                      searchClients(val);
+                    }}
+                    results={clients}
+                    showList={showListClient}
+                    renderItem={(c: ISearchClient) => (
+                      <div
+                        onMouseDown={() => handleSelectClient(c)}
+                        className="w-full flex items-center justify-between gap-4"
+                      >
+                        <span className="truncate">
+                          {c.nombres} {c.apellidos}
+                        </span>
+                        <span className="text-[11px] font-mono text-blue-dark bg-blue-light/10 px-2 py-0.5 rounded border border-blue-dark/20 shrink-0">
+                          DNI: {c.numeroDoc}
+                        </span>
+                      </div>
+                    )}
+                  />
+                </div>
                 <div>
                   <label className="mb-3 block text-sm font-bold text-gray-700">
                     Método de Pago
                   </label>
                   <PaymentMethodSelector />
                 </div>
-
                 <div className="grid grid-cols-3 gap-4">
                   <BaseInput
                     label="Total Venta"
@@ -177,7 +219,6 @@ const PaymentMethod = () => {
                     readOnly
                   />
                 </div>
-
                 {paymentType === "credit" && (
                   <BaseInput
                     label="Número de Cuotas"
@@ -186,13 +227,11 @@ const PaymentMethod = () => {
                     onChange={(e) => setNroCuotas(Number(e.target.value))}
                   />
                 )}
-
                 <BaseTarea
                   label="Notas"
                   value={observacionesLocal}
                   onChange={(e) => setObservacionesLocal(e.target.value)}
                 />
-
                 <button
                   onClick={handleRegisterSale}
                   disabled={loading || cartStoreTotal === 0}

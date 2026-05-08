@@ -1,8 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
+
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import Image from "next/image";
 import { CartItem } from "@/types/cart";
+import { useSelector } from "react-redux";
+
+import {
+  selectTotalPrice,
+  removeItemFromCart,
+  updateCartItemQuantity,
+} from "@/redux/features/cart-slice";
 
 interface SingleItemProps {
   item: CartItem;
@@ -15,8 +23,26 @@ const SingleItem: React.FC<SingleItemProps> = ({
 }) => {
   const dispatch = useDispatch<AppDispatch>();
 
+  const totalPrice = useSelector(selectTotalPrice);
+
   const handleRemoveFromCart = () => {
     dispatch(removeItemFromCart(item.id));
+  };
+
+  const [quantity, setQuantity] = useState(item.quantity);
+
+  const handleIncreaseQuantity = () => {
+    const newQty = quantity + 1;
+    setQuantity(newQty);
+    dispatch(updateCartItemQuantity({ id: item.id, quantity: newQty }));
+  };
+
+  const handleDecreaseQuantity = () => {
+    if (quantity > 1) {
+      const newQty = quantity - 1;
+      setQuantity(newQty);
+      dispatch(updateCartItemQuantity({ id: item.id, quantity: newQty }));
+    }
   };
 
   return (
@@ -27,12 +53,50 @@ const SingleItem: React.FC<SingleItemProps> = ({
             <span className="text-4xl">👓</span>
           </div>
         </div>
-
         <div>
           <h3 className="font-medium text-dark mb-1 ease-out duration-200 hover:text-blue">
             <a href="#"> {item.productName} </a>
           </h3>
-          <p className="text-custom-sm">Price: S/. {item.price}</p>
+          <p className="text-custom-sm">Price: S/. {totalPrice}</p>
+          <p className="text-dark text-sm font-bold">
+            {"ESF " + item.esf ?? "-"} / {"CYL " + item.cyl ?? "-"}
+          </p>
+        </div>
+        {/* CANTIDAD */}
+        <div className="flex-1 flex justify-center">
+          <div className="flex items-center rounded-lg border border-gray-3 bg-white overflow-hidden shadow-sm">
+            <button
+              onClick={handleDecreaseQuantity}
+              className="flex items-center justify-center w-9 h-9 hover:bg-gray-2 text-dark transition-colors"
+            >
+              <svg width="12" height="2" viewBox="0 0 12 2" fill="none">
+                <path
+                  d="M1 1H11"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </button>
+
+            <span className="flex items-center justify-center w-10 h-9 border-x border-gray-3 text-sm font-bold text-dark">
+              {quantity}
+            </span>
+
+            <button
+              onClick={handleIncreaseQuantity}
+              className="flex items-center justify-center w-9 h-9 hover:bg-gray-2 text-dark transition-colors"
+            >
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path
+                  d="M6 1V11M1 6H11"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
 
