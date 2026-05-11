@@ -10,7 +10,7 @@ async function loginUser(
     throw new Error("NEXT_PUBLIC_API_URL no está definido");
   }
 
-  const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "auth/login", {
+  const res = await fetch(process.env.NEXT_PUBLIC_API_URL + "auth/login/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
