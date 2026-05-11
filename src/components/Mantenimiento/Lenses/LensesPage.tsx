@@ -6,7 +6,7 @@ import { BaseTabs } from "@/components/Common/Inputs";
 
 import CreateLens from "./CreateLens";
 
-import ListLens from "@/components/Shop/ListLens";
+import ListLens from "@/components/Listados/ListLens";
 
 export default function AccesoriesPage() {
   const [tab, setTab] = useState("crear");

@@ -91,10 +91,8 @@ export default function ListLens() {
 
   return (
     <>
-      {/* <Breadcrumb title="Lentes" pages={["productos", "nuevo"]} /> */}
-
-      <section className="py-12 bg-gray-2">
-        <div className="max-w-[1740px] mx-auto px-4 sm:px-8">
+      <section className="overflow-hidden pt-[200px] pb-20 bg-beige min-h-screen">
+        <div className="max-w-[1700px] w-full mx-auto px-4 sm:px-8 xl:px-10">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
             {loading ? (
               <div className="col-span-full text-center text-blue text-xs font-bold">

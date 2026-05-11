@@ -1,6 +1,6 @@
 import React from "react";
 
-interface Option {
+export interface IOptionSelect {
   label: string;
   value: string | number;
 }
@@ -9,7 +9,7 @@ interface SelectProps {
   label?: string;
   name?: string;
   value: string | number;
-  options: Option[];
+  options: IOptionSelect[];
   placeholder?: string;
   disabled?: boolean;
   required?: boolean;
@@ -58,9 +58,9 @@ export const BaseSelect = ({
             transition-all duration-300 text-dark shadow-sm
           "
         >
-          <option value="" disabled>
+          {/* <option value="" disabled>
             {placeholder}
-          </option>
+          </option> */}
 
           {options.map((opt) => (
             <option key={opt.value} value={opt.value}>

@@ -91,7 +91,7 @@ const Header = () => {
                     </span>
 
                     {/* DROPDOWN SIMPLE */}
-                    <div className="absolute left-1/2 -translate-x-1/2 mt-2 hidden group-hover:block bg-white  rounded-xl shadow-lg p-2 min-w-[160px] z-50">
+                    <div className="absolute left-1/2 top-full -translate-x-1/2 hidden group-hover:block bg-white rounded-xl shadow-lg p-2 min-w-[160px] z-50 pt-2">
                       {item.submenu.map((sub, j) => (
                         <Link
                           key={j}

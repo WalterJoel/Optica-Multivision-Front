@@ -1,20 +1,20 @@
 import { useState } from "react";
-import { IAccessory } from "@/types/products/accessory";
-import { getAllKits } from "@/services/kits";
+
+import { getAllKitsService } from "@/services/kits";
 import { IKit } from "@/types/kits";
 
 export function useKits() {
   const [loading, setLoading] = useState(false);
   const [statusMessage, setMessage] = useState<string>("");
   const [success, setSuccess] = useState<boolean>(false);
-  const [Kits, setKits] = useState<IKit[]>([]);
+  const [kits, setKits] = useState<IKit[]>([]);
 
   const getAllLenses = async () => {
     setLoading(true);
     setSuccess(false);
 
     try {
-      const data = await getAllKits();
+      const data = await getAllKitsService();
       setKits(data);
       setSuccess(true);
       setMessage("listado de Kits correto");
@@ -30,5 +30,5 @@ export function useKits() {
     }
   };
 
-  return { getAllLenses, Kits, loading, statusMessage, success };
+  return { getAllLenses, kits, loading, statusMessage, success };
 }

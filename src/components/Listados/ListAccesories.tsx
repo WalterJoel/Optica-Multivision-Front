@@ -1,8 +1,8 @@
 "use client";
 
 import { BaseButton } from "@/components/Common/Buttons";
-import { useEyeglasses } from "@/hooks/products/eyeglasses";
-import { IEyeglass } from "@/types/products";
+import { useAccessories } from "@/hooks/products/accesories/useAccessories";
+import { IAccessory } from "@/types/products";
 import { useEffect, useState, useMemo } from "react";
 
 import { addItemToCart } from "@/redux/features/cart-slice";
@@ -11,21 +11,21 @@ import { useDispatch } from "react-redux";
 import { CartItem } from "@/types/cart";
 import { TipoProducto } from "@/commons/constants";
 
-/* 🆕 TIPADO DE FILTROS (no rompe nada) */
+/* FILTERS */
 type Filters = {
-  sexo?: string;
-  formaFacial?: string;
+  search?: string;
   precioMin?: number;
   precioMax?: number;
-  search?: string;
+  color?: string; // 👈 NUEVO
 };
 
-function EyeglassCardFrame({
-  eyeglass,
+/* CARD */
+function AccessoryCardFrame({
+  accessory,
   children,
   variant = "blue",
 }: {
-  eyeglass: IEyeglass;
+  accessory: IAccessory;
   children?: React.ReactNode;
   variant?: "blue" | "red" | "yellow";
 }) {
@@ -47,40 +47,33 @@ function EyeglassCardFrame({
 
       {/* BODY */}
       <div className="relative bg-white rounded-[1.5rem] w-full flex items-stretch">
-        {/* LEFT IMAGE */}
+        {/* IMAGE */}
         <div className="w-[40%] bg-yellow-light-4 flex items-center justify-center border-r border-yellow-light-2 rounded-[1.6rem]">
-          <div className="w-14 h-14 flex items-center justify-center overflow-hidden">
-            <span className="text-4xl leading-none">👓</span>
-          </div>{" "}
+          <span className="text-4xl">🧰</span>
         </div>
 
-        {/* RIGHT CONTENT */}
+        {/* CONTENT */}
         <div className="w-[60%] p-4 flex flex-col justify-between">
-          {/* TOP */}
           <div>
-            <h3 className="text-sm font-black text-dark uppercase line-clamp-1">
-              {eyeglass.marca}
+            <h3 className="text-sm font-black text-dark uppercase line-clamp-2">
+              {accessory.nombre}
             </h3>
 
             <p className="text-[11px] text-gray-400 font-semibold">
-              {eyeglass.material} • {eyeglass.color}
+              {accessory.codigo || "Sin codigo"}
             </p>
 
-            <p className="text-[10px] text-gray-500 mt-1">
-              📐 {eyeglass.medida} • {eyeglass.formaFacial}
-            </p>
-
-            <p className="text-[10px] text-gray-500">👤 {eyeglass.sexo}</p>
+            {accessory.color && (
+              <p className="text-[10px] text-gray-400">🎨 {accessory.color}</p>
+            )}
           </div>
 
-          {/* PRICE */}
           <div className="mt-2">
             <span className="font-black text-blue text-sm">
-              S/ {eyeglass.precio}
+              S/ {accessory.precio}
             </span>
           </div>
 
-          {/* ACTION */}
           <div className="mt-2 flex justify-end">{children}</div>
         </div>
       </div>
@@ -88,77 +81,70 @@ function EyeglassCardFrame({
   );
 }
 
-/* Filters es opcional */
-export default function ListEyeglasses({ filters }: { filters?: Filters }) {
+/* LIST */
+export default function ListAccessories({ filters }: { filters?: Filters }) {
   const dispatch = useDispatch<AppDispatch>();
-  const { eyeglasses, loading, getAllEyeglassesData } = useEyeglasses();
+  const { accessories, loading, getAllAccessoriesData } = useAccessories();
 
   const ITEMS_PER_PAGE = 20;
   const [page, setPage] = useState(1);
 
   useEffect(() => {
-    getAllEyeglassesData();
+    getAllAccessoriesData();
   }, []);
 
-  /* FILTRADO */
-  const filteredEyeglasses = useMemo(() => {
-    const sexo = filters?.sexo?.toUpperCase();
-    const forma = filters?.formaFacial?.toUpperCase();
+  /* 🔎 FILTRO COMPLETO */
+  const filteredAccessories = useMemo(() => {
     const search = filters?.search?.toLowerCase() || "";
-
     const min = filters?.precioMin ?? 0;
     const max = filters?.precioMax ?? 999999;
+    const color = filters?.color || "";
 
-    return eyeglasses.filter((p: IEyeglass) => {
-      const precio = Number(p.precio) || 0;
-
-      const matchSexo = !sexo || p.sexo?.toUpperCase() === sexo;
-      const matchForma = !forma || p.formaFacial?.toUpperCase() === forma;
-
-      const matchPrecio = precio >= min && precio <= max;
+    return accessories.filter((item: IAccessory) => {
+      const precio = Number(item.precio) || 0;
 
       const matchSearch =
         !search ||
-        p.marca?.toLowerCase().includes(search) ||
-        p.material?.toLowerCase().includes(search) ||
-        p.color?.toLowerCase().includes(search);
+        item.nombre?.toLowerCase().includes(search) ||
+        item.codigo?.toLowerCase().includes(search);
 
-      return matchSexo && matchForma && matchPrecio && matchSearch;
+      const matchPrecio = precio >= min && precio <= max;
+
+      const matchColor =
+        !color || item.color?.toLowerCase() === color.toLowerCase();
+
+      return matchSearch && matchPrecio && matchColor;
     });
-  }, [eyeglasses, filters]);
+  }, [accessories, filters]);
 
-  /*  RESET PAGE CUANDO CAMBIA FILTRO */
+  /* RESET PAGINATION */
   useEffect(() => {
     setPage(1);
   }, [filters]);
 
-  /*  PAGINACIÓN SOBRE FILTRADOS */
-  const paginatedEyeglasses = useMemo(() => {
+  /* PAGINACIÓN */
+  const paginatedAccessories = useMemo(() => {
     const start = (page - 1) * ITEMS_PER_PAGE;
-    return filteredEyeglasses.slice(start, start + ITEMS_PER_PAGE);
-  }, [filteredEyeglasses, page]);
+    return filteredAccessories.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredAccessories, page]);
 
-  const totalPages = Math.ceil(filteredEyeglasses.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(filteredAccessories.length / ITEMS_PER_PAGE);
 
-  const handleAddToCart = (eyeGlass: IEyeglass) => {
+  const handleAddToCart = (item: IAccessory) => {
     const itemToCart: CartItem = {
-      id: eyeGlass.id,
-      productName: (TipoProducto.MONTURA + " " + eyeGlass.marca).toUpperCase(),
-      productId: eyeGlass.productoId,
-      price: eyeGlass.precio,
+      id: item.id,
+      productName: (TipoProducto.ACCESORIO + " " + item.nombre).toUpperCase(),
+      productId: item.id,
+      price: item.precio,
       quantity: 1,
-      productType: TipoProducto.MONTURA,
+      productType: TipoProducto.ACCESORIO,
       discount: 0,
       cyl: null,
       esf: null,
       isLens: false,
       imgs: {
-        thumbnails: [
-          "https://www.flaticon.es/icono-gratis/anteojos-con-media-montura_27114",
-        ],
-        previews: [
-          "https://www.flaticon.es/icono-gratis/anteojos-con-media-montura_27114",
-        ],
+        thumbnails: [item.imagenUrl || ""],
+        previews: [item.imagenUrl || ""],
       },
     };
 
@@ -173,21 +159,22 @@ export default function ListEyeglasses({ filters }: { filters?: Filters }) {
             <div className="col-span-full text-center text-blue text-xs font-bold">
               Cargando...
             </div>
-          ) : paginatedEyeglasses.length === 0 ? (
+          ) : paginatedAccessories.length === 0 ? (
             <div className="col-span-full text-center text-gray-400 font-bold">
               Sin resultados
             </div>
           ) : (
-            paginatedEyeglasses.map((eyeglass: IEyeglass) => (
-              <EyeglassCardFrame key={eyeglass.id} eyeglass={eyeglass}>
-                <BaseButton onClick={() => handleAddToCart(eyeglass)}>
+            paginatedAccessories.map((item: IAccessory) => (
+              <AccessoryCardFrame key={item.id} accessory={item}>
+                <BaseButton onClick={() => handleAddToCart(item)}>
                   Agregar
                 </BaseButton>
-              </EyeglassCardFrame>
+              </AccessoryCardFrame>
             ))
           )}
         </div>
 
+        {/* PAGINATION */}
         {!loading && totalPages > 1 && (
           <div className="flex justify-center items-center gap-3 mt-8">
             <button

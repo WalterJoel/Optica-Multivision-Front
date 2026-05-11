@@ -61,7 +61,7 @@ export const menuData: Menu[] = [
         id: 66,
         title: "Accesorios",
         newTab: false,
-        path: "/lentes",
+        path: "/inventarios/accesorios",
       },
     ],
   },

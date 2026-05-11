@@ -5,6 +5,7 @@ export interface IEyeglass {
   productoId: number;
   precio: number;
   marca: string;
+  codigo: string;
   material: string;
   medida: string;
   color: string;

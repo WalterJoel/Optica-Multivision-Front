@@ -1,10 +1,10 @@
 import React from "react";
-import Checkout from "@/components/Checkout";
+import InventarioAccesorios from "@/components/Inventarios/Accesorios";
 
 const CheckoutPage = () => {
   return (
     <main>
-      <Checkout />
+      <InventarioAccesorios />
     </main>
   );
 };

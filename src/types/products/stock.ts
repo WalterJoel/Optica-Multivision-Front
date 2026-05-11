@@ -51,3 +51,24 @@ export interface IOutdatedProductStockResponse {
     };
   };
 }
+
+export interface IOutdatedAccesoryStockResponse {
+  id: string;
+  sedeId: string;
+  productoId: string;
+  cantidad: string;
+  ubicacion: string;
+  createdAt: string;
+  updatedAt: string;
+  producto: {
+    id: string;
+    nombre: string;
+    activo: string;
+    tipo: string;
+    createdAt: string;
+    accesorio: {
+      id: string;
+      codigo: string;
+    };
+  };
+}

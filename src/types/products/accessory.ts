@@ -2,6 +2,8 @@ import { PRODUCTOS } from "@/commons/constants";
 
 export interface IAccessory {
   id: number;
+  codigo: string;
+  color: string;
   precio: number;
   nombre: string;
   atributo: string;
@@ -22,4 +24,20 @@ export interface ISearchAccesory {
 export interface IResponseSearchAccesory {
   total: number;
   accesorios: ISearchAccesory[];
+}
+
+export interface IAccesoryQrResponse {
+  accesorio: {
+    id: number;
+    codigo: string;
+    productoId: string;
+    precio: number;
+    nombre: string;
+  };
+  stock: {
+    id: number;
+    cantidad: number;
+    ubicacion: string;
+    updateAt: string;
+  };
 }

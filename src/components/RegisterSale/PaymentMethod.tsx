@@ -30,6 +30,8 @@ import PaymentMethodSelector from "./PaymentMethodSelector";
 import { ISearchClient } from "@/types/clients";
 import { useSearchClient } from "@/hooks/clients";
 import { useSessionUser } from "@/hooks/session";
+import PaymentDaysSelector from "./DaysSelector";
+import Discount from "../Cart/Discount";
 
 type PaymentType = "cash" | "credit";
 
@@ -170,36 +172,20 @@ const PaymentMethod = () => {
               <div className="flex flex-col space-y-5 flex-1">
                 {/* Buscar Cliente */}
                 <div>
-                  <BaseSearchInput
-                    label="Buscar Cliente"
-                    value={searchClientTerm}
-                    required
-                    onChange={(val) => {
-                      setSearchClientTerm(val);
-                      searchClients(val);
-                    }}
-                    results={clients}
-                    showList={showListClient}
-                    renderItem={(c: ISearchClient) => (
-                      <div
-                        onMouseDown={() => handleSelectClient(c)}
-                        className="w-full flex items-center justify-between gap-4"
-                      >
-                        <span className="truncate">
-                          {c.nombres} {c.apellidos}
-                        </span>
-                        <span className="text-[11px] font-mono text-blue-dark bg-blue-light/10 px-2 py-0.5 rounded border border-blue-dark/20 shrink-0">
-                          DNI: {c.numeroDoc}
-                        </span>
-                      </div>
-                    )}
-                  />
+                  <Discount />
                 </div>
                 <div>
                   <label className="mb-3 block text-sm font-bold text-gray-700">
                     Método de Pago
                   </label>
                   <PaymentMethodSelector />
+                </div>
+                <div>
+                  <label className="mb-3 block text-sm font-bold text-gray-700">
+                    Compromiso de Pago
+                  </label>
+
+                  <PaymentDaysSelector />
                 </div>
                 <div className="grid grid-cols-3 gap-4">
                   <BaseInput

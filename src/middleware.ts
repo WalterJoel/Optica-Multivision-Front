@@ -19,6 +19,7 @@ const ROLE_PERMISSIONS: Record<Role, string[]> = {
     "/sell-products",
     "/seguimiento-pedidos",
     "/caja",
+    "/inventarios/accesorios",
   ],
   VENDEDOR: ["/products", "/dashboard", "/profile"],
   ALMACEN: ["/products", "/profile"],

@@ -14,7 +14,7 @@ export function useUpdateStockProductos() {
     try {
       await updateStockProductosService(payload);
       setSuccess(true);
-      setMessage("Montura creada correctamente");
+      setMessage("Producto actualizado correctamente");
     } catch (err: any) {
       const backendMessage = err.response?.data?.message;
       setMessage(

@@ -3,9 +3,15 @@
 import { useState, useEffect } from "react";
 import { useCreateLens } from "@/hooks/products";
 import { BaseInput } from "@/components/Common/Inputs";
-import { PRODUCTOS, IMG_LENTE, STATUS_MODAL } from "@/commons/constants";
+import { PRODUCTOS, STATUS_MODAL } from "@/commons/constants";
 import { CreateLens } from "@/types/products";
 import { StatusModal, LoadingModal } from "@/components/Common/modal";
+import {
+  BaseSelect,
+  IOptionSelect,
+} from "@/components/Common/Inputs/BaseSelect";
+import { BaseButton } from "@/components/Common/Buttons";
+import { useKits } from "@/hooks/kits";
 
 const initialForm: CreateLens = {
   marca: "",
@@ -13,8 +19,8 @@ const initialForm: CreateLens = {
   precio_serie1: 0,
   precio_serie2: 0,
   precio_serie3: 0,
-  // imagenUrl: IMG_LENTE,
-  productoId: 0, //TODO CAMBIE POR EL BUILD
+  kitId: null,
+  imagenUrl: null,
   tipo: PRODUCTOS.LENTE,
 };
 
@@ -23,7 +29,10 @@ export default function LensForm() {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [typeModal, setTypeModal] = useState<string>("");
   const [imagenUrl, setImagen] = useState<File | null>(null);
+
+  // Composables
   const { addLens, success, statusMessage, loading } = useCreateLens();
+  const { kits, getAllLenses } = useKits();
 
   const resetForm = () => {
     setForm(initialForm);
@@ -48,6 +57,18 @@ export default function LensForm() {
     await addLens(payload);
   };
 
+  //Wrapper/Mapper para el BaseSelect
+  const kitOptions: IOptionSelect[] = [
+    {
+      label: "Ninguno",
+      value: "",
+    },
+    ...kits.map((kit) => ({
+      label: kit.nombre,
+      value: String(kit.id),
+    })),
+  ];
+
   useEffect(() => {
     if (!loading && (success || statusMessage)) {
       if (success) {
@@ -60,9 +81,16 @@ export default function LensForm() {
     }
   }, [loading, success, statusMessage]);
 
+  useEffect(() => {
+    getAllLenses();
+  }, []);
+
   return (
     <>
-      <form onSubmit={handleSubmit}>
+      <form
+        onSubmit={handleSubmit}
+        className="w-full rounded-xl border border-gray-3 bg-beige p-6"
+      >
         <div className="flex flex-col lg:flex-row gap-5 mb-5">
           <BaseInput
             label="Marca"
@@ -110,6 +138,18 @@ export default function LensForm() {
             required
             onChange={handleChange}
           />
+          <BaseSelect
+            label="Seleccione un Kit"
+            name="kitId"
+            value={form.kitId ?? ""}
+            options={kitOptions}
+            onChange={(e) =>
+              setForm((prev) => ({
+                ...prev,
+                kitId: e.target.value === "" ? null : Number(e.target.value),
+              }))
+            }
+          />
         </div>
 
         <div className="mb-5">
@@ -123,13 +163,12 @@ export default function LensForm() {
           />
         </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="inline-flex font-medium text-white bg-blue py-3 px-7 rounded-md disabled:opacity-50 hover:bg-opacity-90 transition-all"
-        >
+        <BaseButton className="min-w-[240px]" type="submit" disabled={loading}>
           Guardar
-        </button>
+        </BaseButton>
+        <p className="mt-4 text-center text-sm text-green-600">
+          Puedes cambiar de KIT luego
+        </p>
       </form>
 
       <LoadingModal isOpen={loading} />

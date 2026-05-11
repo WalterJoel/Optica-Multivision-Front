@@ -2,29 +2,32 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { CheckCircle2, Search } from "lucide-react";
-import { useSearchEyeglassByQr } from "@/hooks/products/eyeglasses/useSearchEyeGlassByQr";
 import { useUpdateStockProductos } from "@/hooks/products/stock/useUpdateStockProductos";
-import { IEyeglassQrResponse, IUpdateStockProductos } from "@/types/products";
+import { IAccesoryQrResponse, IUpdateStockProductos } from "@/types/products";
 import {
   StatusModal,
   LoadingModal,
   ModalFrameWrapper,
 } from "@/components/Common/modal";
 import { STATUS_MODAL } from "@/commons/constants";
-import { BaseButton } from "../Common/Buttons";
+import { useSessionUser } from "@/hooks/session";
 
 // Modales
-import { OutdatedProductsModal } from "./OutdatedProductsModal";
+import { OutdatedProductsModal } from "./ModalPorActualizar";
+import { BaseButton } from "@/components/Common/Buttons/BaseButton";
+import { useSearchAccesoryByCode } from "@/hooks/products/accesories/useSearchAccesoryByCode";
 
 export default function InventarioMultivision() {
   const [busqueda, setBusqueda] = useState("");
-  const [lote, setLote] = useState<IEyeglassQrResponse[]>([]);
-  const [boxItem, setBoxItem] = useState<IEyeglassQrResponse | null>(null);
+  const [lote, setLote] = useState<IAccesoryQrResponse[]>([]);
+  const [boxItem, setBoxItem] = useState<IAccesoryQrResponse | null>(null);
   const [contador, setContador] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const [typeModal, setTypeModal] = useState<string>("");
-  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [modalMessage, setModalMessage] = useState({
+    open: false,
+    type: "",
+    message: "",
+  });
 
   //Modales
   const [isOpenModalOutdated, setOpenModalOutdated] = useState<boolean>(false);
@@ -34,11 +37,21 @@ export default function InventarioMultivision() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Hooks
-  const { eyeglass, searchEyeglassByQr } = useSearchEyeglassByQr();
+  const {
+    accesory,
+    searchAccesoryByCode,
+    loading: loadingAccesory,
+    statusMessage: statusMessageAccesory,
+    success: successAccesory,
+  } = useSearchAccesoryByCode();
+
   const { loading, statusMessage, success, updateStockProductos } =
     useUpdateStockProductos();
 
-  const procesarProductoEncontrado = (data: IEyeglassQrResponse) => {
+  const { sedeId } = useSessionUser();
+
+  // Functions
+  const procesarProductoEncontrado = (data: IAccesoryQrResponse) => {
     const stockId = String(data.stock.id);
     const existeEnLote = lote.find((item) => item.stock.id === data.stock.id);
 
@@ -63,7 +76,7 @@ export default function InventarioMultivision() {
     const codigo = e.currentTarget.value.trim();
     if (!codigo) return;
 
-    searchEyeglassByQr(codigo, 1);
+    searchAccesoryByCode(codigo, sedeId);
 
     // Limpieza inmediata para el siguiente escaneo
     setBusqueda("");
@@ -94,22 +107,32 @@ export default function InventarioMultivision() {
   };
 
   useEffect(() => {
-    if (eyeglass && eyeglass.montura) {
-      procesarProductoEncontrado(eyeglass);
+    if (accesory && accesory.accesorio) {
+      procesarProductoEncontrado(accesory);
     }
-  }, [eyeglass]);
+  }, [accesory]);
 
   useEffect(() => {
     if (!loading && (success || statusMessage)) {
-      if (success) {
-        setTypeModal(STATUS_MODAL.SUCCESS_MODAL);
-      } else {
-        setTypeModal(STATUS_MODAL.ERROR_MODAL);
-      }
-      setOpenModal(true);
+      setModalMessage({
+        open: true,
+        type: success ? STATUS_MODAL.SUCCESS_MODAL : STATUS_MODAL.ERROR_MODAL,
+        message: statusMessage,
+      });
     }
   }, [loading, success, statusMessage]);
 
+  useEffect(() => {
+    if (loadingAccesory) return;
+
+    if (statusMessageAccesory) {
+      setModalMessage({
+        open: true,
+        type: STATUS_MODAL.ERROR_MODAL,
+        message: statusMessageAccesory,
+      });
+    }
+  }, [loadingAccesory, statusMessageAccesory]);
   return (
     <>
       <section className="overflow-hidden pt-[200px] pb-20 bg-beige min-h-screen">
@@ -127,7 +150,7 @@ export default function InventarioMultivision() {
                     Inventario
                   </h1>
                   <span className="text-slate-900 text-xl font-black tracking-tighter leading-none uppercase">
-                    <span className="text-blue">Monturas</span>
+                    <span className="text-blue">Accesorios</span>
                   </span>
                 </div>
               </div>
@@ -146,7 +169,9 @@ export default function InventarioMultivision() {
                   onKeyDown={handleScan}
                   // disabled={loading} <-- Removido para permitir ráfagas de escaneo
                   placeholder={
-                    loading ? "BUSCANDO..." : "ESCANEE CÓDIGO DE QR ..."
+                    loading
+                      ? "BUSCANDO..."
+                      : "ESCANEE CÓDIGO ÚNICO CP-420-1-LI ..."
                   }
                   className="w-full py-4 pl-12 pr-4 rounded-xl border border-slate-100 bg-slate-50 text-blue font-bold text-lg focus:border-blue focus:bg-white transition-all outline-none"
                 />
@@ -175,10 +200,10 @@ export default function InventarioMultivision() {
                 <div className="flex justify-center text-4xl">👓</div>
                 <div className="flex flex-col justify-center min-w-0">
                   <h2 className="text-white font-black text-2xl uppercase tracking-tighter leading-none truncate">
-                    {boxItem?.montura?.marca}
+                    {boxItem?.accesorio?.nombre}
                   </h2>
                   <p className="text-blue-light-5 font-bold font-mono text-[10px] uppercase mt-0.5">
-                    MODELO: {boxItem?.montura?.codigo}
+                    MODELO: {boxItem?.accesorio?.codigo}
                   </p>
                 </div>
                 <div className="flex flex-col items-center justify-center border-l border-white/20 pl-2">
@@ -240,10 +265,10 @@ export default function InventarioMultivision() {
                             <p
                               className={`font-bold text-sm uppercase ${isSelected ? "text-blue" : "text-slate-800"}`}
                             >
-                              {item.montura.marca} {item.montura.codigo}
+                              {item.accesorio.nombre}
                             </p>
                             <p className="text-[9px] font-mono font-bold text-slate-400 uppercase leading-none">
-                              {item.montura.codigoQr}
+                              {item.accesorio.codigo}
                             </p>
                           </td>
                           <td className="py-3 px-6 text-center text-sm font-bold text-slate-500">
@@ -269,7 +294,6 @@ export default function InventarioMultivision() {
           </div>
         </div>
 
-        {/* MODAL DE FINALIZACIÓN */}
         {/* MODAL DE FINALIZACIÓN */}
         {isModalOpen && (
           <ModalFrameWrapper size="md">
@@ -304,12 +328,12 @@ export default function InventarioMultivision() {
                           <tr key={p.stock.id} className="mv-tr">
                             <td className="mv-td">
                               <span className="mv-text-main text-slate-700">
-                                {p.montura.marca}
+                                {p.accesorio.nombre}
                               </span>
                             </td>
                             <td className="mv-td">
                               <span className="font-mono text-[10px] font-bold text-slate-500">
-                                {p.montura.codigo}
+                                {p.accesorio.codigo}
                               </span>
                             </td>
                             <td className="mv-td text-center">
@@ -353,10 +377,15 @@ export default function InventarioMultivision() {
       <LoadingModal isOpen={loading} />
 
       <StatusModal
-        isOpen={openModal}
-        type={typeModal}
-        message={statusMessage}
-        onClose={() => setOpenModal(false)}
+        isOpen={modalMessage.open}
+        type={modalMessage.type}
+        message={modalMessage.message}
+        onClose={() =>
+          setModalMessage((prev) => ({
+            ...prev,
+            open: false,
+          }))
+        }
       />
 
       <OutdatedProductsModal
