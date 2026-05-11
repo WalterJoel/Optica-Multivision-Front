@@ -14,6 +14,8 @@ const emptyForm: ICreateAccessory = {
   precio: 0,
   atributo: "",
   imagenUrl: "",
+  codigo: "",
+  color: "",
   basico: false,
 };
 
@@ -97,6 +99,16 @@ export default function CreateAccessory() {
           name="nombre"
           value={form.nombre}
           placeholder="Nombre del accesorio"
+          type="string"
+          required
+          onChange={onChange}
+        />
+
+        <BaseInput
+          label="Codigo"
+          name="codigo"
+          value={form.codigo}
+          placeholder="Codigo interno unico"
           type="string"
           required
           onChange={onChange}

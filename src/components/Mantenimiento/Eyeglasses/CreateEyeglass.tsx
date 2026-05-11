@@ -17,6 +17,7 @@ const emptyForm: ICreateEyeglass = {
   formaFacial: "",
   sexo: "",
   imagenUrl: "",
+  codigo: "",
   tipo: PRODUCTOS.MONTURA,
 };
 
@@ -97,6 +98,15 @@ export default function CreateEyeglass() {
           name="material"
           value={form.material}
           placeholder="Material"
+          type="string"
+          required
+          onChange={onChange}
+        />
+        <BaseInput
+          label="Codigo"
+          name="codigo"
+          value={form.codigo}
+          placeholder="Codigo interno unico"
           type="string"
           required
           onChange={onChange}

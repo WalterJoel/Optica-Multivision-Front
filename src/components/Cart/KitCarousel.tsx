@@ -21,7 +21,7 @@ export default function KitCarousel() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [selectedKitId, setSelectedKitId] = useState<number | null>(null);
 
-  const { Kits, getAllLenses } = useKits();
+  const { kits, getAllLenses } = useKits();
 
   const scroll = (direction: "left" | "right") => {
     if (scrollRef.current) {
@@ -47,7 +47,7 @@ export default function KitCarousel() {
         ref={scrollRef}
         className="flex overflow-x-hidden scroll-smooth snap-x snap-mandatory w-full h-full"
       >
-        {Kits.map((kit, index) => {
+        {kits.map((kit, index) => {
           const isSelected = selectedKitId === kit.id;
 
           return (
