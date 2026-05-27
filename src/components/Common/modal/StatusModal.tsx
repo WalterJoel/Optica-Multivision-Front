@@ -86,11 +86,10 @@ export function StatusModal({
           {isSuccess ? "¡Éxito!" : "Error !"}
         </h2>
 
-        {/* Mensaje */}
-        <p className="text-dark-3 font-medium text-sm leading-relaxed mb-10 px-4">
+        {/* Mensaje con Scroll */}
+        <p className="text-dark-3 font-medium text-sm leading-relaxed mb-10 px-4 max-h-[150px] overflow-y-auto pr-2 custom-scrollbar">
           {message}
         </p>
-
         {/* Botón Principal */}
         <button
           onClick={onClose}

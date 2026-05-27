@@ -10,6 +10,8 @@ import { AppDispatch } from "@/redux/store";
 import { useDispatch } from "react-redux";
 import { CartItem } from "@/types/cart";
 import { TipoProducto } from "@/commons/constants";
+import { useSessionUser } from "@/hooks/session";
+import { Package } from "lucide-react";
 
 /* 🆕 TIPADO DE FILTROS (no rompe nada) */
 type Filters = {
@@ -74,12 +76,16 @@ function EyeglassCardFrame({
             </p>
 
             <p className="text-[10px] text-gray-500">👤 {eyeglass.sexo}</p>
+            <p className="text-[10px] text-gray-500 flex items-center gap-1">
+              <Package size={18} />
+              {eyeglass.producto?.cantidad}
+            </p>
           </div>
 
           {/* PRICE */}
           <div className="mt-2">
             <span className="font-black text-blue text-sm">
-              S/ {eyeglass.precio}
+              S/ {eyeglass.precioVenta}
             </span>
           </div>
 
@@ -93,8 +99,10 @@ function EyeglassCardFrame({
 
 /* Filters es opcional */
 export default function ListEyeglasses({ filters }: { filters?: Filters }) {
+  const { sedeId } = useSessionUser();
+
   const dispatch = useDispatch<AppDispatch>();
-  const { eyeglasses, loading, getAllEyeglassesData } = useEyeglasses();
+  const { eyeglasses, loading, getAllEyeglassesData } = useEyeglasses(sedeId);
 
   const ITEMS_PER_PAGE = 20;
   const [page, setPage] = useState(1);

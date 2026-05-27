@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { IEyeglass } from "@/types/products/eyeglass";
-import { getAllEyeglasses } from "@/services/products/eyeglasses";
+import { getAllEyeglassesService } from "@/services/products/eyeglasses";
 
-export function useEyeglasses() {
+export function useEyeglasses(sedeId: number) {
   const [loading, setLoading] = useState(false);
   const [statusMessage, setMessage] = useState<string>("");
   const [success, setSuccess] = useState<boolean>(false);
@@ -13,7 +13,7 @@ export function useEyeglasses() {
     setSuccess(false);
 
     try {
-      const data = await getAllEyeglasses();
+      const data = await getAllEyeglassesService(sedeId);
       setEyeglasses(data);
       setSuccess(true);
       setMessage("Monturas obtenidas correctamente");

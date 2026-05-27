@@ -47,6 +47,12 @@ export const menuData: Menu[] = [
     submenu: [
       {
         id: 64,
+        title: "Por Excel",
+        newTab: false,
+        path: "/inventarios/excel",
+      },
+      {
+        id: 64,
         title: "Monturas",
         newTab: false,
         path: "/checkout",

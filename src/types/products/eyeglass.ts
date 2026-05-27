@@ -3,7 +3,7 @@ import { PRODUCTOS } from "@/commons/constants";
 export interface IEyeglass {
   id: number;
   productoId: number;
-  precio: number;
+  precioVenta: number;
   marca: string;
   codigo: string;
   material: string;
@@ -16,6 +16,7 @@ export interface IEyeglass {
   producto?: {
     id: number;
     nombre: string;
+    cantidad: number;
     tipo: string;
     activo: boolean;
     createdAt?: string;

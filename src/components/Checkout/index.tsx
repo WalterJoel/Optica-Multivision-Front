@@ -165,6 +165,13 @@ export default function InventarioMultivision() {
               >
                 Por Actualizar
               </BaseButton>
+              <BaseButton
+                variant="secondary"
+                fullWidth={false}
+                onClick={() => setOpenModalOutdated(true)}
+              >
+                Cargar Excel
+              </BaseButton>
             </header>
 
             {/* BOX ITEM ACTUAL */}

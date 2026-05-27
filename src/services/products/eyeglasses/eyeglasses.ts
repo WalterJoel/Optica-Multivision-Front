@@ -12,8 +12,12 @@ export const createEyeglassService = async (payload: ICreateEyeglass) => {
   return data;
 };
 
-export const getAllEyeglasses = async (): Promise<IEyeglass[]> => {
-  const { data } = await api.get("/productos/monturas");
+// Ajustamos la función para que reciba obligatoriamente el sedeId
+export const getAllEyeglassesService = async (
+  idSede: number,
+): Promise<IEyeglass[]> => {
+  const { data } = await api.get(`/productos/monturas/${idSede}`);
+
   return data;
 };
 

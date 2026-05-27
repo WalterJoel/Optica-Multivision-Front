@@ -102,7 +102,7 @@ export default function ListStores() {
                           {s.nombre}
                         </span>
                         <span className="text-[10px] text-dark-5 font-bold uppercase tracking-tighter">
-                          Multivisión Sucursal
+                          IDENTIFICADOR: {s.id}
                         </span>
                       </div>
                     </div>
