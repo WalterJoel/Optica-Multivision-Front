@@ -1,13 +1,13 @@
 import { useState } from "react";
 
-import { UploadFileService } from "@/services/upload-file";
+import { UploadFileService, IUploadResponse } from "@/services/upload-file";
 
 export function useUploadFile() {
     const [loading, setLoading] = useState(false);
     const [statusMessage, setStatusMessage] = useState<string>("");
     const [success, setSuccess] = useState<boolean>(false);
 
-    const uploadFile = async (file: File) => {
+    const uploadFile = async (file: File): Promise<IUploadResponse> => {
         setLoading(true);
 
         setSuccess(false);
@@ -19,9 +19,7 @@ export function useUploadFile() {
 
             setSuccess(true);
 
-            setStatusMessage(
-                `Imagen subida correctamente (${response})`,
-            );
+            setStatusMessage("Imagen subida correctamente");
 
             return response;
         } catch (err: any) {

@@ -77,8 +77,8 @@ export const BaseFile = ({
     if (triggerUpload && value && !loading) {
       const doUpload = async () => {
         try {
-          const url = await uploadFile(value);
-          if (onUploadSuccess) onUploadSuccess(url);
+          const res = await uploadFile(value);
+          if (onUploadSuccess) onUploadSuccess(res.url);
         } catch (error) {
           if (onUploadError) onUploadError(error);
         }
