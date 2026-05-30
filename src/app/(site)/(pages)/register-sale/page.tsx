@@ -1,20 +1,16 @@
 import React from "react";
-import RegisterClient from "@/components/RegisterSale";
+import RegisterClient from "@/components/RegistrarVenta";
 
 import { Metadata } from "next";
-import RegisterSale from "@/components/RegisterSale";
-export const metadata: Metadata = {
-  title: "Register Sale Page | NextCommerce Nextjs E-commerce template",
-  description: "This is Checkout Page for NextCommerce Template",
-  // other metadata
-};
+import RegistrarVenta from "@/components/RegistrarVenta";
 
-const RegisterSalePage = () => {
+
+const RegistrarVentaPage = () => {
   return (
     <main>
-      <RegisterSale />
+      <RegistrarVenta />
     </main>
   );
 };
 
-export default RegisterSalePage;
+export default RegistrarVentaPage;
