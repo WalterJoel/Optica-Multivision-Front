@@ -7,6 +7,7 @@ import { BaseInput, BaseFile } from "@/components/Common/Inputs";
 import { BaseButton } from "@/components/Common/Buttons/BaseButton";
 import { LoadingModal, StatusModal } from "@/components/Common/modal";
 import { STATUS_MODAL } from "@/commons/constants";
+import { useSessionUser } from "@/hooks/session";
 
 const emptyForm = {
   marca: "",
@@ -20,7 +21,8 @@ const emptyForm = {
 };
 
 export default function ListEyeglasses() {
-  const { eyeglasses, loading, getAllEyeglassesData } = useEyeglasses();
+  const { sedeId } = useSessionUser()
+  const { eyeglasses, loading, getAllEyeglassesData } = useEyeglasses(sedeId);
   const {
     updateEyeglass,
     loading: updating,
@@ -55,8 +57,8 @@ export default function ListEyeglasses() {
     setForm({
       marca: item.marca ?? "",
       material: item.material ?? "",
-      precio: Number(item.precio) ?? 0,
-      medida: item.medida ?? "",
+      precio: Number(item.precioVenta) ?? 0,
+      medida: item.talla ?? "",
       color: item.color ?? "",
       formaFacial: item.formaFacial ?? "",
       sexo: item.sexo ?? "",
@@ -156,12 +158,12 @@ export default function ListEyeglasses() {
                   <tr key={item.id} className="border-t border-gray-3">
                     <td className="px-6 py-4">{item.marca}</td>
                     <td className="px-6 py-4">{item.material}</td>
-                    <td className="px-6 py-4">{item.medida}</td>
+                    <td className="px-6 py-4">{item.talla}</td>
                     <td className="px-6 py-4">{item.color}</td>
                     <td className="px-6 py-4">{item.formaFacial}</td>
                     <td className="px-6 py-4">{item.sexo}</td>
                     <td className="px-6 py-4">
-                      S/ {Number(item.precio).toFixed(2)}
+                      S/ {Number(item.precioVenta).toFixed(2)}
                     </td>
                     <td className="px-6 py-4 text-right">
                       <button

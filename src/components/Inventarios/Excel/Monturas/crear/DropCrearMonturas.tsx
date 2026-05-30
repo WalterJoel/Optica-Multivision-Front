@@ -19,18 +19,18 @@ import { useSessionUser } from "@/hooks/session";
 
 export const DropCrearMonturas = () => {
   const { sedeId } = useSessionUser();
+  const [downloading, setDownloading] = useState(false);
 
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [typeModal, setTypeModal] = useState<string>("");
 
   const [file, setFile] = useState<File | null>(null);
 
-  // 🔥 bloqueo descarga
-  const [downloading, setDownloading] = useState(false);
-
+  // Hooks
   const { uploadExcelMonturas, loading, statusMessage, success } =
     useCrearMonturasExcel();
 
+  // Functions
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const selectedFile = acceptedFiles[0];
     if (!selectedFile) return;

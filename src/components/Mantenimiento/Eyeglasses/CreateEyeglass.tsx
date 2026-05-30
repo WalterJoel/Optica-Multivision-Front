@@ -1,37 +1,50 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { BaseInput, BaseFile } from "@/components/Common/Inputs";
+import { BaseInput, BaseFile, BaseSelect } from "@/components/Common/Inputs";
 import { BaseButton } from "@/components/Common/Buttons/BaseButton";
 import { StatusModal, LoadingModal } from "@/components/Common/modal";
 import { STATUS_MODAL, PRODUCTOS } from "@/commons/constants";
 import { ICreateEyeglass } from "@/types/products";
 import { useCreateEyeglass } from "@/hooks/products/eyeglasses";
+import { useSessionUser } from "@/hooks/session";
 
 const emptyForm: ICreateEyeglass = {
   marca: "",
   material: "",
-  precio: 0,
-  medida: "",
+  precioVenta: "" as unknown as number,
+  precioCompra: "" as unknown as number,
+  codigoMontura: "",
+  codigo: "",
   color: "",
   formaFacial: "",
   sexo: "",
   imagenUrl: "",
-  codigo: "",
-  tipo: PRODUCTOS.MONTURA,
+  talla: "",
+  ubicacion: "",
+  sedeId: 0,
+  cantidad: "" as unknown as number,
 };
 
 export default function CreateEyeglass() {
+
   const [form, setForm] = useState<ICreateEyeglass>(emptyForm);
-  const { addEyeglass, loading, statusMessage, success } = useCreateEyeglass();
+
   const [typeModal, setTypeModal] = useState<string>("");
   const [openModal, setOpenModal] = useState<boolean>(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [triggerUpload, setTriggerUpload] = useState(false);
 
+  //Hooks
+  const { addEyeglass, loading, statusMessage, success } = useCreateEyeglass();
+  const { sedeId } = useSessionUser()
+
+  //Functions
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm((p) => ({
       ...p,
-      [name]: name === "precio" ? Number(value) : value,
+      [name]: value,
     }));
   };
 
@@ -40,27 +53,30 @@ export default function CreateEyeglass() {
     setForm((p) => ({ ...p, [name]: value }));
   };
 
-  const onChangeFile = async (file: File | null) => {
-    if (!file) {
-      setForm((p) => ({ ...p, imagenUrl: "" }));
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const res = await fetch("/api/upload-s3", {
-      method: "POST",
-      body: formData,
-    });
-
-    const data = await res.json();
-    setForm((p) => ({ ...p, imagenUrl: data.url }));
+  const onChangeFile = (file: File | null) => {
+    setSelectedFile(file);
   };
+
+  const submitEyeglassForm = async (imageUrl: string) => {
+    await addEyeglass({
+      ...form,
+      precioCompra: Number(form.precioCompra) || 0,
+      precioVenta: Number(form.precioVenta) || 0,
+      cantidad: Number(form.cantidad) || 0,
+      imagenUrl: imageUrl,
+      sedeId,
+    });
+  };
+
 
   const createEyeglass = async (e: React.FormEvent) => {
     e.preventDefault();
-    await addEyeglass(form);
+
+    if (selectedFile) {
+      setTriggerUpload(true);
+    } else {
+      await submitEyeglassForm(form.imagenUrl);
+    }
   };
 
   useEffect(() => {
@@ -68,6 +84,7 @@ export default function CreateEyeglass() {
       if (success) {
         setTypeModal(STATUS_MODAL.SUCCESS_MODAL);
         setForm(emptyForm);
+        setSelectedFile(null);
       } else {
         setTypeModal(STATUS_MODAL.ERROR_MODAL);
       }
@@ -78,11 +95,9 @@ export default function CreateEyeglass() {
   return (
     <form
       onSubmit={createEyeglass}
-      className="w-full max-w-4xl mx-auto rounded-xl border border-gray-200 bg-white p-6 shadow-md space-y-6"
+      className="w-full rounded-xl border border-gray-3 bg-beige p-6"
     >
-      <h2 className="text-2xl font-semibold text-gray-700">Crear Montura</h2>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
         <BaseInput
           label="Marca"
           name="marca"
@@ -106,17 +121,35 @@ export default function CreateEyeglass() {
           label="Codigo"
           name="codigo"
           value={form.codigo}
-          placeholder="Codigo interno unico"
+          placeholder="Ejemplo: 900C"
           type="string"
           required
           onChange={onChange}
         />
-
         <BaseInput
-          label="Precio"
-          name="precio"
+          label="Codigo Montura"
+          name="codigoMontura"
+          value={form.codigoMontura}
+          placeholder="Ejemplo: PZ8010"
+          type="string"
+          required
+          onChange={onChange}
+        />
+        <BaseInput
+          label="Precio Compra"
+          name="precioCompra"
           type="number"
-          value={form.precio}
+          value={form.precioCompra}
+          placeholder="0.00"
+          step="0.01"
+          required
+          onChange={onChange}
+        />
+        <BaseInput
+          label="Precio Venta"
+          name="precioVenta"
+          type="number"
+          value={form.precioVenta}
           placeholder="0.00"
           step="0.01"
           required
@@ -124,9 +157,9 @@ export default function CreateEyeglass() {
         />
 
         <BaseInput
-          label="Medida"
-          name="medida"
-          value={form.medida}
+          label="Talla"
+          name="talla"
+          value={form.talla}
           placeholder="Ej. 54-18-145"
           type="string"
           required
@@ -142,49 +175,66 @@ export default function CreateEyeglass() {
           required
           onChange={onChange}
         />
+        <BaseInput
+          label="Cantidad"
+          name="cantidad"
+          value={form.cantidad}
+          placeholder="Stock"
+          type="number"
+          required
+          onChange={onChange}
+        />
+        <BaseInput
+          label="Ubicación"
+          name="ubicacion"
+          value={form.ubicacion}
+          placeholder="Ejemplo: Estante 32 ..."
+          type="string"
 
-        <div>
-          <label className="mb-2.5 block font-medium text-black dark:text-white">
-            Forma Facial
-          </label>
-          <select
-            name="formaFacial"
-            value={form.formaFacial}
-            onChange={onChangeSelect}
-            className="w-full rounded-lg border border-stroke bg-transparent py-3 px-5 outline-none transition focus:border-primary"
-            required
-          >
-            <option value="">Seleccionar</option>
-            <option value="OVALADO">Ovalado</option>
-            <option value="CUADRADO">Cuadrado</option>
-            <option value="REDONDO">Redondo</option>
-          </select>
-        </div>
+          onChange={onChange}
+        />
 
-        <div>
-          <label className="mb-2.5 block font-medium text-black dark:text-white">
-            Sexo
-          </label>
-          <select
-            name="sexo"
-            value={form.sexo}
-            onChange={onChangeSelect}
-            className="w-full rounded-lg border border-stroke bg-transparent py-3 px-5 outline-none transition focus:border-primary"
-            required
-          >
-            <option value="">Seleccionar</option>
-            <option value="M">Masculino</option>
-            <option value="F">Femenino</option>
-            <option value="UNISEX">Unisex</option>
-          </select>
-        </div>
+        <BaseSelect
+          label="Forma Facial"
+          name="formaFacial"
+          value={form.formaFacial}
+          onChange={onChangeSelect}
+          required
+          options={[
+            { label: "Seleccionar", value: "" },
+            { label: "Ovalado", value: "OVALADO" },
+            { label: "Cuadrado", value: "CUADRADO" },
+            { label: "Redondo", value: "REDONDO" },
+          ]}
+        />
+
+        <BaseSelect
+          label="Sexo"
+          name="sexo"
+          value={form.sexo}
+          onChange={onChangeSelect}
+          required
+          options={[
+            { label: "Seleccionar", value: "" },
+            { label: "Masculino", value: "M" },
+            { label: "Femenino", value: "F" },
+            { label: "Unisex", value: "UNISEX" },
+          ]}
+        />
       </div>
 
       <BaseFile
         label="Imagen"
         name="imagen"
+        value={selectedFile}
         onChange={onChangeFile}
         currentUrl={form.imagenUrl || undefined}
+        triggerUpload={triggerUpload}
+        onUploadSuccess={async (url) => {
+          setTriggerUpload(false);
+          await submitEyeglassForm(url);
+        }}
+        onUploadError={() => setTriggerUpload(false)}
       />
 
       <div className="flex justify-center">

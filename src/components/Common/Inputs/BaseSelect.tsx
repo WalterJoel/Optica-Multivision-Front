@@ -49,14 +49,8 @@ export const BaseSelect = ({
           onChange={onChange}
           onBlur={onBlur}
           onFocus={onFocus}
-          className="
-            w-full appearance-none
-            rounded-2xl border border-gray-3 bg-white
-            p-4.5 pr-12
-            outline-none
-            focus:border-blue focus:ring-4 focus:ring-blue/5
-            transition-all duration-300 text-dark shadow-sm
-          "
+          style={{ backgroundColor: "white" }}
+          className="w-full appearance-none rounded-2xl border border-gray-3 bg-white p-4.5 pr-12 outline-none focus:border-blue focus:ring-4 focus:ring-blue/5 transition-all duration-300 text-dark shadow-sm"
         >
           {/* <option value="" disabled>
             {placeholder}

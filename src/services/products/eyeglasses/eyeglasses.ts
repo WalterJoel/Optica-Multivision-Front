@@ -8,7 +8,7 @@ import {
 } from "@/types/products";
 
 export const createEyeglassService = async (payload: ICreateEyeglass) => {
-  const { data } = await api.post("/productos/crearMontura", payload);
+  const { data } = await api.post("/productos/monturas/crearMontura", payload);
   return data;
 };
 

@@ -44,7 +44,7 @@ const CreateMonturaDiscount = () => {
   const handleSelectMontura = (m: IEyeglass) => {
     setSearchMonturaTerm(`${m.marca} - ${m.color}`);
     setShowList(false);
-    setSelectedMonturaPrice(Number(m.precio || 0));
+    setSelectedMonturaPrice(Number(m.precioVenta || 0));
     setForm((prev) => ({
       ...prev,
       productoId: m.productoId,
@@ -143,10 +143,10 @@ const CreateMonturaDiscount = () => {
                 className="w-full flex items-center justify-between gap-4"
               >
                 <span className="truncate">
-                  {m.marca} - {m.color} - {m.medida}
+                  {m.marca} - {m.color} - {m.talla}
                 </span>
                 <span className="text-[11px] font-mono text-blue-dark bg-blue-light/10 px-2 py-0.5 rounded border border-blue-dark/20 shrink-0">
-                  S/ {Number(m.precio).toFixed(2)}
+                  S/ {Number(m.precioVenta).toFixed(2)}
                 </span>
               </div>
             )}

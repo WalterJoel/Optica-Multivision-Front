@@ -72,7 +72,7 @@ function EyeglassCardFrame({
             </p>
 
             <p className="text-[10px] text-gray-500 mt-1">
-              📐 {eyeglass.medida} • {eyeglass.formaFacial}
+              📐 {eyeglass.talla} • {eyeglass.formaFacial}
             </p>
 
             <p className="text-[10px] text-gray-500">👤 {eyeglass.sexo}</p>
@@ -121,7 +121,7 @@ export default function ListEyeglasses({ filters }: { filters?: Filters }) {
     const max = filters?.precioMax ?? 999999;
 
     return eyeglasses.filter((p: IEyeglass) => {
-      const precio = Number(p.precio) || 0;
+      const precio = Number(p.precioVenta) || 0;
 
       const matchSexo = !sexo || p.sexo?.toUpperCase() === sexo;
       const matchForma = !forma || p.formaFacial?.toUpperCase() === forma;
@@ -157,7 +157,7 @@ export default function ListEyeglasses({ filters }: { filters?: Filters }) {
       id: eyeGlass.id,
       productName: (TipoProducto.MONTURA + " " + eyeGlass.marca).toUpperCase(),
       productId: eyeGlass.productoId,
-      price: eyeGlass.precio,
+      price: eyeGlass.precioVenta,
       quantity: 1,
       productType: TipoProducto.MONTURA,
       discount: 0,
