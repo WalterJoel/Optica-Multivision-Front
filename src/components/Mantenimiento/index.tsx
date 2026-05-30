@@ -4,7 +4,7 @@ import Breadcrumb from "../Common/Breadcrumb";
 import Image from "next/image";
 
 import UsersTab from "./Usuarios/UsersPage";
-import CajaPage from "./Caja/CajaPage";
+
 import SedesPage from "./Stores/StorePage";
 import KitPage from "./Kits/KitPage";
 
@@ -37,9 +37,8 @@ const MyAccount = () => {
   const menuButton = (id: string, label: string, Icon: any) => (
     <button
       onClick={() => setActiveTab(id)}
-      className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
-        activeTab === id ? "text-white bg-blue" : "text-dark-2 bg-gray-1"
-      }`}
+      className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${activeTab === id ? "text-white bg-blue" : "text-dark-2 bg-gray-1"
+        }`}
     >
       <Icon size={20} />
       {label}
@@ -48,15 +47,14 @@ const MyAccount = () => {
 
   return (
     <>
-      <Breadcrumb title={"Mantenimiento"} pages={["my account"]} />
-
-      <section className="overflow-hidden py-20 bg-gray-2">
-        <div className="max-w-[1600px] w-full mx-auto px-4 sm:px-8 xl:px-10">
+      {/* <Breadcrumb title={"Mantenimiento"} pages={["my account"]} /> */}
+      <div className="bg-beige pt-32 pb-16 px-4 sm:px-6 lg:px-8 min-h-screen mt-15">
+        <div className="max-w-[1700px] mx-auto">
           <div className="flex flex-col xl:flex-row gap-7.5 items-stretch">
             {/* SIDEBAR */}
             <div className="xl:w-[350px] w-full bg-white rounded-xl shadow-1 flex-shrink-0">
               <div className="flex xl:flex-col">
-                <div className="hidden lg:flex flex-wrap items-center gap-5 py-6 px-4 sm:px-7.5 xl:px-9 border-r xl:border-r-0 xl:border-b border-gray-3">
+                <div className="hidden   lg:flex flex-wrap items-center gap-5 py-6 px-4 sm:px-7.5 xl:px-9 border-r xl:border-r-0 xl:border-b border-gray-3">
                   <div className="max-w-[64px] w-full h-16 rounded-full overflow-hidden">
                     <Image
                       src="/images/users/user-04.jpg"
@@ -80,7 +78,7 @@ const MyAccount = () => {
                     {menuButton("sedes", "Sedes", Building2)}
                     {menuButton("users", "Usuarios", Users)}
 
-                    {menuButton("abrir-caja", "Caja", CreditCard)}
+
                     {menuButton(
                       "movimiento",
                       "Movimientos de Caja",
@@ -118,11 +116,7 @@ const MyAccount = () => {
                 <UsersTab />
               </div>
 
-              <div
-                className={`w-full bg-white rounded-xl shadow-1 ${activeTab === "abrir-caja" ? "block" : "hidden"}`}
-              >
-                <CajaPage />
-              </div>
+
 
               <div
                 className={`w-full bg-white rounded-xl shadow-1 ${activeTab === "movimiento" ? "block" : "hidden"}`}
@@ -162,7 +156,7 @@ const MyAccount = () => {
             </div>
           </div>
         </div>
-      </section>
+      </div>
     </>
   );
 };

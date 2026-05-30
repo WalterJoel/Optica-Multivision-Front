@@ -2,17 +2,28 @@ import { PRODUCTOS } from "@/commons/constants";
 
 export interface IAccessory {
   id: number;
-  codigo: string;
+  sedeId: number;
+  productoId: number;
+  codigoAccesorio: string;
   color: string;
-  precio: number;
+  precioVenta: number;
+  precioCompra: number;
   nombre: string;
-  atributo: string;
-  imagenUrl: string;
-  createdAt: string;
-  basico: boolean;
+  ubicacion?: string;
+  imagenUrl?: string;
+  createdAt?: string;
+  cantidad: number;
+  producto?: {
+    id: number;
+    nombre: string;
+    cantidad: number;
+    tipo: string;
+    activo: boolean;
+    createdAt?: string;
+  };
 }
 
-export type ICreateAccessory = Omit<IAccessory, "id" | "createdAt"> & {};
+export type ICreateAccessory = Omit<IAccessory, "id" | "productoId" | "createdAt" | "producto"> & {};
 
 export interface ISearchAccesory {
   id: number;

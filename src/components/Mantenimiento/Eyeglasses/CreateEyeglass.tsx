@@ -138,20 +138,20 @@ export default function CreateEyeglass() {
         <BaseInput
           label="Precio Compra"
           name="precioCompra"
-          type="number"
           value={form.precioCompra}
           placeholder="0.00"
-          step="0.01"
+          pattern="^[0-9]+(\.[0-9]{1,2})?$"
+          title="Solo se permiten hasta 2 decimales (ej. 12.50)"
           required
           onChange={onChange}
         />
         <BaseInput
           label="Precio Venta"
           name="precioVenta"
-          type="number"
           value={form.precioVenta}
           placeholder="0.00"
-          step="0.01"
+          pattern="^[0-9]+(\.[0-9]{1,2})?$"
+          title="Solo se permiten hasta 2 decimales (ej. 12.50)"
           required
           onChange={onChange}
         />
@@ -180,7 +180,8 @@ export default function CreateEyeglass() {
           name="cantidad"
           value={form.cantidad}
           placeholder="Stock"
-          type="number"
+          pattern="^[0-9]+$"
+          title="Solo se permiten números enteros (ej. 10)"
           required
           onChange={onChange}
         />

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useCreateLens } from "@/hooks/products";
-import { BaseInput } from "@/components/Common/Inputs";
+import { BaseInput, BaseFile } from "@/components/Common/Inputs";
 import { PRODUCTOS, STATUS_MODAL } from "@/commons/constants";
 import { CreateLens } from "@/types/products";
 import { StatusModal, LoadingModal } from "@/components/Common/modal";
@@ -13,12 +13,12 @@ import {
 import { BaseButton } from "@/components/Common/Buttons";
 import { useKits } from "@/hooks/kits";
 
-const initialForm: CreateLens = {
+const initialForm = {
   marca: "",
   material: "",
-  precio_serie1: 0,
-  precio_serie2: 0,
-  precio_serie3: 0,
+  precio_serie1: "" as unknown as number,
+  precio_serie2: "" as unknown as number,
+  precio_serie3: "" as unknown as number,
   kitId: null,
   imagenUrl: null,
   tipo: PRODUCTOS.LENTE,
@@ -28,15 +28,16 @@ export default function LensForm() {
   const [form, setForm] = useState<CreateLens>(initialForm);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [typeModal, setTypeModal] = useState<string>("");
-  const [imagenUrl, setImagen] = useState<File | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [triggerUpload, setTriggerUpload] = useState(false);
 
-  // Composables
+  // Hooks
   const { addLens, success, statusMessage, loading } = useCreateLens();
   const { kits, getAllLenses } = useKits();
 
   const resetForm = () => {
     setForm(initialForm);
-    setImagen(null);
+    setSelectedFile(null);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,17 +45,26 @@ export default function LensForm() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const submitLensForm = async (imageUrl: string) => {
     const payload: CreateLens = {
       ...form,
-      precio_serie1: Number(form.precio_serie1),
-      precio_serie2: Number(form.precio_serie2),
-      precio_serie3: Number(form.precio_serie3),
+      precio_serie1: Number(form.precio_serie1) || 0,
+      precio_serie2: Number(form.precio_serie2) || 0,
+      precio_serie3: Number(form.precio_serie3) || 0,
+      imagenUrl: imageUrl || null,
     };
 
     await addLens(payload);
+  };
+
+  const createLens = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (selectedFile) {
+      setTriggerUpload(true);
+    } else {
+      await submitLensForm(form.imagenUrl || "");
+    }
   };
 
   //Wrapper/Mapper para el BaseSelect
@@ -88,7 +98,7 @@ export default function LensForm() {
   return (
     <>
       <form
-        onSubmit={handleSubmit}
+        onSubmit={createLens}
         className="w-full rounded-xl border border-gray-3 bg-beige p-6"
       >
         <div className="flex flex-col lg:flex-row gap-5 mb-5">
@@ -114,27 +124,30 @@ export default function LensForm() {
           <BaseInput
             label="Precio Serie 1"
             name="precio_serie1"
-            type="number"
-            step="0.01"
             value={form.precio_serie1}
+            placeholder="0.00"
+            pattern="^[0-9]+(\.[0-9]{1,2})?$"
+            title="Solo se permiten hasta 2 decimales (ej. 12.50)"
             required
             onChange={handleChange}
           />
           <BaseInput
             label="Precio Serie 2"
             name="precio_serie2"
-            type="number"
-            step="0.01"
             value={form.precio_serie2}
+            placeholder="0.00"
+            pattern="^[0-9]+(\.[0-9]{1,2})?$"
+            title="Solo se permiten hasta 2 decimales (ej. 12.50)"
             required
             onChange={handleChange}
           />
           <BaseInput
             label="Precio Serie 3"
             name="precio_serie3"
-            type="number"
-            step="0.01"
             value={form.precio_serie3}
+            placeholder="0.00"
+            pattern="^[0-9]+(\.[0-9]{1,2})?$"
+            title="Solo se permiten hasta 2 decimales (ej. 12.50)"
             required
             onChange={handleChange}
           />
@@ -152,23 +165,28 @@ export default function LensForm() {
           />
         </div>
 
-        <div className="mb-5">
-          <label className="block mb-2.5">
-            Cargar imagen <span className="text-red">*</span>
-          </label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => e.target.files && setImagen(e.target.files[0])}
-          />
-        </div>
+        <BaseFile
+          label="Imagen"
+          name="imagen"
+          value={selectedFile}
+          onChange={(file) => setSelectedFile(file)}
+          currentUrl={form.imagenUrl || undefined}
+          triggerUpload={triggerUpload}
+          onUploadSuccess={async (url) => {
+            setTriggerUpload(false);
+            await submitLensForm(url);
+          }}
+          onUploadError={() => setTriggerUpload(false)}
+        />
 
-        <BaseButton className="min-w-[240px]" type="submit" disabled={loading}>
-          Guardar
-        </BaseButton>
-        <p className="mt-4 text-center text-sm text-green-600">
-          Puedes cambiar de KIT luego
-        </p>
+        <div className="flex flex-col items-center mt-6">
+          <BaseButton className="min-w-[240px]" type="submit" disabled={loading}>
+            Guardar
+          </BaseButton>
+          <p className="mt-4 text-center text-sm text-green-600">
+            Puedes cambiar de KIT luego
+          </p>
+        </div>
       </form>
 
       <LoadingModal isOpen={loading} />
