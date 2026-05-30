@@ -19,7 +19,6 @@ const emptyForm: ICreateAccessory = {
   ubicacion: "",
   cantidad: "" as unknown as number,
   color: "",
-
 };
 
 export default function CreateAccessory() {

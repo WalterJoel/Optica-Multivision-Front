@@ -2,7 +2,7 @@ import { api } from "../../api";
 import { ICreateAccessory, IAccessory } from "@/types/products";
 
 export const createAccesoryService = async (payload: ICreateAccessory) => {
-  const { data } = await api.post("/productos/crearAccesorio", payload);
+  const { data } = await api.post("/productos/accesorios/crearAccesorio", payload);
   return data;
 };
 
@@ -14,8 +14,8 @@ export const updateAccesoryService = async (
   return data;
 };
 
-export const getAllAccessories = async (): Promise<IAccessory[]> => {
-  const { data } = await api.get("/productos/accesorios");
+export const getAllAccessoriesService = async (sedeId: number): Promise<IAccessory[]> => {
+  const { data } = await api.get(`/productos/accesorios/${sedeId}`);
   return data;
 };
 
@@ -23,6 +23,7 @@ export const getAccessoryById = async (id: number): Promise<IAccessory> => {
   const { data } = await api.get(`/productos/accesorio/${id}`);
   return data;
 };
+
 
 export const deleteAccesoryService = async (id: number) => {
   const { data } = await api.delete(`/productos/accesorio/${id}`);

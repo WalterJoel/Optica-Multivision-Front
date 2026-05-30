@@ -50,10 +50,18 @@ function EyeglassCardFrame({
       {/* BODY */}
       <div className="relative bg-white rounded-[1.5rem] w-full flex items-stretch">
         {/* LEFT IMAGE */}
-        <div className="w-[40%] bg-yellow-light-4 flex items-center justify-center border-r border-yellow-light-2 rounded-[1.6rem]">
-          <div className="w-14 h-14 flex items-center justify-center overflow-hidden">
-            <span className="text-4xl leading-none">👓</span>
-          </div>{" "}
+        <div className="w-[40%] bg-yellow-light-4 flex items-center justify-center border-r border-yellow-light-2 rounded-[1.6rem] overflow-hidden">
+          {eyeglass.imagenUrl ? (
+            <img
+              src={eyeglass.imagenUrl}
+              alt={eyeglass.marca}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-14 h-14 flex items-center justify-center overflow-hidden">
+              <span className="text-4xl leading-none">👓</span>
+            </div>
+          )}
         </div>
 
         {/* RIGHT CONTENT */}

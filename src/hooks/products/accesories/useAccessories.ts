@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { IAccessory } from "@/types/products/accessory";
-import { getAllAccessories } from "@/services/products/accesories";
+import { getAllAccessoriesService } from "@/services/products/accesories";
 
-export function useAccessories() {
+export function useAccessories(sedeId: number) {
   const [loading, setLoading] = useState(false);
   const [statusMessage, setMessage] = useState<string>("");
   const [accessories, setAccessories] = useState<IAccessory[]>([]);
@@ -14,7 +14,7 @@ export function useAccessories() {
     setMessage("");
 
     try {
-      const data = await getAllAccessories();
+      const data = await getAllAccessoriesService(sedeId);
 
       setAccessories(data || []);
       setMessage("Accesorios obtenidos correctamente");

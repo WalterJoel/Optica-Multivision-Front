@@ -10,13 +10,15 @@ import { AppDispatch } from "@/redux/store";
 import { useDispatch } from "react-redux";
 import { CartItem } from "@/types/cart";
 import { TipoProducto } from "@/commons/constants";
+import { useSessionUser } from "@/hooks/session";
+import { Package } from "lucide-react";
 
 /* FILTERS */
 type Filters = {
   search?: string;
   precioMin?: number;
   precioMax?: number;
-  color?: string; // 👈 NUEVO
+  color?: string;
 };
 
 /* CARD */
@@ -38,7 +40,7 @@ function AccessoryCardFrame({
   const colors = borderPairs[variant];
 
   return (
-    <div className="relative w-full min-h-[170px] overflow-hidden rounded-[1.6rem] p-[2px] shadow-md hover:shadow-lg transition flex">
+    <div className="relative w-full h-[220px] overflow-hidden rounded-[1.6rem] p-[2px] shadow-md hover:shadow-lg transition flex">
       {/* BORDER */}
       <div className="absolute inset-0 flex">
         <div className={`w-1/2 h-full ${colors.left}`} />
@@ -48,29 +50,47 @@ function AccessoryCardFrame({
       {/* BODY */}
       <div className="relative bg-white rounded-[1.5rem] w-full flex items-stretch">
         {/* IMAGE */}
-        <div className="w-[40%] bg-yellow-light-4 flex items-center justify-center border-r border-yellow-light-2 rounded-[1.6rem]">
-          <span className="text-4xl">🧰</span>
+        <div className="w-[40%] bg-yellow-light-4 flex items-center justify-center border-r border-yellow-light-2 rounded-[1.6rem] overflow-hidden">
+          {accessory.imagenUrl ? (
+            <img
+              src={accessory.imagenUrl}
+              alt={accessory.nombre}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-14 h-14 flex items-center justify-center overflow-hidden">
+              <span className="text-4xl leading-none">🧰</span>
+            </div>
+          )}
         </div>
 
         {/* CONTENT */}
         <div className="w-[60%] p-4 flex flex-col justify-between">
           <div>
-            <h3 className="text-sm font-black text-dark uppercase line-clamp-2">
+            <h3 className="text-sm font-black text-dark uppercase line-clamp-1">
               {accessory.nombre}
             </h3>
 
+            <h3 className="text-[11px] text-gray-400 font-semibold">
+              {accessory.codigoAccesorio || "Sin código"}
+            </h3>
+
             <p className="text-[11px] text-gray-400 font-semibold">
-              {accessory.codigo || "Sin codigo"}
+              🎨 {accessory.color || "Sin color"}
             </p>
 
-            {accessory.color && (
-              <p className="text-[10px] text-gray-400">🎨 {accessory.color}</p>
-            )}
+
+
+
+            <p className="text-[10px] text-gray-500 flex items-center gap-1">
+              <Package size={18} />
+              {accessory.producto?.cantidad ?? accessory.cantidad ?? 0}
+            </p>
           </div>
 
           <div className="mt-2">
             <span className="font-black text-blue text-sm">
-              S/ {accessory.precio}
+              S/ {accessory.precioVenta}
             </span>
           </div>
 
@@ -84,7 +104,9 @@ function AccessoryCardFrame({
 /* LIST */
 export default function ListAccessories({ filters }: { filters?: Filters }) {
   const dispatch = useDispatch<AppDispatch>();
-  const { accessories, loading, getAllAccessoriesData } = useAccessories();
+  // Hooks
+  const { sedeId } = useSessionUser()
+  const { accessories, loading, getAllAccessoriesData } = useAccessories(sedeId);
 
   const ITEMS_PER_PAGE = 20;
   const [page, setPage] = useState(1);
@@ -101,12 +123,12 @@ export default function ListAccessories({ filters }: { filters?: Filters }) {
     const color = filters?.color || "";
 
     return accessories.filter((item: IAccessory) => {
-      const precio = Number(item.precio) || 0;
+      const precio = Number(item.precioVenta) || 0;
 
       const matchSearch =
         !search ||
         item.nombre?.toLowerCase().includes(search) ||
-        item.codigo?.toLowerCase().includes(search);
+        item.codigoAccesorio?.toLowerCase().includes(search);
 
       const matchPrecio = precio >= min && precio <= max;
 
@@ -135,7 +157,7 @@ export default function ListAccessories({ filters }: { filters?: Filters }) {
       id: item.id,
       productName: (TipoProducto.ACCESORIO + " " + item.nombre).toUpperCase(),
       productId: item.id,
-      price: item.precio,
+      price: item.precioVenta,
       quantity: 1,
       productType: TipoProducto.ACCESORIO,
       discount: 0,

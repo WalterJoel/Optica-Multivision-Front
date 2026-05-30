@@ -221,11 +221,10 @@ const PaymentMethod = () => {
                 <button
                   onClick={handleRegisterSale}
                   disabled={loading || cartStoreTotal === 0}
-                  className={`mt-auto w-full rounded-xl py-4 text-white font-bold text-lg shadow-lg transition-all ${
-                    loading
-                      ? "bg-gray-400"
-                      : "bg-blue hover:bg-blue-dark active:scale-[0.98]"
-                  }`}
+                  className={`mt-auto w-full rounded-xl py-4 text-white font-bold text-lg shadow-lg transition-all ${loading
+                    ? "bg-gray-400"
+                    : "bg-blue hover:bg-blue-dark active:scale-[0.98]"
+                    }`}
                 >
                   {loading ? "PROCESANDO..." : "REGISTRAR OPERACIÓN"}
                 </button>

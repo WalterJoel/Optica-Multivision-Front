@@ -236,11 +236,10 @@ const PaymentMethod = () => {
                                 method: method.key,
                               }))
                             }
-                            className={`flex flex-col items-center gap-2 rounded-xl border p-3.5 ${
-                              active
-                                ? "border-blue bg-blue/5"
-                                : "border-gray-200"
-                            }`}
+                            className={`flex flex-col items-center gap-2 rounded-xl border p-3.5 ${active
+                              ? "border-blue bg-blue/5"
+                              : "border-gray-200"
+                              }`}
                           >
                             <Image
                               src={method.icon}
@@ -261,7 +260,7 @@ const PaymentMethod = () => {
                       name="total"
                       type="text"
                       value={`S/ ${form.total}`}
-                      onChange={() => {}}
+                      onChange={() => { }}
                       readOnly
                     />
 
@@ -277,12 +276,11 @@ const PaymentMethod = () => {
                       label={paymentType === "cash" ? "Cambio" : "Deuda"}
                       name="result"
                       type="text"
-                      value={`S/ ${
-                        paymentType === "cash"
-                          ? change.toFixed(2)
-                          : debt.toFixed(2)
-                      }`}
-                      onChange={() => {}}
+                      value={`S/ ${paymentType === "cash"
+                        ? change.toFixed(2)
+                        : debt.toFixed(2)
+                        }`}
+                      onChange={() => { }}
                       readOnly
                     />
                   </div>
