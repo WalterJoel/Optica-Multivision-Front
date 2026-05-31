@@ -19,3 +19,8 @@ export const searchClient = async (
 
   return data.clientes;
 };
+
+export const getAllClientsService = async () => {
+  const { data } = await api.get("/clientes");
+  return data;
+};

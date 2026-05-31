@@ -1,7 +1,7 @@
 interface ModalFrameWrapperProps {
   children: React.ReactNode;
   variant?: "blue" | "red" | "yellow";
-  size?: "xs" | "sm" | "md";
+  size?: "xs" | "sm" | "md" | "lg" | "xl";
 }
 export function ModalFrameWrapper({
   children,
@@ -12,6 +12,8 @@ export function ModalFrameWrapper({
     xs: "max-w-[300px]",
     sm: "max-w-sm",
     md: "max-w-lg",
+    lg: "max-w-2xl",
+    xl: "max-w-4xl",
   };
 
   // Definimos los pares de colores sólidos según la variante

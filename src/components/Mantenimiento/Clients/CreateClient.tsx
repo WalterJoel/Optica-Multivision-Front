@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { BaseInput } from "@/components/Common/Inputs/BaseInput";
+import { BaseSelect } from "@/components/Common/Inputs/BaseSelect";
 import { BaseButton } from "@/components/Common/Buttons/BaseButton";
 import { BaseTarea } from "@/components/Common/Inputs/BaseTarea";
 import { StatusModal, LoadingModal } from "@/components/Common/modal";
@@ -133,20 +134,18 @@ export default function CreateClient() {
     <>
       <form
         onSubmit={createClient}
-        className="w-full rounded-xl border border-gray-3 bg-white p-6"
+        className="w-full rounded-xl border border-gray-3 bg-beige p-6"
       >
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-dark">Tipo</label>
-            <select
-              value={form.tipoCliente}
-              onChange={onChangeTipo}
-              className="w-full rounded-md border border-gray-3 bg-gray-1 px-5 py-3 outline-none duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20"
-            >
-              <option value="PERSONA">Persona</option>
-              <option value="EMPRESA">Empresa</option>
-            </select>
-          </div>
+          <BaseSelect
+            label="Tipo"
+            value={form.tipoCliente}
+            onChange={onChangeTipo}
+            options={[
+              { label: "Persona", value: "PERSONA" },
+              { label: "Empresa", value: "EMPRESA" },
+            ]}
+          />
 
           <BaseInput
             label={tipoDoc}
@@ -243,15 +242,15 @@ export default function CreateClient() {
             Especificaciones de las Medidas
           </h3>
 
-<div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">            <BaseInput
-              label="ADD"
-              name="add"
-              value={form.add || ""}
-              placeholder="1.50"
-              onChange={onChange}
-            />
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">            <BaseInput
+            label="ADD"
+            name="add"
+            value={form.add || ""}
+            placeholder="1.50"
+            onChange={onChange}
+          />
 
-           
+
           </div>
 
           <div className="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-2">

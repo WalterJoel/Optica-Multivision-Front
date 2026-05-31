@@ -1,7 +1,5 @@
-"use client";
-
 import { useState } from "react";
-import { api } from "@/services/api";
+import { createClientService } from "@/services/clients";
 import { ICreateClient } from "@/types/clients";
 
 export const useCreateClient = () => {
@@ -84,7 +82,7 @@ export const useCreateClient = () => {
         if (body[k] === undefined) delete body[k];
       });
 
-      await api.post("/clientes/crearCliente", body);
+      await createClientService(body);
 
       setSuccess(true);
       setStatusMessage("Cliente creado correctamente");
