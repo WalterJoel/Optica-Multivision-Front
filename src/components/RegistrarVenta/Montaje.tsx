@@ -119,8 +119,8 @@ const Montaje = () => {
   });
 
   return (
-    <div className="w-full">
-      <div className="flex h-full flex-col rounded-xl bg-white p-5 shadow-lg xl:p-6 border-2 border-blue/20">
+    <div className="w-full bg-white rounded-2xl shadow-xl border border-gray-100 p-6 h-full">
+      <div className="flex h-full flex-col rounded-xl bg-beige p-6 shadow-sm">
         <h3 className="mb-5 text-lg font-semibold flex items-center gap-2">
           <div className="w-2 h-6 bg-blue rounded-full" />
           Datos de Orden de Montaje
@@ -259,7 +259,7 @@ const Montaje = () => {
               {lenteOptions.map((item) => (
                 <label
                   key={item}
-                  className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer"
+                  className="flex items-center gap-3 rounded-lg border border-gray-100 bg-white px-4 py-2 hover:bg-gray-50 transition-colors shadow-sm cursor-pointer"
                 >
                   <input
                     type="checkbox"
@@ -267,7 +267,7 @@ const Montaje = () => {
                     checked={form.lenteMateriales.includes(item)}
                     onChange={() => toggleArrayValue("lenteMateriales", item)}
                   />
-                  <span>{item}</span>
+                  <span className="text-sm text-gray-700 font-medium">{item}</span>
                 </label>
               ))}
             </div>
@@ -275,11 +275,11 @@ const Montaje = () => {
 
           <div>
             <h4 className="mb-3 font-semibold text-sm text-gray-700">Material de montura</h4>
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-3">
               {monturaMaterialOptions.map((item) => (
                 <label
                   key={item}
-                  className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer"
+                  className="flex items-center gap-3 rounded-lg border border-gray-100 bg-white px-4 py-2 hover:bg-gray-50 transition-colors shadow-sm cursor-pointer"
                 >
                   <input
                     type="checkbox"
@@ -287,7 +287,7 @@ const Montaje = () => {
                     checked={form.monturaMateriales.includes(item)}
                     onChange={() => toggleArrayValue("monturaMateriales", item)}
                   />
-                  <span>{item}</span>
+                  <span className="text-sm text-gray-700 font-medium">{item}</span>
                 </label>
               ))}
             </div>
@@ -295,8 +295,8 @@ const Montaje = () => {
 
           <div>
             <h4 className="mb-3 font-semibold text-sm text-gray-700">Montura</h4>
-            <div className="flex gap-6">
-              <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+            <div className="flex gap-3">
+              <label className="flex items-center gap-3 rounded-lg border border-gray-100 bg-white px-4 py-2 hover:bg-gray-50 transition-colors shadow-sm cursor-pointer">
                 <input
                   type="radio"
                   name="tipoMontura"
@@ -309,10 +309,10 @@ const Montaje = () => {
                     }))
                   }
                 />
-                Nueva
+                <span className="text-sm text-gray-700 font-medium">Nueva</span>
               </label>
 
-              <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+              <label className="flex items-center gap-3 rounded-lg border border-gray-100 bg-white px-4 py-2 hover:bg-gray-50 transition-colors shadow-sm cursor-pointer">
                 <input
                   type="radio"
                   name="tipoMontura"
@@ -325,7 +325,7 @@ const Montaje = () => {
                     }))
                   }
                 />
-                Usada
+                <span className="text-sm text-gray-700 font-medium">Usada</span>
               </label>
             </div>
           </div>
@@ -357,8 +357,8 @@ const Montaje = () => {
 
           <div>
             <h4 className="mb-3 font-semibold text-sm text-gray-700">Bisel brillante</h4>
-            <div className="flex gap-6">
-              <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+            <div className="flex gap-3">
+              <label className="flex items-center gap-3 rounded-lg border border-gray-100 bg-white px-4 py-2 hover:bg-gray-50 transition-colors shadow-sm cursor-pointer">
                 <input
                   type="radio"
                   name="biselBrillante"
@@ -371,10 +371,10 @@ const Montaje = () => {
                     }))
                   }
                 />
-                SI
+                <span className="text-sm text-gray-700 font-medium">SI</span>
               </label>
 
-              <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+              <label className="flex items-center gap-3 rounded-lg border border-gray-100 bg-white px-4 py-2 hover:bg-gray-50 transition-colors shadow-sm cursor-pointer">
                 <input
                   type="radio"
                   name="biselBrillante"
@@ -387,7 +387,7 @@ const Montaje = () => {
                     }))
                   }
                 />
-                NO
+                <span className="text-sm text-gray-700 font-medium">NO</span>
               </label>
             </div>
           </div>

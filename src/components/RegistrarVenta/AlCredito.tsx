@@ -90,23 +90,21 @@ const AlCredito = () => {
         const productosDesdeCart: VentaProducto[] = cartStoreItems.map((item) => ({
             productoId: item.productId,
             tipoProducto: item.productType,
-            precioUnitario: item.price,
-            cantidad: item.quantity,
+            precioUnitario: Number(item.price),
+            cantidad: Number(item.quantity),
             subtotal: Number(
-                ((item.price - (item.discount || 0)) * item.quantity).toFixed(2),
+                ((Number(item.price) - (Number(item.discount) || 0)) * Number(item.quantity)).toFixed(2),
             ),
-            descuento: item.discount || null,
+            descuento: item.discount ? Number(item.discount) : null,
             stockId: item.isLens ? item.id : null,
             cyl: item.cyl || null,
             esf: item.esf || null,
-            stockProductoId: !item.isLens ? item.id : null,
         }));
 
         const payload: ICreateSale = {
             sedeId: sedeId,
             userId: userId,
             metodoPago: ventaStore.metodoPago,
-            kitId: ventaStore.kitRegaloId,
             montoPagado: Number(montoRecibido),
             productos: productosDesdeCart,
             total: cartStoreTotal,

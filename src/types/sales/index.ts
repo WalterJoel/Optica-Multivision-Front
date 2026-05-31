@@ -6,7 +6,7 @@ import {
 } from "@/commons/constants";
 
 export interface VentaProducto {
-  productoId: number;
+  productoId?: number;
   tipoProducto: TipoProducto;
   precioUnitario: number;
   cantidad: number;
@@ -17,28 +17,24 @@ export interface VentaProducto {
   stockId?: number;
   esf?: number;
   cyl?: number;
-
-  // ✅ Para monturas y accesorios
-  stockProductoId?: number;
 }
 
 export interface ICreateSale {
   sedeId: number;
   userId: number;
-  responsableVenta?: string;
   metodoPago: MetodoPago;
   tipoVenta: TipoVenta;
   estadoPago?: EstadoPago;
   montaje?: boolean;
-  nroCuotas?: number;
+  nroCuotas?: number | null;
   observaciones?: string;
   tipoComprobante?: string;
   nroComprobante?: string;
-  kitId?: number;
   productos: VentaProducto[];
   total: number;
   montoPagado: number;
   deuda: number;
+  diasCompromisoPago?: number | null;
 }
 
 export interface IResponseSale {
@@ -76,6 +72,5 @@ export interface ProductSale {
   stockId: number;
   esf: string;
   cyl: string;
-  stockProductoId: number | null;
   createdAt: string;
 }
