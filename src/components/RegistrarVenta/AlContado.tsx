@@ -5,8 +5,10 @@ import { LoadingModal, StatusModal } from "@/components/Common/modal";
 import { BaseInput, BaseTarea } from "@/components/Common/Inputs";
 import { useCreateSale } from "@/hooks/sales";
 import { useAppSelector } from "@/redux/store";
+import { useDispatch } from "react-redux";
+// Selectores de Slices
 import { selectVenta } from "@/redux/features/sale-slice";
-import { selectTotalPrice, selectCartItems } from "@/redux/features/cart-slice";
+import { selectTotalPrice, selectCartItems, removeAllItemsFromCart } from "@/redux/features/cart-slice";
 // Constants
 import { TipoVenta, EstadoPago, STATUS_MODAL } from "@/commons/constants";
 import { ICreateSale, VentaProducto } from "@/types/sales";
@@ -18,6 +20,7 @@ import { BaseButton } from "../Common/Buttons";
 
 const AlContado = () => {
     // Hooks
+    const dispatch = useDispatch();
     const { addSale, loading, statusMessage, success } = useCreateSale();
     const { sedeId, userId } = useSessionUser();
 
@@ -83,6 +86,9 @@ const AlContado = () => {
                 success ? STATUS_MODAL.SUCCESS_MODAL : STATUS_MODAL.ERROR_MODAL,
             );
             setOpenModal(true);
+            if (success) {
+                dispatch(removeAllItemsFromCart());
+            }
         }
     }, [loading, success, statusMessage]);
 

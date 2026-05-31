@@ -1,27 +1,49 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { TrendingUp, Calendar, Building2 } from "lucide-react";
+import { TrendingUp } from "lucide-react";
 import { MiniTable } from "./MiniTable";
 
-import { useSales } from "@/hooks/sales";
+import { useSales, useAnularVenta } from "@/hooks/sales";
+import { useSessionUser } from "@/hooks/session";
+import { StatusModal, LoadingModal } from "@/components/Common/modal";
+import { STATUS_MODAL } from "@/commons/constants";
 
 export default function CajaPremiumFino() {
-  const { getAllSales, sales, loading } = useSales();
+  // Hooks
+  const { sedeId } = useSessionUser();
+  const { getAllSales, sales, loading } = useSales(sedeId!);
+  const { anularVenta, loading: isAnnulling, success: annulOk, statusMessage: annulMsg } = useAnularVenta();
 
   const [fecha, setFecha] = useState("");
+  const [openModal, setOpenModal] = useState(false);
+  const [typeModal, setTypeModal] = useState("");
+  const [modalMsg, setModalMsg] = useState("");
 
   useEffect(() => {
-    getAllSales();
-  }, []);
+    if (sedeId) {
+      getAllSales();
+    }
+  }, [sedeId]);
+
+  useEffect(() => {
+    if (!isAnnulling && (annulOk || annulMsg)) {
+      setTypeModal(
+        annulOk ? STATUS_MODAL.SUCCESS_MODAL : STATUS_MODAL.ERROR_MODAL,
+      );
+      setModalMsg(annulMsg);
+      setOpenModal(true);
+      if (annulOk) {
+        getAllSales();
+      }
+    }
+  }, [isAnnulling, annulOk, annulMsg]);
 
   const ventasFiltradas = fecha
     ? sales.filter(
       (v) => new Date(v.createdAt).toISOString().slice(0, 10) === fecha,
     )
     : sales;
-
-
 
   return (
     <div className="bg-beige pt-32 pb-16 px-4 sm:px-6 lg:px-8 min-h-screen mt-15">
@@ -51,39 +73,22 @@ export default function CajaPremiumFino() {
               </h1>
             </div>
           </div>
-
-          {/* RIGHT CONTROLS */}
-          {/* <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-            <div className="flex items-center gap-3 bg-white border-2 border-blue-light-4 rounded-2xl px-4 py-3 shadow-md hover:shadow-lg transition-all w-full sm:w-auto">
-              <Building2 size={18} className="text-blue-light" />
-              <select
-                value={sedeId}
-                onChange={(e) => setSedeId(Number(e.target.value))}
-                className="bg-transparent outline-none text-[13px] font-bold text-dark w-full cursor-pointer"
-              >
-                <option value={1}>Sede Principal</option>
-                <option value={2}>Sede Norte</option>
-                <option value={3}>Sede Sur</option>
-              </select>
-            </div>
-
-            <div className="flex items-center gap-3 bg-white border-2 border-blue-light-4 rounded-2xl px-4 py-3 shadow-md hover:shadow-lg transition-all w-full sm:w-auto">
-              <Calendar size={18} className="text-blue-light" />
-              <input
-                type="date"
-                value={fecha}
-                onChange={(e) => setFecha(e.target.value)}
-                className="bg-transparent outline-none text-[13px] font-bold text-dark w-full cursor-pointer"
-              />
-            </div>
-          </div> */}
         </header>
 
         {/* TABLAS */}
         <div className="grid grid-cols-1 xl:grid-cols-1 gap-6 sm:gap-8">
-          <MiniTable titulo="Ventas" data={sales} />
+          <MiniTable titulo="Ventas" data={sales} onDelete={anularVenta} />
         </div>
       </div>
+
+      {/* MODALS */}
+      <LoadingModal isOpen={loading} />
+      <StatusModal
+        isOpen={openModal}
+        type={typeModal}
+        message={modalMsg}
+        onClose={() => setOpenModal(false)}
+      />
     </div>
   );
 }

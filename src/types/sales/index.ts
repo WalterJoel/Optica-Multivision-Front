@@ -39,17 +39,16 @@ export interface ICreateSale {
 
 export interface IResponseSale {
   id: number;
+  sedeId: number;
+  userId: number;
   activo: boolean;
   total: string;
   montoPagado: string;
   deuda: string;
-  kitId: number;
-  sedeId: number;
-  userId: number;
-  responsableVenta: string;
-  metodoPago: string;
   tipoVenta: string;
   estadoPago: string;
+  metodoPago: string;
+  diasCompromisoPago?: string | null
   montaje: boolean;
   nroCuotas: number | null;
   observaciones: string | null;
@@ -69,8 +68,8 @@ export interface ProductSale {
   subtotal: string;
   descuento: string | null;
   cantidad: number;
-  stockId: number;
-  esf: string;
-  cyl: string;
+  stockId?: number | null;
+  esf?: string | null;
+  cyl?: string | null;
   createdAt: string;
 }

@@ -118,11 +118,10 @@ export default function ListStores() {
                   <td className="px-6 py-5">
                     <div className="flex justify-center">
                       <span
-                        className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.1em] border shadow-sm ${
-                          s.activo
+                        className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.1em] border shadow-sm ${s.activo
                             ? "bg-green-light-6 text-green-dark border-green-light-5"
                             : "bg-red-light-6 text-red-dark border-red-light-5"
-                        }`}
+                          }`}
                       >
                         {s.activo ? "Activo" : "Inactivo"}
                       </span>
@@ -141,11 +140,10 @@ export default function ListStores() {
                       <button
                         type="button"
                         onClick={() => onToggle(s)}
-                        className={`p-2.5 rounded-xl transition-all shadow-sm border ${
-                          s.activo
+                        className={`p-2.5 rounded-xl transition-all shadow-sm border ${s.activo
                             ? "bg-white border-red-light-4 text-red hover:bg-red hover:text-white"
                             : "bg-white border-green-light-4 text-green hover:bg-green hover:text-white"
-                        }`}
+                          }`}
                       >
                         <Power size={16} strokeWidth={3} />
                       </button>

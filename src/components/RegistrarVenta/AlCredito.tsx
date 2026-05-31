@@ -21,7 +21,7 @@ import { useAppSelector } from "@/redux/store";
 // Selectores de Slices
 import { selectAuth } from "@/redux/features/auth-slice";
 import { selectVenta, setMetodoPago } from "@/redux/features/sale-slice";
-import { selectTotalPrice, selectCartItems } from "@/redux/features/cart-slice";
+import { selectTotalPrice, selectCartItems, removeAllItemsFromCart } from "@/redux/features/cart-slice";
 
 // Constants
 import { TipoVenta, EstadoPago, STATUS_MODAL } from "@/commons/constants";
@@ -134,6 +134,9 @@ const AlCredito = () => {
                 success ? STATUS_MODAL.SUCCESS_MODAL : STATUS_MODAL.ERROR_MODAL,
             );
             setOpenModal(true);
+            if (success) {
+                dispatch(removeAllItemsFromCart());
+            }
         }
     }, [loading, success, statusMessage]);
 
