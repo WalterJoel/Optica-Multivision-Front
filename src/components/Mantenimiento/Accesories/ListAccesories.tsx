@@ -8,24 +8,26 @@ import { BaseInput, BaseFile, BaseTarea } from "@/components/Common/Inputs";
 import { BaseButton } from "@/components/Common/Buttons/BaseButton";
 import { LoadingModal, StatusModal } from "@/components/Common/modal";
 import { STATUS_MODAL } from "@/commons/constants";
+import { useSessionUser } from "@/hooks/session";
 
 /* TIPADO LIMPIO */
 type AccessoryForm = {
   nombre: string;
   precio: number;
-  atributo: string;
+  // atributo: string;
   imagenUrl: string;
 };
 
 const emptyForm: AccessoryForm = {
   nombre: "",
   precio: 0,
-  atributo: "",
+  // atributo: "",
   imagenUrl: "",
 };
 
 export default function ListAccesories() {
-  const { accessories, loading, getAllAccessoriesData } = useAccessories();
+  const { sedeId } = useSessionUser()
+  const { accessories, loading, getAllAccessoriesData } = useAccessories(sedeId);
 
   const {
     updateAccessory,
@@ -67,8 +69,8 @@ export default function ListAccesories() {
 
     setForm({
       nombre: item.nombre ?? "",
-      precio: Number(item.precio) || 0,
-      atributo: item.atributo ?? "",
+      precio: Number(item.precioVenta) || 0,
+      // atributo: item.atributo ?? "",
       imagenUrl: item.imagenUrl ?? "",
     });
   };
@@ -160,12 +162,9 @@ export default function ListAccesories() {
                   <tr key={item.id} className="border-t border-gray-3">
                     <td className="px-6 py-4 font-medium">{item.nombre}</td>
 
-                    <td className="px-6 py-4 text-gray-500">
-                      {item.atributo || "-"}
-                    </td>
 
                     <td className="px-6 py-4 font-bold text-blue">
-                      S/ {Number(item.precio).toFixed(2)}
+                      S/ {Number(item.precioVenta).toFixed(2)}
                     </td>
 
                     <td className="px-6 py-4">
@@ -224,12 +223,7 @@ export default function ListAccesories() {
                 onChange={handleChange}
               />
 
-              <BaseTarea
-                label="Descripción"
-                name="atributo"
-                value={form.atributo}
-                onChange={handleChange}
-              />
+
 
               <BaseFile
                 label="Imagen"
