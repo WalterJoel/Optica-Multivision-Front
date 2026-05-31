@@ -17,17 +17,11 @@ export default function CajaPremiumFino() {
 
   const ventasFiltradas = fecha
     ? sales.filter(
-        (v) => new Date(v.createdAt).toISOString().slice(0, 10) === fecha,
-      )
+      (v) => new Date(v.createdAt).toISOString().slice(0, 10) === fecha,
+    )
     : sales;
 
-  if (loading) {
-    return (
-      <div className="p-6 text-[12px] font-bold text-gray-5 uppercase tracking-widest">
-        Cargando ventas...
-      </div>
-    );
-  }
+
 
   return (
     <div className="bg-beige pt-32 pb-16 px-4 sm:px-6 lg:px-8 min-h-screen mt-15">

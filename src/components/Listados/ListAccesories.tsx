@@ -156,7 +156,7 @@ export default function ListAccessories({ filters }: { filters?: Filters }) {
     const itemToCart: CartItem = {
       id: item.id,
       productName: (TipoProducto.ACCESORIO + " " + item.nombre).toUpperCase(),
-      productId: item.id,
+      productId: item.producto?.id,
       price: item.precioVenta,
       quantity: 1,
       productType: TipoProducto.ACCESORIO,

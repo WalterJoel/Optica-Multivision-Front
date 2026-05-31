@@ -30,7 +30,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({
 
     const itemToCart: CartItem = {
       id: selected.id,
-      productId: selected.productoId,
+      productId: null,
       productName: "Lente " + selected.nombreProducto,
       productType: TipoProducto.LENTE,
       discount: 0,
@@ -91,9 +91,8 @@ export const DetailModal: React.FC<DetailModalProps> = ({
           </span>
 
           <span
-            className={`text-xl font-black ${
-              selected.cantidad > 0 ? "text-green" : "text-red"
-            }`}
+            className={`text-xl font-black ${selected.cantidad > 0 ? "text-green" : "text-red"
+              }`}
           >
             {selected.cantidad}
             <small className="text-[10px] uppercase font-bold ml-1">Und</small>

@@ -164,7 +164,7 @@ export default function ListEyeglasses({ filters }: { filters?: Filters }) {
     const itemToCart: CartItem = {
       id: eyeGlass.id,
       productName: (TipoProducto.MONTURA + " " + eyeGlass.marca).toUpperCase(),
-      productId: eyeGlass.productoId,
+      productId: eyeGlass.producto?.id,
       price: eyeGlass.precioVenta,
       quantity: 1,
       productType: TipoProducto.MONTURA,
