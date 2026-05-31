@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { BaseInput } from "@/components/Common/Inputs/BaseInput";
 import { BaseButton } from "@/components/Common/Buttons/BaseButton";
+import { BaseSelect } from "@/components/Common/Inputs/BaseSelect";
 import { StatusModal, LoadingModal } from "@/components/Common/modal";
 import { ROLE_OPTIONS, STATUS_MODAL } from "@/commons/constants";
 import type { CreateUser } from "@/types/users";
@@ -89,7 +90,6 @@ export default function CreateUser() {
 
   const createUser = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(form, " FORM");
     await addUser(form);
   };
 
@@ -109,6 +109,22 @@ export default function CreateUser() {
       setOpenModal(true);
     }
   }, [loading, success, statusMessage, activeSedes]);
+
+  const roleOptions = useMemo(() => {
+    return ROLE_OPTIONS.map((opt) => ({
+      label: opt.label,
+      value: opt.value,
+    }));
+  }, []);
+
+  const sedeOptions = useMemo(() => {
+    if (loadingSedes) return [{ label: "Cargando sedes...", value: 0 }];
+    if (activeSedes.length === 0) return [{ label: "No hay sedes registradas", value: 0 }];
+    return activeSedes.map((s) => ({
+      label: `${s.nombre}`,
+      value: s.id,
+    }));
+  }, [loadingSedes, activeSedes]);
 
   return (
     <>
@@ -137,7 +153,7 @@ export default function CreateUser() {
             value={form.email}
             placeholder="correo@ejemplo.com"
             required
-            pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
+            type="email"
             onChange={onChangeInput}
           />
 
@@ -147,54 +163,32 @@ export default function CreateUser() {
             value={form.password}
             placeholder="******"
             required
-            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$"
+            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,}$"
             onChange={onChangeInput}
             type="password"
             title="Mínimo 8 caracteres, incluyendo mayúscula, minúscula y número"
           />
 
-          {/* Rol (select) */}
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-dark">Rol</label>
-            <select
-              name="role"
-              value={form.role}
-              onChange={onChangeRole}
-              required
-              className="h-12 rounded-lg border border-gray-3 bg-white px-4 text-sm outline-none focus:border-primary"
-            >
-              {ROLE_OPTIONS.map((r) => (
-                <option key={r.value} value={r.value}>
-                  {r.label}
-                </option>
-              ))}
-            </select>
-          </div>
+          {/* Rol (BaseSelect) */}
+          <BaseSelect
+            label="Rol"
+            name="role"
+            value={form.role}
+            options={roleOptions}
+            required
+            onChange={onChangeRole}
+          />
 
-          {/* Sede (select) */}
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-dark">Sede</label>
-            <select
-              name="sedeId"
-              value={String(form.sedeId || 0)}
-              onChange={onChangeSede}
-              required
-              disabled={loadingSedes || activeSedes.length === 0}
-              className="h-12 rounded-lg border border-gray-3 bg-white px-4 text-sm outline-none focus:border-primary disabled:opacity-60"
-            >
-              {loadingSedes ? (
-                <option value="0">Cargando sedes...</option>
-              ) : activeSedes.length === 0 ? (
-                <option value="0">No hay sedes registradas</option>
-              ) : (
-                activeSedes.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.nombre} (ID: {s.id})
-                  </option>
-                ))
-              )}
-            </select>
-          </div>
+          {/* Sede (BaseSelect) */}
+          <BaseSelect
+            label="Sede"
+            name="sedeId"
+            value={form.sedeId}
+            options={sedeOptions}
+            required
+            disabled={loadingSedes || activeSedes.length === 0}
+            onChange={onChangeSede}
+          />
         </div>
 
         <div className="mt-8 flex justify-center">

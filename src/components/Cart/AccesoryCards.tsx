@@ -27,7 +27,7 @@ export function AccessoryCards() {
       id: acc.id,
       // productId: acc.productoId, //Ojo revisar
       productId: acc.id, //TODO:Ojo revisar se cambio a la mala por temas de COMPILACION
-      price: acc.precio,
+      price: acc.precioVenta,
       productName: acc.nombre,
       productType: TipoProducto.ACCESORIO,
       quantity: 1,
@@ -79,7 +79,7 @@ export function AccessoryCards() {
                     {acc.nombre}
                   </span>
                   <span className="text-slate-700 font-bold text-[15px] mt-1">
-                    S/ {acc.precio}
+                    S/ {acc.precioVenta}
                   </span>
                 </div>
               </div>
@@ -88,11 +88,10 @@ export function AccessoryCards() {
                 onClick={() => handleAddToCart(acc)}
                 fullWidth={false}
                 disabled={alreadyAdded}
-                className={`group relative flex items-center justify-center rounded-xl  ${
-                  alreadyAdded
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-blue text-white hover:bg-blue-dark active:scale-95"
-                }`}
+                className={`group relative flex items-center justify-center rounded-xl  ${alreadyAdded
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-blue text-white hover:bg-blue-dark active:scale-95"
+                  }`}
               >
                 {alreadyAdded ? (
                   <Check size={20} />

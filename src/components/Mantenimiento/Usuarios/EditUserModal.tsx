@@ -1,10 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { BaseInput } from "@/components/Common/Inputs/BaseInput";
 import { BaseButton } from "@/components/Common/Buttons/BaseButton";
-import { IUser } from "@/types/users";
+import { BaseSelect } from "@/components/Common/Inputs/BaseSelect";
+import { ModalFrameWrapper } from "@/components/Common/modal";
 import { ROLE_OPTIONS } from "@/commons/constants";
+import { IUser } from "@/types/users";
+import { User as UserIcon, X } from "lucide-react";
 
 type Sede = { id: number; nombre: string; activo?: boolean };
 
@@ -37,14 +40,31 @@ export default function EditUserModal({
     if (user) {
       setEmail(user.email);
       setRole(user.role);
-      setSedeId(user.sede?.id ?? 0); //todo
+      setSedeId(user.sede?.id);
       setPassword("");
     }
   }, [user]);
 
-  if (!isOpen || !user) return null;
+  const activeSedes = useMemo(() => {
+    return sedes.filter((s) => s.activo !== false);
+  }, [sedes]);
 
-  const activeSedes = sedes.filter((s) => s.activo !== false);
+  const roleOptions = useMemo(() => {
+    return ROLE_OPTIONS.map((opt) => ({
+      label: opt.label,
+      value: opt.value,
+    }));
+  }, []);
+
+  const sedeOptions = useMemo(() => {
+    if (activeSedes.length === 0) return [{ label: "No hay sedes registradas", value: 0 }];
+    return activeSedes.map((s) => ({
+      label: `${s.nombre}`,
+      value: s.id,
+    }));
+  }, [activeSedes]);
+
+  if (!isOpen || !user) return null;
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,84 +77,103 @@ export default function EditUserModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[99999] flex items-center justify-center px-4">
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-      <div className="relative w-full max-w-[720px] rounded-xl bg-white border border-gray-3 p-6">
-        <div className="flex items-center justify-between gap-3">
-          <p className="font-semibold text-dark">Editar usuario #{user.id}</p>
+    <ModalFrameWrapper size="lg">
+      <div className="pt-2 pb-14 w-full max-h-[82vh] overflow-y-auto pr-1">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-6">
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-2xl bg-blue/5 border border-blue-light-5 flex items-center justify-center text-blue shadow-sm">
+              <UserIcon size={20} />
+            </div>
+            <div>
+              <h3 className="text-lg font-black text-dark uppercase tracking-tight leading-none">
+                Editar Usuario
+              </h3>
+              <p className="text-[10px] font-bold text-gray-4 uppercase tracking-widest mt-1.5">
+                Usuario #{user.id} • {user.nombre} {user.apellido}
+              </p>
+            </div>
+          </div>
           <button
+            type="button"
             onClick={onClose}
-            className="text-sm text-dark-4 hover:text-dark"
+            className="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-all border border-slate-100 cursor-pointer"
           >
-            ✕
+            <X size={18} />
           </button>
         </div>
 
-        <form onSubmit={submit} className="mt-5">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <BaseInput
-              label="Email"
-              name="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
+        <form onSubmit={submit}>
+          {/* Card Container */}
+          <div className="bg-beige/40 border border-slate-200/80 border-dashed rounded-2xl p-5 mb-6">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="w-5 h-[3px] bg-yellow-dark rounded-full" />
+              <h4 className="text-[10px] font-black text-blue uppercase tracking-widest">
+                Información del Usuario
+              </h4>
+            </div>
 
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium text-dark">Rol</label>
-              <select
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <BaseInput
+                label="Email"
+                name="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+
+              <BaseSelect
+                label="Rol"
+                name="role"
                 value={role}
+                options={roleOptions}
+                required
                 onChange={(e) => setRole(e.target.value)}
-                className="h-12 rounded-lg border border-gray-3 bg-white px-4 text-sm outline-none focus:border-primary"
-              >
-                {ROLE_OPTIONS.map((r) => (
-                  <option key={r.value} value={r.value}>
-                    {r.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+              />
 
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium text-dark">Sede</label>
-              <select
-                value={String(sedeId || 0)}
+              <BaseSelect
+                label="Sede"
+                name="sedeId"
+                value={sedeId}
+                options={sedeOptions}
+                required
                 onChange={(e) => setSedeId(Number(e.target.value))}
-                className="h-12 rounded-lg border border-gray-3 bg-white px-4 text-sm outline-none focus:border-primary"
-              >
-                {activeSedes.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.nombre} (ID: {s.id})
-                  </option>
-                ))}
-              </select>
-            </div>
+              />
 
-            <BaseInput
-              label="Nueva contraseña (opcional)"
-              name="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Dejar vacío para no cambiar"
-              type="password"
-            />
+              <BaseInput
+                label="Nueva contraseña (opcional)"
+                name="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Dejar vacío para no cambiar"
+                type="password"
+              />
+            </div>
           </div>
 
-          <div className="mt-6 flex justify-end gap-3">
-            <button
+          {/* Action Buttons */}
+          <div className="flex justify-end gap-3">
+            <BaseButton
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-lg border border-gray-3 hover:bg-gray-1 text-sm font-semibold"
+              variant="cancel"
+              fullWidth={false}
+              className="px-6"
             >
               Cancelar
-            </button>
+            </BaseButton>
 
-            <BaseButton type="submit" loading={loading}>
-              Guardar cambios
+            <BaseButton
+              loading={loading}
+              type="submit"
+              fullWidth={false}
+              className="px-6"
+            >
+              Guardar Cambios
             </BaseButton>
           </div>
         </form>
       </div>
-    </div>
+    </ModalFrameWrapper>
   );
 }
