@@ -1,22 +1,17 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { StatusModal, LoadingModal } from "@/components/Common/modal";
 import { STATUS_MODAL } from "@/commons/constants";
 import EditStoreModal from "./EditStoreModal";
 import { useToggleStoreStatus } from "@/hooks/stores/useToggleStoreStatus";
 import { IStore } from "@/types/stores";
-import { Edit3, Power, Store, Phone } from "lucide-react";
+import { Edit3, Power, Store, Phone, Search } from "lucide-react";
 import { useStores } from "@/hooks/stores";
 
 export default function ListStores() {
+  // Hooks
   const { sedes, loading, getAllStores } = useStores();
-  const [openEdit, setOpenEdit] = useState(false);
-  const [selected, setSelected] = useState<IStore | null>(null);
-  const [openModal, setOpenModal] = useState(false);
-  const [typeModal, setTypeModal] = useState("");
-  const [modalMsg, setModalMsg] = useState("");
-
   const {
     updateToggleStatus,
     loading: toggling,
@@ -24,7 +19,31 @@ export default function ListStores() {
     statusMessage: updateToggleMessage,
   } = useToggleStoreStatus();
 
-  //Functions
+  // States
+  const [searchTerm, setSearchTerm] = useState("");
+  const [openEdit, setOpenEdit] = useState(false);
+  const [selected, setSelected] = useState<IStore | null>(null);
+  const [openModal, setOpenModal] = useState(false);
+  const [typeModal, setTypeModal] = useState("");
+  const [modalMsg, setModalMsg] = useState("");
+
+  // Memos
+  const filteredSedes = useMemo(() => {
+    let result = sedes;
+
+    if (searchTerm.trim() !== "") {
+      const term = searchTerm.toLowerCase().trim();
+      result = result.filter((s) => {
+        const nombre = (s.nombre || "").toLowerCase();
+        const ruc = (s.ruc || "").toLowerCase();
+        return nombre.includes(term) || ruc.includes(term);
+      });
+    }
+
+    return result;
+  }, [sedes, searchTerm]);
+
+  // Functions
   const onEdit = (s: IStore) => {
     setSelected(s);
     setOpenEdit(true);
@@ -34,10 +53,10 @@ export default function ListStores() {
     await updateToggleStatus(s.id, !s.activo);
   };
 
-  //Show Loading Modal
+  // Helper variables
   const busy = loading || toggling;
 
-  //Use Effects
+  // Effects
   useEffect(() => {
     if (!toggling && (toggleOk || updateToggleMessage)) {
       setTypeModal(
@@ -50,7 +69,22 @@ export default function ListStores() {
   }, [toggling, toggleOk, updateToggleMessage, getAllStores]);
 
   return (
-    <div className="w-full rounded-2xl border border-gray-3 bg-white shadow-sm overflow-hidden">
+    <div className="w-full rounded-2xl border border-gray-3 bg-white shadow-sm overflow-hidden flex flex-col">
+      <div className="px-6 py-5 border-b border-gray-3 flex items-center justify-between gap-4 flex-wrap bg-white">
+
+        {/* Buscador */}
+        <div className="flex items-center bg-beige-dark/40 rounded-2xl px-4 py-2 border border-transparent focus-within:border-blue-light-3 transition-all ml-auto">
+          <Search size={16} className="text-blue-light-2" />
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Buscar por nombre de sede o RUC..."
+            className="bg-transparent text-sm ml-2.5 outline-none w-72 text-dark-3 font-semibold placeholder:text-gray-5"
+          />
+        </div>
+      </div>
+
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm border-spacing-0">
           <thead>
@@ -77,17 +111,19 @@ export default function ListStores() {
           </thead>
 
           <tbody className="divide-y-4 divide-beige">
-            {sedes.length === 0 ? (
+            {filteredSedes.length === 0 ? (
               <tr>
                 <td
-                  colSpan={5}
+                  colSpan={6}
                   className="px-6 py-24 text-center text-dark-5 font-bold uppercase text-[10px] tracking-widest"
                 >
-                  No se encontraron sedes activas
+                  {searchTerm.trim() !== ""
+                    ? "No se encontraron sedes para tu búsqueda"
+                    : "No se encontraron sedes activas"}
                 </td>
               </tr>
             ) : (
-              sedes.map((s) => (
+              filteredSedes.map((s) => (
                 <tr
                   key={s.id}
                   className="group hover:bg-white  transition-all duration-300"
@@ -119,8 +155,8 @@ export default function ListStores() {
                     <div className="flex justify-center">
                       <span
                         className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.1em] border shadow-sm ${s.activo
-                            ? "bg-green-light-6 text-green-dark border-green-light-5"
-                            : "bg-red-light-6 text-red-dark border-red-light-5"
+                          ? "bg-green-light-6 text-green-dark border-green-light-5"
+                          : "bg-red-light-6 text-red-dark border-red-light-5"
                           }`}
                       >
                         {s.activo ? "Activo" : "Inactivo"}
@@ -141,8 +177,8 @@ export default function ListStores() {
                         type="button"
                         onClick={() => onToggle(s)}
                         className={`p-2.5 rounded-xl transition-all shadow-sm border ${s.activo
-                            ? "bg-white border-red-light-4 text-red hover:bg-red hover:text-white"
-                            : "bg-white border-green-light-4 text-green hover:bg-green hover:text-white"
+                          ? "bg-white border-red-light-4 text-red hover:bg-red hover:text-white"
+                          : "bg-white border-green-light-4 text-green hover:bg-green hover:text-white"
                           }`}
                       >
                         <Power size={16} strokeWidth={3} />
