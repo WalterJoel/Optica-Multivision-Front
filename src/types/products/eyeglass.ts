@@ -14,13 +14,13 @@ export interface IEyeglass {
   color: string;
   formaFacial: string;
   sexo: string;
-  ubicacion?: string;
   imagenUrl?: string;
   cantidad: number;
   createdAt?: string;
   producto?: {
     id: number;
     nombre: string;
+    ubicacion?: string;
     cantidad: number;
     tipo: string;
     activo: boolean;
@@ -29,6 +29,6 @@ export interface IEyeglass {
 }
 
 export type ICreateEyeglass = Omit<
-  IEyeglass, "id" | "productoId" | "createdAt" | "producto">;
+  IEyeglass, "id" | "productoId" | "createdAt" | "producto"> & { ubicacion?: string };
 
-export type IUpdateEyeglass = Partial<ICreateEyeglass>;
+export type IUpdateEyeglass = Partial<ICreateEyeglass> & { productoId?: number };

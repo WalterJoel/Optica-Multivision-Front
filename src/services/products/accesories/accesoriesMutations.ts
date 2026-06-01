@@ -10,7 +10,7 @@ export const updateAccesoryService = async (
   id: number,
   payload: Partial<ICreateAccessory>,
 ) => {
-  const { data } = await api.patch(`/productos/accesorio/${id}`, payload);
+  const { data } = await api.patch(`/productos/accesorios/actualizar/${id}`, payload);
   return data;
 };
 
@@ -26,7 +26,7 @@ export const getAccessoryById = async (id: number): Promise<IAccessory> => {
 
 
 export const deleteAccesoryService = async (id: number) => {
-  const { data } = await api.delete(`/productos/accesorio/${id}`);
+  const { data } = await api.delete(`/productos/accesorios/eliminar/${id}`);
   return data;
 };
 

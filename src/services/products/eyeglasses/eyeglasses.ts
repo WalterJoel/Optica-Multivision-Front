@@ -30,12 +30,12 @@ export const updateEyeglassService = async (
   id: number,
   payload: IUpdateEyeglass,
 ) => {
-  const { data } = await api.patch(`/productos/montura/${id}`, payload);
+  const { data } = await api.patch(`/productos/monturas/actualizar/${id}`, payload);
   return data;
 };
 
 export const deleteEyeglassService = async (id: number) => {
-  const { data } = await api.delete(`/productos/montura/${id}`);
+  const { data } = await api.delete(`/productos/monturas/eliminar/${id}`);
   return data;
 };
 

@@ -1,190 +1,220 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useAccessories } from "@/hooks/products/accesories/useAccessories";
-import { useUpdateAccessory } from "@/hooks/products/accesories/useUpdateAccesory";
+import { useDeleteAccesory } from "@/hooks/products/accesories/useDeleteAccesory";
 import { IAccessory } from "@/types/products";
-import { BaseInput, BaseFile, BaseTarea } from "@/components/Common/Inputs";
-import { BaseButton } from "@/components/Common/Buttons/BaseButton";
-import { LoadingModal, StatusModal } from "@/components/Common/modal";
-import { STATUS_MODAL } from "@/commons/constants";
 import { useSessionUser } from "@/hooks/session";
-
-/* TIPADO LIMPIO */
-type AccessoryForm = {
-  nombre: string;
-  precio: number;
-  // atributo: string;
-  imagenUrl: string;
-};
-
-const emptyForm: AccessoryForm = {
-  nombre: "",
-  precio: 0,
-  // atributo: "",
-  imagenUrl: "",
-};
+import EditAccessoryModal from "./EditAccessoryModal";
+import { Edit3, Trash2, Search, Package } from "lucide-react";
+import { StatusModal, LoadingModal, ConfirmModal } from "@/components/Common/modal";
+import { STATUS_MODAL } from "@/commons/constants";
 
 export default function ListAccesories() {
-  const { sedeId } = useSessionUser()
+  const { sedeId } = useSessionUser();
   const { accessories, loading, getAllAccessoriesData } = useAccessories(sedeId);
-
   const {
-    updateAccessory,
-    loading: updating,
-    statusMessage,
-    success,
-  } = useUpdateAccessory();
+    deleteAccessory,
+    loading: deleting,
+    success: deleteSuccess,
+    statusMessage: deleteMsg,
+  } = useDeleteAccesory();
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [openEdit, setOpenEdit] = useState(false);
   const [selected, setSelected] = useState<IAccessory | null>(null);
-  const [form, setForm] = useState<AccessoryForm>(emptyForm);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
 
-  const [statusOpen, setStatusOpen] = useState(false);
-  const [statusType, setStatusType] = useState<string>("");
+  const [openModal, setOpenModal] = useState(false);
+  const [typeModal, setTypeModal] = useState("");
+  const [modalMsg, setModalMsg] = useState("");
 
-  /* LOAD DATA */
   useEffect(() => {
     getAllAccessoriesData();
   }, []);
 
-  /* STATUS HANDLER */
+  const openEditModal = (item: IAccessory) => {
+    setSelected(item);
+    setOpenEdit(true);
+  };
+
+  const closeEditModal = () => {
+    setOpenEdit(false);
+    setSelected(null);
+  };
+
+  const onDelete = (id: number) => {
+    setDeleteId(id);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (deleteId) {
+      await deleteAccessory(deleteId);
+      setDeleteId(null);
+    }
+  };
+
   useEffect(() => {
-    if (!updating && statusMessage) {
-      setStatusType(
-        success ? STATUS_MODAL.SUCCESS_MODAL : STATUS_MODAL.ERROR_MODAL,
+    if (!deleting && (deleteSuccess || deleteMsg)) {
+      setTypeModal(
+        deleteSuccess ? STATUS_MODAL.SUCCESS_MODAL : STATUS_MODAL.ERROR_MODAL
       );
-
-      setStatusOpen(true);
-
-      if (success) {
-        setSelected(null);
+      setModalMsg(deleteMsg);
+      setOpenModal(true);
+      if (deleteSuccess) {
         getAllAccessoriesData();
       }
     }
-  }, [updating, success, statusMessage]);
+  }, [deleting, deleteSuccess, deleteMsg]);
 
-  /* OPEN EDIT */
-  const openEdit = (item: IAccessory) => {
-    setSelected(item);
+  const filteredAccessories = useMemo(() => {
+    let result = accessories;
 
-    setForm({
-      nombre: item.nombre ?? "",
-      precio: Number(item.precioVenta) || 0,
-      // atributo: item.atributo ?? "",
-      imagenUrl: item.imagenUrl ?? "",
-    });
-  };
-
-  /* CLOSE EDIT */
-  const closeEdit = () => {
-    setSelected(null);
-    setForm(emptyForm);
-  };
-
-  /* CHANGE INPUTS */
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const { name, value } = e.target;
-
-    setForm((prev) => ({
-      ...prev,
-      [name]: name === "precio" ? Number(value) : value,
-    }));
-  };
-
-  /* IMAGE UPLOAD */
-  const handleFile = async (file: File | null) => {
-    if (!file) {
-      setForm((p) => ({ ...p, imagenUrl: "" }));
-      return;
+    if (searchTerm.trim() !== "") {
+      const term = searchTerm.toLowerCase().trim();
+      result = result.filter((item) => {
+        const nombre = (item.nombre || "").toLowerCase();
+        const codigo = (item.codigoAccesorio || "").toLowerCase();
+        const color = (item.color || "").toLowerCase();
+        const ubicacion = (item.producto?.ubicacion ?? item.ubicacion ?? "").toLowerCase();
+        return (
+          nombre.includes(term) ||
+          codigo.includes(term) ||
+          color.includes(term) ||
+          ubicacion.includes(term)
+        );
+      });
     }
 
-    const fd = new FormData();
-    fd.append("file", file);
+    return result;
+  }, [accessories, searchTerm]);
 
-    const res = await fetch("/api/upload-s3", {
-      method: "POST",
-      body: fd,
-    });
-
-    const data = await res.json();
-
-    setForm((p) => ({ ...p, imagenUrl: data.url }));
-  };
-
-  /* SUBMIT */
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selected) return;
-
-    await updateAccessory(selected.id, form);
-  };
+  const busy = loading || deleting;
 
   return (
     <>
-      <div className="w-full rounded-xl border border-gray-3 bg-white overflow-hidden">
-        {/* HEADER */}
-        <div className="px-6 py-4 border-b border-gray-3">
-          <p className="font-medium text-dark">
-            Accesorios ({accessories.length})
+      <div className="w-full rounded-2xl border border-gray-3 bg-white shadow-sm overflow-hidden flex flex-col">
+        <div className="px-6 py-5 border-b border-gray-3 flex items-center justify-between gap-4 flex-wrap bg-white">
+          <p className="font-black text-dark uppercase text-xs tracking-wider">
+            Lista de accesorios
           </p>
+
+          {/* Buscador */}
+          <div className="flex items-center bg-beige-dark/40 rounded-2xl px-4 py-2 border border-transparent focus-within:border-blue-light-3 transition-all ml-auto">
+            <Search size={16} className="text-blue-light-2" />
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Buscar por nombre, código, color..."
+              className="bg-transparent text-sm ml-2.5 outline-none w-72 text-dark-3 font-semibold placeholder:text-gray-5"
+            />
+          </div>
         </div>
 
-        {/* TABLE */}
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-gray-1">
-              <tr>
-                <th className="px-6 py-3">Nombre</th>
-                <th className="px-6 py-3">Detalle</th>
-                <th className="px-6 py-3">Precio</th>
-                <th className="px-6 py-3">Imagen</th>
-                <th className="px-6 py-3 text-right">Acción</th>
+          <table className="w-full text-left text-sm border-spacing-0">
+            <thead>
+              <tr className="bg-beige backdrop-blur-sm">
+                <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3">
+                  Nombre / Código
+                </th>
+                <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3">
+                  Color / Ubicación
+                </th>
+                <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3">
+                  Cantidad (Stock)
+                </th>
+                <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3">
+                  Imagen
+                </th>
+                <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3">
+                  Precio Venta
+                </th>
+                <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3 text-right">
+                  Acciones
+                </th>
               </tr>
             </thead>
 
-            <tbody>
-              {loading ? (
+            <tbody className="divide-y-4 divide-beige">
+              {filteredAccessories.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-6">
-                    Cargando...
-                  </td>
-                </tr>
-              ) : accessories.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="px-6 py-6">
-                    Sin accesorios
+                  <td
+                    colSpan={6}
+                    className="px-6 py-24 text-center text-dark-5 font-bold uppercase text-[10px] tracking-widest"
+                  >
+                    {searchTerm.trim() !== ""
+                      ? "No se encontraron accesorios para tu búsqueda"
+                      : "No hay accesorios registrados"}
                   </td>
                 </tr>
               ) : (
-                accessories.map((item) => (
-                  <tr key={item.id} className="border-t border-gray-3">
-                    <td className="px-6 py-4 font-medium">{item.nombre}</td>
-
-
-                    <td className="px-6 py-4 font-bold text-blue">
-                      S/ {Number(item.precioVenta).toFixed(2)}
+                filteredAccessories.map((item) => (
+                  <tr
+                    key={item.id}
+                    className="group hover:bg-white transition-all duration-300"
+                  >
+                    <td className="px-6 py-5">
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 flex items-center justify-center bg-blue-light/20 rounded-xl text-blue shadow-sm group-hover:scale-110 transition-transform">
+                          <Package size={20} strokeWidth={2.5} />
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="font-black text-dark uppercase text-xs tracking-tight">
+                            {item.nombre}
+                          </span>
+                          <span className="text-[10px] text-dark-5 font-bold uppercase tracking-tighter">
+                            CÓDIGO: {item.codigoAccesorio}
+                          </span>
+                        </div>
+                      </div>
                     </td>
-
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-5 text-dark-2">
+                      <div className="flex flex-col">
+                        <span className="font-bold text-dark text-xs">{item.color || "-"}</span>
+                        <span className="text-[10px] text-dark-5 font-bold uppercase mt-0.5">
+                          {item.producto?.ubicacion ?? item.ubicacion ?? "-"}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-5">
+                      <span className="font-bold text-dark text-xs bg-beige px-3 py-1.5 rounded-xl border border-slate-200">
+                        {item.producto?.cantidad ?? item.cantidad ?? 0} uds
+                      </span>
+                    </td>
+                    <td className="px-6 py-5">
                       {item.imagenUrl ? (
                         <img
                           src={item.imagenUrl}
-                          className="h-12 w-12 rounded-lg object-cover border"
+                          className="h-10 w-10 rounded-lg object-cover border border-slate-200 shadow-sm"
                         />
                       ) : (
-                        "-"
+                        <span className="text-gray-4 font-semibold text-xs">-</span>
                       )}
                     </td>
-
-                    <td className="px-6 py-4 text-right">
-                      <button
-                        onClick={() => openEdit(item)}
-                        className="px-3 py-2 text-xs font-bold bg-gray-1 rounded-md hover:bg-blue hover:text-white transition"
-                      >
-                        Editar
-                      </button>
+                    <td className="px-6 py-5 font-bold text-dark">
+                      S/ {Number(item.precioVenta).toFixed(2)}
+                    </td>
+                    <td className="px-6 py-5 text-right">
+                      <div className="flex items-center justify-end gap-2.5">
+                        <button
+                          type="button"
+                          onClick={() => openEditModal(item)}
+                          className="p-2.5 rounded-xl bg-yellow-dark text-white hover:scale-110 active:scale-95 transition-all shadow-md shadow-yellow-dark/20 border border-yellow-dark"
+                          title="Editar Accesorio"
+                        >
+                          <Edit3 size={16} strokeWidth={3} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => onDelete(item.id)}
+                          className="p-2.5 rounded-xl bg-white border border-red-light-4 text-red hover:bg-red hover:text-white hover:scale-110 active:scale-95 transition-all shadow-sm"
+                          title="Eliminar Accesorio"
+                        >
+                          <Trash2 size={16} strokeWidth={2.5} />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -194,65 +224,31 @@ export default function ListAccesories() {
         </div>
       </div>
 
-      {/* MODAL EDIT */}
-      {selected && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/40" onClick={closeEdit} />
+      <EditAccessoryModal
+        isOpen={openEdit}
+        accessory={selected}
+        onClose={closeEditModal}
+        onRefresh={getAllAccessoriesData}
+      />
 
-          <div className="relative w-full max-w-2xl bg-white rounded-xl p-6">
-            <div className="mb-5">
-              <h3 className="text-lg font-bold">Editar accesorio</h3>
-              <p className="text-sm text-gray-500">
-                Actualiza información del producto
-              </p>
-            </div>
+      <ConfirmModal
+        isOpen={deleteId !== null}
+        onClose={() => setDeleteId(null)}
+        onConfirm={handleConfirmDelete}
+        title="¿Eliminar Accesorio?"
+        message="Esta acción eliminará de forma permanente este accesorio de tu inventario. ¿Estás seguro?"
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        loading={deleting}
+        variant="danger"
+      />
 
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <BaseInput
-                label="Nombre"
-                name="nombre"
-                value={form.nombre}
-                onChange={handleChange}
-              />
-
-              <BaseInput
-                label="Precio"
-                name="precio"
-                type="number"
-                value={form.precio}
-                onChange={handleChange}
-              />
-
-
-
-              <BaseFile
-                label="Imagen"
-                name="imagen"
-                onChange={handleFile}
-                currentUrl={form.imagenUrl}
-              />
-
-              <div className="flex justify-end gap-3">
-                <BaseButton type="button" onClick={closeEdit}>
-                  Cancelar
-                </BaseButton>
-
-                <BaseButton type="submit" loading={updating}>
-                  Guardar
-                </BaseButton>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      <LoadingModal isOpen={updating} />
-
+      <LoadingModal isOpen={busy} />
       <StatusModal
-        isOpen={statusOpen}
-        type={statusType}
-        message={statusMessage}
-        onClose={() => setStatusOpen(false)}
+        isOpen={openModal}
+        type={typeModal}
+        message={modalMsg}
+        onClose={() => setOpenModal(false)}
       />
     </>
   );

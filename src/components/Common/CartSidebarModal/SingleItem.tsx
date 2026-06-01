@@ -50,7 +50,7 @@ const SingleItem: React.FC<SingleItemProps> = ({
       <div className="w-full flex items-center gap-6">
         <div className="flex items-center justify-center rounded-[10px] bg-gray-3 max-w-[90px] w-full h-22.5">
           <div className="w-16 h-16 bg-yellow-light-4 rounded-xl flex items-center justify-center border border-yellow-light-2">
-            <span className="text-4xl">👓</span>
+            <span className="text-4xl">{item.imageUrl}</span>
           </div>
         </div>
         <div>

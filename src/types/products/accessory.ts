@@ -17,6 +17,7 @@ export interface IAccessory {
     id: number;
     nombre: string;
     cantidad: number;
+    ubicacion: string;
     tipo: string;
     activo: boolean;
     createdAt?: string;
@@ -24,6 +25,8 @@ export interface IAccessory {
 }
 
 export type ICreateAccessory = Omit<IAccessory, "id" | "productoId" | "createdAt" | "producto"> & {};
+
+export type IUpdateAccessory = Partial<ICreateAccessory> & { productoId?: number };
 
 export interface ISearchAccesory {
   id: number;

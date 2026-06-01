@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ICreateAccessory } from "@/types/products";
+import { IUpdateAccessory } from "@/types/products";
 import { updateAccesoryService } from "@/services/products/accesories";
 
 export function useUpdateAccessory() {
@@ -9,7 +9,7 @@ export function useUpdateAccessory() {
 
   const updateAccessory = async (
     id: number,
-    payload: Partial<ICreateAccessory>,
+    payload: IUpdateAccessory,
   ) => {
     setLoading(true);
     setSuccess(false);
