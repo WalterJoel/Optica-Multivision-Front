@@ -2,11 +2,11 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { useAccessories } from "@/hooks/products/accesories/useAccessories";
-import { useDeleteAccesory } from "@/hooks/products/accesories/useDeleteAccesory";
+import { useUpdateAccessory } from "@/hooks/products/accesories/useUpdateAccesory";
 import { IAccessory } from "@/types/products";
 import { useSessionUser } from "@/hooks/session";
 import EditAccessoryModal from "./EditAccessoryModal";
-import { Edit3, Trash2, Search, Package } from "lucide-react";
+import { Edit3, Power, Search, Package } from "lucide-react";
 import { StatusModal, LoadingModal, ConfirmModal } from "@/components/Common/modal";
 import { STATUS_MODAL } from "@/commons/constants";
 
@@ -14,11 +14,11 @@ export default function ListAccesories() {
   const { sedeId } = useSessionUser();
   const { accessories, loading, getAllAccessoriesData } = useAccessories(sedeId);
   const {
-    deleteAccessory,
+    updateAccessory,
     loading: deleting,
     success: deleteSuccess,
     statusMessage: deleteMsg,
-  } = useDeleteAccesory();
+  } = useUpdateAccessory();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [openEdit, setOpenEdit] = useState(false);
@@ -49,7 +49,7 @@ export default function ListAccesories() {
 
   const handleConfirmDelete = async () => {
     if (deleteId) {
-      await deleteAccessory(deleteId);
+      await updateAccessory(deleteId, { activo: false });
       setDeleteId(null);
     }
   };
@@ -210,9 +210,9 @@ export default function ListAccesories() {
                           type="button"
                           onClick={() => onDelete(item.id)}
                           className="p-2.5 rounded-xl bg-white border border-red-light-4 text-red hover:bg-red hover:text-white hover:scale-110 active:scale-95 transition-all shadow-sm"
-                          title="Eliminar Accesorio"
+                          title="Desactivar Accesorio"
                         >
-                          <Trash2 size={16} strokeWidth={2.5} />
+                          <Power size={16} strokeWidth={3} />
                         </button>
                       </div>
                     </td>
@@ -235,12 +235,12 @@ export default function ListAccesories() {
         isOpen={deleteId !== null}
         onClose={() => setDeleteId(null)}
         onConfirm={handleConfirmDelete}
-        title="¿Eliminar Accesorio?"
-        message="Esta acción eliminará de forma permanente este accesorio de tu inventario. ¿Estás seguro?"
-        confirmText="Eliminar"
+        title="¿Desactivar Accesorio?"
+        message="Esta acción desactivará este accesorio de tu inventario. ¿Estás seguro?"
+        confirmText="Desactivar"
         cancelText="Cancelar"
         loading={deleting}
-        variant="danger"
+        variant="warning"
       />
 
       <LoadingModal isOpen={busy} />

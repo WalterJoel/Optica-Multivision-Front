@@ -120,11 +120,10 @@ export default function Matrix() {
                   setMatrixType(type as any);
                   setSelected(null);
                 }}
-                className={`rounded-full border px-6 py-2 text-xs font-bold transition-all ${
-                  matrixType === type
+                className={`rounded-full border px-6 py-2 text-xs font-bold transition-all ${matrixType === type
                     ? "bg-blue text-white border-blue shadow-md"
                     : "bg-white text-dark hover:bg-gray-1"
-                }`}
+                  }`}
               >
                 {type === "NEGATIVO" ? "NEGATIVOS" : "POSITIVOS"}
               </button>
@@ -192,16 +191,15 @@ export default function Matrix() {
                                   });
                                 }
                               }}
-                              className={`transition-colors ${
-                                hoveredCol === colIndex
+                              className={`transition-colors ${hoveredCol === colIndex
                                   ? "matrix-col-active"
                                   : ""
-                              } ${isSelected ? "matrix-cell-selected" : ""} ${
+                                } ${isSelected ? "matrix-cell-selected" : ""} ${
                                 /* Cambiamos el color aquí: Rojo más vivo para el 0 */
                                 !isSelected && Number(val) === 0
                                   ? "text-red-vino"
                                   : "text-dark"
-                              }`}
+                                }`}
                             >
                               <div className="w-full h-full flex items-center justify-center">
                                 {mode === "stock" ? (

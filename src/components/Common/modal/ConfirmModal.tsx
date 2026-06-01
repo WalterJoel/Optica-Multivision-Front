@@ -52,7 +52,7 @@ export function ConfirmModal({
 
   const getConfirmButtonClass = () => {
     if (isDanger) return "bg-red hover:bg-red-dark shadow-red/20 text-white";
-    if (isWarning) return "bg-yellow-dark hover:bg-yellow shadow-yellow-dark/20 text-dark";
+    if (isWarning) return "bg-yellow hover:bg-yellow-dark shadow-yellow/20 text-white";
     return "bg-blue hover:bg-blue-dark shadow-blue/20 text-white";
   };
 
@@ -90,7 +90,7 @@ export function ConfirmModal({
             type="button"
             onClick={onClose}
             disabled={loading}
-            className="w-1/2 py-4 rounded-2xl font-black text-dark-3 uppercase tracking-[0.2em] text-[11px] bg-gray-1 border border-gray-3 hover:bg-gray-2 shadow-sm transition-all active:scale-95"
+            className="w-1/2 py-4 px-2 rounded-2xl font-black text-dark-3 uppercase tracking-wider text-[11px] bg-gray-1 border border-gray-3 hover:bg-gray-2 shadow-sm transition-all active:scale-95"
           >
             {cancelText}
           </button>
@@ -98,7 +98,7 @@ export function ConfirmModal({
             type="button"
             onClick={onConfirm}
             disabled={loading}
-            className={`w-1/2 py-4 rounded-2xl font-black uppercase tracking-[0.2em] text-[11px] shadow-xl transition-all active:scale-95 ${getConfirmButtonClass()}`}
+            className={`w-1/2 py-4 px-2 rounded-2xl font-black uppercase tracking-wider text-[11px] shadow-xl transition-all active:scale-95 ${getConfirmButtonClass()}`}
           >
             {loading ? "Cargando..." : confirmText}
           </button>

@@ -43,7 +43,7 @@ function LensCardFrame({
 
           {/* ICONO (un poco más grande para compensar card ancho) */}
           <div className="w-16 h-16 bg-yellow-light-4 rounded-xl flex items-center justify-center border border-yellow-light-2">
-            <span className="text-4xl">👓</span>
+            <span className="text-4xl">{lens.image_url}</span>
           </div>
 
           {/* NOMBRE + MATERIAL */}

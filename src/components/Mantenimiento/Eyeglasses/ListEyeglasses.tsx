@@ -5,7 +5,7 @@ import { useEyeglasses, useDeleteEyeglass } from "@/hooks/products/eyeglasses";
 import { IEyeglass } from "@/types/products";
 import { useSessionUser } from "@/hooks/session";
 import EditEyeglassModal from "./EditEyeglassModal";
-import { Edit3, Trash2, Search, Glasses } from "lucide-react";
+import { Edit3, Power, Search, Glasses } from "lucide-react";
 import { StatusModal, LoadingModal, ConfirmModal } from "@/components/Common/modal";
 import { STATUS_MODAL } from "@/commons/constants";
 
@@ -232,9 +232,9 @@ export default function ListEyeglasses() {
                           type="button"
                           onClick={() => onDelete(item.id)}
                           className="p-2.5 rounded-xl bg-white border border-red-light-4 text-red hover:bg-red hover:text-white hover:scale-110 active:scale-95 transition-all shadow-sm"
-                          title="Eliminar Montura"
+                          title="Desactivar Montura"
                         >
-                          <Trash2 size={16} strokeWidth={2.5} />
+                          <Power size={16} strokeWidth={3} />
                         </button>
                       </div>
                     </td>
@@ -257,12 +257,12 @@ export default function ListEyeglasses() {
         isOpen={deleteId !== null}
         onClose={() => setDeleteId(null)}
         onConfirm={handleConfirmDelete}
-        title="¿Eliminar Montura?"
-        message="Esta acción eliminará de forma permanente esta montura de tu inventario. ¿Estás seguro?"
-        confirmText="Eliminar"
+        title="¿Desactivar Montura?"
+        message="Esta acción desactivará esta montura de tu inventario. ¿Estás seguro?"
+        confirmText="Desactivar"
         cancelText="Cancelar"
         loading={deleting}
-        variant="danger"
+        variant="warning"
       />
 
       <LoadingModal isOpen={busy} />

@@ -171,7 +171,7 @@ export default function CreateKit() {
             label="Descripción"
             name="descripcion"
             value={form.descripcion}
-            minLength={85}
+            minLength={10}
             placeholder="Ejm: Incluye cristales con filtro azul, estuche rígido y líquido de limpieza profesional...."
             onChange={onChange}
             required
