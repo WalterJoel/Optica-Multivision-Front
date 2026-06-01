@@ -50,7 +50,7 @@ export function AddAccessoryModal({
 
   return (
     <ModalFrameWrapper variant="blue" size="sm">
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 pb-6">
         <BaseSearchInput
           label="Buscar accesorio"
           value={newAccesory.nombre}
@@ -94,11 +94,22 @@ export function AddAccessoryModal({
         />
 
         <div className="flex justify-end gap-3 mt-6">
-          <BaseButton type="button" variant="cancel" onClick={onClose}>
+          <BaseButton
+            type="button"
+            variant="cancel"
+            fullWidth={false}
+            className="px-6"
+            onClick={onClose}
+          >
             Cancelar
           </BaseButton>
 
-          <BaseButton type="button" onClick={handleAdd}>
+          <BaseButton
+            type="button"
+            fullWidth={false}
+            className="px-6"
+            onClick={handleAdd}
+          >
             Agregar
           </BaseButton>
         </div>
