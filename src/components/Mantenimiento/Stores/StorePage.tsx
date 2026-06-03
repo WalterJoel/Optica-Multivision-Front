@@ -15,7 +15,7 @@ export default function SedesPage() {
   ];
 
   return (
-    <div className="h-screen overflow-y-auto px-4 sm:px-6 xl:px-8">
+    <div className="h-full overflow-y-auto px-4 sm:px-6 xl:px-8">
       <div className="border-b border-gray-3 mb-6">
         <BaseTabs tabs={tabsData} activeTab={tab} onChange={setTab} />{" "}
       </div>

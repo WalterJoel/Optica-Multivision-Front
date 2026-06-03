@@ -99,21 +99,21 @@ const MyAccount = () => {
             </div>
 
             {/* CONTENT */}
-            <div className="flex-grow">
+            <div className="flex-grow flex flex-col">
               <div
-                className={`w-full bg-white rounded-xl shadow-1 ${activeTab === "sedes" ? "block" : "hidden"}`}
+                className={`w-full bg-white rounded-xl shadow-1 flex-grow ${activeTab === "sedes" ? "flex flex-col" : "hidden"}`}
               >
                 <SedesPage />
               </div>
 
               <div
-                className={`w-full bg-white rounded-xl shadow-1 ${activeTab === "clientes" ? "block" : "hidden"}`}
+                className={`w-full bg-white rounded-xl shadow-1 flex-grow ${activeTab === "clientes" ? "flex flex-col" : "hidden"}`}
               >
                 <ClientsPage />
               </div>
 
               <div
-                className={`w-full bg-white rounded-xl shadow-1 ${activeTab === "users" ? "block" : "hidden"}`}
+                className={`w-full bg-white rounded-xl shadow-1 flex-grow ${activeTab === "users" ? "flex flex-col" : "hidden"}`}
               >
                 <UsersTab />
               </div>
@@ -121,37 +121,37 @@ const MyAccount = () => {
 
 
               <div
-                className={`w-full bg-white rounded-xl shadow-1 ${activeTab === "movimiento" ? "block" : "hidden"}`}
+                className={`w-full bg-white rounded-xl shadow-1 flex-grow ${activeTab === "movimiento" ? "flex flex-col" : "hidden"}`}
               >
                 <MovimientoCajaPage />
               </div>
 
               <div
-                className={`w-full bg-white rounded-xl shadow-1 ${activeTab === "combos" ? "block" : "hidden"}`}
+                className={`w-full bg-white rounded-xl shadow-1 flex-grow ${activeTab === "combos" ? "flex flex-col" : "hidden"}`}
               >
                 <KitPage />
               </div>
 
               <div
-                className={`w-full bg-white rounded-xl shadow-1 ${activeTab === "accesories" ? "block" : "hidden"}`}
+                className={`w-full bg-white rounded-xl shadow-1 flex-grow ${activeTab === "accesories" ? "flex flex-col" : "hidden"}`}
               >
                 <AccesoriesPage />
               </div>
 
               <div
-                className={`w-full bg-white rounded-xl shadow-1 ${activeTab === "eyeglasses" ? "block" : "hidden"}`}
+                className={`w-full bg-white rounded-xl shadow-1 flex-grow ${activeTab === "eyeglasses" ? "flex flex-col" : "hidden"}`}
               >
                 <EyeglassesPage />
               </div>
 
               <div
-                className={`w-full bg-white rounded-xl shadow-1 ${activeTab === "discounts" ? "block" : "hidden"}`}
+                className={`w-full bg-white rounded-xl shadow-1 flex-grow ${activeTab === "discounts" ? "flex flex-col" : "hidden"}`}
               >
                 <DiscountPage />
               </div>
 
               <div
-                className={`w-full bg-white rounded-xl shadow-1 ${activeTab === "lens" ? "block" : "hidden"}`}
+                className={`w-full bg-white rounded-xl shadow-1 flex-grow ${activeTab === "lens" ? "flex flex-col" : "hidden"}`}
               >
                 <LensesPage />
               </div>

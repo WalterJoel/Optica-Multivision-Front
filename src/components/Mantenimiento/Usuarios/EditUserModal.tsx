@@ -28,9 +28,13 @@ export default function EditUserModal({
     role?: string;
     sedeId?: number;
     password?: string;
+    nombre?: string;
+    apellido?: string;
   }) => void;
   loading: boolean;
 }) {
+  const [nombre, setNombre] = useState("");
+  const [apellido, setApellido] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("vendedor");
   const [sedeId, setSedeId] = useState<number>(0);
@@ -38,9 +42,11 @@ export default function EditUserModal({
 
   useEffect(() => {
     if (user) {
-      setEmail(user.email);
+      setNombre(user.nombre || "");
+      setApellido(user.apellido || "");
+      setEmail(user.email || "");
       setRole(user.role);
-      setSedeId(user.sede?.id);
+      setSedeId(user.sede?.id || 0);
       setPassword("");
     }
   }, [user]);
@@ -69,6 +75,8 @@ export default function EditUserModal({
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     onSave({
+      nombre,
+      apellido,
       email,
       role,
       sedeId,
@@ -114,6 +122,22 @@ export default function EditUserModal({
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <BaseInput
+                label="Nombre"
+                name="nombre"
+                value={nombre}
+                onChange={(e) => setNombre(e.target.value)}
+                required
+              />
+
+              <BaseInput
+                label="Apellido"
+                name="apellido"
+                value={apellido}
+                onChange={(e) => setApellido(e.target.value)}
+                required
+              />
+
               <BaseInput
                 label="Email"
                 name="email"

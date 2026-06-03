@@ -58,11 +58,10 @@ export const BaseSearchInput = <T,>({
             className={`w-full bg-white rounded-full pl-11 pr-10 py-2.5 
                        outline-none transition-all duration-200 text-sm shadow-sm
                        placeholder:text-gray-400
-                       ${
-                         error
-                           ? "border-2 border-red-500 focus:ring-red-100"
-                           : "border border-blue-dark/20 focus:border-blue focus:ring-4 focus:ring-blue/10"
-                       }`}
+                       ${error
+                ? "border-2 border-red-500 focus:ring-red-100"
+                : "border border-blue-dark/20 focus:border-blue focus:ring-4 focus:ring-blue/10"
+              }`}
           />
 
           {error && (

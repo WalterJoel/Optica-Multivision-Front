@@ -1,7 +1,9 @@
 export interface ICreateDiscount {
   clienteId: number;
-  productoId: number;
-  serie?: number;
+  productoId?: number | null;
+  lenteId?: number | null;
+  serie?: number | null;
+  activo?: boolean;
   montoDescuento: number;
   tipoProducto: string;
 }
@@ -22,4 +24,27 @@ export interface IResponseDiscountByProduct {
   esLente: boolean;
   serie: number;
   montoDescuento: number;
+}
+
+export interface IDescuento {
+  id: number;
+  clienteId: number;
+  productoId?: number | null;
+  lenteId?: number | null;
+  serie?: number | null;
+  montoDescuento: number;
+  tipoProducto: string;
+  activo: boolean;
+  createdAt: string;
+  producto?: {
+    id: number;
+    nombre: string;
+    codigoAccesorio?: string;
+    color?: string;
+  } | null;
+  lente?: {
+    id: number;
+    marca: string;
+    material: string;
+  } | null;
 }

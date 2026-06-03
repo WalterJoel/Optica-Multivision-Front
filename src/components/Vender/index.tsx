@@ -78,18 +78,16 @@ export default function Vender() {
                   className="relative group"
                 >
                   <div
-                    className={`absolute inset-0 blur-xl rounded-xl transition ${
-                      isActive ? "bg-blue-light/20" : "bg-transparent"
-                    }`}
+                    className={`absolute inset-0 blur-xl rounded-xl transition ${isActive ? "bg-blue-light/20" : "bg-transparent"
+                      }`}
                   />
 
                   <div
                     className={`relative px-4 py-2 rounded-xl text-sm font-bold border transition flex items-center gap-2
-                    ${
-                      isActive
+                    ${isActive
                         ? "bg-white border-blue-light text-blue-light shadow-testimonial"
                         : "bg-white border-gray-200 text-gray-500 hover:border-blue-light hover:text-blue-light"
-                    }`}
+                      }`}
                   >
                     <span className="flex gap-[2px]">
                       <span className="w-[3px] h-3 bg-blue-light rounded-full" />

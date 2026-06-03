@@ -5,17 +5,18 @@ import { List, CirclePlus } from "lucide-react";
 import { BaseTabs } from "@/components/Common/Inputs";
 
 import CreateLensDiscount from "./CreateLensDiscount";
-// import ListClients from "./CreateAccesoryDiscount";
 import CreateAccessoryDiscount from "./CreateAccessoryDiscount";
 import CreateMonturaDiscount from "./CreateMonturaDiscount";
+import ListDiscounts from "./ListDiscounts";
 
 export default function DiscountPage() {
   const [tab, setTab] = useState("lente");
 
   const tabsData = [
-    { key: "lente", label: "Lentes", icon: <CirclePlus size={22} /> },
-    { key: "accesorio", label: "Accesorios", icon: <List size={22} /> },
-    { key: "montura", label: "Monturas", icon: <List size={22} /> },
+    { key: "lente", label: "Descuento Lentes", icon: <CirclePlus size={22} /> },
+    { key: "accesorio", label: "Descuento Accesorios", icon: <CirclePlus size={22} /> },
+    { key: "montura", label: "Descuento Monturas", icon: <CirclePlus size={22} /> },
+    { key: "lista", label: "Lista de Descuentos", icon: <List size={22} /> },
   ];
 
   return (
@@ -25,10 +26,9 @@ export default function DiscountPage() {
       </div>
 
       {tab === "lente" && <CreateLensDiscount />}
-      {/* {tab === "accesorio" && <CreateClient />}
-      {tab === "montura" && <ListClients />} */}
-       {tab === "accesorio" && <CreateAccessoryDiscount />}
+      {tab === "accesorio" && <CreateAccessoryDiscount />}
       {tab === "montura" && <CreateMonturaDiscount />}
+      {tab === "lista" && <ListDiscounts />}
     </div>
   );
 }

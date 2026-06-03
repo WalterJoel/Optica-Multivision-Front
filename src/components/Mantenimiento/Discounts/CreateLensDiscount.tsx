@@ -13,20 +13,25 @@ import { ISearchClient } from "@/types/clients";
 import { ICreateDiscount, ISeries } from "@/types/discounts";
 import { PRODUCTOS, STATUS_MODAL } from "@/commons/constants";
 import { LoadingModal, StatusModal } from "@/components/Common/modal";
+import { Info } from "lucide-react";
 
 const emptyForm: ICreateDiscount = {
   clienteId: 0,
-  productoId: 0,
+  productoId: null,
+  lenteId: null,
   montoDescuento: 0,
   serie: 1, //Default
   tipoProducto: PRODUCTOS.LENTE,
 };
 
 const SeriesDescuentos = () => {
+  // --- States ---
   const [form, setForm] = useState<ICreateDiscount>(emptyForm);
   const [searchLensTerm, setSearchLensTerm] = useState("");
   const [searchClientTerm, setSearchClientTerm] = useState("");
   const [selectedId, setSelectedId] = useState<number>(1);
+  const [typeModal, setTypeModal] = useState<string>("");
+  const [openModal, setOpenModal] = useState<boolean>(false);
   const [series, setSeries] = useState<ISeries[]>([
     {
       id: 1,
@@ -54,7 +59,7 @@ const SeriesDescuentos = () => {
     },
   ]);
 
-  const { searchlens, lens, showList, setShowList } = useSearchLens();
+  // --- Hooks ---
   const { addDiscount, loading, statusMessage, success } = useCreateDiscount();
   const {
     searchClients,
@@ -62,14 +67,17 @@ const SeriesDescuentos = () => {
     showList: showListClient,
     setShowList: setShowListClient,
   } = useSearchClient();
+  const { searchlens, lens, showList, setShowList } = useSearchLens();
 
-  const [typeModal, setTypeModal] = useState<string>("");
-  const [openModal, setOpenModal] = useState<boolean>(false);
-
+  // --- Handlers ---
   const handleSelectLens = (l: ILens) => {
     setSearchLensTerm(l.marca);
     setShowList(false);
-    setForm((prev) => ({ ...prev, productoId: l.productoId }));
+    setForm((prev) => ({
+      ...prev,
+      lenteId: l.id,
+      productoId: null,
+    }));
     setSeries((prev) =>
       prev.map((s) => ({
         ...s,
@@ -119,6 +127,7 @@ const SeriesDescuentos = () => {
     setSeries((prev) => prev.map((s) => ({ ...s, precio: 0, descuento: 0 })));
   };
 
+  // --- Effects ---
   useEffect(() => {
     if (!loading && (success || statusMessage)) {
       if (success) {
@@ -135,13 +144,14 @@ const SeriesDescuentos = () => {
     <>
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col gap-8 p-6 w-full max-w-5xl mx-auto"
+        className="w-full rounded-xl border border-gray-3 bg-beige p-6"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
           <BaseSearchInput
             label="Buscar Cliente"
             value={searchClientTerm}
             required
+            placeholder="Buscar por nombre, apellido o doc..."
             onChange={(val) => {
               setSearchClientTerm(val);
               searchClients(val);
@@ -167,6 +177,7 @@ const SeriesDescuentos = () => {
             label="Buscar Lente"
             value={searchLensTerm}
             required
+            placeholder="Buscar por marca o material..."
             onChange={(val) => {
               setSearchLensTerm(val);
               searchlens(val);
@@ -180,7 +191,7 @@ const SeriesDescuentos = () => {
             )}
           />
         </div>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 mt-8">
           <label className="text-sm font-medium text-gray-500">
             Seleccione la Serie
           </label>
@@ -199,7 +210,7 @@ const SeriesDescuentos = () => {
           </div>
         </div>
 
-        <div className="flex-1 max-w-xs">
+        <div className="flex-1 max-w-xs mt-8">
           <BaseInput
             label="Monto de Descuento"
             type="number"
@@ -211,10 +222,16 @@ const SeriesDescuentos = () => {
           />
         </div>
 
-        <div className="mt-6 flex justify-center">
+        <div className="mt-8 flex flex-col items-center gap-3">
           <BaseButton type="submit" disabled={loading}>
             Crear descuento
           </BaseButton>
+          <div className="flex items-center gap-2 text-xs text-gray-500 mt-1 italic">
+            <Info size={14} className="text-blue shrink-0 animate-pulse" />
+            <span>
+              Se buscan y crean descuentos <strong>para los lentes compartidos en todas las sedes</strong>.
+            </span>
+          </div>
         </div>
       </form>
 

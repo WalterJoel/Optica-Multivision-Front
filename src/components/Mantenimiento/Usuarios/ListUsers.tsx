@@ -121,6 +121,8 @@ export default function ListUsers() {
     role?: string;
     sedeId?: number;
     password?: string;
+    nombre?: string;
+    apellido?: string;
   }) => {
     if (!selected) return;
     await updateUser(selected.id, payload as any);

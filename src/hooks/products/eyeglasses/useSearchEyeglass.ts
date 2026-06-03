@@ -1,11 +1,13 @@
 import { useState, useRef } from "react";
 import { IEyeglass } from "@/types/products/eyeglass";
-import { searchEyeglasses } from "@/services/products/eyeglasses";
+import { searchEyeglassesService } from "@/services/products/eyeglasses";
+import { useSessionUser } from "@/hooks/session";
 
 export function useSearchEyeglass() {
   const [eyeglasses, setEyeglasses] = useState<IEyeglass[]>([]);
   const [showList, setShowList] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { sedeId } = useSessionUser();
 
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -22,7 +24,7 @@ export function useSearchEyeglass() {
       setLoading(true);
 
       try {
-        const data = await searchEyeglasses(value);
+        const data = await searchEyeglassesService(sedeId || 0, value);
         setEyeglasses(data?.monturas || []);
         setShowList(true);
       } catch (error) {

@@ -41,9 +41,17 @@ function LensCardFrame({
             </span>
           </div>
 
-          {/* ICONO (un poco más grande para compensar card ancho) */}
-          <div className="w-16 h-16 bg-yellow-light-4 rounded-xl flex items-center justify-center border border-yellow-light-2">
-            <span className="text-4xl">{lens.image_url}</span>
+          {/* FOTO / ICONO */}
+          <div className="w-20 h-20 bg-yellow-light-4 rounded-xl flex items-center justify-center border border-yellow-light-2 overflow-hidden p-2">
+            {lens.imagenUrl ? (
+              <img
+                src={lens.imagenUrl}
+                alt={lens.marca}
+                className="w-full h-full object-contain"
+              />
+            ) : (
+              <span className="text-4xl">👁️</span>
+            )}
           </div>
 
           {/* NOMBRE + MATERIAL */}

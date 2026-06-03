@@ -100,6 +100,7 @@ const Discount = () => {
                 label="Buscar Cliente"
                 value={searchTerm}
                 required
+                placeholder="Buscar por nombre, apellido o doc..."
                 onChange={(val) => {
                   setSearchTerm(val);
                   searchClients(val);
@@ -157,11 +158,10 @@ const Discount = () => {
                         <BaseButton
                           onClick={() => handleToggleDiscount(d)}
                           fullWidth={false}
-                          className={`w-10 h-10 flex items-center justify-center transition-all duration-300 ${
-                            alreadyApplied
-                              ? "bg-green-50 text-green-500 border border-green-200"
-                              : "bg-blue text-white hover:bg-blue-dark"
-                          }`}
+                          className={`w-10 h-10 flex items-center justify-center transition-all duration-300 ${alreadyApplied
+                            ? "bg-green-50 text-green-500 border border-green-200"
+                            : "bg-blue text-white hover:bg-blue-dark"
+                            }`}
                         >
                           {alreadyApplied ? <Check size={18} /> : "OK"}
                         </BaseButton>

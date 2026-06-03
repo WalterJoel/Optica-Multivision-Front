@@ -7,12 +7,13 @@ import {
 } from "@/types/products/accessory";
 
 export const searchAccesoryService = async (
+  sedeId: number,
   nombre: string,
   limite: number = 50,
   desplazamiento: number = 0,
 ): Promise<ISearchAccesory[]> => {
   const { data } = await api.get<IResponseSearchAccesory>(
-    "/productos/buscarAccesorio",
+    `/productos/accesorios/buscarAccesorio/${sedeId}`,
     {
       params: {
         nombre,

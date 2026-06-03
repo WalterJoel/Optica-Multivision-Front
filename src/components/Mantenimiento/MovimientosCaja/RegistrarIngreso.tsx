@@ -75,6 +75,7 @@ export default function RegistrarIngreso() {
         className="w-full rounded-xl border border-gray-3 bg-beige p-6"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+
           <BaseInput
             label="Monto"
             name="monto"

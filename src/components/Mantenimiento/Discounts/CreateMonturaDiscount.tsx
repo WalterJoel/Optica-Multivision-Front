@@ -12,6 +12,7 @@ import { PRODUCTOS, STATUS_MODAL } from "@/commons/constants";
 import { LoadingModal, StatusModal } from "@/components/Common/modal";
 import { useSearchEyeglass } from "@/hooks/products/eyeglasses";
 import { IEyeglass } from "@/types/products/eyeglass";
+import { Info } from "lucide-react";
 
 const emptyForm: ICreateDiscount = {
   clienteId: 0,
@@ -21,26 +22,30 @@ const emptyForm: ICreateDiscount = {
 };
 
 const CreateMonturaDiscount = () => {
+  // --- States ---
   const [form, setForm] = useState<ICreateDiscount>(emptyForm);
   const [searchMonturaTerm, setSearchMonturaTerm] = useState("");
   const [searchClientTerm, setSearchClientTerm] = useState("");
   const [selectedMonturaPrice, setSelectedMonturaPrice] = useState(0);
+  const [typeModal, setTypeModal] = useState("");
+  const [openModal, setOpenModal] = useState(false);
 
-  const { eyeglasses, searchEyeglass, showList, setShowList } =
-    useSearchEyeglass();
-
+  // --- Hooks ---
   const { addDiscount, loading, statusMessage, success } = useCreateDiscount();
-
   const {
     searchClients,
     clients,
     showList: showListClient,
     setShowList: setShowListClient,
   } = useSearchClient();
+  const {
+    eyeglasses,
+    searchEyeglass,
+    showList,
+    setShowList
+  } = useSearchEyeglass();
 
-  const [typeModal, setTypeModal] = useState("");
-  const [openModal, setOpenModal] = useState(false);
-
+  // --- Handlers ---
   const handleSelectMontura = (m: IEyeglass) => {
     setSearchMonturaTerm(`${m.marca} - ${m.color}`);
     setShowList(false);
@@ -83,6 +88,7 @@ const CreateMonturaDiscount = () => {
     setSelectedMonturaPrice(0);
   };
 
+  // --- Effects ---
   useEffect(() => {
     if (!loading && (success || statusMessage)) {
       if (success) {
@@ -99,13 +105,14 @@ const CreateMonturaDiscount = () => {
     <>
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col gap-8 p-6 w-full max-w-5xl mx-auto"
+        className="w-full rounded-xl border border-gray-3 bg-beige p-6"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
           <BaseSearchInput
             label="Buscar Cliente"
             value={searchClientTerm}
             required
+            placeholder="Buscar por nombre, apellido o doc..."
             onChange={(val) => {
               setSearchClientTerm(val);
               searchClients(val);
@@ -131,6 +138,7 @@ const CreateMonturaDiscount = () => {
             label="Buscar Montura"
             value={searchMonturaTerm}
             required
+            placeholder="Buscar por marca, material o código..."
             onChange={(val) => {
               setSearchMonturaTerm(val);
               searchEyeglass(val);
@@ -153,7 +161,7 @@ const CreateMonturaDiscount = () => {
           />
         </div>
 
-        <div className="flex flex-col gap-2 max-w-xs">
+        <div className="flex flex-col gap-2 max-w-xs mt-8">
           <label className="text-sm font-medium text-gray-500">
             Precio de la montura
           </label>
@@ -162,7 +170,7 @@ const CreateMonturaDiscount = () => {
           </div>
         </div>
 
-        <div className="flex-1 max-w-xs">
+        <div className="flex-1 max-w-xs mt-8">
           <BaseInput
             label="Monto de Descuento"
             type="number"
@@ -174,13 +182,19 @@ const CreateMonturaDiscount = () => {
           />
         </div>
 
-        <div className="mt-6 flex justify-center">
+        <div className="mt-8 flex flex-col items-center gap-3">
           <BaseButton
             type="submit"
             disabled={loading || !form.clienteId || !form.productoId}
           >
             Crear descuento
           </BaseButton>
+          <div className="flex items-center gap-2 text-xs text-gray-500 mt-1 italic">
+            <Info size={14} className="text-blue shrink-0 animate-pulse" />
+            <span>
+              Se buscan y crean descuentos <strong>solo para las monturas de esta sede</strong>.
+            </span>
+          </div>
         </div>
       </form>
 

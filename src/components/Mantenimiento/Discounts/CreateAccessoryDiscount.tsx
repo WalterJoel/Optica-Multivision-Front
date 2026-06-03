@@ -12,6 +12,7 @@ import { PRODUCTOS, STATUS_MODAL } from "@/commons/constants";
 import { LoadingModal, StatusModal } from "@/components/Common/modal";
 import { useSearchAccesory } from "@/hooks/products/accesories";
 import { ISearchAccesory } from "@/types/products/accessory";
+import { Info } from "lucide-react";
 
 const emptyForm: ICreateDiscount = {
   clienteId: 0,
@@ -21,30 +22,34 @@ const emptyForm: ICreateDiscount = {
 };
 
 const CreateAccessoryDiscount = () => {
+  // --- States ---
   const [form, setForm] = useState<ICreateDiscount>(emptyForm);
   const [searchAccessoryTerm, setSearchAccessoryTerm] = useState("");
   const [searchClientTerm, setSearchClientTerm] = useState("");
   const [selectedAccessoryPrice, setSelectedAccessoryPrice] = useState(0);
+  const [typeModal, setTypeModal] = useState("");
+  const [openModal, setOpenModal] = useState(false);
 
-  const { accesories, searchAccesories, showList, setShowList } =
-    useSearchAccesory();
-
+  // --- Hooks ---
   const { addDiscount, loading, statusMessage, success } = useCreateDiscount();
-
   const {
     searchClients,
     clients,
     showList: showListClient,
     setShowList: setShowListClient,
   } = useSearchClient();
+  const {
+    accesories,
+    searchAccesories,
+    showList,
+    setShowList,
+  } = useSearchAccesory();
 
-  const [typeModal, setTypeModal] = useState("");
-  const [openModal, setOpenModal] = useState(false);
-
+  // --- Handlers ---
   const handleSelectAccessory = (a: ISearchAccesory) => {
     setSearchAccessoryTerm(a.nombre);
     setShowList(false);
-    setSelectedAccessoryPrice(Number(a.precio || 0));
+    setSelectedAccessoryPrice(Number(a.precioVenta || 0));
     setForm((prev) => ({
       ...prev,
       productoId: a.productoId,
@@ -83,6 +88,7 @@ const CreateAccessoryDiscount = () => {
     setSelectedAccessoryPrice(0);
   };
 
+  // --- Effects ---
   useEffect(() => {
     if (!loading && (success || statusMessage)) {
       if (success) {
@@ -99,13 +105,14 @@ const CreateAccessoryDiscount = () => {
     <>
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col gap-8 p-6 w-full max-w-5xl mx-auto"
+        className="w-full rounded-xl border border-gray-3 bg-beige p-6"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
           <BaseSearchInput
             label="Buscar Cliente"
             value={searchClientTerm}
             required
+            placeholder="Buscar por nombre, apellido o doc..."
             onChange={(val) => {
               setSearchClientTerm(val);
               searchClients(val);
@@ -131,6 +138,7 @@ const CreateAccessoryDiscount = () => {
             label="Buscar Accesorio"
             value={searchAccessoryTerm}
             required
+            placeholder="Buscar por nombre..."
             onChange={(val) => {
               setSearchAccessoryTerm(val);
               searchAccesories(val);
@@ -144,14 +152,14 @@ const CreateAccessoryDiscount = () => {
               >
                 <span className="truncate">{a.nombre}</span>
                 <span className="text-[11px] font-mono text-blue-dark bg-blue-light/10 px-2 py-0.5 rounded border border-blue-dark/20 shrink-0">
-                  S/ {Number(a.precio).toFixed(2)}
+                  S/ {Number(a.precioVenta).toFixed(2)}
                 </span>
               </div>
             )}
           />
         </div>
 
-        <div className="flex flex-col gap-2 max-w-xs">
+        <div className="flex flex-col gap-2 max-w-xs mt-8">
           <label className="text-sm font-medium text-gray-500">
             Precio del accesorio
           </label>
@@ -160,7 +168,7 @@ const CreateAccessoryDiscount = () => {
           </div>
         </div>
 
-        <div className="flex-1 max-w-xs">
+        <div className="flex-1 max-w-xs mt-8">
           <BaseInput
             label="Monto de Descuento"
             type="number"
@@ -172,13 +180,19 @@ const CreateAccessoryDiscount = () => {
           />
         </div>
 
-        <div className="mt-6 flex justify-center">
+        <div className="mt-8 flex flex-col items-center gap-3">
           <BaseButton
             type="submit"
             disabled={loading || !form.clienteId || !form.productoId}
           >
             Crear descuento
           </BaseButton>
+          <div className="flex items-center gap-2 text-xs text-gray-500 mt-1 italic">
+            <Info size={14} className="text-blue shrink-0 animate-pulse" />
+            <span>
+              Se buscan y crean descuentos <strong>solo para los accesorios de esta sede</strong>.
+            </span>
+          </div>
         </div>
       </form>
 

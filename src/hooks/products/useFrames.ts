@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ILens, CreateLens } from "@/types/products";
-import { createLens, getLenses, UpdateLensStock } from "@/services/products";
+import { getLenses, UpdateLensStock } from "@/services/products";
 
 export function useLenses() {
   const [lenses, setLenses] = useState<ILens[]>([]);

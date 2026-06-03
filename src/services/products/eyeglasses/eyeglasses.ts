@@ -39,13 +39,14 @@ export const deleteEyeglassService = async (id: number) => {
   return data;
 };
 
-export const searchEyeglasses = async (
+export const searchEyeglassesService = async (
+  sedeId: number,
   busqueda: string,
 ): Promise<{ total: number; monturas: IEyeglass[] }> => {
-  const { data } = await api.get("/productos/buscarMontura", {
+  const { data } = await api.get(`/productos/monturas/buscarMontura/${sedeId}`, {
     params: { busqueda },
   });
-  return data?.monturas || [];
+  return data;
 };
 
 export const searchEyeglassByQrService = async (

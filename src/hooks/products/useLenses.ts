@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { ILens, InventoryByStoreResponse } from "@/types/products";
 import {
-  createLens,
   getLenses,
   UpdateLensStock,
   getInventoryByStoresService,

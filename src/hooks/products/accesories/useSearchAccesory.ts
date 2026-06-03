@@ -1,11 +1,13 @@
 import { useState, useRef } from "react";
 import { ISearchAccesory } from "@/types/products";
 import { searchAccesoryService } from "@/services/products/accesories";
+import { useSessionUser } from "@/hooks/session";
 
 export function useSearchAccesory() {
   const [loading, setLoading] = useState(false);
   const [accesories, setAccesories] = useState<ISearchAccesory[]>([]);
   const [showList, setShowList] = useState(false);
+  const { sedeId } = useSessionUser();
 
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -23,7 +25,7 @@ export function useSearchAccesory() {
       setLoading(true);
 
       try {
-        const data = await searchAccesoryService(value);
+        const data = await searchAccesoryService(sedeId || 0, value);
         setAccesories(data);
         setShowList(true);
       } catch (error) {
