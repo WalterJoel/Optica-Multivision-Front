@@ -33,7 +33,7 @@ export default function LensForm() {
 
   // Hooks
   const { addLens, success, statusMessage, loading } = useCreateLens();
-  const { kits } = useKits();
+  const { kits, getAllKits } = useKits();
 
   const resetForm = () => {
     setForm(initialForm);
@@ -91,9 +91,9 @@ export default function LensForm() {
     }
   }, [loading, success, statusMessage]);
 
-  // useEffect(() => {
-  //   getAllLenses();
-  // }, []);
+  useEffect(() => {
+    getAllKits();
+  }, []);
 
   return (
     <>

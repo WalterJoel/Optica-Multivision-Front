@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { CreateLens } from "@/types/products";
-import { createLens } from "@/services/products";
+import { createLensService } from "@/services/products";
 
 export function useCreateLens() {
   const [loading, setLoading] = useState(false);
@@ -12,7 +12,7 @@ export function useCreateLens() {
     setSuccess(false);
 
     try {
-      await createLens(payload);
+      await createLensService(payload);
       setSuccess(true);
       setMessage("Lente creado correctamente");
     } catch (err: any) {

@@ -18,6 +18,7 @@ import {
   ScanEye,
   Package,
   Tags,
+  EyeIcon,
 } from "lucide-react";
 
 import ClientsPage from "./Clients/ClientsPage";
@@ -89,8 +90,9 @@ const MyAccount = () => {
 
                     {menuButton("accesories", "Accesorios", Package)}
                     {menuButton("eyeglasses", "Monturas", ScanEye)}
+                    {menuButton("lens", "Lentes", EyeIcon)}
                     {menuButton("discounts", "Descuentos", Tags)}
-                    {menuButton("lens", "Lentes", Tags)}
+
                   </div>
                 </div>
               </div>

@@ -9,6 +9,7 @@ export interface ILens {
   precio_serie3: number;
   kitId?: number | null;
   imagenUrl?: string | null;
+  activo?: boolean;
 }
 
 export type CreateLens = Omit<ILens, "id" | "productoId"> & {

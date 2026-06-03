@@ -126,9 +126,6 @@ export default function ListAccesories() {
                   Cantidad (Stock)
                 </th>
                 <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3">
-                  Imagen
-                </th>
-                <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3">
                   Precio Venta
                 </th>
                 <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3 text-right">
@@ -141,7 +138,7 @@ export default function ListAccesories() {
               {filteredAccessories.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={6}
+                    colSpan={5}
                     className="px-6 py-24 text-center text-dark-5 font-bold uppercase text-[10px] tracking-widest"
                   >
                     {searchTerm.trim() !== ""
@@ -158,7 +155,15 @@ export default function ListAccesories() {
                     <td className="px-6 py-5">
                       <div className="flex items-center gap-3">
                         <div className="h-10 w-10 flex items-center justify-center bg-blue-light/20 rounded-xl text-blue shadow-sm group-hover:scale-110 transition-transform">
-                          <Package size={20} strokeWidth={2.5} />
+                          {item.imagenUrl ? (
+                            <img
+                              src={item.imagenUrl}
+                              alt={item.nombre}
+                              className="h-full w-full object-cover rounded-xl"
+                            />
+                          ) : (
+                            <Package size={20} strokeWidth={2.5} />
+                          )}
                         </div>
                         <div className="flex flex-col">
                           <span className="font-black text-dark uppercase text-xs tracking-tight">
@@ -182,16 +187,6 @@ export default function ListAccesories() {
                       <span className="font-bold text-dark text-xs bg-beige px-3 py-1.5 rounded-xl border border-slate-200">
                         {item.producto?.cantidad ?? item.cantidad ?? 0} uds
                       </span>
-                    </td>
-                    <td className="px-6 py-5">
-                      {item.imagenUrl ? (
-                        <img
-                          src={item.imagenUrl}
-                          className="h-10 w-10 rounded-lg object-cover border border-slate-200 shadow-sm"
-                        />
-                      ) : (
-                        <span className="text-gray-4 font-semibold text-xs">-</span>
-                      )}
                     </td>
                     <td className="px-6 py-5 font-bold text-dark">
                       S/ {Number(item.precioVenta).toFixed(2)}

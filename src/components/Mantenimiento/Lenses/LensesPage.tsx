@@ -5,15 +5,14 @@ import { List, CirclePlus } from "lucide-react";
 import { BaseTabs } from "@/components/Common/Inputs";
 
 import CreateLens from "./CreateLens";
-
-import ListLens from "@/components/Listados/ListLens";
+import ListLenses from "./ListLenses";
 
 export default function AccesoriesPage() {
   const [tab, setTab] = useState("crear");
 
   const tabsData = [
     { key: "crear", label: "Crear Lente", icon: <CirclePlus size={22} /> },
-    // { key: "lista", label: "Lista de accesorios", icon: <List size={22} /> },
+    { key: "lista", label: "Lista de Lentes", icon: <List size={22} /> },
   ];
 
   return (
@@ -23,7 +22,7 @@ export default function AccesoriesPage() {
       </div>
 
       {tab === "crear" && <CreateLens />}
-      {tab === "lista" && <ListLens />}
+      {tab === "lista" && <ListLenses />}
     </div>
   );
 }
