@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Building2, List } from "lucide-react";
+import { Building2, List, FileText } from "lucide-react";
 import RegistrarIngreso from "./RegistrarIngreso";
 import RegistrarEgreso from "./RegistrarEgreso";
+import ListCajaMovimientos from "./ListCajaMovimientos";
 import { BaseTabs } from "@/components/Common/Inputs";
 
 export default function MovimientoCajaPage() {
@@ -12,13 +13,18 @@ export default function MovimientoCajaPage() {
   const tabsData = [
     {
       key: "registrar-ingreso",
-      label: "Registar Ingreso",
+      label: "Registrar Ingreso",
       icon: <Building2 size={18} />,
     },
     {
       key: "registrar-egreso",
       label: "Registrar Egreso",
       icon: <List size={18} />,
+    },
+    {
+      key: "lista",
+      label: "Listar Movimientos",
+      icon: <FileText size={18} />,
     },
   ];
 
@@ -30,6 +36,7 @@ export default function MovimientoCajaPage() {
 
       {tab === "registrar-ingreso" && <RegistrarIngreso />}
       {tab === "registrar-egreso" && <RegistrarEgreso />}
+      {tab === "lista" && <ListCajaMovimientos />}
     </div>
   );
 }

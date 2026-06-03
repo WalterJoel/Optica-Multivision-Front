@@ -33,7 +33,7 @@ export function AddAccessoryModal({
       id: acc.id,
       productoId: acc.productoId,
       nombre: acc.nombre,
-      precio: acc.precio,
+      precioVenta: acc.precioVenta,
     }));
 
     setShowList(false);

@@ -1,34 +1,31 @@
 import { useState } from "react";
+import { updateKitService } from "@/services/kits";
+import { ICreateKitAccesory } from "@/types/kits";
 
-import { getAllKitsService } from "@/services/kits";
-import { IKit } from "@/types/kits";
-
-export function useKits() {
+export function useUpdateKit() {
   const [loading, setLoading] = useState(false);
   const [statusMessage, setMessage] = useState<string>("");
   const [success, setSuccess] = useState<boolean>(false);
-  const [kits, setKits] = useState<IKit[]>([]);
 
-  const getAllKits = async () => {
+  const updateKit = async (id: number, payload: Partial<ICreateKitAccesory>) => {
     setLoading(true);
     setSuccess(false);
 
     try {
-      const data = await getAllKitsService();
-      setKits(data);
+      await updateKitService(id, payload);
       setSuccess(true);
-      setMessage("listado de Kits correto");
+      setMessage("Kit actualizado correctamente");
     } catch (err: any) {
       const backendMessage = err.response?.data?.message;
       setMessage(
         backendMessage
-          ? "Error al listar kits: " + backendMessage
-          : "Error al listar kits",
+          ? "Error al actualizar kit: " + backendMessage
+          : "Error al actualizar kit",
       );
     } finally {
       setLoading(false);
     }
   };
 
-  return { getAllKits, kits, loading, statusMessage, success };
+  return { updateKit, loading, statusMessage, success };
 }

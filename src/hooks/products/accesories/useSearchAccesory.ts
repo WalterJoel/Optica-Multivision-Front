@@ -19,6 +19,7 @@ export function useSearchAccesory() {
         return;
       }
 
+
       setLoading(true);
 
       try {
@@ -30,7 +31,7 @@ export function useSearchAccesory() {
       } finally {
         setLoading(false);
       }
-    }, 300);
+    }, 100);
   };
 
   return {

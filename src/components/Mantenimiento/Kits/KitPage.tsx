@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { Building2, List } from "lucide-react";
 import CreateKit from "./CreateKit";
-// import ListKit from "./ListKit";
+import ListKit from "./ListKit";
 import { BaseTabs } from "@/components/Common/Inputs";
 
-export default function SedesPage() {
+export default function KitsPage() {
   const [tab, setTab] = useState("crear");
 
   const tabsData = [
@@ -21,7 +21,7 @@ export default function SedesPage() {
       </div>
 
       {tab === "crear" && <CreateKit />}
-      {/* {tab === "lista" && <ListKit />} */}
+      {tab === "lista" && <ListKit />}
     </div>
   );
 }

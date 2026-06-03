@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { BaseInput } from "@/components/Common/Inputs/BaseInput";
 import { BaseButton } from "@/components/Common/Buttons/BaseButton";
 import { ICrearMovimientoCaja, TipoMovimiento } from "@/types/caja-movimiento";
-import { useValidarCajaAbierta } from "@/hooks/caja";
 import { useCrearMovimientoCaja } from "@/hooks/caja-movimiento";
 import { StatusModal, LoadingModal } from "@/components/Common/modal";
 import { MetodoPago, STATUS_MODAL } from "@/commons/constants";
@@ -13,14 +12,14 @@ import { BaseTarea } from "@/components/Common/Inputs";
 import { BaseSelect } from "@/components/Common/Inputs/BaseSelect";
 
 const emptyForm: ICrearMovimientoCaja = {
-  cajaId: 0,
   tipo: TipoMovimiento.EGRESO,
-  monto: 0,
+  monto: "" as unknown as number,
+  sedeId: 0,
   descripcion: "",
   metodoPago: MetodoPago.EFECTIVO,
 };
 
-export default function RegistrarIngreso() {
+export default function RegistrarEgreso() {
   const [form, setForm] = useState<ICrearMovimientoCaja>(emptyForm);
   const [typeModal, setTypeModal] = useState("");
   const [openModal, setOpenModal] = useState(false);
@@ -29,16 +28,7 @@ export default function RegistrarIngreso() {
   const { crearMovimientoCaja, statusMessage, loading } =
     useCrearMovimientoCaja();
 
-  const { validarCajaAbierta, caja, existe } = useValidarCajaAbierta();
-
   const { sedeId } = useSessionUser();
-
-  // VALIDACIÓN INICIAL DE CAJA
-  useEffect(() => {
-    if (sedeId) {
-      validarCajaAbierta(sedeId);
-    }
-  }, [sedeId]);
 
   const onChange = (
     e: React.ChangeEvent<
@@ -49,27 +39,24 @@ export default function RegistrarIngreso() {
 
     setForm((p) => ({
       ...p,
-      [e.target.name]: e.target.value,
+      [name]: value,
     }));
   };
 
   const crear = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // SOLO SI HAY CAJA ABIERTA
-    if (!existe || !caja?.id) return;
-
     const payload: ICrearMovimientoCaja = {
       ...form,
-      cajaId: caja.id,
+      monto: Number(form.monto) || 0,
+      sedeId: Number(sedeId),
     };
 
     const result = await crearMovimientoCaja(payload);
 
-    // LIMPIEZA + REFRESH
+    // LIMPIEZA
     if (result?.success) {
       setForm(emptyForm);
-      await validarCajaAbierta(sedeId);
     }
 
     setTypeModal(
@@ -93,7 +80,6 @@ export default function RegistrarIngreso() {
             placeholder="100.00"
             required
             type="number"
-            disabled={!existe}
             onChange={onChange}
           />
 
@@ -103,7 +89,6 @@ export default function RegistrarIngreso() {
             value={form.metodoPago}
             placeholder="Selecciona método"
             required
-            disabled={!existe}
             options={[
               { label: "Efectivo", value: MetodoPago.EFECTIVO },
               { label: "Yape", value: MetodoPago.YAPE },
@@ -117,27 +102,16 @@ export default function RegistrarIngreso() {
             label="Descripción"
             name="descripcion"
             value={form.descripcion}
-            placeholder="Ingreso por venta..."
-            disabled={!existe}
+            placeholder="Egreso por compra..."
             onChange={onChange}
           />
         </div>
 
         <div className="mt-8 flex justify-center">
-          <BaseButton type="submit" loading={loading} disabled={!existe}>
+          <BaseButton type="submit" loading={loading}>
             Registrar Egreso
           </BaseButton>
         </div>
-
-        {!existe ? (
-          <p className="mt-4 text-center text-sm text-red-500">
-            No puedes registrar movimientos porque no hay una caja abierta.
-          </p>
-        ) : (
-          <p className="mt-4 text-center text-sm text-green-600">
-            Caja activa — Puedes registrar Egresos
-          </p>
-        )}
       </form>
 
       <LoadingModal isOpen={loading} />

@@ -21,7 +21,7 @@ export default function KitCarousel() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [selectedKitId, setSelectedKitId] = useState<number | null>(null);
 
-  const { kits, getAllLenses } = useKits();
+  const { kits, getAllKits } = useKits();
 
   const scroll = (direction: "left" | "right") => {
     if (scrollRef.current) {
@@ -38,7 +38,7 @@ export default function KitCarousel() {
   };
 
   useEffect(() => {
-    getAllLenses();
+    getAllKits();
   }, []);
 
   return (
@@ -56,18 +56,16 @@ export default function KitCarousel() {
               className="min-w-full w-full flex-none snap-center h-full p-4"
             >
               <div
-                className={`grid grid-cols-[140px_1fr_140px] sm:grid-cols-[180px_1fr_180px] h-full items-center gap-4 transition-all duration-300 rounded-2xl border border-blue ${
-                  isSelected
-                    ? "bg-blue-light-6 shadow-md scale-[1.01]"
-                    : "bg-white shadow-sm"
-                }`}
+                className={`grid grid-cols-[140px_1fr_140px] sm:grid-cols-[180px_1fr_180px] h-full items-center gap-4 transition-all duration-300 rounded-2xl border border-blue ${isSelected
+                  ? "bg-blue-light-6 shadow-md scale-[1.01]"
+                  : "bg-white shadow-sm"
+                  }`}
               >
                 {/* IMAGEN */}
                 <div className="relative flex justify-center items-center h-full pl-6">
                   <div
-                    className={`relative w-32 h-32 sm:w-40 sm:h-40 transition-transform duration-300 ${
-                      isSelected ? "scale-105" : "scale-100"
-                    }`}
+                    className={`relative w-32 h-32 sm:w-40 sm:h-40 transition-transform duration-300 ${isSelected ? "scale-105" : "scale-100"
+                      }`}
                   >
                     <Image
                       src="/images/icons/kit.webp"
@@ -96,11 +94,10 @@ export default function KitCarousel() {
                     <div className="flex justify-center w-full">
                       <BaseButton
                         onClick={() => handleSelectKit(kit.id)}
-                        className={`!h-11 !w-full !max-w-[190px] !p-0 transition-all duration-300 ${
-                          isSelected
-                            ? "!bg-blue !border-blue"
-                            : "!bg-blue hover:!bg-blue-dark"
-                        }`}
+                        className={`!h-11 !w-full !max-w-[190px] !p-0 transition-all duration-300 ${isSelected
+                          ? "!bg-blue !border-blue"
+                          : "!bg-blue hover:!bg-blue-dark"
+                          }`}
                       >
                         <div className="flex items-center justify-center w-full h-full gap-2 px-4">
                           {isSelected && (
@@ -122,9 +119,8 @@ export default function KitCarousel() {
                 {/* PRECIO */}
                 <div className="flex items-center justify-center h-full pr-8">
                   <div
-                    className={`flex items-start leading-none select-none transition-colors ${
-                      isSelected ? "text-blue" : "text-slate-800"
-                    }`}
+                    className={`flex items-start leading-none select-none transition-colors ${isSelected ? "text-blue" : "text-slate-800"
+                      }`}
                   >
                     <span className="text-xl sm:text-2xl font-bold mt-2 mr-1">
                       S/

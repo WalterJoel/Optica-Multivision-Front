@@ -4,7 +4,7 @@ interface ITableKitAccesories {
   createdAt: Date;
   accesorio: {
     id: number; // Id del accesorio
-    precio: number;
+    precioVenta: number;
     nombre: string;
     atributo: string;
     imagenUrl: string;
@@ -15,7 +15,7 @@ interface ITableKitAccesories {
 export interface IKit {
   id: number;
   nombre: string;
-  precio: number; //Precio total del kit
+  precio: number; // precio total del kit
   activo: boolean;
   createdAt: string;
   descripcion: string;
@@ -26,14 +26,14 @@ export interface IResponseKitAccesory {
   id: number;
   nombre: string;
   productoId: number;
-  precio: number;
+  precioVenta: number;
 }
 export interface IKitAccesory {
   id: number;
   nombre: string;
   cantidad: number;
   productoId: number;
-  precio: number;
+  precioVenta: number;
 }
 
 export interface ICreateKit {

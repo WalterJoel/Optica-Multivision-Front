@@ -10,7 +10,7 @@ export const updateKitService = async (
   id: number,
   payload: Partial<ICreateKit>,
 ) => {
-  const { data } = await api.patch(`/kits/${id}`, payload);
+  const { data } = await api.patch(`/kits/actualizar/${id}`, payload);
   return data;
 };
 

@@ -30,7 +30,7 @@ export type IUpdateAccessory = Partial<ICreateAccessory> & { productoId?: number
 
 export interface ISearchAccesory {
   id: number;
-  precio: number;
+  precioVenta: number;
   nombre: string;
   productoId: number;
 }

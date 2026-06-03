@@ -32,7 +32,7 @@ const emptyAccesory: IKitAccesory = {
   nombre: "",
   cantidad: 1,
   productoId: 0,
-  precio: 0,
+  precioVenta: 0,
 };
 
 export default function CreateKit() {
@@ -118,7 +118,7 @@ export default function CreateKit() {
 
   useEffect(() => {
     const total = accesorios.reduce(
-      (sum, acc) => sum + acc.precio * acc.cantidad,
+      (sum, acc) => sum + acc.precioVenta * acc.cantidad,
       0,
     );
 
@@ -146,7 +146,7 @@ export default function CreateKit() {
     <>
       <form
         onSubmit={createKit}
-        className="w-full rounded-xl border border-gray-3 bg-white p-6"
+        className="w-full rounded-xl border border-gray-3 bg-beige p-6"
       >
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <BaseInput
@@ -159,7 +159,7 @@ export default function CreateKit() {
           />
 
           <BaseInput
-            label="Precio"
+            label="Precio Total"
             name="precio"
             type="number"
             value={form.precio}
@@ -196,7 +196,7 @@ export default function CreateKit() {
                 <tr>
                   <th className="p-4 text-left">Accesorio</th>
                   <th className="p-4 text-center">Cantidad</th>
-                  <th className="p-4 text-center">Precio</th>
+                  <th className="p-4 text-center">precioVenta</th>
                   <th className="p-4 text-center">Acciones</th>
                 </tr>
               </thead>
@@ -213,7 +213,7 @@ export default function CreateKit() {
                     <tr key={acc.id} className="border-t hover:bg-gray-50">
                       <td className="p-4">{acc.nombre}</td>
                       <td className="p-4 text-center">{acc.cantidad}</td>
-                      <td className="p-4 text-center">{acc.precio}</td>
+                      <td className="p-4 text-center">{acc.precioVenta}</td>
 
                       <td className="p-4 text-center">
                         <BaseButtonIcon
