@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import Discount from "./Discount";
-import OrderSummary from "./OrderSummary";
 import { useAppSelector } from "@/redux/store";
 import SingleItem from "./SingleItem";
 import Link from "next/link";
@@ -94,7 +93,6 @@ const Cart = () => {
 
               {/* COLUMNA DERECHA */}
               <div className="flex flex-col gap-10">
-                <OrderSummary />
                 <AccessoryCards />
               </div>
             </div>

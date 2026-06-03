@@ -9,6 +9,8 @@ import {
 } from "@/redux/features/cart-slice";
 import Image from "next/image";
 
+import { Glasses, Package } from "lucide-react";
+
 const SingleItem = ({ item }) => {
   const [quantity, setQuantity] = useState(item.quantity);
   const dispatch = useDispatch<AppDispatch>();
@@ -31,18 +33,43 @@ const SingleItem = ({ item }) => {
     }
   };
 
+  const getResolvedImageUrl = () => {
+    const imgUrl = item.imagenUrl || item.imgs?.thumbnails?.[0];
+    if (!imgUrl) return null;
+    if (imgUrl.startsWith("http://") || imgUrl.startsWith("https://")) {
+      if (imgUrl.includes("flaticon")) return null;
+      return imgUrl;
+    }
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+    return `${baseUrl.replace(/\/$/, "")}/${imgUrl.replace(/^\//, "")}`;
+  };
+
+  const resolvedImg = getResolvedImageUrl();
+
   return (
     <div className="flex items-center border-t border-gray-3 py-5 px-7.5 bg-white">
       {/* PRODUCTO */}
       <div className="flex-[2] flex items-center gap-5.5 min-w-0">
         <div className="flex items-center justify-center rounded-[5px] bg-gray-2 w-16 h-16 shrink-0 overflow-hidden shadow-sm">
-          <Image
-            width={80}
-            height={80}
-            src={item.imgs?.thumbnails[0] || "/placeholder.png"}
-            alt={"nidea"}
-            className="object-contain p-1"
-          />
+          {resolvedImg ? (
+            <img
+              src={resolvedImg}
+              alt={item.productName}
+              className="w-full h-full object-cover"
+            />
+          ) : item.isLens ? (
+            <div className="w-full h-full flex items-center justify-center bg-blue-light/10 text-blue">
+              <Glasses size={24} />
+            </div>
+          ) : item.productType === "ACCESORIO" ? (
+            <div className="w-full h-full flex items-center justify-center bg-teal-50 text-teal-600">
+              <Package size={24} />
+            </div>
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-yellow-light-4 text-yellow-dark">
+              <Glasses size={24} />
+            </div>
+          )}
         </div>
         <div className="min-w-0">
           <h3 className="text-dark font-medium truncate pr-2 hover:text-blue transition-colors cursor-pointer">
@@ -60,12 +87,12 @@ const SingleItem = ({ item }) => {
 
       {/* PRECIO */}
       <div className="flex-1 text-center">
-        <p className="text-dark text-sm font-bold">S/. {item.price}</p>
+        <p className="text-dark text-sm font-bold">S/. {Number(item.price).toFixed(2)}</p>
       </div>
 
       {/* DESCUENTO */}
       <div className="flex-1 text-center">
-        <p className="text-dark text-sm font-bold">S/. {item.discount}</p>
+        <p className="text-dark text-sm font-bold">S/. {Number(item.discount || 0).toFixed(2)}</p>
       </div>
 
       {/* CANTIDAD */}
@@ -108,7 +135,7 @@ const SingleItem = ({ item }) => {
       {/* SUBTOTAL */}
       <div className="flex-1 text-center">
         <p className="text-blue font-bold text-sm">
-          S/. {((item.price - (item.discount || 0)) * quantity).toFixed(2)}{" "}
+          S/. {((Number(item.price) - Number(item.discount || 0)) * quantity).toFixed(2)}{" "}
         </p>
       </div>
 

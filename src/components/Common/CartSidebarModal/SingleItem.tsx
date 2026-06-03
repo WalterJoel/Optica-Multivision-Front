@@ -12,6 +12,8 @@ import {
   updateCartItemQuantity,
 } from "@/redux/features/cart-slice";
 
+import { Glasses, Package } from "lucide-react";
+
 interface SingleItemProps {
   item: CartItem;
   removeItemFromCart: (id: number) => any;
@@ -22,8 +24,6 @@ const SingleItem: React.FC<SingleItemProps> = ({
   removeItemFromCart,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
-
-  const totalPrice = useSelector(selectTotalPrice);
 
   const handleRemoveFromCart = () => {
     dispatch(removeItemFromCart(item.id));
@@ -45,22 +45,55 @@ const SingleItem: React.FC<SingleItemProps> = ({
     }
   };
 
+  const getResolvedImageUrl = () => {
+    const imgUrl = item.imagenUrl || item.imgs?.thumbnails?.[0];
+    if (!imgUrl) return null;
+    if (imgUrl.startsWith("http://") || imgUrl.startsWith("https://")) {
+      if (imgUrl.includes("flaticon")) return null;
+      return imgUrl;
+    }
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+    return `${baseUrl.replace(/\/$/, "")}/${imgUrl.replace(/^\//, "")}`;
+  };
+
+  const resolvedImg = getResolvedImageUrl();
+
   return (
     <div className="flex items-center justify-between gap-5">
       <div className="w-full flex items-center gap-6">
         <div className="flex items-center justify-center rounded-[10px] bg-gray-3 max-w-[90px] w-full h-22.5">
-          <div className="w-16 h-16 bg-yellow-light-4 rounded-xl flex items-center justify-center border border-yellow-light-2">
-            {/* <span className="text-4xl">{item.imageUrl}</span> */}
+          <div className="w-16 h-16 bg-yellow-light-4 rounded-xl flex items-center justify-center border border-yellow-light-2 overflow-hidden shrink-0">
+            {resolvedImg ? (
+              <img
+                src={resolvedImg}
+                alt={item.productName}
+                className="w-full h-full object-cover"
+              />
+            ) : item.isLens ? (
+              <div className="w-full h-full flex items-center justify-center bg-blue-light/10 text-blue">
+                <Glasses size={24} />
+              </div>
+            ) : item.productType === "ACCESORIO" ? (
+              <div className="w-full h-full flex items-center justify-center bg-teal-50 text-teal-600">
+                <Package size={24} />
+              </div>
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-yellow-light-4 text-yellow-dark">
+                <Glasses size={24} />
+              </div>
+            )}
           </div>
         </div>
         <div>
           <h3 className="font-medium text-dark mb-1 ease-out duration-200 hover:text-blue">
-            <a href="#"> {item.productName} </a>
+            {item.productName}
           </h3>
-          <p className="text-custom-sm">Price: S/. {totalPrice}</p>
-          <p className="text-dark text-sm font-bold">
-            {/* {"ESF " + item.esf ?? "-"} / {"CYL " + item.cyl ?? "-"} */}
-          </p>
+          <p className="text-custom-sm">Price: S/. {Number(item.price).toFixed(2)}</p>
+          {item.isLens && (
+            <p className="text-dark-5 text-[11px] font-bold mt-0.5">
+              ESF {item.esf ?? "-"} / CYL {item.cyl ?? "-"}
+            </p>
+          )}
         </div>
         {/* CANTIDAD */}
         <div className="flex-1 flex justify-center">

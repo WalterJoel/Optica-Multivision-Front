@@ -172,12 +172,13 @@ export default function ListEyeglasses({ filters }: { filters?: Filters }) {
       cyl: null,
       esf: null,
       isLens: false,
+      imagenUrl: eyeGlass.imagenUrl,
       imgs: {
         thumbnails: [
-          "https://www.flaticon.es/icono-gratis/anteojos-con-media-montura_27114",
+          eyeGlass.imagenUrl || "",
         ],
         previews: [
-          "https://www.flaticon.es/icono-gratis/anteojos-con-media-montura_27114",
+          eyeGlass.imagenUrl || "",
         ],
       },
     };

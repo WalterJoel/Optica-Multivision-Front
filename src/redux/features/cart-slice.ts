@@ -82,7 +82,9 @@ export const selectCartItems = (state: RootState) => state.cartReducer.items;
 
 export const selectTotalPrice = createSelector([selectCartItems], (items) =>
   items.reduce((total, item) => {
-    const finalPrice = Math.max(0, item.price - (item.discount || 0));
+    const price = Number(item.price);
+    const discount = Number(item.discount || 0);
+    const finalPrice = Math.max(0, price - discount);
     return total + finalPrice * item.quantity;
   }, 0),
 );

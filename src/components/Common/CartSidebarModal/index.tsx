@@ -17,7 +17,7 @@ const CartSidebarModal = () => {
   const cartItems = useAppSelector((state) => state.cartReducer.items);
 
   const totalPrice = useSelector(selectTotalPrice);
-  console.log('ITEMS', cartItems)
+  console
   useEffect(() => {
     // closing modal while clicking outside
     function handleClickOutside(event) {
@@ -102,7 +102,7 @@ const CartSidebarModal = () => {
               <Link
                 onClick={() => closeCartModal()}
                 href="/register-sale"
-                className="w-full flex justify-center font-medium text-white bg-blue py-3 px-6 rounded-md ease-out duration-200 hover:bg-blue-dark mt-7.5"
+                className="w-full flex justify-center font-medium text-white bg-yellow py-3 px-6 rounded-md ease-out duration-200 hover:bg-blue-dark mt-7.5"
               >
                 Pagar
               </Link>

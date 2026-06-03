@@ -35,6 +35,7 @@ export function AccessoryCards() {
       esf: null,
       cyl: null,
       isLens: false,
+      imagenUrl: acc.imagenUrl,
       imgs: {
         thumbnails: [acc.imagenUrl],
         previews: [acc.imagenUrl],

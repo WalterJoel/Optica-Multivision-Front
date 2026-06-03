@@ -164,6 +164,7 @@ export default function ListAccessories({ filters }: { filters?: Filters }) {
       cyl: null,
       esf: null,
       isLens: false,
+      imagenUrl: item.imagenUrl,
       imgs: {
         thumbnails: [item.imagenUrl || ""],
         previews: [item.imagenUrl || ""],
