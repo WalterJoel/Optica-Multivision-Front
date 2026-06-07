@@ -1,4 +1,5 @@
 import { MonturaExcelRow } from "@/types/excel/monturas";
+import { AccesorioExcelRow } from "@/types/excel/accesorios";
 import { api } from "../api";
 
 export const obtenerMonturasExcelService = async (
@@ -10,3 +11,14 @@ export const obtenerMonturasExcelService = async (
 
   return data;
 };
+
+export const obtenerAccesoriosExcelService = async (
+  sedeId: number,
+): Promise<AccesorioExcelRow[]> => {
+  const { data } = await api.get<AccesorioExcelRow[]>(
+    `/productos/accesorios/obtenerAccesoriosExcel/${sedeId}`,
+  );
+
+  return data;
+};
+

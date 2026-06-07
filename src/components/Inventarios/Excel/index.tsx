@@ -5,6 +5,8 @@ import { FileSpreadsheet, ShoppingCart } from "lucide-react";
 import { TipoProducto } from "@/commons/constants";
 import { DropCrearMonturas } from "./Monturas/crear/DropCrearMonturas";
 import { DropEditarMonturas } from "./Monturas/editar/DropEditarMonturas";
+import { DropCrearAccesorios } from "./Accesorios/crear/DropCrearAccesorios";
+import { DropEditarAccesorios } from "./Accesorios/editar/DropEditarAccesorios";
 
 export const ExcelInventarios = () => {
   const [selectedCategory, setSelectedCategory] = useState(
@@ -30,7 +32,7 @@ export const ExcelInventarios = () => {
               <div className="flex items-center gap-2 mb-1">
                 <span className="w-6 h-[4px] bg-yellow-dark rounded-full" />
                 <p className="text-[10px] sm:text-[11px] font-semibold text-blue-light uppercase tracking-[4px]">
-                  MONTURAS
+                  PRODUCTOS MASIVOS
                 </p>
               </div>
 
@@ -89,7 +91,19 @@ export const ExcelInventarios = () => {
             </div>
           </div>
         )}
+
+        {selectedCategory === TipoProducto.ACCESORIO && (
+          <div className="grid grid-cols-12 gap-6 items-start">
+            <div className="col-span-12 xl:col-span-6">
+              <DropCrearAccesorios />
+            </div>
+            <div className="col-span-12 xl:col-span-6">
+              <DropEditarAccesorios />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 };
+
