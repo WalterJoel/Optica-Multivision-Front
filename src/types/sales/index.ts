@@ -4,6 +4,8 @@ import {
   EstadoPago,
   TipoProducto,
 } from "@/commons/constants";
+import { IUser } from "../users";
+import { IClient } from "../clients";
 
 export interface VentaProducto {
   productoId?: number;
@@ -41,6 +43,7 @@ export interface IResponseSale {
   id: number;
   sedeId: number;
   userId: number;
+  clienteId?: number | null;
   activo: boolean;
   total: string;
   montoPagado: string;
@@ -57,6 +60,8 @@ export interface IResponseSale {
   createdAt: string;
   updatedAt: string;
   productos: ProductSale[];
+  user?: IUser;
+  cliente?: IClient | null;
 }
 
 export interface ProductSale {

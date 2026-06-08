@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { IAccessory } from "@/types/products/accessory";
-import { getAllVentasService } from "@/services/sales";
+import { buscarVentasService } from "@/services/sales";
 import { IResponseSale } from "@/types/sales";
 
 export function useSales(sedeId: number) {
@@ -9,14 +9,14 @@ export function useSales(sedeId: number) {
   const [success, setSuccess] = useState<boolean>(false);
   const [sales, setSales] = useState<IResponseSale[]>([]);
 
-  const getAllSales = async () => {
+  const getAllSales = async (fechaInicio: string, fechaFin: string) => {
     if (loading) return;
 
     setLoading(true);
     setSuccess(false);
 
     try {
-      const data = await getAllVentasService(sedeId);
+      const data = await buscarVentasService(sedeId, fechaInicio, fechaFin);
       setSales(data || []);
       setSuccess(true);
       setMessage("Ventas obtenidas correctamente");

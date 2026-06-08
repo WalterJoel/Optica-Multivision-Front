@@ -3,6 +3,7 @@
 import React, { useState, useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 import { BaseInput, BaseTarea } from "@/components/Common/Inputs";
+import { getLocalDateString } from "@/utils/date";
 import OrderPrint from "./OrderPrint";
 import OrderPreviewModal from "./OrderPreviewModal";
 
@@ -27,6 +28,7 @@ const monturaMaterialOptions = [
   "Aluminio",
 ];
 
+
 const Montaje = () => {
   const [openPreview, setOpenPreview] = useState(false);
   const printRef = useRef<HTMLDivElement | null>(null);
@@ -34,7 +36,7 @@ const Montaje = () => {
   const [form, setForm] = useState({
     orderId: "",
     optica: "",
-    orderDate: new Date().toISOString().slice(0, 10),
+    orderDate: getLocalDateString(),
     customerName: "",
     marca: "",
     precio: "",

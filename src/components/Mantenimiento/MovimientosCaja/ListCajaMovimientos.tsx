@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { useMovimientosCaja } from "@/hooks/caja-movimiento";
-import { IMovimientosCaja, TipoMovimiento } from "@/types/caja-movimiento";
+import { IMovimientoCajaResponse, IMovimientosCaja, TipoMovimiento } from "@/types/caja-movimiento";
 import EditCajaMovimientoModal from "./EditCajaMovimientoModal";
 import { Edit3, Search, TrendingUp, TrendingDown, Calendar, CreditCard } from "lucide-react";
 import { LoadingModal } from "@/components/Common/modal";
@@ -14,7 +14,7 @@ export default function ListCajaMovimientos() {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [openEdit, setOpenEdit] = useState(false);
-  const [selected, setSelected] = useState<IMovimientosCaja | null>(null);
+  const [selected, setSelected] = useState<IMovimientoCajaResponse | null>(null);
 
   useEffect(() => {
     if (sedeId) {
@@ -22,7 +22,7 @@ export default function ListCajaMovimientos() {
     }
   }, [sedeId]);
 
-  const openEditModal = (item: IMovimientosCaja) => {
+  const openEditModal = (item: IMovimientoCajaResponse) => {
     setSelected(item);
     setOpenEdit(true);
   };
@@ -121,11 +121,10 @@ export default function ListCajaMovimientos() {
                       <td className="px-6 py-5">
                         <div className="flex items-center gap-3">
                           <div
-                            className={`h-10 w-10 flex items-center justify-center rounded-xl shadow-sm group-hover:scale-110 transition-transform ${
-                              isIngreso
-                                ? "bg-green-100/60 text-green-600"
-                                : "bg-red-100/60 text-red-600"
-                            }`}
+                            className={`h-10 w-10 flex items-center justify-center rounded-xl shadow-sm group-hover:scale-110 transition-transform ${isIngreso
+                              ? "bg-green-100/60 text-green-600"
+                              : "bg-red-100/60 text-red-600"
+                              }`}
                           >
                             {isIngreso ? (
                               <TrendingUp size={20} strokeWidth={2.5} />
@@ -165,21 +164,20 @@ export default function ListCajaMovimientos() {
                           <span>
                             {item.createdAt
                               ? new Date(item.createdAt).toLocaleString("es-PE", {
-                                  day: "2-digit",
-                                  month: "2-digit",
-                                  year: "numeric",
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                })
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })
                               : "-"}
                           </span>
                         </div>
                       </td>
                       <td className="px-6 py-5">
                         <span
-                          className={`font-black text-sm ${
-                            isIngreso ? "text-green-600" : "text-red-600"
-                          }`}
+                          className={`font-black text-sm ${isIngreso ? "text-green-600" : "text-red-600"
+                            }`}
                         >
                           {isIngreso ? "+" : "-"} S/ {Number(item.monto).toFixed(2)}
                         </span>

@@ -1,30 +1,50 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { TrendingUp } from "lucide-react";
+import { TrendingUp, Calendar } from "lucide-react";
 import { MiniTable } from "./MiniTable";
 
 import { useSales, useAnularVenta } from "@/hooks/sales";
 import { useSessionUser } from "@/hooks/session";
 import { StatusModal, LoadingModal } from "@/components/Common/modal";
 import { STATUS_MODAL } from "@/commons/constants";
+import { getLocalDateString } from "@/utils/date";
+import { SedeSelect } from "@/components/Common/SedeSelect";
 
 export default function CajaPremiumFino() {
   // Hooks
-  const { sedeId } = useSessionUser();
-  const { getAllSales, sales, loading } = useSales(sedeId!);
-  const { anularVenta, loading: isAnnulling, success: annulOk, statusMessage: annulMsg } = useAnularVenta();
+  const { sedeId: userSedeId } = useSessionUser();
+  const [sedeId, setSedeId] = useState<number>(1);
 
-  const [fecha, setFecha] = useState("");
+  const today = getLocalDateString();
+  const [fechaInicio, setFechaInicio] = useState<string>(today);
+  const [fechaFin, setFechaFin] = useState<string>(today);
+
+  const { getAllSales, sales, loading } = useSales(sedeId);
+  const {
+    anularVenta,
+    loading: isAnnulling,
+    success: annulOk,
+    statusMessage: annulMsg,
+  } = useAnularVenta();
+
   const [openModal, setOpenModal] = useState(false);
   const [typeModal, setTypeModal] = useState("");
   const [modalMsg, setModalMsg] = useState("");
 
+  // Sincronizar la sede inicial del usuario
+  useEffect(() => {
+    if (userSedeId) {
+      setSedeId(userSedeId);
+    }
+  }, [userSedeId]);
+
+  // Ejecutar búsqueda cuando cambien los filtros
   useEffect(() => {
     if (sedeId) {
-      getAllSales();
+      getAllSales(fechaInicio, fechaFin);
     }
-  }, [sedeId]);
+  }, [sedeId, fechaInicio, fechaFin]);
 
   useEffect(() => {
     if (!isAnnulling && (annulOk || annulMsg)) {
@@ -33,17 +53,11 @@ export default function CajaPremiumFino() {
       );
       setModalMsg(annulMsg);
       setOpenModal(true);
-      if (annulOk) {
-        getAllSales();
+      if (annulOk && sedeId) {
+        getAllSales(fechaInicio, fechaFin);
       }
     }
   }, [isAnnulling, annulOk, annulMsg]);
-
-  const ventasFiltradas = fecha
-    ? sales.filter(
-      (v) => new Date(v.createdAt).toISOString().slice(0, 10) === fecha,
-    )
-    : sales;
 
   return (
     <div className="bg-beige pt-32 pb-16 px-4 sm:px-6 lg:px-8 min-h-screen mt-15">
@@ -71,6 +85,34 @@ export default function CajaPremiumFino() {
                 Resumen de{" "}
                 <span className="text-blue-light italic">Ventas</span>
               </h1>
+            </div>
+          </div>
+
+          {/* RIGHT CONTROLS */}
+          <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+            {/* SEDE */}
+            <SedeSelect value={sedeId} onChange={setSedeId} />
+
+            {/* FECHA INICIO */}
+            <div className="flex items-center gap-3 bg-white border-2 border-blue-light-4 rounded-2xl px-4 py-3 shadow-md hover:shadow-lg transition-all w-full sm:w-auto">
+              <Calendar size={18} className="text-blue-light" />
+              <input
+                type="date"
+                value={fechaInicio}
+                onChange={(e) => setFechaInicio(e.target.value)}
+                className="bg-transparent outline-none text-[13px] font-bold text-dark w-full cursor-pointer"
+              />
+            </div>
+
+            {/* FECHA FIN */}
+            <div className="flex items-center gap-3 bg-white border-2 border-blue-light-4 rounded-2xl px-4 py-3 shadow-md hover:shadow-lg transition-all w-full sm:w-auto">
+              <Calendar size={18} className="text-blue-light" />
+              <input
+                type="date"
+                value={fechaFin}
+                onChange={(e) => setFechaFin(e.target.value)}
+                className="bg-transparent outline-none text-[13px] font-bold text-dark w-full cursor-pointer"
+              />
             </div>
           </div>
         </header>

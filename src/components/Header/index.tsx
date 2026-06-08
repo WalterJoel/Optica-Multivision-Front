@@ -63,11 +63,10 @@ const Header = () => {
 
   return (
     <header
-      className={`fixed left-0 top-0 w-full z-[999] transition-all duration-500 ${
-        stickyMenu
-          ? "bg-white/80 backdrop-blur-lg py-2 shadow-[0_8px_32px_rgba(0,0,0,0.05)] border-b border-white/20"
-          : "bg-gradient-to-b from-slate-50/50 to-transparent py-5"
-      }`}
+      className={`fixed left-0 top-0 w-full z-[999] transition-all duration-500 ${stickyMenu
+        ? "bg-white/80 backdrop-blur-lg py-2 shadow-[0_8px_32px_rgba(0,0,0,0.05)] border-b border-white/20"
+        : "bg-gradient-to-b from-slate-50/50 to-transparent py-5"
+        }`}
     >
       <div className="mt-5 max-w-[1700px] mx-auto px-4 md:px-16 flex items-center justify-between gap-4">
         {/* 1. LOGO */}
@@ -173,11 +172,10 @@ const Header = () => {
           {/* CHAT PREMIUM */}
           <button
             onClick={() => setChatOpen(!chatOpen)}
-            className={`p-3 rounded-full transition-all border shadow-sm ${
-              chatOpen
-                ? "bg-blue text-white border-blue shadow-blue/20"
-                : "bg-white text-slate-400 border-white hover:border-blue hover:text-blue"
-            }`}
+            className={`p-3 rounded-full transition-all border shadow-sm ${chatOpen
+              ? "bg-blue text-white border-blue shadow-blue/20"
+              : "bg-white text-slate-400 border-white hover:border-blue hover:text-blue"
+              }`}
           >
             <MessageCircleMore size={20} strokeWidth={2.5} />
           </button>
@@ -194,7 +192,7 @@ const Header = () => {
               </span>
             </div>
             <span className="text-base font-[1000] tracking-tighter hidden sm:inline">
-              ${totalPrice}
+              S/. {totalPrice}
             </span>
           </button>
 

@@ -1,20 +1,22 @@
 import { useState } from "react";
-import { IMovimientosCaja } from "@/types/caja-movimiento";
-import { movimientosCajaService } from "@/services/caja-movimiento";
+import { IMovimientoCajaResponse } from "@/types/caja-movimiento";
+import { movimientosCajaService, buscarMovimientosCajaService } from "@/services/caja-movimiento";
 
 export function useMovimientosCaja() {
-  const [movimientos, setMovimientos] = useState<IMovimientosCaja[]>([]);
+  const [movimientos, setMovimientos] = useState<IMovimientoCajaResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const [statusMessage, setMessage] = useState<string>("");
   const [success, setSuccess] = useState<boolean>(false);
 
-  const getMovimientosCaja = async (sedeId: number) => {
+  const getMovimientosCaja = async (sedeId: number, fechaInicio?: string, fechaFin?: string) => {
     setLoading(true);
     setSuccess(false);
     setMessage("");
 
     try {
-      const res = await movimientosCajaService(sedeId);
+      const res = (fechaInicio && fechaFin)
+        ? await buscarMovimientosCajaService(sedeId, fechaInicio, fechaFin)
+        : await movimientosCajaService(sedeId);
 
       setMovimientos(res || []);
 

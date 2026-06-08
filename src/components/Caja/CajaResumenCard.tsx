@@ -2,18 +2,43 @@
 
 import React from "react";
 import { ArrowUpRight, ArrowDownLeft } from "lucide-react";
+import { getLocalDateString } from "@/utils/date";
 
 type Props = {
   balance: number;
   totalIngresos: number;
   totalEgresos: number;
+  fechaInicio: string;
+  fechaFin: string;
+};
+
+const formatFecha = (f: string) => {
+  const parts = f.split("-");
+  if (parts.length === 3) {
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  }
+  return f;
 };
 
 export default function CajaResumenCard({
   balance,
   totalIngresos,
   totalEgresos,
+  fechaInicio,
+  fechaFin,
 }: Props) {
+  const today = getLocalDateString();
+
+  const getRangoTexto = () => {
+    if (fechaInicio === today && fechaFin === today) {
+      return "HOY";
+    }
+    if (fechaInicio === fechaFin) {
+      return formatFecha(fechaInicio);
+    }
+    return `${formatFecha(fechaInicio)} AL ${formatFecha(fechaFin)}`;
+  };
+
   return (
     <div className="mb-10">
       <div className="bg-white rounded-[35px] p-10 border border-blue-light-5 shadow-testimonial relative overflow-hidden">
@@ -37,7 +62,7 @@ export default function CajaResumenCard({
 
           {/* Badge pequeño */}
           <div className="bg-white/70 backdrop-blur px-4 py-2 rounded-xl border border-blue-light-5 text-[10px] font-black text-blue-light uppercase tracking-widest">
-            HOY
+            {getRangoTexto()}
           </div>
         </div>
 

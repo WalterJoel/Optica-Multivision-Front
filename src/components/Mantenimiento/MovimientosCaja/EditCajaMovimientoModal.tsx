@@ -5,7 +5,7 @@ import { BaseInput } from "@/components/Common/Inputs/BaseInput";
 import { BaseButton } from "@/components/Common/Buttons/BaseButton";
 import { BaseTarea } from "@/components/Common/Inputs";
 import { BaseSelect } from "@/components/Common/Inputs/BaseSelect";
-import { IMovimientosCaja, TipoMovimiento } from "@/types/caja-movimiento";
+import { IMovimientoCajaResponse, IMovimientosCaja, TipoMovimiento } from "@/types/caja-movimiento";
 import { useUpdateCajaMovimiento } from "@/hooks/caja-movimiento";
 import { Wallet } from "lucide-react";
 import {
@@ -17,7 +17,7 @@ import { MetodoPago, STATUS_MODAL } from "@/commons/constants";
 
 interface EditCajaMovimientoModalProps {
   isOpen: boolean;
-  movimiento: IMovimientosCaja | null;
+  movimiento: IMovimientoCajaResponse | null;
   onClose: () => void;
   onRefresh: () => void;
 }

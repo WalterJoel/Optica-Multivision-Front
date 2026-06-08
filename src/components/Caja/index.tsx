@@ -1,29 +1,38 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { TrendingUp, Calendar, Building2 } from "lucide-react";
+import { TrendingUp, Calendar } from "lucide-react";
 import { useMovimientosCaja } from "@/hooks/caja-movimiento/useMovimientosCaja";
+import { useSessionUser } from "@/hooks/session/useSessionUser";
+import { getLocalDateString } from "@/utils/date";
+import { SedeSelect } from "@/components/Common/SedeSelect";
 import { MiniTable } from "./MiniTable";
 import CajaResumenCard from "./CajaResumenCard";
 
+
 export default function CajaPremiumFino() {
   const { movimientos, getMovimientosCaja } = useMovimientosCaja();
+  const { sedeId: userSedeId } = useSessionUser();
 
+  const today = getLocalDateString();
   const [sedeId, setSedeId] = useState<number>(1);
-  const [fecha, setFecha] = useState<string>("");
+  const [fechaInicio, setFechaInicio] = useState<string>(today);
+  const [fechaFin, setFechaFin] = useState<string>(today);
 
   useEffect(() => {
-    getMovimientosCaja(sedeId);
-  }, [sedeId]);
+    if (userSedeId) {
+      setSedeId(userSedeId);
+    }
+  }, [userSedeId]);
 
-  const movimientosFiltrados = fecha
-    ? movimientos.filter(
-        (m) => new Date(m.createdAt).toISOString().slice(0, 10) === fecha,
-      )
-    : movimientos;
+  useEffect(() => {
+    if (sedeId) {
+      getMovimientosCaja(sedeId, fechaInicio, fechaFin);
+    }
+  }, [sedeId, fechaInicio, fechaFin]);
 
-  const ingresos = movimientosFiltrados.filter((m) => m.tipo === "INGRESO");
-  const egresos = movimientosFiltrados.filter((m) => m.tipo === "EGRESO");
+  const ingresos = movimientos.filter((m) => m.tipo === "INGRESO");
+  const egresos = movimientos.filter((m) => m.tipo === "EGRESO");
 
   const totalIngresos = ingresos.reduce((acc, m) => acc + Number(m.monto), 0);
   const totalEgresos = egresos.reduce((acc, m) => acc + Number(m.monto), 0);
@@ -60,26 +69,26 @@ export default function CajaPremiumFino() {
           {/* RIGHT CONTROLS */}
           <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
             {/* SEDE */}
-            <div className="flex items-center gap-3 bg-white border-2 border-blue-light-4 rounded-2xl px-4 py-3 shadow-md hover:shadow-lg transition-all w-full sm:w-auto">
-              <Building2 size={18} className="text-blue-light" />
-              <select
-                value={sedeId}
-                onChange={(e) => setSedeId(Number(e.target.value))}
-                className="bg-transparent outline-none text-[13px] font-bold text-dark w-full cursor-pointer"
-              >
-                <option value={1}>Sede Principal</option>
-                <option value={2}>Sede Norte</option>
-                <option value={3}>Sede Sur</option>
-              </select>
-            </div>
+            <SedeSelect value={sedeId} onChange={setSedeId} />
 
-            {/* FECHA */}
+            {/* FECHA INICIO */}
             <div className="flex items-center gap-3 bg-white border-2 border-blue-light-4 rounded-2xl px-4 py-3 shadow-md hover:shadow-lg transition-all w-full sm:w-auto">
               <Calendar size={18} className="text-blue-light" />
               <input
                 type="date"
-                value={fecha}
-                onChange={(e) => setFecha(e.target.value)}
+                value={fechaInicio}
+                onChange={(e) => setFechaInicio(e.target.value)}
+                className="bg-transparent outline-none text-[13px] font-bold text-dark w-full cursor-pointer"
+              />
+            </div>
+
+            {/* FECHA FIN */}
+            <div className="flex items-center gap-3 bg-white border-2 border-blue-light-4 rounded-2xl px-4 py-3 shadow-md hover:shadow-lg transition-all w-full sm:w-auto">
+              <Calendar size={18} className="text-blue-light" />
+              <input
+                type="date"
+                value={fechaFin}
+                onChange={(e) => setFechaFin(e.target.value)}
                 className="bg-transparent outline-none text-[13px] font-bold text-dark w-full cursor-pointer"
               />
             </div>
@@ -92,6 +101,8 @@ export default function CajaPremiumFino() {
             balance={balance}
             totalIngresos={totalIngresos}
             totalEgresos={totalEgresos}
+            fechaInicio={fechaInicio}
+            fechaFin={fechaFin}
           />
         </div>
 
@@ -112,3 +123,4 @@ export default function CajaPremiumFino() {
     </div>
   );
 }
+

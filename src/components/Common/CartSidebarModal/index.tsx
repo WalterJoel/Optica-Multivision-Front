@@ -102,7 +102,7 @@ const CartSidebarModal = () => {
               <Link
                 onClick={() => closeCartModal()}
                 href="/register-sale"
-                className="w-full flex justify-center font-medium text-white bg-yellow py-3 px-6 rounded-md ease-out duration-200 hover:bg-blue-dark mt-7.5"
+                className="w-full flex justify-center items-center font-[1000] text-dark bg-yellow-dark py-5 px-10 rounded-2xl transition-all duration-300 hover:bg-yellow hover:-translate-y-0.5 hover:shadow-xl hover:shadow-yellow-dark/25 active:translate-y-0 active:scale-[0.98] uppercase tracking-[0.25em] text-sm shadow-lg shadow-yellow-dark/20 mt-7.5"
               >
                 Pagar
               </Link>
