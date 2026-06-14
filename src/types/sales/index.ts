@@ -81,3 +81,39 @@ export interface ProductSale {
   producto?: any;
   stock?: any;
 }
+
+export interface IProductoVendidoResponse {
+  id: number;
+  ventaId: number;
+  productoId: number | null;
+  stockId: number | null;
+  tipoProducto: string;
+  precioUnitario: string;
+  cantidad: number;
+  subtotal: string;
+  descuento: string | null;
+  esf?: string | null;
+  cyl?: string | null;
+  createdAt: string;
+  fechaVenta: string;
+  lenteId: number | null;
+  nombreSede?: string | null;
+  producto?: {
+    id: number;
+    nombre: string;
+    ubicacion?: string;
+  } | null;
+  stock?: {
+    id: number;
+    lenteId: number;
+    matrix?: string;
+    row?: number;
+    col?: number;
+    ubicacion?: string;
+    lente?: {
+      id: number;
+      marca: string;
+      material: string;
+    };
+  } | null;
+}

@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { TrendingUp, Calendar } from "lucide-react";
+import { TrendingUp, Calendar, FileSpreadsheet, Loader2 } from "lucide-react";
 import { MiniTable } from "./MiniTable";
 
-import { useSales, useAnularVenta } from "@/hooks/sales";
+import { useSales, useAnularVenta, useProductosVendidos } from "@/hooks/sales";
 import { useSessionUser } from "@/hooks/session";
 import { StatusModal, LoadingModal } from "@/components/Common/modal";
 import { STATUS_MODAL } from "@/commons/constants";
@@ -28,6 +28,9 @@ export default function CajaPremiumFino() {
     statusMessage: annulMsg,
   } = useAnularVenta();
 
+  const { descargarReporteProductosVendidos, loading: isGeneratingReport } =
+    useProductosVendidos();
+
   const [openModal, setOpenModal] = useState(false);
   const [typeModal, setTypeModal] = useState("");
   const [modalMsg, setModalMsg] = useState("");
@@ -49,7 +52,7 @@ export default function CajaPremiumFino() {
   useEffect(() => {
     if (!isAnnulling && (annulOk || annulMsg)) {
       setTypeModal(
-        annulOk ? STATUS_MODAL.SUCCESS_MODAL : STATUS_MODAL.ERROR_MODAL,
+         annulOk ? STATUS_MODAL.SUCCESS_MODAL : STATUS_MODAL.ERROR_MODAL,
       );
       setModalMsg(annulMsg);
       setOpenModal(true);
@@ -89,7 +92,24 @@ export default function CajaPremiumFino() {
           </div>
 
           {/* RIGHT CONTROLS */}
-          <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+          <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto items-center">
+            {/* BOTÓN DESCARGAR REPORTE EXCEL */}
+            <button
+              onClick={() => descargarReporteProductosVendidos(sedeId, fechaInicio, fechaFin)}
+              disabled={isGeneratingReport}
+              className="flex items-center justify-center gap-3 bg-white border-2 border-blue-light-4 rounded-2xl px-4 py-3 shadow-md hover:shadow-lg transition-all font-bold text-[13px] text-dark w-full sm:w-auto shrink-0 cursor-pointer disabled:opacity-60"
+              title="Descargar reporte de productos vendidos en Excel"
+            >
+              {isGeneratingReport ? (
+                <Loader2 size={16} className="animate-spin text-emerald-600" />
+              ) : (
+                <FileSpreadsheet size={16} className="text-emerald-600" />
+              )}
+              <span className="uppercase tracking-wide">
+                {isGeneratingReport ? "Generando..." : "Reporte Excel"}
+              </span>
+            </button>
+
             {/* SEDE */}
             <SedeSelect value={sedeId} onChange={setSedeId} />
 
