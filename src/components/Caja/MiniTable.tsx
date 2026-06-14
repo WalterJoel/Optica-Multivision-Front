@@ -34,9 +34,8 @@ export const MiniTable = ({
       <div className="px-6 py-5 flex justify-between items-center border-b border-gray-2 bg-white">
         <div className="flex items-center gap-3">
           <div
-            className={`w-2 h-2 rounded-full ${
-              type === "ingreso" ? "bg-green" : "bg-red"
-            } animate-pulse`}
+            className={`w-2 h-2 rounded-full ${type === "ingreso" ? "bg-green" : "bg-red"
+              } animate-pulse`}
           />
           <h3 className="text-[12px] font-black text-dark-2 uppercase tracking-[2px]">
             {titulo}
@@ -113,9 +112,8 @@ export const MiniTable = ({
                     <div className="flex items-center justify-end gap-3">
                       <div className="flex flex-col items-end">
                         <span
-                          className={`text-[15px] font-black tracking-tighter ${
-                            type === "ingreso" ? "text-green" : "text-red"
-                          }`}
+                          className={`text-[15px] font-black tracking-tighter ${type === "ingreso" ? "text-green" : "text-red"
+                            }`}
                         >
                           S/ {Number(m.monto).toFixed(2)}
                         </span>

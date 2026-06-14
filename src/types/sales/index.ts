@@ -78,4 +78,6 @@ export interface ProductSale {
   esf?: string | null;
   cyl?: string | null;
   createdAt: string;
+  producto?: any;
+  stock?: any;
 }

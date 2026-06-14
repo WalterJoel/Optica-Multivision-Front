@@ -36,12 +36,27 @@ export const MiniTable = ({
   const filteredData = data.filter((venta) => {
     if (!searchTerm) return true;
     const term = searchTerm.toLowerCase();
+    
+    const clienteNombre = venta.cliente
+      ? venta.cliente.tipoCliente === "EMPRESA"
+        ? (venta.cliente.razonSocial || "").toLowerCase()
+        : `${venta.cliente.nombres || ""} ${venta.cliente.apellidos || ""}`.toLowerCase()
+      : "";
+    const clienteDoc = (venta.cliente?.numeroDoc || "").toLowerCase();
+    
+    const vendedorNombre = venta.user
+      ? `${venta.user.nombre || ""} ${venta.user.apellido || ""}`.toLowerCase()
+      : "";
+
     return (
       venta.id.toString().includes(term) ||
       (venta.metodoPago || "").toLowerCase().includes(term) ||
       (venta.tipoVenta || "").toLowerCase().includes(term) ||
       (venta.estadoPago || "").toLowerCase().includes(term) ||
-      venta.userId.toString().includes(term)
+      venta.userId.toString().includes(term) ||
+      clienteNombre.includes(term) ||
+      clienteDoc.includes(term) ||
+      vendedorNombre.includes(term)
     );
   });
 
@@ -103,6 +118,9 @@ export const MiniTable = ({
                 Fecha
               </th>
               <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3">
+                Cliente
+              </th>
+              <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3">
                 Vendedor
               </th>
               <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3">
@@ -128,7 +146,7 @@ export const MiniTable = ({
             {paginatedData.length === 0 && (
               <tr>
                 <td
-                  colSpan={8}
+                  colSpan={9}
                   className="px-6 py-24 text-center text-dark-5 font-bold uppercase text-[10px] tracking-widest"
                 >
                   No hay ventas registradas
@@ -163,6 +181,25 @@ export const MiniTable = ({
                     {date.toLocaleDateString()}
                   </td>
 
+                  {/* Cliente */}
+                  <td className="px-6 py-5">
+                    <div className="flex flex-col">
+                      <span className="font-black text-dark uppercase text-[11px] tracking-tight">
+                        {venta.cliente
+                          ? venta.cliente.tipoCliente === "EMPRESA"
+                            ? venta.cliente.razonSocial
+                            : `${venta.cliente.nombres || ""} ${venta.cliente.apellidos || ""}`.trim()
+                          : "Público General"
+                        }
+                      </span>
+                      {venta.cliente && (
+                        <span className="text-[10px] text-gray-4 font-mono font-bold mt-0.5">
+                          {venta.cliente.numeroDoc}
+                        </span>
+                      )}
+                    </div>
+                  </td>
+
                   {/* Vendedor */}
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-2">
@@ -171,15 +208,18 @@ export const MiniTable = ({
                       </div>
                       <div className="flex flex-col">
                         <span className="font-black text-dark uppercase text-[11px] tracking-tight">
-                          Usuario #{venta.userId}
+                          {venta.user ? `${venta.user.nombre || ""} ${venta.user.apellido || ""}`.trim() : `Usuario #${venta.userId}`}
                         </span>
                       </div>
                     </div>
                   </td>
 
-                  {/* Método Pago - Texto No Ma */}
-                  <td className="px-6 py-5 text-dark-2 font-semibold">
-                    {venta.metodoPago || "—"}
+                  {/* Método Pago */}
+                  <td className="px-6 py-5">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.1em] border shadow-sm bg-white border-blue-light-5 text-dark-4">
+                      <CreditCard size={10} className="text-blue-light" />
+                      {venta.metodoPago || "—"}
+                    </span>
                   </td>
 
                   {/* Tipo Venta */}
@@ -243,11 +283,10 @@ export const MiniTable = ({
                             onDelete(venta.id);
                           }
                         }}
-                        className={`p-2.5 rounded-xl transition-all shadow-sm border flex items-center justify-center ${
-                          venta.activo
-                            ? "bg-white border-red-light-4 text-red hover:bg-red hover:text-white cursor-pointer"
-                            : "bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed opacity-60"
-                        }`}
+                        className={`p-2.5 rounded-xl transition-all shadow-sm border flex items-center justify-center ${venta.activo
+                          ? "bg-white border-red-light-4 text-red hover:bg-red hover:text-white cursor-pointer"
+                          : "bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed opacity-60"
+                          }`}
                         disabled={!venta.activo}
                         title={venta.activo ? "Anular Venta" : "Venta Anulada"}
                       >
@@ -313,7 +352,7 @@ export const MiniTable = ({
             </div>
 
             {/* Metadata Grid */}
-            <div className="grid grid-cols-2 gap-3 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
               <div className="bg-beige/40 rounded-2xl p-3.5 border border-gray-100/50 flex items-center gap-3">
                 <Calendar size={16} className="text-blue" />
                 <div>
@@ -328,8 +367,23 @@ export const MiniTable = ({
                 <User size={16} className="text-blue" />
                 <div>
                   <span className="block text-[8px] font-black text-gray-4 uppercase tracking-wider leading-none mb-1">Vendedor</span>
-                  <span className="text-xs font-bold text-dark-3 truncate block max-w-[150px]">
-                    Usuario #{selectedSale.userId}
+                  <span className="text-xs font-bold text-dark-3 truncate block max-w-[150px]" title={selectedSale.user ? `${selectedSale.user.nombre || ""} ${selectedSale.user.apellido || ""}`.trim() : `Usuario #${selectedSale.userId}`}>
+                    {selectedSale.user ? `${selectedSale.user.nombre || ""} ${selectedSale.user.apellido || ""}`.trim() : `Usuario #${selectedSale.userId}`}
+                  </span>
+                </div>
+              </div>
+
+              <div className="bg-beige/40 rounded-2xl p-3.5 border border-gray-100/50 flex items-center gap-3">
+                <User size={16} className="text-blue" />
+                <div>
+                  <span className="block text-[8px] font-black text-gray-4 uppercase tracking-wider leading-none mb-1">Cliente</span>
+                  <span className="text-xs font-bold text-dark-3 truncate block max-w-[150px]" title={selectedSale.cliente ? (selectedSale.cliente.tipoCliente === "EMPRESA" ? selectedSale.cliente.razonSocial : `${selectedSale.cliente.nombres || ""} ${selectedSale.cliente.apellidos || ""}`.trim()) : "Público General"}>
+                    {selectedSale.cliente
+                      ? selectedSale.cliente.tipoCliente === "EMPRESA"
+                        ? selectedSale.cliente.razonSocial
+                        : `${selectedSale.cliente.nombres || ""} ${selectedSale.cliente.apellidos || ""}`.trim()
+                      : "Público General"
+                    }
                   </span>
                 </div>
               </div>
@@ -344,11 +398,12 @@ export const MiniTable = ({
             </div>
 
             {/* Product Table Container */}
-            <div className="bg-beige/40 border border-gray-1 border-dashed rounded-2xl overflow-hidden mb-6 max-h-60 overflow-y-auto">
-              <table className="w-full text-left text-xs border-collapse">
+            <div className="bg-beige/40 border border-gray-1 border-dashed rounded-2xl overflow-x-auto overflow-y-auto mb-6 max-h-64">
+              <table className="w-full text-left text-xs border-collapse min-w-[700px]">
                 <thead>
                   <tr className="bg-beige/80 text-[9px] font-black text-blue uppercase tracking-widest border-b border-gray-1">
-                    <th className="px-4 py-3">Código</th>
+                    <th className="px-4 py-3">Cód.</th>
+                    <th className="px-4 py-3">Producto / Detalle</th>
                     <th className="px-4 py-3">Tipo</th>
                     <th className="px-4 py-3 text-center">Cant</th>
                     <th className="px-4 py-3 text-right">Unitario</th>
@@ -365,15 +420,49 @@ export const MiniTable = ({
 
                     return (
                       <tr key={prod.id} className="hover:bg-white/50 transition-colors">
-                        <td className="px-4 py-3">
-                          <span className="font-black text-dark block">
-                            #{prod.productoId || prod.stockId}
+                        {/* Código */}
+                        <td className="px-4 py-3 font-bold text-gray-5">
+                          #{prod.productoId || prod.stockId}
+                        </td>
+                        {/* Producto / Detalle */}
+                        <td className="px-4 py-3 font-semibold">
+                          <span className="font-black text-dark block leading-tight">
+                            {prod.tipoProducto === "LENTE" && prod.stock?.lente
+                              ? `LENTE ${prod.stock.lente.marca} (${prod.stock.lente.material})`
+                              : prod.producto?.nombre || `Producto #${prod.productoId || prod.stockId}`}
                           </span>
                           {/* Mostrar datos refractivos específicos para lentes (si existen y no son nulos) */}
                           {prod.esf !== undefined && prod.esf !== null && prod.cyl !== undefined && prod.cyl !== null && (
-                            <span className="inline-block mt-0.5 text-[9px] font-bold font-mono text-gray-5 bg-yellow/10 border border-yellow-dark/20 rounded px-1">
+                            <span className="inline-block mt-1 text-[9px] font-bold font-mono text-yellow-dark bg-yellow/10 border border-yellow-dark/20 rounded px-1.5 py-0.5 mr-1.5">
                               ESF: {Number(prod.esf) > 0 ? `+${prod.esf}` : prod.esf} | CYL: {Number(prod.cyl) > 0 ? `+${prod.cyl}` : prod.cyl}
                             </span>
+                          )}
+                          {/* Ubicación / Matriz (Lentes o Productos normales) */}
+                          {prod.tipoProducto === "LENTE" && prod.stock && (
+                            <div className="flex flex-wrap gap-1 mt-1.5">
+                              {prod.stock.matrix && (
+                                <span className="inline-block text-[8px] font-black text-blue bg-blue-light-6 border border-blue-light-5 rounded px-1.5 py-0.5 uppercase tracking-wider">
+                                  Matriz: {prod.stock.matrix}
+                                </span>
+                              )}
+                              {(prod.stock.row !== undefined && prod.stock.row !== null) && (
+                                <span className="inline-block text-[8px] font-black text-dark bg-beige border border-gray-3 rounded px-1.5 py-0.5 uppercase tracking-wider">
+                                  Fila: {prod.stock.row} | Col: {prod.stock.col}
+                                </span>
+                              )}
+                              {prod.stock.ubicacion && (
+                                <span className="inline-block text-[8px] font-black text-yellow-dark bg-yellow/10 border border-yellow-dark/20 rounded px-1.5 py-0.5 uppercase tracking-wider">
+                                  Ubi: {prod.stock.ubicacion}
+                                </span>
+                              )}
+                            </div>
+                          )}
+                          {prod.tipoProducto !== "LENTE" && prod.producto?.ubicacion && (
+                            <div className="mt-1.5">
+                              <span className="inline-block text-[8px] font-black text-yellow-dark bg-yellow/10 border border-yellow-dark/20 rounded px-1.5 py-0.5 uppercase tracking-wider">
+                                Ubicación: {prod.producto.ubicacion}
+                              </span>
+                            </div>
                           )}
                         </td>
                         <td className="px-4 py-3">
