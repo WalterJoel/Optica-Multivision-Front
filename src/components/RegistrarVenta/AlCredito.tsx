@@ -27,6 +27,7 @@ import { selectTotalPrice, selectCartItems, removeAllItemsFromCart } from "@/red
 import { TipoVenta, EstadoPago, STATUS_MODAL } from "@/commons/constants";
 import { ICreateSale, VentaProducto } from "@/types/sales";
 import PaymentMethodSelector from "./PaymentMethodSelector";
+import CuotasSelector from "./CuotasSelector";
 import { ISearchClient } from "@/types/clients";
 import { useSearchClient } from "@/hooks/clients";
 import { useSessionUser } from "@/hooks/session";
@@ -142,8 +143,8 @@ const AlCredito = () => {
     }, [loading, success, statusMessage]);
 
     return (
-        <section className="overflow-hidden pt-[180px] pb-20 bg-gray-2 min-h-screen">
-            <div className="max-w-[1740px] w-full mx-auto px-4 sm:px-8 xl:px-10">
+        <section className="w-full">
+            <div className="w-full">
                 <div className="flex w-full gap-6">
                     {/* PANEL IZQUIERDO */}
                     <div className="w-[45%] flex-shrink-0">
@@ -219,12 +220,12 @@ const AlCredito = () => {
                                     </p>
                                 )}
                                 {paymentType === "credit" && (
-                                    <BaseInput
-                                        label="Número de Cuotas"
-                                        type="number"
-                                        value={nroCuotas}
-                                        onChange={(e) => setNroCuotas(Number(e.target.value))}
-                                    />
+                                    <div className="w-full">
+                                        <label className="mb-3 block text-sm font-bold text-gray-700">
+                                            Número de Cuotas
+                                        </label>
+                                        <CuotasSelector value={nroCuotas} onChange={setNroCuotas} />
+                                    </div>
                                 )}
                                 <BaseTarea
                                     label="Notas"
@@ -239,14 +240,13 @@ const AlCredito = () => {
                                         !ventaStore.metodoPago ||
                                         (paymentType === "cash" && (!montoRecibido || Number(montoRecibido) < cartStoreTotal))
                                     }
-                                    className={`mt-auto w-full rounded-xl py-4 text-white font-bold text-lg shadow-lg transition-all ${
-                                        loading ||
+                                    className={`mt-auto w-full rounded-xl py-4 text-white font-bold text-lg shadow-lg transition-all ${loading ||
                                         cartStoreTotal === 0 ||
                                         !ventaStore.metodoPago ||
                                         (paymentType === "cash" && (!montoRecibido || Number(montoRecibido) < cartStoreTotal))
-                                            ? "bg-gray-400 cursor-not-allowed opacity-60"
-                                            : "bg-blue hover:bg-blue-dark active:scale-[0.98]"
-                                    }`}
+                                        ? "bg-gray-400 cursor-not-allowed opacity-60"
+                                        : "bg-blue hover:bg-blue-dark active:scale-[0.98]"
+                                        }`}
                                 >
                                     {loading ? "PROCESANDO..." : "REGISTRAR OPERACIÓN"}
                                 </button>

@@ -118,9 +118,25 @@ const SingleItem: React.FC<SingleItemProps> = ({
           <h3 className="font-medium text-dark mb-1 ease-out duration-200 hover:text-blue">
             {displayName}
           </h3>
-          <p className="text-custom-sm">Price: S/. {Number(item.price).toFixed(2)}</p>
+          {item.discount && item.discount > 0 ? (
+            <div className="flex flex-col gap-0.5">
+              <div className="flex items-center gap-2">
+                <span className="text-custom-sm font-bold text-green">
+                  S/. {(Number(item.price) - Number(item.discount)).toFixed(2)}
+                </span>
+                <span className="text-xs text-gray-400 line-through">
+                  S/. {Number(item.price).toFixed(2)}
+                </span>
+              </div>
+              <span className="inline-block text-[9px] font-bold text-green bg-green-light-6 border border-green-light-5 px-1.5 py-0.5 rounded-md w-fit">
+                Desc: - S/. {Number(item.discount).toFixed(2)}
+              </span>
+            </div>
+          ) : (
+            <p className="text-custom-sm">Price: S/. {Number(item.price).toFixed(2)}</p>
+          )}
           {item.isLens && (
-            <p className="text-dark-5 text-[11px] font-bold mt-0.5">
+            <p className="text-dark-2 text-[11px] font-bold mt-0.5">
               ESF {item.esf ?? "-"} / CYL {item.cyl ?? "-"}
             </p>
           )}

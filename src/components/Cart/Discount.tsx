@@ -13,7 +13,7 @@ import {
   applyDiscountToItem,
   removeDiscountFromItem,
 } from "@/redux/features/cart-slice";
-import { Check } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
 import { IResponseDiscountByProduct } from "@/types/discounts";
 
 const Discount = () => {
@@ -63,11 +63,6 @@ const Discount = () => {
     setSelectedClientId(client.id);
     setShowList(false);
     setDiscounts([]);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedClientId) return;
 
     const productosPayload = cartItems.map((item) => ({
       productoId: item.productId,
@@ -76,11 +71,33 @@ const Discount = () => {
       lenteId: item.isLens ? item.lenteId : null,
     }));
 
-    await searchDiscounts({
-      clienteId: selectedClientId,
+    searchDiscounts({
+      clienteId: client.id,
       productos: productosPayload,
     });
   };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+  };
+
+  // Este useEffect, aplica automaticamente los descuentos
+  useEffect(() => {
+    if (discounts && discounts.length > 0) {
+      discounts.forEach((d) => {
+        const item = cartItems.find((item) => item.productId === d.productoId);
+        if (item && (!item.discount || item.discount === 0)) {
+          dispatch(
+            applyDiscountToItem({
+              itemId: item.id,
+              discount: d.montoDescuento,
+              discountId: d.id,
+            })
+          );
+        }
+      });
+    }
+  }, [discounts]);
 
   useEffect(() => {
     if (statusMessage.includes("No se encontraron descuentos")) {
@@ -122,34 +139,48 @@ const Discount = () => {
           <div className="p-8 sm:p-10 flex flex-col h-full">
             {/* Buscador */}
             <div className="mb-6">
-              <BaseSearchInput
-                label="Buscar Cliente"
-                value={searchTerm}
-                required
-                placeholder="Buscar por nombre, apellido o doc..."
-                onChange={(val) => {
-                  setSearchTerm(val);
-                  searchClients(val);
+              <span className="block text-sm font-medium text-gray-500 mb-1.5">Buscar Cliente</span>
+              <div className="flex items-center gap-3">
+                <div className="flex-1">
+                  <BaseSearchInput
+                    value={searchTerm}
+                    required
+                    placeholder="Buscar por nombre, apellido o doc..."
+                    onChange={(val) => {
+                      setSearchTerm(val);
+                      searchClients(val);
 
-                  if (selectedClientId) setSelectedClientId(null);
-                  setDiscounts([]);
-                }}
-                results={clients}
-                showList={showList}
-                renderItem={(c: ISearchClient) => (
-                  <div
-                    onMouseDown={() => handleSelectClient(c)}
-                    className="w-full flex items-center justify-between gap-4 cursor-pointer p-1"
-                  >
-                    <span className="truncate text-sm font-medium">
-                      {c.nombres} {c.apellidos}
-                    </span>
-                    <span className="text-[10px] font-mono text-blue bg-blue-light/10 px-2 py-0.5 rounded border border-blue/20">
-                      DNI: {c.numeroDoc}
-                    </span>
-                  </div>
+                      if (selectedClientId) {
+                        setSelectedClientId(null);
+                        cartItems.forEach((item) => {
+                          if (item.discount && item.discount > 0) {
+                            dispatch(removeDiscountFromItem({ itemId: item.id }));
+                          }
+                        });
+                      }
+                      setDiscounts([]);
+                    }}
+                    results={clients}
+                    showList={showList}
+                    renderItem={(c: ISearchClient) => (
+                      <div
+                        onMouseDown={() => handleSelectClient(c)}
+                        className="w-full flex items-center justify-between gap-4 cursor-pointer p-1"
+                      >
+                        <span className="truncate text-sm font-medium">
+                          {c.nombres} {c.apellidos}
+                        </span>
+                        <span className="text-[10px] font-mono text-blue bg-blue-light/10 px-2 py-0.5 rounded border border-blue/20">
+                          DNI: {c.numeroDoc}
+                        </span>
+                      </div>
+                    )}
+                  />
+                </div>
+                {loading && (
+                  <Loader2 className="animate-spin text-blue shrink-0" size={18} />
                 )}
-              />
+              </div>
             </div>
 
             {/* Descuentos */}
@@ -198,12 +229,6 @@ const Discount = () => {
                   })}
                 </ul>
               </div>
-            )}
-
-            {selectedClientId && (
-              <BaseButton type="submit">
-                {loading ? "Buscando..." : "Buscar"}
-              </BaseButton>
             )}
           </div>
         </form>

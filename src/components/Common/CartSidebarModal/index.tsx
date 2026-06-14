@@ -92,10 +92,23 @@ const CartSidebarModal = () => {
           </div>
 
           <div className="border-t border-gray-3 bg-white pt-5 pb-4 sm:pb-7.5 lg:pb-11 mt-7.5 sticky bottom-0">
+            {cartItems.reduce((acc, item) => acc + Number(item.discount || 0) * item.quantity, 0) > 0 && (
+              <div className="space-y-1.5 mb-4 border-b border-dashed border-gray-3 pb-4 text-sm font-semibold">
+                <div className="flex items-center justify-between text-slate-500">
+                  <span>Total Original:</span>
+                  <span className="line-through">S/. {cartItems.reduce((acc, item) => acc + Number(item.price) * item.quantity, 0).toFixed(2)}</span>
+                </div>
+                <div className="flex items-center justify-between text-green">
+                  <span>Descuento Total:</span>
+                  <span>- S/. {cartItems.reduce((acc, item) => acc + Number(item.discount || 0) * item.quantity, 0).toFixed(2)}</span>
+                </div>
+              </div>
+            )}
+
             <div className="flex items-center justify-between gap-5 mb-6">
               <p className="font-medium text-xl text-dark">Subtotal:</p>
 
-              <p className="font-medium text-xl text-dark">S/. {totalPrice}</p>
+              <p className="font-medium text-xl text-dark">S/. {Number(totalPrice).toFixed(2)}</p>
             </div>
 
             <div className="flex items-center gap-4">
