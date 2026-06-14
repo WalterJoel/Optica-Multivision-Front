@@ -1,22 +1,31 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { CheckCircle2 } from "lucide-react";
 
-const paymentDays = ["1 Día", "7 Días", "15 Días", "30 Días"];
+interface PaymentDaysSelectorProps {
+  value: number | null;
+  onChange: (value: number | null) => void;
+}
 
-export default function PaymentDaysSelector() {
-  const [selected, setSelected] = useState<string | null>(null);
+const paymentDays = [
+  { label: "1 Día", value: 1 },
+  { label: "7 Días", value: 7 },
+  { label: "15 Días", value: 15 },
+  { label: "30 Días", value: 30 },
+];
 
+export default function PaymentDaysSelector({ value, onChange }: PaymentDaysSelectorProps) {
   return (
-    <div className="grid grid-cols-4 gap-2">
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full">
       {paymentDays.map((day) => {
-        const isSelected = selected === day;
+        const isSelected = value === day.value;
 
         return (
           <button
-            key={day}
-            onClick={() => setSelected(day)}
+            key={day.value}
+            type="button"
+            onClick={() => onChange(isSelected ? null : day.value)}
             className={`
               relative overflow-hidden
               rounded-xl p-[2px]
@@ -55,7 +64,7 @@ export default function PaymentDaysSelector() {
                   ${isSelected ? "text-yellow-700 scale-105" : "text-slate-500"}
                 `}
               >
-                {day}
+                {day.label}
               </span>
 
               {isSelected && (

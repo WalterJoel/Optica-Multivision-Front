@@ -40,6 +40,7 @@ const AlContado = () => {
 
 
     const handleRegisterSale = () => {
+        console.log("Registrando venta al contado - Sede:", sedeId, "Usuario:", userId, "Cliente:", ventaStore.clienteId);
         const productosDesdeCart: VentaProducto[] = cartStoreItems.map((item) => ({
             productoId: item.productId,
             tipoProducto: item.productType,
@@ -55,8 +56,9 @@ const AlContado = () => {
         }));
 
         const payload: ICreateSale = {
-            sedeId: sedeId,
-            userId: userId,
+            sedeId: sedeId ? Number(sedeId) : 0,
+            userId: userId ? Number(userId) : 0,
+            clienteId: ventaStore.clienteId ? Number(ventaStore.clienteId) : null,
             metodoPago: ventaStore.metodoPago,
             montoPagado: Number(montoRecibido),
             productos: productosDesdeCart,
@@ -89,15 +91,19 @@ const AlContado = () => {
             if (success) {
                 dispatch(removeAllItemsFromCart());
                 dispatch(resetVenta());
+                setmontaje(false);
+                setObservacionesLocal("");
+                setMontoRecibido("");
+                setChange(0);
             }
         }
     }, [loading, success, statusMessage]);
 
     return (
         <>
-            <div className="flex w-full gap-6">
+            <div className="flex flex-col lg:flex-row w-full gap-6">
                 {/* PANEL IZQUIERDO */}
-                <div className="w-[45%] flex-shrink-0 bg-white rounded-2xl shadow-xl p-6">
+                <div className="w-full lg:w-[45%] flex-shrink-0 bg-white rounded-2xl shadow-xl p-6">
                     <div className="flex flex-col rounded-xl bg-beige p-6 shadow-sm h-full">
                         <div className="mb-5 flex items-center justify-between">
                             <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-gray-100 bg-white px-4 py-2 hover:bg-gray-50 transition-colors shadow-sm">
@@ -161,6 +167,12 @@ const AlContado = () => {
                                 value={observacionesLocal}
                                 onChange={(e) => setObservacionesLocal(e.target.value)}
                             />
+                            {ventaStore.bloqueadoPorDeuda && ventaStore.deudaMensaje && (
+                                <div className="p-4 bg-red-50 border border-red-200 text-red rounded-xl flex flex-col gap-1 text-xs font-semibold animate-pulse mb-2">
+                                    <span className="font-bold text-sm">⚠️ Operación Bloqueada</span>
+                                    <span>{ventaStore.deudaMensaje}</span>
+                                </div>
+                            )}
                             <BaseButton
                                 onClick={handleRegisterSale}
                                 disabled={
@@ -168,7 +180,8 @@ const AlContado = () => {
                                     cartStoreTotal === 0 ||
                                     !montoRecibido ||
                                     Number(montoRecibido) < cartStoreTotal ||
-                                    !ventaStore.metodoPago
+                                    !ventaStore.metodoPago ||
+                                    ventaStore.bloqueadoPorDeuda
                                 }
                             >
                                 {loading ? "PROCESANDO..." : "REGISTRAR VENTA"}
@@ -178,7 +191,7 @@ const AlContado = () => {
                 </div>
 
                 {/* PANEL DERECHO */}
-                <div className="w-[55%] flex-shrink-0">
+                <div className="w-full lg:w-[55%] flex-shrink-0">
                     {montaje ? (
                         <Montaje />
 

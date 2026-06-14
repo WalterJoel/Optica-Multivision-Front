@@ -58,6 +58,7 @@ const AlCredito = () => {
     const [observacionesLocal, setObservacionesLocal] = useState("");
     const [montoRecibido, setMontoRecibido] = useState("");
     const [typeModal, setTypeModal] = useState<string>("");
+    const [diasCompromiso, setDiasCompromiso] = useState<number | null>(null);
 
     //Cliente
     const [searchClientTerm, setSearchClientTerm] = useState("");
@@ -105,6 +106,7 @@ const AlCredito = () => {
         const payload: ICreateSale = {
             sedeId: sedeId,
             userId: userId,
+            clienteId: ventaStore.clienteId,
             metodoPago: ventaStore.metodoPago,
             montoPagado: Number(montoRecibido),
             productos: productosDesdeCart,
@@ -116,6 +118,7 @@ const AlCredito = () => {
                     : EstadoPago.PENDIENTE,
             montaje: showOrder,
             nroCuotas: paymentType === "credit" ? nroCuotas : null,
+            diasCompromisoPago: paymentType === "credit" ? diasCompromiso : null,
             observaciones: observacionesLocal,
             deuda: paymentType === "credit" ? debt : 0,
         };
@@ -138,6 +141,11 @@ const AlCredito = () => {
             if (success) {
                 dispatch(removeAllItemsFromCart());
                 dispatch(resetVenta());
+                setNroCuotas(0);
+                setObservacionesLocal("");
+                setMontoRecibido("");
+                setDiasCompromiso(null);
+                setShowOrder(false);
             }
         }
     }, [loading, success, statusMessage]);
@@ -145,9 +153,9 @@ const AlCredito = () => {
     return (
         <section className="w-full">
             <div className="w-full">
-                <div className="flex w-full gap-6">
+                <div className="flex flex-col lg:flex-row w-full gap-6">
                     {/* PANEL IZQUIERDO */}
-                    <div className="w-[45%] flex-shrink-0">
+                    <div className="w-full lg:w-[45%] flex-shrink-0">
                         <div className="flex flex-col rounded-xl bg-white p-6 shadow-lg h-full">
                             <div className="mb-5 flex items-center justify-between">
                                 <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-gray-100 bg-gray-50 px-4 py-2 hover:bg-gray-100 transition-colors">
@@ -189,12 +197,36 @@ const AlCredito = () => {
                                     )}
                                 </div>
                                 <div>
-                                    <label className="mb-3 block text-sm font-bold text-gray-700">
-                                        Compromiso de Pago
+                                    <label className="mb-3 flex items-center gap-1.5 text-sm font-bold text-gray-700">
+                                        Compromiso de Pago <span className="text-red font-bold text-xs">*</span>
                                     </label>
 
-                                    <PaymentDaysSelector />
+                                    <PaymentDaysSelector value={diasCompromiso} onChange={setDiasCompromiso} />
+                                    {diasCompromiso === null && (
+                                        <p className="mt-2 text-xs font-semibold text-red animate-pulse">
+                                            ⚠️ Por favor, seleccione un compromiso de pago.
+                                        </p>
+                                    )}
                                 </div>
+
+                                {paymentType === "cash" && montoRecibido && Number(montoRecibido) < cartStoreTotal && (
+                                    <p className="text-xs font-semibold text-red animate-pulse">
+                                        ⚠️ El monto recibido debe ser mayor o igual al total de la venta (S/. {cartStoreTotal.toFixed(2)}).
+                                    </p>
+                                )}
+                                {paymentType === "credit" && (
+                                    <div className="w-full">
+                                        <label className="mb-3 flex items-center gap-1.5 text-sm font-bold text-gray-700">
+                                            Número de Cuotas <span className="text-red font-bold text-xs">*</span>
+                                        </label>
+                                        <CuotasSelector value={nroCuotas} onChange={setNroCuotas} />
+                                        {nroCuotas === 0 && (
+                                            <p className="mt-2 text-xs font-semibold text-red animate-pulse">
+                                                ⚠️ Por favor, seleccione el número de cuotas.
+                                            </p>
+                                        )}
+                                    </div>
+                                )}
                                 <div className="grid grid-cols-3 gap-4">
                                     <BaseInput
                                         label="Total Venta"
@@ -214,36 +246,33 @@ const AlCredito = () => {
                                         readOnly
                                     />
                                 </div>
-                                {paymentType === "cash" && montoRecibido && Number(montoRecibido) < cartStoreTotal && (
-                                    <p className="text-xs font-semibold text-red animate-pulse">
-                                        ⚠️ El monto recibido debe ser mayor o igual al total de la venta (S/. {cartStoreTotal.toFixed(2)}).
-                                    </p>
-                                )}
-                                {paymentType === "credit" && (
-                                    <div className="w-full">
-                                        <label className="mb-3 block text-sm font-bold text-gray-700">
-                                            Número de Cuotas
-                                        </label>
-                                        <CuotasSelector value={nroCuotas} onChange={setNroCuotas} />
-                                    </div>
-                                )}
                                 <BaseTarea
                                     label="Notas"
                                     value={observacionesLocal}
                                     onChange={(e) => setObservacionesLocal(e.target.value)}
                                 />
+                                {ventaStore.bloqueadoPorDeuda && ventaStore.deudaMensaje && (
+                                    <div className="p-4 bg-red-50 border border-red-200 text-red rounded-xl flex flex-col gap-1 text-xs font-semibold animate-pulse">
+                                        <span className="font-bold text-sm">⚠️ Operación Bloqueada</span>
+                                        <span>{ventaStore.deudaMensaje}</span>
+                                    </div>
+                                )}
                                 <button
                                     onClick={handleRegisterSale}
                                     disabled={
                                         loading ||
                                         cartStoreTotal === 0 ||
                                         !ventaStore.metodoPago ||
-                                        (paymentType === "cash" && (!montoRecibido || Number(montoRecibido) < cartStoreTotal))
+                                        (paymentType === "cash" && (!montoRecibido || Number(montoRecibido) < cartStoreTotal)) ||
+                                        (paymentType === "credit" && (nroCuotas === 0 || diasCompromiso === null)) ||
+                                        ventaStore.bloqueadoPorDeuda
                                     }
                                     className={`mt-auto w-full rounded-xl py-4 text-white font-bold text-lg shadow-lg transition-all ${loading ||
                                         cartStoreTotal === 0 ||
                                         !ventaStore.metodoPago ||
-                                        (paymentType === "cash" && (!montoRecibido || Number(montoRecibido) < cartStoreTotal))
+                                        (paymentType === "cash" && (!montoRecibido || Number(montoRecibido) < cartStoreTotal)) ||
+                                        (paymentType === "credit" && (nroCuotas === 0 || diasCompromiso === null)) ||
+                                        ventaStore.bloqueadoPorDeuda
                                         ? "bg-gray-400 cursor-not-allowed opacity-60"
                                         : "bg-blue hover:bg-blue-dark active:scale-[0.98]"
                                         }`}
@@ -255,7 +284,7 @@ const AlCredito = () => {
                     </div>
 
                     {/* PANEL DERECHO */}
-                    <div className="w-[55%] flex-shrink-0">
+                    <div className="w-full lg:w-[55%] flex-shrink-0">
                         {showOrder ? (
                             <motion.div
                                 initial={{ opacity: 0, scale: 0.95 }}

@@ -24,6 +24,7 @@ export interface VentaProducto {
 export interface ICreateSale {
   sedeId: number;
   userId: number;
+  clienteId?: number | null;
   metodoPago: MetodoPago;
   tipoVenta: TipoVenta;
   estadoPago?: EstadoPago;

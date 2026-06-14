@@ -6,6 +6,13 @@ import { useSearchClient } from "@/hooks/clients";
 import { ISearchClient } from "@/types/clients";
 import { useAppSelector } from "@/redux/store";
 import { useSearchDiscountByProducts } from "@/hooks/discounts";
+import { useRevisarDeudas } from "@/hooks/sales";
+import {
+  setClienteId,
+  setBloqueadoPorDeuda,
+  setDeudaMensaje,
+  selectVenta,
+} from "@/redux/features/sale-slice";
 import { BaseButton } from "../Common/Buttons";
 import { InfoModal } from "../Common/modal";
 import { useDispatch } from "react-redux";
@@ -17,9 +24,27 @@ import { Check, Loader2 } from "lucide-react";
 import { IResponseDiscountByProduct } from "@/types/discounts";
 
 const Discount = () => {
-  const cartItems = useAppSelector((state) => state.cartReducer.items);
+  // 1. Redux Hooks & Dispatch
   const dispatch = useDispatch();
+  const cartItems = useAppSelector((state) => state.cartReducer.items);
+  const ventaStore = useAppSelector(selectVenta);
 
+  // 2. Local State Hooks
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedClientId, setSelectedClientId] = useState<number | null>(null);
+  const [isInfoOpen, setIsInfoOpen] = useState(false);
+  const [infoConfig, setInfoConfig] = useState({
+    message: "",
+    code: undefined as string | number | undefined,
+  });
+
+  // 3. Custom Hooks
+  const { clients, searchClients, setShowList, showList } = useSearchClient();
+  const { discounts, searchDiscounts, loading, statusMessage, setDiscounts } =
+    useSearchDiscountByProducts();
+  const { checkDeudas, loading: loadingDeudas } = useRevisarDeudas();
+
+  // 4. Functions & Handlers
   const getProductTypeBadge = (productType: string) => {
     switch (productType) {
       case "LENTE":
@@ -45,24 +70,28 @@ const Discount = () => {
     }
   };
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedClientId, setSelectedClientId] = useState<number | null>(null);
-
-  const [isInfoOpen, setIsInfoOpen] = useState(false);
-  const [infoConfig, setInfoConfig] = useState({
-    message: "",
-    code: undefined as string | number | undefined,
-  });
-
-  const { clients, searchClients, setShowList, showList } = useSearchClient();
-  const { discounts, searchDiscounts, loading, statusMessage, setDiscounts } =
-    useSearchDiscountByProducts();
-
-  const handleSelectClient = (client: ISearchClient) => {
+  const handleSelectClient = async (client: ISearchClient) => {
     setSearchTerm(`${client.nombres} ${client.apellidos}`);
     setSelectedClientId(client.id);
     setShowList(false);
     setDiscounts([]);
+
+    // 1. Dispatch clienteId to Redux
+    dispatch(setClienteId(client.id));
+
+    // 2. Check for overdue debts
+    const debtRes = await checkDeudas(client.id);
+    if (debtRes && debtRes.tieneDeudasVencidas) {
+      dispatch(setBloqueadoPorDeuda(true));
+      dispatch(setDeudaMensaje(debtRes.mensaje));
+      setInfoConfig({ message: debtRes.mensaje, code: "DEUDA_VENCIDA" });
+      setIsInfoOpen(true);
+      return; // Stop and do not fetch discounts
+    }
+
+    // 3. Clear any existing block state
+    dispatch(setBloqueadoPorDeuda(false));
+    dispatch(setDeudaMensaje(null));
 
     const productosPayload = cartItems.map((item) => ({
       productoId: item.productId,
@@ -81,7 +110,39 @@ const Discount = () => {
     e.preventDefault();
   };
 
-  // Este useEffect, aplica automaticamente los descuentos
+  const handleToggleDiscount = (discount: IResponseDiscountByProduct) => {
+    const { productoId, montoDescuento, id: idDescuento } = discount;
+
+    const item = cartItems.find((item) => item.productId === productoId);
+
+    if (!item) return;
+
+    const alreadyApplied = item.discount && item.discount > 0;
+
+    if (alreadyApplied) {
+      dispatch(removeDiscountFromItem({ itemId: item.id }));
+    } else {
+      dispatch(
+        applyDiscountToItem({
+          itemId: item.id,
+          discount: montoDescuento,
+          discountId: idDescuento,
+        }),
+      );
+    }
+  };
+
+  // 5. UseEffects
+  // Sincronizar el input si el clienteId en Redux se limpia (por ejemplo, después de una venta exitosa)
+  useEffect(() => {
+    if (ventaStore.clienteId === null) {
+      setSearchTerm("");
+      setSelectedClientId(null);
+      setDiscounts([]);
+    }
+  }, [ventaStore.clienteId]);
+
+  // Aplica automaticamente los descuentos
   useEffect(() => {
     if (discounts && discounts.length > 0) {
       discounts.forEach((d) => {
@@ -106,29 +167,6 @@ const Discount = () => {
     }
   }, [statusMessage]);
 
-  //  TOGGLE DESCUENTO
-  const handleToggleDiscount = (discount: IResponseDiscountByProduct) => {
-    const { productoId, montoDescuento, id: idDescuento } = discount;
-
-    const item = cartItems.find((item) => item.productId === productoId);
-
-    if (!item) return;
-
-    const alreadyApplied = item.discount && item.discount > 0;
-
-    if (alreadyApplied) {
-      dispatch(removeDiscountFromItem({ itemId: item.id }));
-    } else {
-      dispatch(
-        applyDiscountToItem({
-          itemId: item.id,
-          discount: montoDescuento,
-          discountId: idDescuento,
-        }),
-      );
-    }
-  };
-
   return (
     <>
       <div className="w-full h-full">
@@ -149,6 +187,10 @@ const Discount = () => {
                     onChange={(val) => {
                       setSearchTerm(val);
                       searchClients(val);
+
+                      dispatch(setClienteId(null));
+                      dispatch(setBloqueadoPorDeuda(false));
+                      dispatch(setDeudaMensaje(null));
 
                       if (selectedClientId) {
                         setSelectedClientId(null);
@@ -177,7 +219,7 @@ const Discount = () => {
                     )}
                   />
                 </div>
-                {loading && (
+                {(loading || loadingDeudas) && (
                   <Loader2 className="animate-spin text-blue shrink-0" size={18} />
                 )}
               </div>

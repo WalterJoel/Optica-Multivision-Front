@@ -9,6 +9,8 @@ export interface VentaState {
   observaciones?: string;
   total?: number;
   fechaVenta?: string;
+  bloqueadoPorDeuda?: boolean;
+  deudaMensaje?: string | null;
 }
 
 const initialState: VentaState = {
@@ -18,13 +20,15 @@ const initialState: VentaState = {
   observaciones: undefined,
   total: 0,
   fechaVenta: undefined,
+  bloqueadoPorDeuda: false,
+  deudaMensaje: null,
 };
 
 export const ventaSlice = createSlice({
   name: "venta",
   initialState,
   reducers: {
-    setClienteId: (state, action: PayloadAction<number>) => {
+    setClienteId: (state, action: PayloadAction<number | null>) => {
       state.clienteId = action.payload;
     },
     setKitRegaloId: (state, action: PayloadAction<number>) => {
@@ -41,6 +45,12 @@ export const ventaSlice = createSlice({
     setTotal: (state, action: PayloadAction<number>) => {
       state.total = action.payload;
     },
+    setBloqueadoPorDeuda: (state, action: PayloadAction<boolean>) => {
+      state.bloqueadoPorDeuda = action.payload;
+    },
+    setDeudaMensaje: (state, action: PayloadAction<string | null>) => {
+      state.deudaMensaje = action.payload;
+    },
 
     resetVenta: (state) => {
       state.clienteId = null;
@@ -48,6 +58,8 @@ export const ventaSlice = createSlice({
       state.metodoPago = null;
       state.observaciones = undefined;
       state.total = 0;
+      state.bloqueadoPorDeuda = false;
+      state.deudaMensaje = null;
     },
   },
 });
@@ -58,6 +70,8 @@ export const {
   setMetodoPago,
   setObservaciones,
   setTotal,
+  setBloqueadoPorDeuda,
+  setDeudaMensaje,
   resetVenta,
 } = ventaSlice.actions;
 

@@ -14,16 +14,16 @@ export function useSearchAccesory() {
   const searchAccesories = (value: string) => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
+    if (!value || value.length < 2) {
+      setAccesories([]);
+      setShowList(false);
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+
     debounceRef.current = setTimeout(async () => {
-      if (!value || value.length < 2) {
-        setAccesories([]);
-        setShowList(false);
-        return;
-      }
-
-
-      setLoading(true);
-
       try {
         const data = await searchAccesoryService(sedeId || 0, value);
         setAccesories(data);
@@ -33,7 +33,7 @@ export function useSearchAccesory() {
       } finally {
         setLoading(false);
       }
-    }, 100);
+    }, 200);
   };
 
   return {

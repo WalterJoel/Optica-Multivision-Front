@@ -16,3 +16,8 @@ export const buscarVentasService = async (
   return data;
 };
 
+export const revisarDeudasService = async (clienteId: number) => {
+  const { data } = await api.get(`/ventas/revisarDeudas/${clienteId}`);
+  return data;
+};
+

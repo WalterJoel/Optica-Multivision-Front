@@ -12,15 +12,16 @@ export function useSearchLens() {
   const searchlens = (value: string) => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
+    if (!value || value.length < 2) {
+      setLens([]);
+      setShowList(false);
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+
     debounceRef.current = setTimeout(async () => {
-      if (!value || value.length < 2) {
-        setLens([]);
-        setShowList(false);
-        return;
-      }
-
-      setLoading(true);
-
       try {
         const data = await searchLens(value);
         setLens(data);
@@ -30,7 +31,7 @@ export function useSearchLens() {
       } finally {
         setLoading(false);
       }
-    }, 300);
+    }, 200);
   };
 
   return {

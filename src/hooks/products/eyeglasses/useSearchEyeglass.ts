@@ -14,15 +14,16 @@ export function useSearchEyeglass() {
   const searchEyeglass = (value: string) => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
+    if (!value || value.length < 2) {
+      setEyeglasses([]);
+      setShowList(false);
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+
     debounceRef.current = setTimeout(async () => {
-      if (!value || value.length < 2) {
-        setEyeglasses([]);
-        setShowList(false);
-        return;
-      }
-
-      setLoading(true);
-
       try {
         const data = await searchEyeglassesService(sedeId || 0, value);
         setEyeglasses(data?.monturas || []);
@@ -32,7 +33,7 @@ export function useSearchEyeglass() {
       } finally {
         setLoading(false);
       }
-    }, 300);
+    }, 200);
   };
 
   return {

@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { CheckCircle2 } from "lucide-react";
 
 interface CuotasSelectorProps {
   value: number;
@@ -66,6 +67,12 @@ export default function CuotasSelector({ value, onChange }: CuotasSelectorProps)
               >
                 {cuota === 1 ? "Cuota" : "Cuotas"}
               </span>
+
+              {isSelected && (
+                <div className="absolute top-1.5 right-1.5">
+                  <CheckCircle2 size={14} className="text-yellow" />
+                </div>
+              )}
             </div>
           </button>
         );

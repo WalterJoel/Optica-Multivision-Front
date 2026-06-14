@@ -54,7 +54,7 @@ export function ModalFrameWrapper({
           <div className="absolute -top-16 -left-16 w-32 h-32 bg-slate-100 rounded-full blur-3xl pointer-events-none opacity-50" />
 
           {/* Content */}
-          <div className="p-8 relative z-10">{children}</div>
+          <div className="p-8 pb-14 relative z-10">{children}</div>
 
           {/* Badge de marca minimalista en la esquina */}
           <div className="absolute bottom-6 right-8 select-none">

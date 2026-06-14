@@ -12,15 +12,16 @@ export function useSearchClient() {
   const searchClients = (value: string) => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
+    if (!value || value.length < 2) {
+      setClients([]);
+      setShowList(false);
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+
     debounceRef.current = setTimeout(async () => {
-      if (!value || value.length < 2) {
-        setClients([]);
-        setShowList(false);
-        return;
-      }
-
-      setLoading(true);
-
       try {
         const data = await searchClient(value);
         setClients(data);
@@ -30,7 +31,7 @@ export function useSearchClient() {
       } finally {
         setLoading(false);
       }
-    }, 300);
+    }, 200);
   };
 
   return {
