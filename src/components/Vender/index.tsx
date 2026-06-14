@@ -13,7 +13,7 @@ import AccessoryFilters from "./AccesoriosFilter";
 
 export default function Vender() {
   const [selectedCategory, setSelectedCategory] = useState(
-    TipoProducto.MONTURA,
+    TipoProducto.LENTE,
   );
 
   /* FILTROS SEPARADOS */
