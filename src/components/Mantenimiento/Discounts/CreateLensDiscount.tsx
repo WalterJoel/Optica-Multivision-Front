@@ -87,7 +87,8 @@ const SeriesDescuentos = () => {
   };
 
   const handleSelectClient = (c: ISearchClient) => {
-    setSearchClientTerm(`${c.nombres} ${c.apellidos}`);
+    const displayName = c.tipoCliente === "EMPRESA" ? (c.razonSocial || "") : `${c.nombres || ""} ${c.apellidos || ""}`.trim();
+    setSearchClientTerm(displayName);
     setShowListClient(false);
     setForm((prev) => ({ ...prev, clienteId: c.id }));
   };
@@ -158,19 +159,22 @@ const SeriesDescuentos = () => {
             }}
             results={clients}
             showList={showListClient}
-            renderItem={(c: ISearchClient) => (
-              <div
-                onMouseDown={() => handleSelectClient(c)}
-                className="w-full flex items-center justify-between gap-4"
-              >
-                <span className="truncate">
-                  {c.nombres} {c.apellidos}
-                </span>
-                <span className="text-[11px] font-mono text-blue-dark bg-blue-light/10 px-2 py-0.5 rounded border border-blue-dark/20 shrink-0">
-                  DNI: {c.numeroDoc}
-                </span>
-              </div>
-            )}
+            renderItem={(c: ISearchClient) => {
+              const displayName = c.tipoCliente === "EMPRESA" ? (c.razonSocial || "") : `${c.nombres || ""} ${c.apellidos || ""}`.trim();
+              return (
+                <div
+                  onMouseDown={() => handleSelectClient(c)}
+                  className="w-full flex items-center justify-between gap-4"
+                >
+                  <span className="truncate">
+                    {displayName}
+                  </span>
+                  <span className="text-[11px] font-mono text-blue-dark bg-blue-light/10 px-2 py-0.5 rounded border border-blue-dark/20 shrink-0">
+                    {c.tipoCliente === "EMPRESA" ? "RUC" : "DNI"}: {c.numeroDoc}
+                  </span>
+                </div>
+              );
+            }}
           />
 
           <BaseSearchInput

@@ -71,7 +71,8 @@ const Discount = () => {
   };
 
   const handleSelectClient = async (client: ISearchClient) => {
-    setSearchTerm(`${client.nombres} ${client.apellidos}`);
+    const displayName = client.tipoCliente === "EMPRESA" ? (client.razonSocial || "") : `${client.nombres || ""} ${client.apellidos || ""}`.trim();
+    setSearchTerm(displayName);
     setSelectedClientId(client.id);
     setShowList(false);
     setDiscounts([]);
@@ -204,19 +205,22 @@ const Discount = () => {
                     }}
                     results={clients}
                     showList={showList}
-                    renderItem={(c: ISearchClient) => (
-                      <div
-                        onMouseDown={() => handleSelectClient(c)}
-                        className="w-full flex items-center justify-between gap-4 cursor-pointer p-1"
-                      >
-                        <span className="truncate text-sm font-medium">
-                          {c.nombres} {c.apellidos}
-                        </span>
-                        <span className="text-[10px] font-mono text-blue bg-blue-light/10 px-2 py-0.5 rounded border border-blue/20">
-                          DNI: {c.numeroDoc}
-                        </span>
-                      </div>
-                    )}
+                     renderItem={(c: ISearchClient) => {
+                       const displayName = c.tipoCliente === "EMPRESA" ? (c.razonSocial || "") : `${c.nombres || ""} ${c.apellidos || ""}`.trim();
+                       return (
+                         <div
+                           onMouseDown={() => handleSelectClient(c)}
+                           className="w-full flex items-center justify-between gap-4 cursor-pointer p-1"
+                         >
+                           <span className="truncate text-sm font-medium">
+                             {displayName}
+                           </span>
+                           <span className="text-[10px] font-mono text-blue bg-blue-light/10 px-2 py-0.5 rounded border border-blue/20">
+                             {c.tipoCliente === "EMPRESA" ? "RUC" : "DNI"}: {c.numeroDoc}
+                           </span>
+                         </div>
+                       );
+                     }}
                   />
                 </div>
                 {(loading || loadingDeudas) && (

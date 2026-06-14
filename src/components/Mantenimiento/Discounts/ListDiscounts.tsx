@@ -37,7 +37,8 @@ export default function ListDiscounts() {
 
   const getClientName = (clientId: number) => {
     const client = clientes.find((c) => c.id === clientId);
-    return client ? `${client.nombres} ${client.apellidos}` : `Cliente #${clientId}`;
+    if (!client) return `Cliente #${clientId}`;
+    return client.tipoCliente === "EMPRESA" ? (client.razonSocial || "") : `${client.nombres || ""} ${client.apellidos || ""}`.trim();
   };
 
   const getProductName = (d: IDescuento) => {

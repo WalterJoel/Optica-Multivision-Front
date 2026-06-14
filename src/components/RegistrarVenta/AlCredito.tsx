@@ -127,7 +127,8 @@ const AlCredito = () => {
     };
 
     const handleSelectClient = (c: ISearchClient) => {
-        setSearchClientTerm(`${c.nombres} ${c.apellidos}`);
+        const displayName = c.tipoCliente === "EMPRESA" ? (c.razonSocial || "") : `${c.nombres || ""} ${c.apellidos || ""}`.trim();
+        setSearchClientTerm(displayName);
         setShowListClient(false);
         // setForm((prev) => ({ ...prev, clienteId: c.id }));
     };

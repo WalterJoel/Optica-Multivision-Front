@@ -69,6 +69,8 @@ export interface ISearchClient {
   numeroDoc: string;
   nombres: string | null;
   apellidos: string | null;
+  tipoCliente?: ClientType;
+  razonSocial?: string | null;
 }
 
 export interface IResponseSearchClient {
