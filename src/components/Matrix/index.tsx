@@ -241,7 +241,11 @@ export default function Matrix() {
         )}
         {/* Modal de Detalle con campo Precio */}
         {mode === "stock" && selected && (
-          <DetailModal selected={selected} onClose={() => setSelected(null)} />
+          <DetailModal
+            selected={selected}
+            lenteId={lenteId}
+            onClose={() => setSelected(null)}
+          />
         )}{" "}
       </section>
     </>

@@ -20,6 +20,31 @@ const Discount = () => {
   const cartItems = useAppSelector((state) => state.cartReducer.items);
   const dispatch = useDispatch();
 
+  const getProductTypeBadge = (productType: string) => {
+    switch (productType) {
+      case "LENTE":
+        return (
+          <span className="inline-block text-[9px] font-[900] uppercase tracking-widest px-2 py-0.5 rounded-md bg-blue-light/10 text-blue mb-1">
+            Lente
+          </span>
+        );
+      case "MONTURA":
+        return (
+          <span className="inline-block text-[9px] font-[900] uppercase tracking-widest px-2 py-0.5 rounded-md bg-yellow-light-4 text-yellow-dark mb-1">
+            Montura
+          </span>
+        );
+      case "ACCESORIO":
+        return (
+          <span className="inline-block text-[9px] font-[900] uppercase tracking-widest px-2 py-0.5 rounded-md bg-teal-50 text-teal-600 mb-1">
+            Accesorio
+          </span>
+        );
+      default:
+        return null;
+    }
+  };
+
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedClientId, setSelectedClientId] = useState<number | null>(null);
 
@@ -48,6 +73,7 @@ const Discount = () => {
       productoId: item.productId,
       esLente: item.isLens,
       cyl: item.isLens ? item.cyl : null,
+      lenteId: item.isLens ? item.lenteId : null,
     }));
 
     await searchDiscounts({
@@ -140,6 +166,7 @@ const Discount = () => {
                     );
 
                     const alreadyApplied = item?.discount && item.discount > 0;
+                    const productType = item?.productType || (d.esLente ? "LENTE" : "MONTURA");
 
                     return (
                       <li
@@ -147,6 +174,7 @@ const Discount = () => {
                         className="flex justify-between items-center bg-blue-light-6 px-4 py-2 rounded-xl"
                       >
                         <div>
+                          {getProductTypeBadge(productType)}
                           <div className="text-xs font-semibold">
                             {d.nombreProducto}
                           </div>

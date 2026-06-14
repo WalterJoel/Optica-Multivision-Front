@@ -47,6 +47,35 @@ export default function ListDiscounts() {
     return d.producto?.nombre ?? "Desconocido";
   };
 
+  const getProductTypeBadge = (tipoProducto: string) => {
+    switch (tipoProducto) {
+      case "LENTE":
+        return (
+          <span className="inline-block text-[9px] font-[900] uppercase tracking-widest px-2 py-0.5 rounded-md bg-blue-light/10 text-blue">
+            Lente
+          </span>
+        );
+      case "MONTURA":
+        return (
+          <span className="inline-block text-[9px] font-[900] uppercase tracking-widest px-2 py-0.5 rounded-md bg-yellow-light-4 text-yellow-dark">
+            Montura
+          </span>
+        );
+      case "ACCESORIO":
+        return (
+          <span className="inline-block text-[9px] font-[900] uppercase tracking-widest px-2 py-0.5 rounded-md bg-teal-50 text-teal-600">
+            Accesorio
+          </span>
+        );
+      default:
+        return (
+          <span className="px-2.5 py-1 bg-slate-100 text-slate-700 text-[10px] font-bold rounded-lg uppercase">
+            {tipoProducto}
+          </span>
+        );
+    }
+  };
+
   // Memos
   const filteredDiscounts = useMemo(() => {
     let result = discounts;
@@ -185,9 +214,7 @@ export default function ListDiscounts() {
                     </div>
                   </td>
                   <td className="px-6 py-5">
-                    <span className="px-2.5 py-1 bg-slate-100 text-slate-700 text-[10px] font-bold rounded-lg uppercase">
-                      {d.tipoProducto}
-                    </span>
+                    {getProductTypeBadge(d.tipoProducto)}
                   </td>
                   <td className="px-6 py-5 text-dark-2 uppercase font-medium">
                     {getProductName(d)}

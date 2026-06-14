@@ -3,6 +3,7 @@ import { TipoProducto } from "@/commons/constants";
 export interface CartItem {
   id: number;
   productId: number | null; //Null cuando es lente no tiene producto
+  lenteId?: number | null;
   productName: string;
   productType: TipoProducto;
   discount?: number | null; // Un unico descuento por producto

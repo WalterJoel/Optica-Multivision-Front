@@ -14,11 +14,13 @@ import { TipoProducto } from "@/commons/constants";
 
 type DetailModalProps = {
   selected: ILensStockMatrixItem;
+  lenteId: number;
   onClose: () => void;
 };
 
 export const DetailModal: React.FC<DetailModalProps> = ({
   selected,
+  lenteId,
   onClose,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -31,6 +33,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({
     const itemToCart: CartItem = {
       id: selected.id,
       productId: null,
+      lenteId: lenteId,
       productName: "Lente " + selected.nombreProducto,
       productType: TipoProducto.LENTE,
       discount: 0,
