@@ -92,13 +92,10 @@ const Header = () => {
 
         {/* 2. MENU DATA - DISEÑO CAPSULA PREMIUM DUAL BORDER */}
         <nav className="hidden xl:flex flex-1 items-center justify-center max-w-[800px] w-full mx-auto">
-          <div className="relative p-[1.5px] rounded-2xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.03)] w-full">
-            {/* Dual color border background */}
-            <div className="absolute inset-0 flex">
-              <div className="h-full w-1/2 bg-blue" />
-              <div className="h-full w-1/2 bg-yellow" />
-            </div>
-            
+          <div 
+            className="relative p-[1.5px] rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] w-full"
+            style={{ backgroundImage: "linear-gradient(to right, #1976D2 50%, #FBBF24 50%)" }}
+          >
             {/* Nav content */}
             <ul className="relative flex items-center gap-1 bg-white/95 backdrop-blur-md p-1 rounded-[14px] w-full">
               {menuData.map((item, i) => {
@@ -120,23 +117,28 @@ const Header = () => {
 
                         {/* Dropdown with premium slide/fade animation */}
                         <div className="absolute left-1/2 top-full -translate-x-1/2 pt-2 opacity-0 translate-y-2 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-300 z-50">
-                          <div className="bg-white rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-slate-100 p-1.5 min-w-[170px]">
-                            {item.submenu.map((sub, j) => {
-                              const isSubActive = pathname === sub.path;
-                              return (
-                                <Link
-                                  key={j}
-                                  href={sub.path}
-                                  className={`block px-3.5 py-2 text-[10.5px] font-bold rounded-lg transition-all text-left uppercase tracking-tight ${
-                                    isSubActive 
-                                      ? "text-blue bg-blue/5 font-black" 
-                                      : "text-slate-600 hover:text-blue hover:bg-slate-50"
-                                  }`}
-                                >
-                                  {sub.title}
-                                </Link>
-                              );
-                            })}
+                          <div 
+                            className="p-[1.5px] rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.08)] min-w-[170px]"
+                            style={{ backgroundImage: "linear-gradient(to right, #1976D2 50%, #FBBF24 50%)" }}
+                          >
+                            <div className="bg-white rounded-[10px] p-1.5 w-full">
+                              {item.submenu.map((sub, j) => {
+                                const isSubActive = pathname === sub.path;
+                                return (
+                                  <Link
+                                    key={j}
+                                    href={sub.path}
+                                    className={`block px-3.5 py-2 text-[10.5px] font-bold rounded-lg transition-all text-left uppercase tracking-tight ${
+                                      isSubActive 
+                                        ? "text-blue bg-blue/5 font-black" 
+                                        : "text-slate-600 hover:text-blue hover:bg-slate-50"
+                                    }`}
+                                  >
+                                    {sub.title}
+                                  </Link>
+                                );
+                              })}
+                            </div>
                           </div>
                         </div>
                       </>
