@@ -7,7 +7,7 @@ import { useCreateSale } from "@/hooks/sales";
 import { useAppSelector } from "@/redux/store";
 import { useDispatch } from "react-redux";
 // Selectores de Slices
-import { selectVenta } from "@/redux/features/sale-slice";
+import { selectVenta, resetVenta } from "@/redux/features/sale-slice";
 import { selectTotalPrice, selectCartItems, removeAllItemsFromCart } from "@/redux/features/cart-slice";
 // Constants
 import { TipoVenta, EstadoPago, STATUS_MODAL } from "@/commons/constants";
@@ -88,6 +88,7 @@ const AlContado = () => {
             setOpenModal(true);
             if (success) {
                 dispatch(removeAllItemsFromCart());
+                dispatch(resetVenta());
             }
         }
     }, [loading, success, statusMessage]);
@@ -118,13 +119,18 @@ const AlContado = () => {
                                 <Discount />
                             </div>
                             <div>
-                                <label className="mb-3 block text-sm font-bold text-gray-700">
-                                    Método de Pago
+                                <label className="mb-3 flex items-center gap-1.5 text-sm font-bold text-gray-700">
+                                    Método de Pago <span className="text-red font-bold text-xs">*</span>
                                 </label>
                                 <PaymentMethodSelector />
+                                {!ventaStore.metodoPago && (
+                                    <p className="mt-2 text-xs font-semibold text-red animate-pulse">
+                                        ⚠️ Por favor, seleccione un método de pago.
+                                    </p>
+                                )}
                             </div>
 
-                            <div className="grid grid-cols-3 gap-4">
+                             <div className="grid grid-cols-3 gap-4">
                                 <BaseInput
                                     label="Total Venta"
                                     value={`S/ ${cartStoreTotal.toFixed(2)}`}
@@ -144,6 +150,11 @@ const AlContado = () => {
                                     readOnly
                                 />
                             </div>
+                            {montoRecibido && Number(montoRecibido) < cartStoreTotal && (
+                                <p className="text-xs font-semibold text-red animate-pulse">
+                                    ⚠️ El monto recibido debe ser mayor o igual al total de la venta (S/. {cartStoreTotal.toFixed(2)}).
+                                </p>
+                            )}
 
                             <BaseTarea
                                 label="Observaciones"
@@ -155,7 +166,9 @@ const AlContado = () => {
                                 disabled={
                                     loading ||
                                     cartStoreTotal === 0 ||
-                                    !montoRecibido
+                                    !montoRecibido ||
+                                    Number(montoRecibido) < cartStoreTotal ||
+                                    !ventaStore.metodoPago
                                 }
                             >
                                 {loading ? "PROCESANDO..." : "REGISTRAR VENTA"}

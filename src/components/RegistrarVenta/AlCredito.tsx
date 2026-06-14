@@ -20,7 +20,7 @@ import { useAppSelector } from "@/redux/store";
 
 // Selectores de Slices
 import { selectAuth } from "@/redux/features/auth-slice";
-import { selectVenta, setMetodoPago } from "@/redux/features/sale-slice";
+import { selectVenta, setMetodoPago, resetVenta } from "@/redux/features/sale-slice";
 import { selectTotalPrice, selectCartItems, removeAllItemsFromCart } from "@/redux/features/cart-slice";
 
 // Constants
@@ -136,6 +136,7 @@ const AlCredito = () => {
             setOpenModal(true);
             if (success) {
                 dispatch(removeAllItemsFromCart());
+                dispatch(resetVenta());
             }
         }
     }, [loading, success, statusMessage]);
@@ -176,10 +177,15 @@ const AlCredito = () => {
                                     <Discount />
                                 </div>
                                 <div>
-                                    <label className="mb-3 block text-sm font-bold text-gray-700">
-                                        Método de Pago
+                                    <label className="mb-3 flex items-center gap-1.5 text-sm font-bold text-gray-700">
+                                        Método de Pago <span className="text-red font-bold text-xs">*</span>
                                     </label>
                                     <PaymentMethodSelector />
+                                    {!ventaStore.metodoPago && (
+                                        <p className="mt-2 text-xs font-semibold text-red animate-pulse">
+                                            ⚠️ Por favor, seleccione un método de pago.
+                                        </p>
+                                    )}
                                 </div>
                                 <div>
                                     <label className="mb-3 block text-sm font-bold text-gray-700">
@@ -198,6 +204,7 @@ const AlCredito = () => {
                                         label="Monto Recibido"
                                         type="number"
                                         value={montoRecibido}
+                                        required={paymentType === "cash"}
                                         onChange={(e) => setMontoRecibido(e.target.value)}
                                     />
                                     <BaseInput
@@ -206,6 +213,11 @@ const AlCredito = () => {
                                         readOnly
                                     />
                                 </div>
+                                {paymentType === "cash" && montoRecibido && Number(montoRecibido) < cartStoreTotal && (
+                                    <p className="text-xs font-semibold text-red animate-pulse">
+                                        ⚠️ El monto recibido debe ser mayor o igual al total de la venta (S/. {cartStoreTotal.toFixed(2)}).
+                                    </p>
+                                )}
                                 {paymentType === "credit" && (
                                     <BaseInput
                                         label="Número de Cuotas"
@@ -221,11 +233,20 @@ const AlCredito = () => {
                                 />
                                 <button
                                     onClick={handleRegisterSale}
-                                    disabled={loading || cartStoreTotal === 0}
-                                    className={`mt-auto w-full rounded-xl py-4 text-white font-bold text-lg shadow-lg transition-all ${loading
-                                        ? "bg-gray-400"
-                                        : "bg-blue hover:bg-blue-dark active:scale-[0.98]"
-                                        }`}
+                                    disabled={
+                                        loading ||
+                                        cartStoreTotal === 0 ||
+                                        !ventaStore.metodoPago ||
+                                        (paymentType === "cash" && (!montoRecibido || Number(montoRecibido) < cartStoreTotal))
+                                    }
+                                    className={`mt-auto w-full rounded-xl py-4 text-white font-bold text-lg shadow-lg transition-all ${
+                                        loading ||
+                                        cartStoreTotal === 0 ||
+                                        !ventaStore.metodoPago ||
+                                        (paymentType === "cash" && (!montoRecibido || Number(montoRecibido) < cartStoreTotal))
+                                            ? "bg-gray-400 cursor-not-allowed opacity-60"
+                                            : "bg-blue hover:bg-blue-dark active:scale-[0.98]"
+                                    }`}
                                 >
                                     {loading ? "PROCESANDO..." : "REGISTRAR OPERACIÓN"}
                                 </button>

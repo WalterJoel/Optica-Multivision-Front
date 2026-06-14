@@ -4,7 +4,8 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { CheckCircle2 } from "lucide-react";
 import { useDispatch } from "react-redux";
-import { setMetodoPago } from "@/redux/features/sale-slice";
+import { useAppSelector } from "@/redux/store";
+import { selectVenta, setMetodoPago } from "@/redux/features/sale-slice";
 import { MetodoPago } from "@/commons/constants";
 
 const paymentMethods: {
@@ -28,10 +29,10 @@ const paymentMethods: {
 
 export default function PaymentMethodSelector() {
   const dispatch = useDispatch();
-  const [selected, setSelected] = useState<MetodoPago | null>(null);
+  const ventaStore = useAppSelector(selectVenta);
+  const selected = ventaStore.metodoPago;
 
   const handleSelect = (method: MetodoPago) => {
-    setSelected(method);
     dispatch(setMetodoPago(method));
   };
 

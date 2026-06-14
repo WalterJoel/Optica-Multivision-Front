@@ -102,9 +102,22 @@ const CartSidebarModal = () => {
               <Link
                 onClick={() => closeCartModal()}
                 href="/register-sale"
-                className="w-full flex justify-center items-center font-[1000] text-dark bg-yellow-dark py-5 px-10 rounded-2xl transition-all duration-300 hover:bg-yellow hover:-translate-y-0.5 hover:shadow-xl hover:shadow-yellow-dark/25 active:translate-y-0 active:scale-[0.98] uppercase tracking-[0.25em] text-sm shadow-lg shadow-yellow-dark/20 mt-7.5"
+                className="group w-full flex justify-center items-center font-[1000] text-dark bg-gradient-to-r from-yellow-dark-2 via-yellow-dark to-yellow py-5.5 px-10 rounded-2xl transition-all duration-300 hover:from-yellow-dark hover:via-yellow hover:to-yellow-light hover:-translate-y-1 hover:shadow-[0_16px_35px_rgba(245,158,11,0.4)] active:translate-y-0 active:scale-[0.98] uppercase tracking-[0.25em] text-base sm:text-lg shadow-[0_8px_25px_rgba(245,158,11,0.25)] mt-7.5"
               >
-                Pagar
+                <span>Pagar</span>
+                <svg
+                  className="ml-3 w-6 h-6 transition-transform duration-300 group-hover:translate-x-1.5 stroke-[3]"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                  />
+                </svg>
               </Link>
             </div>
           </div>
