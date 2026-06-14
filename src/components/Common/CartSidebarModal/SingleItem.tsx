@@ -58,6 +58,35 @@ const SingleItem: React.FC<SingleItemProps> = ({
 
   const resolvedImg = getResolvedImageUrl();
 
+  const getProductTypeBadge = () => {
+    switch (item.productType) {
+      case "LENTE":
+        return (
+          <span className="inline-block text-[9px] font-[900] uppercase tracking-widest px-2 py-0.5 rounded-md bg-blue-light/10 text-blue mb-1">
+            Lente
+          </span>
+        );
+      case "MONTURA":
+        return (
+          <span className="inline-block text-[9px] font-[900] uppercase tracking-widest px-2 py-0.5 rounded-md bg-yellow-light-4 text-yellow-dark mb-1">
+            Montura
+          </span>
+        );
+      case "ACCESORIO":
+        return (
+          <span className="inline-block text-[9px] font-[900] uppercase tracking-widest px-2 py-0.5 rounded-md bg-teal-50 text-teal-600 mb-1">
+            Accesorio
+          </span>
+        );
+      default:
+        return null;
+    }
+  };
+
+  const displayName = item.productName
+    .replace(/^(MONTURA|LENTE|ACCESORIO)\s+/i, "")
+    .trim();
+
   return (
     <div className="flex items-center justify-between gap-5">
       <div className="w-full flex items-center gap-6">
@@ -85,8 +114,9 @@ const SingleItem: React.FC<SingleItemProps> = ({
           </div>
         </div>
         <div>
+          {getProductTypeBadge()}
           <h3 className="font-medium text-dark mb-1 ease-out duration-200 hover:text-blue">
-            {item.productName}
+            {displayName}
           </h3>
           <p className="text-custom-sm">Price: S/. {Number(item.price).toFixed(2)}</p>
           {item.isLens && (

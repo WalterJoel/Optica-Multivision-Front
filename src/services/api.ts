@@ -27,6 +27,7 @@ api.interceptors.response.use(
     const status = error.response?.status;
 
     if (status === 401 && typeof window !== "undefined") {
+      localStorage.clear();
       await signOut({
         callbackUrl: "/signin",
       });

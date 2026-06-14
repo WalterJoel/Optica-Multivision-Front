@@ -46,6 +46,35 @@ const SingleItem = ({ item }) => {
 
   const resolvedImg = getResolvedImageUrl();
 
+  const getProductTypeBadge = () => {
+    switch (item.productType) {
+      case "LENTE":
+        return (
+          <span className="inline-block text-[9px] font-[900] uppercase tracking-widest px-2 py-0.5 rounded-md bg-blue-light/10 text-blue mb-1">
+            Lente
+          </span>
+        );
+      case "MONTURA":
+        return (
+          <span className="inline-block text-[9px] font-[900] uppercase tracking-widest px-2 py-0.5 rounded-md bg-yellow-light-4 text-yellow-dark mb-1">
+            Montura
+          </span>
+        );
+      case "ACCESORIO":
+        return (
+          <span className="inline-block text-[9px] font-[900] uppercase tracking-widest px-2 py-0.5 rounded-md bg-teal-50 text-teal-600 mb-1">
+            Accesorio
+          </span>
+        );
+      default:
+        return null;
+    }
+  };
+
+  const displayName = item.productName
+    .replace(/^(MONTURA|LENTE|ACCESORIO)\s+/i, "")
+    .trim();
+
   return (
     <div className="flex items-center border-t border-gray-3 py-5 px-7.5 bg-white">
       {/* PRODUCTO */}
@@ -66,14 +95,15 @@ const SingleItem = ({ item }) => {
               <Package size={24} />
             </div>
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-yellow-light-4 text-yellow-dark">
-              <Glasses size={24} />
-            </div>
-          )}
+              <div className="w-full h-full flex items-center justify-center bg-yellow-light-4 text-yellow-dark">
+                <Glasses size={24} />
+              </div>
+            )}
         </div>
         <div className="min-w-0">
+          {getProductTypeBadge()}
           <h3 className="text-dark font-medium truncate pr-2 hover:text-blue transition-colors cursor-pointer">
-            {item.productName}
+            {displayName}
           </h3>
         </div>
       </div>
