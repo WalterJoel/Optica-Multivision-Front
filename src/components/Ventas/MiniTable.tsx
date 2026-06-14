@@ -130,6 +130,9 @@ export const MiniTable = ({
                 Tipo Venta
               </th>
               <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3 text-center">
+                Compromiso Pago.
+              </th>
+              <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3 text-center">
                 Estado Pago
               </th>
               <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3 text-right">
@@ -146,7 +149,7 @@ export const MiniTable = ({
             {paginatedData.length === 0 && (
               <tr>
                 <td
-                  colSpan={9}
+                  colSpan={10}
                   className="px-6 py-24 text-center text-dark-5 font-bold uppercase text-[10px] tracking-widest"
                 >
                   No hay ventas registradas
@@ -232,6 +235,17 @@ export const MiniTable = ({
                     >
                       {esCredito ? "A Crédito" : "Al Contado"}
                     </span>
+                  </td>
+
+                  {/* Días Compromiso Pago */}
+                  <td className="px-6 py-5 text-center">
+                    {venta.diasCompromisoPago ? (
+                      <span className="inline-flex items-center px-2.5 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.1em] border shadow-sm bg-yellow/10 text-yellow-dark border-yellow-dark/20">
+                        {venta.diasCompromisoPago} días
+                      </span>
+                    ) : (
+                      <span className="text-gray-4 font-semibold">—</span>
+                    )}
                   </td>
 
                   {/* Estado Pago */}
