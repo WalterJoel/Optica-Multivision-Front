@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { menuData } from "./menuData";
 import { useAppSelector } from "@/redux/store";
 import { useSelector } from "react-redux";
@@ -23,9 +24,11 @@ import { useSessionUser } from "@/hooks/session";
 
 const Header = () => {
   const { user, foto, fullName, accessToken } = useSessionUser();
+  const pathname = usePathname();
   const [stickyMenu, setStickyMenu] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileSubmenuOpen, setMobileSubmenuOpen] = useState<number | null>(null);
   const [chatOpen, setChatOpen] = useState(false);
   const { openCartModal } = useCartModalContext();
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -40,6 +43,10 @@ const Header = () => {
       callbackUrl: "/signin", // Redirige a signin después de limpiar cookies
       redirect: true,
     });
+  };
+
+  const toggleMobileSubmenu = (id: number) => {
+    setMobileSubmenuOpen(mobileSubmenuOpen === id ? null : id);
   };
 
   useEffect(() => {
@@ -68,6 +75,12 @@ const Header = () => {
         : "bg-gradient-to-b from-slate-50/50 to-transparent py-5"
         }`}
     >
+      {/* Thin dual-color premium accent line at the very top of the viewport */}
+      <div className="absolute top-0 left-0 w-full h-[4px] flex z-[1000]">
+        <div className="w-1/2 h-full bg-blue shadow-[0_0_8px_rgba(30,64,175,0.4)]" />
+        <div className="w-1/2 h-full bg-yellow shadow-[0_0_8px_rgba(255,183,0,0.4)]" />
+      </div>
+
       <div className="mt-5 max-w-[1700px] mx-auto px-4 md:px-16 flex items-center justify-between gap-4">
         {/* 1. LOGO */}
         <Link
@@ -77,42 +90,73 @@ const Header = () => {
           <LogoMultivision size="sm" subtitle={false} />
         </Link>
 
-        {/* 2. MENU DATA - DISEÑO CAPSULA PREMIUM */}
-        <nav className="hidden xl:flex flex-1 items-center justify-center">
-          <ul className="flex items-center gap-1 bg-white/40 backdrop-blur-md p-1.5 rounded-2xl border border-white shadow-sm w-full max-w-3xl">
-            {menuData.map((item, i) => (
-              <li key={i} className="flex-1 text-center relative group">
-                {item.submenu ? (
-                  <>
-                    {/* ITEM CON SUBMENU */}
-                    <span className="block py-2.5 text-[11px] font-black text-slate-500 hover:text-blue hover:bg-white rounded-xl transition-all uppercase tracking-tighter hover:shadow-sm cursor-pointer">
-                      {item.title}
-                    </span>
+        {/* 2. MENU DATA - DISEÑO CAPSULA PREMIUM DUAL BORDER */}
+        <nav className="hidden xl:flex flex-1 items-center justify-center max-w-[800px] w-full mx-auto">
+          <div className="relative p-[1.5px] rounded-2xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.03)] w-full">
+            {/* Dual color border background */}
+            <div className="absolute inset-0 flex">
+              <div className="h-full w-1/2 bg-blue" />
+              <div className="h-full w-1/2 bg-yellow" />
+            </div>
+            
+            {/* Nav content */}
+            <ul className="relative flex items-center gap-1 bg-white/95 backdrop-blur-md p-1 rounded-[14px] w-full">
+              {menuData.map((item, i) => {
+                const isActive = pathname === item.path || (item.submenu && item.submenu.some(sub => pathname === sub.path));
+                return (
+                  <li key={i} className="flex-1 text-center relative group">
+                    {item.submenu ? (
+                      <>
+                        <span className={`block py-2 text-[10.5px] font-black uppercase tracking-tight rounded-xl transition-all cursor-pointer ${
+                          isActive 
+                            ? "text-blue bg-blue/5 shadow-[inset_0_1px_2px_rgba(30,64,175,0.05)] border border-blue/10" 
+                            : "text-slate-500 hover:text-blue hover:bg-slate-50 border border-transparent"
+                        }`}>
+                          <span className="flex items-center justify-center gap-1">
+                            {item.title}
+                            <ChevronDown size={11} className="opacity-60 group-hover:rotate-180 transition-transform duration-300" />
+                          </span>
+                        </span>
 
-                    {/* DROPDOWN SIMPLE */}
-                    <div className="absolute left-1/2 top-full -translate-x-1/2 hidden group-hover:block bg-white rounded-xl shadow-lg p-2 min-w-[160px] z-50 pt-2">
-                      {item.submenu.map((sub, j) => (
-                        <Link
-                          key={j}
-                          href={sub.path}
-                          className="block px-3 py-2 text-[11px] font-bold text-slate-600 hover:text-blue hover:bg-blue/5 rounded-lg"
-                        >
-                          {sub.title}
-                        </Link>
-                      ))}
-                    </div>
-                  </>
-                ) : (
-                  <Link
-                    href={item.path || "#"}
-                    className="block py-2.5 text-[11px] font-black text-slate-500 hover:text-blue hover:bg-white rounded-xl transition-all uppercase tracking-tighter hover:shadow-sm"
-                  >
-                    {item.title}
-                  </Link>
-                )}
-              </li>
-            ))}
-          </ul>
+                        {/* Dropdown with premium slide/fade animation */}
+                        <div className="absolute left-1/2 top-full -translate-x-1/2 pt-2 opacity-0 translate-y-2 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-300 z-50">
+                          <div className="bg-white rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.08)] border border-slate-100 p-1.5 min-w-[170px]">
+                            {item.submenu.map((sub, j) => {
+                              const isSubActive = pathname === sub.path;
+                              return (
+                                <Link
+                                  key={j}
+                                  href={sub.path}
+                                  className={`block px-3.5 py-2 text-[10.5px] font-bold rounded-lg transition-all text-left uppercase tracking-tight ${
+                                    isSubActive 
+                                      ? "text-blue bg-blue/5 font-black" 
+                                      : "text-slate-600 hover:text-blue hover:bg-slate-50"
+                                  }`}
+                                >
+                                  {sub.title}
+                                </Link>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <Link
+                        href={item.path || "#"}
+                        className={`block py-2 text-[10.5px] font-black uppercase tracking-tight rounded-xl transition-all ${
+                          isActive 
+                            ? "text-blue bg-blue/5 shadow-[inset_0_1px_2px_rgba(30,64,175,0.05)] border border-blue/10" 
+                            : "text-slate-500 hover:text-blue hover:bg-slate-50 border border-transparent"
+                        }`}
+                      >
+                        {item.title}
+                      </Link>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
         </nav>
 
         {/* 3. ACCIONES */}
@@ -206,27 +250,98 @@ const Header = () => {
         </div>
       </div>
 
-      {/* MENÚ MÓVIL PREMIUM */}
-      {/* {mobileMenuOpen && (
-        <div className="xl:hidden bg-white/95 backdrop-blur-xl border-t border-slate-100 absolute w-full left-0 animate-in slide-in-from-top duration-300 shadow-2xl">
-          <nav className="p-6">
-            <ul className="flex flex-col gap-3">
-              {menuData.map((item, i) => (
-                <li key={i}>
-                  <Link
-                    href={item.path || "#"}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-between p-4 text-xs font-black text-slate-700 hover:bg-blue/5 hover:text-blue rounded-2xl uppercase tracking-widest transition-all border border-transparent hover:border-blue/10"
-                  >
-                    {item.title}
-                    <div className="w-1.5 h-1.5 rounded-full bg-slate-200" />
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
+      {/* MENÚ MÓVIL PREMIUM CON DISEÑO DE ALTA GAMA */}
+      {mobileMenuOpen && (
+        <div className="xl:hidden bg-slate-900/40 backdrop-blur-sm fixed inset-0 top-[76px] z-[998] transition-all duration-300" onClick={() => setMobileMenuOpen(false)}>
+          <div 
+            className="bg-white/95 backdrop-blur-xl border-t border-slate-100 absolute w-full left-0 shadow-2xl p-6 rounded-b-[2rem] overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Dual color accent under top border */}
+            <div className="absolute top-0 left-0 w-full h-[3px] flex">
+              <div className="w-1/2 h-full bg-blue" />
+              <div className="w-1/2 h-full bg-yellow" />
+            </div>
+
+            <nav className="relative pt-2">
+              <ul className="flex flex-col gap-2">
+                {menuData.map((item, i) => {
+                  const isActive = pathname === item.path || (item.submenu && item.submenu.some(sub => pathname === sub.path));
+                  const hasSubmenu = !!item.submenu;
+                  const isSubmenuOpen = mobileSubmenuOpen === item.id;
+
+                  return (
+                    <li key={i} className="w-full">
+                      {hasSubmenu ? (
+                        <div className="flex flex-col w-full">
+                          <button
+                            onClick={() => toggleMobileSubmenu(item.id)}
+                            className={`flex items-center justify-between w-full p-3.5 text-xs font-black uppercase tracking-wider rounded-2xl transition-all border ${
+                              isActive
+                                ? "bg-blue/5 text-blue border-blue/20"
+                                : "text-slate-700 bg-slate-50/50 border-slate-100 hover:bg-slate-100"
+                            }`}
+                          >
+                            <span className="flex items-center gap-2">
+                              <span className="w-1.5 h-1.5 rounded-full bg-yellow" />
+                              {item.title}
+                            </span>
+                            <ChevronDown 
+                              size={16} 
+                              className={`transition-transform duration-300 ${isSubmenuOpen ? "rotate-180 text-blue" : "text-slate-400"}`} 
+                            />
+                          </button>
+                          
+                          {/* Submenu Accordion */}
+                          <div className={`overflow-hidden transition-all duration-300 ${isSubmenuOpen ? "max-h-60 mt-1.5 opacity-100" : "max-h-0 opacity-0"}`}>
+                            <ul className="pl-4 pr-2 py-1.5 flex flex-col gap-1.5 bg-slate-50/80 rounded-2xl border border-slate-100">
+                              {item.submenu!.map((sub, j) => {
+                                const isSubActive = pathname === sub.path;
+                                return (
+                                  <li key={j}>
+                                    <Link
+                                      href={sub.path}
+                                      onClick={() => setMobileMenuOpen(false)}
+                                      className={`flex items-center justify-between p-3 text-[11px] font-bold rounded-xl uppercase tracking-wider transition-all ${
+                                        isSubActive
+                                          ? "text-blue bg-white shadow-sm"
+                                          : "text-slate-600 hover:text-blue hover:bg-white"
+                                      }`}
+                                    >
+                                      {sub.title}
+                                      {isSubActive && <span className="w-1.5 h-1.5 rounded-full bg-blue" />}
+                                    </Link>
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          </div>
+                        </div>
+                      ) : (
+                        <Link
+                          href={item.path || "#"}
+                          onClick={() => setMobileMenuOpen(false)}
+                          className={`flex items-center justify-between p-3.5 text-xs font-black uppercase tracking-wider rounded-2xl transition-all border ${
+                            isActive
+                              ? "bg-blue/5 text-blue border-blue/20 shadow-sm"
+                              : "text-slate-700 bg-slate-50/50 border-transparent hover:bg-slate-100"
+                          }`}
+                        >
+                          <span className="flex items-center gap-2">
+                            {isActive && <span className="w-1.5 h-1.5 rounded-full bg-blue animate-pulse" />}
+                            {item.title}
+                          </span>
+                          <div className={`w-1.5 h-1.5 rounded-full ${isActive ? "bg-blue" : "bg-slate-300"}`} />
+                        </Link>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            </nav>
+          </div>
         </div>
-      )} */}
+      )}
     </header>
   );
 };
