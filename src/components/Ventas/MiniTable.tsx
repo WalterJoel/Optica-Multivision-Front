@@ -36,14 +36,14 @@ export const MiniTable = ({
   const filteredData = data.filter((venta) => {
     if (!searchTerm) return true;
     const term = searchTerm.toLowerCase();
-    
+
     const clienteNombre = venta.cliente
       ? venta.cliente.tipoCliente === "EMPRESA"
         ? (venta.cliente.razonSocial || "").toLowerCase()
         : `${venta.cliente.nombres || ""} ${venta.cliente.apellidos || ""}`.toLowerCase()
       : "";
     const clienteDoc = (venta.cliente?.numeroDoc || "").toLowerCase();
-    
+
     const vendedorNombre = venta.user
       ? `${venta.user.nombre || ""} ${venta.user.apellido || ""}`.toLowerCase()
       : "";
@@ -403,8 +403,8 @@ export const MiniTable = ({
                 <thead>
                   <tr className="bg-beige/80 text-[9px] font-black text-blue uppercase tracking-widest border-b border-gray-1">
                     <th className="px-4 py-3">Cód.</th>
-                    <th className="px-4 py-3">Producto / Detalle</th>
                     <th className="px-4 py-3">Tipo</th>
+                    <th className="px-4 py-3">Detalle</th>
                     <th className="px-4 py-3 text-center">Cant</th>
                     <th className="px-4 py-3 text-right">Unitario</th>
                     <th className="px-4 py-3 text-right">Desc.</th>
@@ -424,17 +424,25 @@ export const MiniTable = ({
                         <td className="px-4 py-3 font-bold text-gray-5">
                           #{prod.productoId || prod.stockId}
                         </td>
+                        {/* Tipo */}
+                        <td className="px-4 py-3">
+                          <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider bg-slate-100 rounded px-1.5 py-0.5 border border-slate-200/50">
+                            {prod.tipoProducto}
+                          </span>
+                        </td>
                         {/* Producto / Detalle */}
                         <td className="px-4 py-3 font-semibold">
                           <span className="font-black text-dark block leading-tight">
-                            {prod.tipoProducto === "LENTE" && prod.stock?.lente
-                              ? `LENTE ${prod.stock.lente.marca} (${prod.stock.lente.material})`
-                              : prod.producto?.nombre || `Producto #${prod.productoId || prod.stockId}`}
+                            {prod.stock?.lente
+                              ? `${prod.stock.lente.marca} (${prod.stock.lente.material})`
+                              : prod.producto?.nombre || ""}
                           </span>
-                          {/* Mostrar datos refractivos específicos para lentes (si existen y no son nulos) */}
-                          {prod.esf !== undefined && prod.esf !== null && prod.cyl !== undefined && prod.cyl !== null && (
+                          {/* Mostrar datos refractivos si existen y no son nulos */}
+                          {(prod.esf || prod.cyl) && (
                             <span className="inline-block mt-1 text-[9px] font-bold font-mono text-yellow-dark bg-yellow/10 border border-yellow-dark/20 rounded px-1.5 py-0.5 mr-1.5">
-                              ESF: {Number(prod.esf) > 0 ? `+${prod.esf}` : prod.esf} | CYL: {Number(prod.cyl) > 0 ? `+${prod.cyl}` : prod.cyl}
+                              {prod.esf ? `ESF: ${Number(prod.esf) > 0 ? `+${prod.esf}` : prod.esf}` : ""}
+                              {prod.esf && prod.cyl ? " | " : ""}
+                              {prod.cyl ? `CYL: ${Number(prod.cyl) > 0 ? `+${prod.cyl}` : prod.cyl}` : ""}
                             </span>
                           )}
                           {/* Ubicación / Matriz (Lentes o Productos normales) */}
@@ -464,11 +472,6 @@ export const MiniTable = ({
                               </span>
                             </div>
                           )}
-                        </td>
-                        <td className="px-4 py-3">
-                          <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider bg-slate-100 rounded px-1.5 py-0.5 border border-slate-200/50">
-                            {prod.tipoProducto}
-                          </span>
                         </td>
                         <td className="px-4 py-3 text-center font-black text-dark">
                           {quantity}
