@@ -20,10 +20,13 @@ export const cart = createSlice({
       const existingItem = state.items.find((i) => i.id === item.id);
 
       if (existingItem) {
-        existingItem.quantity += item.quantity;
+        const maxStock = existingItem.stock ?? 9999;
+        existingItem.quantity = Math.min(existingItem.quantity + item.quantity, maxStock);
       } else {
+        const maxStock = item.stock ?? 9999;
         state.items.push({
           ...item,
+          quantity: Math.min(item.quantity, maxStock),
           discount: 0,
         });
       }
@@ -69,7 +72,10 @@ export const cart = createSlice({
       const { id, quantity } = action.payload;
       const item = state.items.find((item) => item.id === id);
 
-      if (item) item.quantity = quantity;
+      if (item) {
+        const maxStock = item.stock ?? 9999;
+        item.quantity = Math.min(quantity, maxStock);
+      }
     },
 
     removeAllItemsFromCart: (state) => {
