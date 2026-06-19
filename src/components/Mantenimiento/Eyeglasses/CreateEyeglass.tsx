@@ -22,7 +22,6 @@ const emptyForm: ICreateEyeglass = {
   imagenUrl: "",
   talla: "",
   ubicacion: "",
-  sedeId: 0,
   cantidad: "" as unknown as number,
 };
 
@@ -64,7 +63,6 @@ export default function CreateEyeglass() {
       precioVenta: Number(form.precioVenta) || 0,
       cantidad: Number(form.cantidad) || 0,
       imagenUrl: imageUrl,
-      sedeId,
     });
   };
 

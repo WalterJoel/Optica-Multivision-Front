@@ -15,7 +15,6 @@ const emptyForm: ICreateAccessory = {
   precioCompra: "" as unknown as number,
   codigoAccesorio: "",
   imagenUrl: "",
-  sedeId: 0,
   ubicacion: "",
   cantidad: "" as unknown as number,
   color: "",
@@ -56,7 +55,6 @@ export default function CreateAccessory() {
       precioVenta: Number(form.precioVenta) || 0,
       cantidad: Number(form.cantidad) || 0,
       imagenUrl: imageUrl,
-      sedeId,
     });
   };
 

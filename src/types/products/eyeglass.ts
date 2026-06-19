@@ -29,6 +29,6 @@ export interface IEyeglass {
 }
 
 export type ICreateEyeglass = Omit<
-  IEyeglass, "id" | "productoId" | "createdAt" | "producto"> & { ubicacion?: string };
+  IEyeglass, "id" | "productoId" | "createdAt" | "producto" | "sedeId"> & { ubicacion?: string };
 
 export type IUpdateEyeglass = Partial<ICreateEyeglass> & { productoId?: number; activo?: boolean };

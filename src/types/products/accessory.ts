@@ -24,7 +24,7 @@ export interface IAccessory {
   };
 }
 
-export type ICreateAccessory = Omit<IAccessory, "id" | "productoId" | "createdAt" | "producto"> & {};
+export type ICreateAccessory = Omit<IAccessory, "id" | "productoId" | "createdAt" | "producto" | "sedeId"> & {};
 
 export type IUpdateAccessory = Partial<ICreateAccessory> & { productoId?: number; activo?: boolean };
 

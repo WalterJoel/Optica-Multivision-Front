@@ -1,5 +1,5 @@
 export interface MonturaExcelRow {
-  STOCKID: number;
+  PRODUCTOID: number;
   "PRECIO COMPRA": string;
   "PRECIO VENTA": string;
   TALLA: string;
