@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AppDispatch } from "@/redux/store";
 import { useDispatch } from "react-redux";
 import {
@@ -13,23 +13,58 @@ import { Glasses, Package } from "lucide-react";
 
 const SingleItem = ({ item }) => {
   const [quantity, setQuantity] = useState(item.quantity);
+  const [inputValue, setInputValue] = useState(item.quantity.toString());
   const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    setQuantity(item.quantity);
+    setInputValue(item.quantity.toString());
+  }, [item.quantity]);
 
   const handleRemoveFromCart = () => {
     dispatch(removeItemFromCart(item.id));
   };
 
   const handleIncreaseQuantity = () => {
-    const newQty = quantity + 1;
-    setQuantity(newQty);
-    dispatch(updateCartItemQuantity({ id: item.id, quantity: newQty }));
+    const maxStock = item.stock ?? 9999;
+    if (quantity < maxStock) {
+      const newQty = quantity + 1;
+      setQuantity(newQty);
+      setInputValue(newQty.toString());
+      dispatch(updateCartItemQuantity({ id: item.id, quantity: newQty }));
+    }
   };
 
   const handleDecreaseQuantity = () => {
     if (quantity > 1) {
       const newQty = quantity - 1;
       setQuantity(newQty);
+      setInputValue(newQty.toString());
       dispatch(updateCartItemQuantity({ id: item.id, quantity: newQty }));
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    if (/^\d*$/.test(val)) {
+      setInputValue(val);
+      const parsed = parseInt(val, 10);
+      if (!isNaN(parsed) && parsed >= 1) {
+        const maxStock = item.stock ?? 9999;
+        const capped = Math.min(parsed, maxStock);
+        setQuantity(capped);
+        setInputValue(capped.toString());
+        dispatch(updateCartItemQuantity({ id: item.id, quantity: capped }));
+      }
+    }
+  };
+
+  const handleInputBlur = () => {
+    const parsed = parseInt(inputValue, 10);
+    if (isNaN(parsed) || parsed < 1) {
+      setQuantity(1);
+      setInputValue("1");
+      dispatch(updateCartItemQuantity({ id: item.id, quantity: 1 }));
     }
   };
 
@@ -130,7 +165,8 @@ const SingleItem = ({ item }) => {
         <div className="flex items-center rounded-lg border border-gray-3 bg-white overflow-hidden shadow-sm">
           <button
             onClick={handleDecreaseQuantity}
-            className="flex items-center justify-center w-9 h-9 hover:bg-gray-2 text-dark transition-colors"
+            disabled={quantity <= 1}
+            className="flex items-center justify-center w-9 h-9 hover:bg-gray-2 text-dark transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
           >
             <svg width="12" height="2" viewBox="0 0 12 2" fill="none">
               <path
@@ -142,13 +178,18 @@ const SingleItem = ({ item }) => {
             </svg>
           </button>
 
-          <span className="flex items-center justify-center w-10 h-9 border-x border-gray-3 text-sm font-bold text-dark">
-            {quantity}
-          </span>
+          <input
+            type="text"
+            value={inputValue}
+            onChange={handleInputChange}
+            onBlur={handleInputBlur}
+            className="w-10 h-9 text-center border-x border-gray-3 text-sm font-bold text-dark outline-none focus:bg-gray-2/50"
+          />
 
           <button
             onClick={handleIncreaseQuantity}
-            className="flex items-center justify-center w-9 h-9 hover:bg-gray-2 text-dark transition-colors"
+            disabled={quantity >= (item.stock ?? 9999)}
+            className="flex items-center justify-center w-9 h-9 hover:bg-gray-2 text-dark transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
           >
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
               <path

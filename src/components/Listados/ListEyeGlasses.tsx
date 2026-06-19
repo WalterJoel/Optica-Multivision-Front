@@ -167,6 +167,7 @@ export default function ListEyeglasses({ filters }: { filters?: Filters }) {
       productId: eyeGlass.producto?.id,
       price: eyeGlass.precioVenta,
       quantity: 1,
+      stock: eyeGlass.producto?.cantidad ?? 0,
       productType: TipoProducto.MONTURA,
       discount: 0,
       cyl: null,
@@ -199,13 +200,19 @@ export default function ListEyeglasses({ filters }: { filters?: Filters }) {
               Sin resultados
             </div>
           ) : (
-            paginatedEyeglasses.map((eyeglass: IEyeglass) => (
-              <EyeglassCardFrame key={eyeglass.id} eyeglass={eyeglass}>
-                <BaseButton onClick={() => handleAddToCart(eyeglass)}>
-                  Agregar
-                </BaseButton>
-              </EyeglassCardFrame>
-            ))
+            paginatedEyeglasses.map((eyeglass: IEyeglass) => {
+              const cantidad = eyeglass.producto?.cantidad ?? eyeglass.cantidad ?? 0;
+              return (
+                <EyeglassCardFrame key={eyeglass.id} eyeglass={eyeglass}>
+                  <BaseButton
+                    onClick={() => handleAddToCart(eyeglass)}
+                    disabled={cantidad <= 0}
+                  >
+                    Agregar
+                  </BaseButton>
+                </EyeglassCardFrame>
+              );
+            })
           )}
         </div>
 

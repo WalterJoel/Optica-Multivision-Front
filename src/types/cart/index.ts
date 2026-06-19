@@ -12,6 +12,7 @@ export interface CartItem {
   isLens: boolean;
   price: number;
   quantity: number;
+  stock?: number;
   imagenUrl?: string | null;
   imgs?: {
     thumbnails: string[];

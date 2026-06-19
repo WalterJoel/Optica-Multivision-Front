@@ -159,6 +159,7 @@ export default function ListAccessories({ filters }: { filters?: Filters }) {
       productId: item.producto?.id,
       price: item.precioVenta,
       quantity: 1,
+      stock: item.producto?.cantidad ?? 0,
       productType: TipoProducto.ACCESORIO,
       discount: 0,
       cyl: null,
@@ -187,13 +188,19 @@ export default function ListAccessories({ filters }: { filters?: Filters }) {
               Sin resultados
             </div>
           ) : (
-            paginatedAccessories.map((item: IAccessory) => (
-              <AccessoryCardFrame key={item.id} accessory={item}>
-                <BaseButton onClick={() => handleAddToCart(item)}>
-                  Agregar
-                </BaseButton>
-              </AccessoryCardFrame>
-            ))
+            paginatedAccessories.map((item: IAccessory) => {
+              const cantidad = item.producto?.cantidad ?? item.cantidad ?? 0;
+              return (
+                <AccessoryCardFrame key={item.id} accessory={item}>
+                  <BaseButton
+                    onClick={() => handleAddToCart(item)}
+                    disabled={cantidad <= 0}
+                  >
+                    Agregar
+                  </BaseButton>
+                </AccessoryCardFrame>
+              );
+            })
           )}
         </div>
 

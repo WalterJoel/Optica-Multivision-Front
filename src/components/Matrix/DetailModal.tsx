@@ -39,6 +39,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({
       discount: 0,
       price: price,
       quantity: 1,
+      stock: selected.cantidad,
       cyl: selected.cyl,
       esf: selected.esf,
       isLens: true, //TODO: MEJORAR
