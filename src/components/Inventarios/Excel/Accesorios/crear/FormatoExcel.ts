@@ -2,7 +2,7 @@ import { TipoProducto } from "@/commons/constants";
 import * as XLSX from "xlsx";
 
 // Plantilla vacía para crear accesorios
-export const descargarPlantillaExcelVacia = (sedeId: number) => {
+export const descargarPlantillaExcelVacia = () => {
   const plantillaVacia = [
     {
       CODIGO: "", // Ejemplo: ACC-01 (Código de accesorio)
@@ -12,7 +12,6 @@ export const descargarPlantillaExcelVacia = (sedeId: number) => {
       COLOR: "", // Ejemplo: Azul
       CANTIDAD: "", // Ejemplo: 50
       TIPO: TipoProducto.ACCESORIO, // Prellenado por defecto para guiar al usuario (ACCESORIO)
-      SEDE: sedeId, // ID numérico de la sede actual
     },
   ];
 

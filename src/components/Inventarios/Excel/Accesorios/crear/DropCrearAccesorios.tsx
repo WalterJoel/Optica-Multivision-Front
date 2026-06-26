@@ -68,7 +68,7 @@ export const DropCrearAccesorios = () => {
     setDownloading(true);
 
     try {
-      await descargarPlantillaExcelVacia(sedeId);
+      await descargarPlantillaExcelVacia();
     } catch (error) {
       console.error(error);
     } finally {
@@ -126,10 +126,9 @@ export const DropCrearAccesorios = () => {
           relative border-2 border-dashed rounded-3xl transition-all duration-200
           cursor-pointer py-10 px-6 flex flex-col items-center justify-center
           text-center overflow-hidden flex-1
-          ${
-            isDragActive
-              ? "border-blue-light bg-blue-light/5"
-              : "border-gray-200 hover:border-blue-light hover:bg-blue-light/5"
+          ${isDragActive
+            ? "border-blue-light bg-blue-light/5"
+            : "border-gray-200 hover:border-blue-light hover:bg-blue-light/5"
           }
         `}
       >
@@ -161,10 +160,9 @@ export const DropCrearAccesorios = () => {
         <div
           className={`
             mt-4 rounded-2xl p-3 flex items-center gap-3 border
-            ${
-              success
-                ? "border-green-200 bg-green-50"
-                : "border-blue-100 bg-blue-50"
+            ${success
+              ? "border-green-200 bg-green-50"
+              : "border-blue-100 bg-blue-50"
             }
           `}
         >
