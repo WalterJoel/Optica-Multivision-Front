@@ -2,7 +2,7 @@ import { TipoProducto } from "@/commons/constants";
 import * as XLSX from "xlsx";
 
 // Plantilla vacia para crear monturas
-export const descargarPlantillaExcelVacia = () => {
+export const descargarPlantillaExcelVacia = (sedeId: number) => {
   const plantillaVacia = [
     {
       CODIGO: "", // Ejemplo: M-01 (CODIGO que coloca el dueño del negocio - puede repetirse)
@@ -15,6 +15,7 @@ export const descargarPlantillaExcelVacia = () => {
       COLOR: "", // Ejemplo: Negro
       CANTIDAD: "", // Ejemplo: 10
       TIPO: TipoProducto.MONTURA, // Prellenado por defecto para guiar al usuario
+      SEDE: sedeId, // Debe ser numerico y lo dejamos fijado con la sede actual
     },
   ];
 

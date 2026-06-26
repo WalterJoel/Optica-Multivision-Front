@@ -64,3 +64,25 @@ export const ROLE_OPTIONS = [
   { value: "ALMACEN", label: "Almacén" },
   { value: "TALLER", label: "Taller" },
 ];
+
+export enum ClasificacionMonturas {
+  ACETATO = 'ACETATO',
+  CAREY = 'CAREY',
+  TR90 = 'TR90',
+  METAL = 'METAL',
+  NIÑOS = 'NIÑOS',
+  TITANEO = 'TITANEO',
+  PLASTICO = 'PLASTICO',
+  MADERA = 'MADERA',
+  LECTURA = 'LECTURA',
+  OTROS = 'OTROS',
+}
+
+
+export enum ClasificacionAccesorios {
+  COFRES_Y_ESTUCHES = 'COFRES_Y_ESTUCHES',
+  EQUIPOS_Y_HERRAMIENTAS = 'EQUIPOS_Y_HERRAMIENTAS',
+  ACCESORIOS_PARA_OPTICA = 'ACCESORIOS_PARA_OPTICA',
+  MOBILIARIO_PARA_OPTICA = 'MOBILIARIO_PARA_OPTICA',
+  OTROS = 'OTROS',
+}

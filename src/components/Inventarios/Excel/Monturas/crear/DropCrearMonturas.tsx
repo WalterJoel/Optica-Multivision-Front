@@ -68,7 +68,7 @@ export const DropCrearMonturas = () => {
     setDownloading(true);
 
     try {
-      await descargarPlantillaExcelVacia();
+      await descargarPlantillaExcelVacia(sedeId);
     } catch (error) {
       console.error(error);
     } finally {
