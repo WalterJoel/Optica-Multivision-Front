@@ -51,7 +51,6 @@ function LensCardFrame({
               alt={lens.marca}
               className="w-full h-full"
               imgClassName="w-full h-full object-contain"
-              placeholderUrl="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGnQPr3op1MGXxOFrwPtuxTYNQM_1H3ZLsGA&s"
               fallbackIcon={<span className="text-4xl">👁️</span>}
             />
           </div>

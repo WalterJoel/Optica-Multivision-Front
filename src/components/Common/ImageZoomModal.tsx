@@ -9,9 +9,10 @@ interface ImageZoomModalProps {
   alt: string;
   isOpen: boolean;
   onClose: () => void;
+  fallbackIcon?: React.ReactNode;
 }
 
-export function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomModalProps) {
+export function ImageZoomModal({ src, alt, isOpen, onClose, fallbackIcon }: ImageZoomModalProps) {
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -125,16 +126,28 @@ export function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomModalProp
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
         >
-          <img
-            src={src}
-            alt={alt}
-            style={{
-              transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
-              transition: isDragging ? "none" : "transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
-              maxHeight: "280px",
-            }}
-            className="object-contain pointer-events-none select-none max-w-full rounded-xl"
-          />
+          {src ? (
+            <img
+              src={src}
+              alt={alt}
+              style={{
+                transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
+                transition: isDragging ? "none" : "transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+                maxHeight: "280px",
+              }}
+              className="object-contain pointer-events-none select-none max-w-full rounded-xl"
+            />
+          ) : (
+            <div
+              style={{
+                transform: `translate(${position.x}px, ${position.y}px) scale(${scale * 2.5})`,
+                transition: isDragging ? "none" : "transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+              }}
+              className="select-none pointer-events-none flex items-center justify-center"
+            >
+              {fallbackIcon}
+            </div>
+          )}
         </div>
       </div>
     </ModalFrameWrapper>

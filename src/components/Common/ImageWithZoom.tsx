@@ -9,7 +9,6 @@ interface ImageWithZoomProps {
   className?: string;
   imgClassName?: string;
   fallbackIcon?: React.ReactNode;
-  placeholderUrl?: string;
 }
 
 export function ImageWithZoom({
@@ -18,11 +17,8 @@ export function ImageWithZoom({
   className = "w-full h-full",
   imgClassName = "w-full h-full object-contain",
   fallbackIcon = "📷",
-  placeholderUrl = "https://images.unsplash.com/photo-1574258495973-f010dfbb5371?w=800",
 }: ImageWithZoomProps) {
   const [isOpen, setIsOpen] = useState(false);
-
-  const displaySrc = src || placeholderUrl;
 
   return (
     <>
@@ -48,10 +44,11 @@ export function ImageWithZoom({
       </div>
 
       <ImageZoomModal
-        src={displaySrc}
+        src={src || ""}
         alt={alt}
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
+        fallbackIcon={fallbackIcon}
       />
     </>
   );

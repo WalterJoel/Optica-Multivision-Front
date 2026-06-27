@@ -59,7 +59,6 @@ function EyeglassCardFrame({
             alt={eyeglass.marca}
             className="w-full h-full"
             imgClassName="w-full h-full object-contain"
-            placeholderUrl="https://images.unsplash.com/photo-1574258495973-f010dfbb5371?w=800"
             fallbackIcon={
               <div className="w-14 h-14 flex items-center justify-center overflow-hidden">
                 <span className="text-4xl leading-none">👓</span>

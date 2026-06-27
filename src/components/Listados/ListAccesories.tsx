@@ -59,7 +59,6 @@ function AccessoryCardFrame({
             alt={accessory.nombre}
             className="w-full h-full"
             imgClassName="w-full h-full object-contain"
-            placeholderUrl="https://images.unsplash.com/photo-1581235720704-06d3acfcb36f?w=800"
             fallbackIcon={
               <div className="w-14 h-14 flex items-center justify-center overflow-hidden">
                 <span className="text-4xl leading-none">🧰</span>
