@@ -8,6 +8,7 @@ import {
   Loader2,
   FileSpreadsheet,
   Download,
+  AlertTriangle,
 } from "lucide-react";
 import { BaseButton } from "@/components/Common/Buttons";
 import { useCrearMonturasExcel } from "@/hooks/excel";
@@ -117,6 +118,14 @@ export const DropCrearMonturas = () => {
 
           {downloading ? "Descargando..." : "Descargar"}
         </BaseButton>
+      </div>
+
+      {/* ADVERTENCIA */}
+      <div className="mb-5 p-4 rounded-2xl bg-yellow-light-4 border border-yellow-light-2 text-yellow-dark-2 text-xs flex gap-3 items-start shadow-sm">
+        <AlertTriangle className="text-yellow-dark shrink-0 mt-0.5" size={16} />
+        <div>
+          <span className="font-bold">Nota importante:</span> Recuerda que al crear monturas, se considerará la cantidad únicamente para la sede actual y para el resto de sedes será cero.
+        </div>
       </div>
 
       {/* DROPZONE */}

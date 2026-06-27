@@ -9,6 +9,8 @@ import EditAccessoryModal from "./EditAccessoryModal";
 import { Edit3, Power, Search, Package } from "lucide-react";
 import { StatusModal, LoadingModal, ConfirmModal } from "@/components/Common/modal";
 import { STATUS_MODAL } from "@/commons/constants";
+import { ClassificationBadge } from "@/components/Common/ClassificationBadge";
+import { ImageWithZoom } from "@/components/Common/ImageWithZoom";
 
 export default function ListAccesories() {
   const { sedeId } = useSessionUser();
@@ -120,6 +122,9 @@ export default function ListAccesories() {
                   Nombre / Código
                 </th>
                 <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3">
+                  Clasificación
+                </th>
+                <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3">
                   Color / Ubicación
                 </th>
                 <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3">
@@ -138,7 +143,7 @@ export default function ListAccesories() {
               {filteredAccessories.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={5}
+                    colSpan={6}
                     className="px-6 py-24 text-center text-dark-5 font-bold uppercase text-[10px] tracking-widest"
                   >
                     {searchTerm.trim() !== ""
@@ -154,16 +159,14 @@ export default function ListAccesories() {
                   >
                     <td className="px-6 py-5">
                       <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 flex items-center justify-center bg-blue-light/20 rounded-xl text-blue shadow-sm group-hover:scale-110 transition-transform">
-                          {item.imagenUrl ? (
-                            <img
-                              src={item.imagenUrl}
-                              alt={item.nombre}
-                              className="h-full w-full object-cover rounded-xl"
-                            />
-                          ) : (
-                            <Package size={20} strokeWidth={2.5} />
-                          )}
+                        <div className="h-10 w-10 flex items-center justify-center bg-blue-light/20 rounded-xl text-blue shadow-sm group-hover:scale-110 transition-transform overflow-hidden">
+                          <ImageWithZoom
+                            src={item.imagenUrl}
+                            alt={item.nombre}
+                            className="h-full w-full rounded-xl"
+                            imgClassName="h-full w-full object-cover rounded-xl"
+                            fallbackIcon={<Package size={20} strokeWidth={2.5} />}
+                          />
                         </div>
                         <div className="flex flex-col">
                           <span className="font-black text-dark uppercase text-xs tracking-tight">
@@ -175,11 +178,18 @@ export default function ListAccesories() {
                         </div>
                       </div>
                     </td>
+                    <td className="px-6 py-5">
+                      {item.clasificacion ? (
+                        <ClassificationBadge text={item.clasificacion} />
+                      ) : (
+                        <span className="text-[10px] text-dark-5 font-bold uppercase">-</span>
+                      )}
+                    </td>
                     <td className="px-6 py-5 text-dark-2">
                       <div className="flex flex-col">
                         <span className="font-bold text-dark text-xs">{item.color || "-"}</span>
-                        <span className="text-[10px] text-dark-5 font-bold uppercase mt-0.5">
-                          {item.producto?.ubicacion ?? item.ubicacion ?? "-"}
+                        <span className="text-[9px] text-gray-6 font-medium mt-0.5">
+                          Ubi: {item.producto?.ubicacion ?? item.ubicacion ?? "-"}
                         </span>
                       </div>
                     </td>

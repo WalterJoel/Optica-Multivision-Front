@@ -1,4 +1,4 @@
-import { PRODUCTOS } from "@/commons/constants";
+import { PRODUCTOS, ClasificacionLentes, PrioridadLentes } from "@/commons/constants";
 export interface ILens {
   id: number;
   marca: string;
@@ -10,10 +10,13 @@ export interface ILens {
   kitId?: number | null;
   imagenUrl?: string | null;
   activo?: boolean;
+  clasificacion: ClasificacionLentes;
+  prioridad?: PrioridadLentes | null;
 }
 
 export type CreateLens = Omit<ILens, "id" | "productoId"> & {
   tipo: PRODUCTOS;
+  sedeId: number;
 };
 
 export type InventoryByStoreResponse = {

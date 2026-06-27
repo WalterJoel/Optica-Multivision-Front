@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { BaseInput, BaseFile, BaseTarea } from "@/components/Common/Inputs";
+import { BaseInput, BaseFile, BaseTarea, BaseSelect } from "@/components/Common/Inputs";
 import { BaseButton } from "@/components/Common/Buttons/BaseButton";
 import { ICreateAccessory } from "@/types/products";
 import { useCreateAccessory } from "@/hooks/products/accesories/useCreateAccesory";
 import { StatusModal, LoadingModal } from "@/components/Common/modal";
-import { STATUS_MODAL } from "@/commons/constants";
+import { STATUS_MODAL, ClasificacionAccesorios } from "@/commons/constants";
 import { useSessionUser } from "@/hooks/session";
 
 const emptyForm: ICreateAccessory = {
@@ -16,8 +16,10 @@ const emptyForm: ICreateAccessory = {
   codigoAccesorio: "",
   imagenUrl: "",
   ubicacion: "",
+  clasificacion: "" as unknown as ClasificacionAccesorios,
   cantidad: "" as unknown as number,
   color: "",
+  sedeId: 0,
 };
 
 export default function CreateAccessory() {
@@ -44,6 +46,11 @@ export default function CreateAccessory() {
     }));
   };
 
+  const onChangeSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setForm((p) => ({ ...p, [name]: value }));
+  };
+
   const onChangeFile = (file: File | null) => {
     setSelectedFile(file);
   };
@@ -55,6 +62,7 @@ export default function CreateAccessory() {
       precioVenta: Number(form.precioVenta) || 0,
       cantidad: Number(form.cantidad) || 0,
       imagenUrl: imageUrl,
+      sedeId: Number(sedeId),
     });
   };
 
@@ -159,6 +167,21 @@ export default function CreateAccessory() {
           placeholder="Estante / Cajón"
           type="string"
           onChange={onChange}
+        />
+
+        <BaseSelect
+          label="Clasificación"
+          name="clasificacion"
+          value={form.clasificacion}
+          onChange={onChangeSelect}
+          required
+          options={[
+            { label: "Seleccionar", value: "" },
+            ...Object.values(ClasificacionAccesorios).map((val) => ({
+              label: val,
+              value: val,
+            })),
+          ]}
         />
 
 

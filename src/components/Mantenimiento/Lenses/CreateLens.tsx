@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useCreateLens } from "@/hooks/products";
 import { BaseInput, BaseFile } from "@/components/Common/Inputs";
-import { PRODUCTOS, STATUS_MODAL } from "@/commons/constants";
+import { PRODUCTOS, STATUS_MODAL, ClasificacionLentes, PrioridadLentes } from "@/commons/constants";
 import { CreateLens } from "@/types/products";
 import { StatusModal, LoadingModal } from "@/components/Common/modal";
 import {
@@ -12,8 +12,10 @@ import {
 } from "@/components/Common/Inputs/BaseSelect";
 import { BaseButton } from "@/components/Common/Buttons";
 import { useKits } from "@/hooks/kits";
+import { AlertTriangle, Info } from "lucide-react";
+import { useSessionUser } from "@/hooks/session";
 
-const initialForm = {
+const initialForm: CreateLens = {
   marca: "",
   material: "",
   precio_serie1: "" as unknown as number,
@@ -22,6 +24,9 @@ const initialForm = {
   kitId: null,
   imagenUrl: null,
   tipo: PRODUCTOS.LENTE,
+  clasificacion: "" as unknown as ClasificacionLentes,
+  prioridad: null as PrioridadLentes | null,
+  sedeId: 0,
 };
 
 export default function LensForm() {
@@ -32,6 +37,7 @@ export default function LensForm() {
   const [triggerUpload, setTriggerUpload] = useState(false);
 
   // Hooks
+  const { sedeId } = useSessionUser();
   const { addLens, success, statusMessage, loading } = useCreateLens();
   const { kits, getAllKits } = useKits();
 
@@ -52,6 +58,8 @@ export default function LensForm() {
       precio_serie2: Number(form.precio_serie2) || 0,
       precio_serie3: Number(form.precio_serie3) || 0,
       imagenUrl: imageUrl || null,
+      prioridad: form.prioridad || null,
+      sedeId: Number(sedeId),
     };
 
     await addLens(payload);
@@ -165,6 +173,51 @@ export default function LensForm() {
           />
         </div>
 
+        <div className="flex flex-col lg:flex-row gap-5 mb-5">
+          <BaseSelect
+            label="Clasificación"
+            name="clasificacion"
+            value={form.clasificacion}
+            required
+            options={[
+              { label: "Seleccione una clasificación", value: "" },
+              ...Object.values(ClasificacionLentes).map((val) => ({
+                label: val,
+                value: val,
+              })),
+            ]}
+            onChange={(e) =>
+              setForm((prev) => ({
+                ...prev,
+                clasificacion: e.target.value as ClasificacionLentes,
+              }))
+            }
+          />
+          <BaseSelect
+            label="Prioridad de Visualización"
+            name="prioridad"
+            value={form.prioridad ?? ""}
+            options={[
+              { label: "Sin prioridad (Orden por defecto)", value: "" },
+              ...Object.values(PrioridadLentes)
+                .filter((val) => typeof val === "number")
+                .map((val) => {
+                  const key = PrioridadLentes[val as number];
+                  return {
+                    label: key.replace("MOSTRAR_", "MOSTRAR ").replace("_", " "),
+                    value: val,
+                  };
+                }),
+            ]}
+            onChange={(e) =>
+              setForm((prev) => ({
+                ...prev,
+                prioridad: e.target.value === "" ? null : (Number(e.target.value) as PrioridadLentes),
+              }))
+            }
+          />
+        </div>
+
         <BaseFile
           label="Imagen"
           name="imagen"
@@ -179,13 +232,26 @@ export default function LensForm() {
           onUploadError={() => setTriggerUpload(false)}
         />
 
+        {/* ADVERTENCIA SEDE PRECIOS */}
+        <div className="mt-6 p-4 rounded-2xl bg-yellow-light-4 border border-yellow-light-2 text-yellow-dark-2 text-xs flex gap-3 items-start shadow-sm text-left w-full">
+          <AlertTriangle className="text-yellow-dark shrink-0 mt-0.5" size={16} />
+          <div>
+            <span className="font-bold">Nota importante:</span> Recuerda que al crear lentes, se registrarán estos precios únicamente para la sede actual y para el resto de sedes el precio será cero.
+          </div>
+        </div>
+
+        {/* INFO KIT */}
+        <div className="mt-3 p-4 rounded-2xl bg-blue-light-6 border border-blue-light-5 text-blue text-xs flex gap-3 items-start shadow-sm text-left w-full">
+          <Info className="text-blue shrink-0 mt-0.5" size={16} />
+          <div>
+            <span className="font-bold">Información:</span> Puedes cambiar de KIT luego.
+          </div>
+        </div>
+
         <div className="flex flex-col items-center mt-6">
           <BaseButton className="min-w-[240px]" type="submit" disabled={loading}>
             Guardar
           </BaseButton>
-          <p className="mt-4 text-center text-sm text-green-600">
-            Puedes cambiar de KIT luego
-          </p>
         </div>
       </form>
 

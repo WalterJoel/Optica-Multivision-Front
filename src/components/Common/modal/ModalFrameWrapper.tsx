@@ -2,11 +2,13 @@ interface ModalFrameWrapperProps {
   children: React.ReactNode;
   variant?: "blue" | "red" | "yellow";
   size?: "xs" | "sm" | "md" | "lg" | "xl";
+  onClose?: () => void;
 }
 export function ModalFrameWrapper({
   children,
   variant = "blue",
   size = "sm",
+  onClose,
 }: ModalFrameWrapperProps) {
   const sizeClasses = {
     xs: "max-w-[300px]",
@@ -26,9 +28,13 @@ export function ModalFrameWrapper({
   const colors = borderPairs[variant];
 
   return (
-    <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-slate-900/40 backdrop-blur-md p-4 animate-in fade-in duration-500">
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-[99999] flex items-center justify-center bg-slate-900/40 backdrop-blur-md p-4 animate-in fade-in duration-500"
+    >
       {/* CONTENEDOR DE BORDE DUAL (Sólido, sin gradiente) */}
       <div
+        onClick={(e) => e.stopPropagation()}
         className={`
           ${sizeClasses[size]} 
           w-full rounded-[2.5rem] 

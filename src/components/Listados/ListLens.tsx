@@ -3,6 +3,9 @@
 import { useLenses } from "@/hooks/products";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { ImageWithZoom } from "@/components/Common/ImageWithZoom";
+import { useMemo } from "react";
+import { PrioridadLentes } from "@/commons/constants";
 
 function LensCardFrame({
   lens,
@@ -43,15 +46,14 @@ function LensCardFrame({
 
           {/* FOTO / ICONO */}
           <div className="w-20 h-20 bg-yellow-light-4 rounded-xl flex items-center justify-center border border-yellow-light-2 overflow-hidden p-2">
-            {lens.imagenUrl ? (
-              <img
-                src={lens.imagenUrl}
-                alt={lens.marca}
-                className="w-full h-full object-contain"
-              />
-            ) : (
-              <span className="text-4xl">👁️</span>
-            )}
+            <ImageWithZoom
+              src={lens.imagenUrl}
+              alt={lens.marca}
+              className="w-full h-full"
+              imgClassName="w-full h-full object-contain"
+              placeholderUrl="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGnQPr3op1MGXxOFrwPtuxTYNQM_1H3ZLsGA&s"
+              fallbackIcon={<span className="text-4xl">👁️</span>}
+            />
           </div>
 
           {/* NOMBRE + MATERIAL */}
@@ -91,6 +93,19 @@ export default function ListLens() {
   const router = useRouter();
   const { lenses, loading } = useLenses();
 
+  // Ordenar por prioridad: PrioridadLentes (1 a 5), luego el resto
+  const sortedLenses = useMemo(() => {
+    return [...lenses].sort((a, b) => {
+      const aVal = a.prioridad !== null && a.prioridad !== undefined ? Number(a.prioridad) : 999;
+      const bVal = b.prioridad !== null && b.prioridad !== undefined ? Number(b.prioridad) : 999;
+
+      if (aVal !== bVal) {
+        return aVal - bVal;
+      }
+      return (a.marca || "").localeCompare(b.marca || "");
+    });
+  }, [lenses]);
+
   // mode:Stock para que pueda editar la matriz
   const handleOpenMatrix = (id: number) => {
     router.push(`/matrix?lenteId=${id}&mode=stockS`);
@@ -106,7 +121,7 @@ export default function ListLens() {
                 Cargando...
               </div>
             ) : (
-              lenses.map((lens) => (
+              sortedLenses.map((lens) => (
                 <LensCardFrame key={lens.id} lens={lens}>
                   <Link
                     href={{

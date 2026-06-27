@@ -5,7 +5,7 @@ import { BaseInput, BaseFile } from "@/components/Common/Inputs";
 import { BaseButton } from "@/components/Common/Buttons/BaseButton";
 import { ILens, CreateLens } from "@/types/products";
 import { ModalFrameWrapper, StatusModal, LoadingModal } from "@/components/Common/modal";
-import { STATUS_MODAL } from "@/commons/constants";
+import { STATUS_MODAL, ClasificacionLentes, PrioridadLentes } from "@/commons/constants";
 import { useUpdateLens } from "@/hooks/products/lens/useUpdateLens";
 import { Eye, X } from "lucide-react";
 import { useKits } from "@/hooks/kits";
@@ -22,6 +22,8 @@ const emptyForm = {
   precio_serie3: "" as unknown as number,
   kitId: null as number | null,
   imagenUrl: null as string | null,
+  clasificacion: "" as unknown as ClasificacionLentes,
+  prioridad: null as PrioridadLentes | null,
 };
 
 export default function EditLensModal({
@@ -64,6 +66,8 @@ export default function EditLensModal({
       precio_serie3: Number(form.precio_serie3) || 0,
       kitId: form.kitId,
       imagenUrl: imageUrl || form.imagenUrl || null,
+      clasificacion: form.clasificacion,
+      prioridad: form.prioridad || null,
     };
 
     await updateLens(lens.id, payload);
@@ -90,6 +94,8 @@ export default function EditLensModal({
         precio_serie3: lens.precio_serie3,
         kitId: lens.kitId ?? null,
         imagenUrl: lens.imagenUrl ?? null,
+        clasificacion: lens.clasificacion ?? "" as unknown as ClasificacionLentes,
+        prioridad: lens.prioridad ?? null,
       });
       setSelectedFile(null);
     }
@@ -228,6 +234,51 @@ export default function EditLensModal({
                     setForm((prev) => ({
                       ...prev,
                       kitId: e.target.value === "" ? null : Number(e.target.value),
+                    }))
+                  }
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <BaseSelect
+                  label="Clasificación"
+                  name="clasificacion"
+                  value={form.clasificacion}
+                  required
+                  options={[
+                    { label: "Seleccione una clasificación", value: "" },
+                    ...Object.values(ClasificacionLentes).map((val) => ({
+                      label: val,
+                      value: val,
+                    })),
+                  ]}
+                  onChange={(e) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      clasificacion: e.target.value as ClasificacionLentes,
+                    }))
+                  }
+                />
+                <BaseSelect
+                  label="Prioridad de Visualización"
+                  name="prioridad"
+                  value={form.prioridad ?? ""}
+                  options={[
+                    { label: "Sin prioridad (Orden por defecto)", value: "" },
+                    ...Object.values(PrioridadLentes)
+                      .filter((val) => typeof val === "number")
+                      .map((val) => {
+                        const key = PrioridadLentes[val as number];
+                        return {
+                          label: key.replace("MOSTRAR_", "MOSTRAR ").replace("_", " "),
+                          value: val,
+                        };
+                      }),
+                  ]}
+                  onChange={(e) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      prioridad: e.target.value === "" ? null : (Number(e.target.value) as PrioridadLentes),
                     }))
                   }
                 />

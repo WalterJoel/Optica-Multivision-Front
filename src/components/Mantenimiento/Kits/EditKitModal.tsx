@@ -222,14 +222,19 @@ export default function EditKitModal({
                   onChange={onChange}
                 />
 
-                <BaseInput
-                  label="Precio Total (S/)"
-                  name="precio"
-                  type="number"
-                  value={form.precio}
-                  disabled
-                  onChange={onChange}
-                />
+                <div className="flex flex-col w-full">
+                  <BaseInput
+                    label="Precio Total (S/)"
+                    name="precio"
+                    type="number"
+                    value={form.precio}
+                    disabled
+                    onChange={onChange}
+                  />
+                  <span className="text-[10px] text-gray-500 font-semibold mt-1 ml-1">
+                    * Se calcula automáticamente al agregar/quitar accesorios abajo.
+                  </span>
+                </div>
               </div>
 
               <div className="mt-4">

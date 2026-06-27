@@ -1,5 +1,7 @@
 "use client";
 
+import { ClasificacionMonturas } from "@/commons/constants";
+
 type Props = {
   filters: any;
   setFilters: (v: any) => void;
@@ -23,6 +25,20 @@ export default function MonturaFilters({ filters, setFilters }: Props) {
             className="w-full h-10 pl-10 pr-3 rounded-xl border border-blue-light-5 text-sm outline-none focus:ring-2 focus:ring-blue-light/40 transition"
           />
         </div>
+
+        {/* CLASIFICACION */}
+        <select
+          value={filters.clasificacion}
+          onChange={(e) => setFilters({ ...filters, clasificacion: e.target.value })}
+          className="h-10 px-3 rounded-xl border border-blue-light-5 text-sm bg-white"
+        >
+          <option value="">Clasificación</option>
+          {Object.values(ClasificacionMonturas).map((val) => (
+            <option key={val} value={val}>
+              {val}
+            </option>
+          ))}
+        </select>
 
         {/* SEXO */}
         <select
@@ -59,6 +75,8 @@ export default function MonturaFilters({ filters, setFilters }: Props) {
               precioMin: 0,
               precioMax: 9999,
               search: "",
+              codigo: "",
+              clasificacion: "",
             })
           }
           className="h-10 px-4 rounded-xl text-xs font-bold text-gray-400 ml-auto"

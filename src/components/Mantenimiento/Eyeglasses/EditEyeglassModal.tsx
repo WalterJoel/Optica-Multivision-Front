@@ -5,7 +5,7 @@ import { BaseInput, BaseFile, BaseSelect } from "@/components/Common/Inputs";
 import { BaseButton } from "@/components/Common/Buttons/BaseButton";
 import { IEyeglass, IUpdateEyeglass } from "@/types/products";
 import { ModalFrameWrapper, StatusModal, LoadingModal } from "@/components/Common/modal";
-import { STATUS_MODAL } from "@/commons/constants";
+import { STATUS_MODAL, ClasificacionMonturas } from "@/commons/constants";
 import { useUpdateEyeglass } from "@/hooks/products/eyeglasses";
 import { Glasses, X } from "lucide-react";
 
@@ -19,7 +19,7 @@ const emptyForm: IUpdateEyeglass = {
   talla: "",
   color: "",
   cantidad: "" as unknown as number,
-  ubicacion: "",
+  clasificacion: "" as unknown as ClasificacionMonturas,
   formaFacial: "",
   sexo: "",
   imagenUrl: "",
@@ -97,7 +97,7 @@ export default function EditEyeglassModal({
         talla: eyeglass.talla ?? "",
         color: eyeglass.color ?? "",
         cantidad: (eyeglass.producto?.cantidad ?? "") as unknown as number,
-        ubicacion: eyeglass.producto?.ubicacion ?? "",
+        clasificacion: eyeglass.clasificacion ?? "" as unknown as ClasificacionMonturas,
         formaFacial: eyeglass.formaFacial ?? "",
         sexo: eyeglass.sexo ?? "",
         imagenUrl: eyeglass.imagenUrl ?? "",
@@ -259,11 +259,19 @@ export default function EditEyeglassModal({
                   onChange={onChange}
                 />
 
-                <BaseInput
-                  label="Ubicación"
-                  name="ubicacion"
-                  value={form.ubicacion ?? ""}
-                  onChange={onChange}
+                <BaseSelect
+                  label="Clasificación"
+                  name="clasificacion"
+                  value={form.clasificacion ?? ""}
+                  onChange={onChangeSelect}
+                  required
+                  options={[
+                    { label: "Seleccionar", value: "" },
+                    ...Object.values(ClasificacionMonturas).map((val) => ({
+                      label: val,
+                      value: val,
+                    })),
+                  ]}
                 />
               </div>
             </div>

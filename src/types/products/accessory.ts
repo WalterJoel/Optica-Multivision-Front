@@ -1,4 +1,4 @@
-import { PRODUCTOS } from "@/commons/constants";
+import { PRODUCTOS, ClasificacionAccesorios } from "@/commons/constants";
 
 export interface IAccessory {
   id: number;
@@ -10,6 +10,7 @@ export interface IAccessory {
   precioCompra: number;
   nombre: string;
   ubicacion?: string;
+  clasificacion: ClasificacionAccesorios;
   imagenUrl?: string;
   createdAt?: string;
   cantidad: number;
@@ -24,7 +25,9 @@ export interface IAccessory {
   };
 }
 
-export type ICreateAccessory = Omit<IAccessory, "id" | "productoId" | "createdAt" | "producto" | "sedeId"> & {};
+export type ICreateAccessory = Omit<
+  IAccessory, "id" | "productoId" | "createdAt" | "producto"
+>;
 
 export type IUpdateAccessory = Partial<ICreateAccessory> & { productoId?: number; activo?: boolean };
 

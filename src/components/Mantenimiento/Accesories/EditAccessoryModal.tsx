@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BaseInput, BaseFile } from "@/components/Common/Inputs";
+import { BaseInput, BaseFile, BaseSelect } from "@/components/Common/Inputs";
 import { BaseButton } from "@/components/Common/Buttons/BaseButton";
 import { IAccessory, IUpdateAccessory } from "@/types/products";
 import { ModalFrameWrapper, StatusModal, LoadingModal } from "@/components/Common/modal";
-import { STATUS_MODAL } from "@/commons/constants";
+import { STATUS_MODAL, ClasificacionAccesorios } from "@/commons/constants";
 import { useUpdateAccessory } from "@/hooks/products/accesories/useUpdateAccesory";
 import { Package, X } from "lucide-react";
 
@@ -17,6 +17,7 @@ const emptyForm: IUpdateAccessory = {
   cantidad: "" as unknown as number,
   color: "",
   ubicacion: "",
+  clasificacion: "" as unknown as ClasificacionAccesorios,
   imagenUrl: "",
 };
 
@@ -46,6 +47,12 @@ export default function EditAccessoryModal({
       ...p,
       [name]: value,
     }));
+  };
+
+  //Select Clasificacion
+  const onChangeSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setForm((p) => ({ ...p, [name]: value }));
   };
 
   const onChangeFile = (file: File | null) => {
@@ -85,6 +92,7 @@ export default function EditAccessoryModal({
         color: accessory.color ?? "",
         cantidad: (accessory.producto?.cantidad ?? accessory.cantidad ?? "") as unknown as number,
         ubicacion: accessory.producto?.ubicacion ?? accessory.ubicacion ?? "",
+        clasificacion: accessory.clasificacion ?? "" as unknown as ClasificacionAccesorios,
         imagenUrl: accessory.imagenUrl ?? "",
       });
       setSelectedFile(null);
@@ -225,6 +233,21 @@ export default function EditAccessoryModal({
                   name="ubicacion"
                   value={form.ubicacion ?? ""}
                   onChange={onChange}
+                />
+
+                <BaseSelect
+                  label="Clasificación"
+                  name="clasificacion"
+                  value={form.clasificacion ?? ""}
+                  onChange={onChangeSelect}
+                  required
+                  options={[
+                    { label: "Seleccionar", value: "" },
+                    ...Object.values(ClasificacionAccesorios).map((val) => ({
+                      label: val,
+                      value: val,
+                    })),
+                  ]}
                 />
               </div>
             </div>

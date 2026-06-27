@@ -16,7 +16,12 @@ export function useCreateLens() {
       setSuccess(true);
       setMessage("Lente creado correctamente");
     } catch (err: any) {
-      setMessage("Error al registrar lente");
+      const backendMessage = err.response?.data?.message;
+      setMessage(
+        backendMessage
+          ? (Array.isArray(backendMessage) ? backendMessage[0] : backendMessage)
+          : "Error al registrar lente"
+      );
     } finally {
       setLoading(false);
     }

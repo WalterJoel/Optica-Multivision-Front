@@ -1,5 +1,7 @@
 "use client";
 
+import { ClassificationBadge } from "@/components/Common/ClassificationBadge";
+import { ImageWithZoom } from "@/components/Common/ImageWithZoom";
 import { BaseButton } from "@/components/Common/Buttons";
 import { useEyeglasses } from "@/hooks/products/eyeglasses";
 import { IEyeglass } from "@/types/products";
@@ -20,6 +22,7 @@ type Filters = {
   precioMin?: number;
   precioMax?: number;
   search?: string;
+  clasificacion?: string;
 };
 
 function EyeglassCardFrame({
@@ -51,17 +54,18 @@ function EyeglassCardFrame({
       <div className="relative bg-white rounded-[1.5rem] w-full flex items-stretch">
         {/* LEFT IMAGE */}
         <div className="w-[40%] bg-white flex items-center justify-center border-r border-yellow-light-2 rounded-[1.6rem] overflow-hidden p-2">
-          {eyeglass.imagenUrl ? (
-            <img
-              src={eyeglass.imagenUrl}
-              alt={eyeglass.marca}
-              className="w-full h-full object-contain"
-            />
-          ) : (
-            <div className="w-14 h-14 flex items-center justify-center overflow-hidden">
-              <span className="text-4xl leading-none">👓</span>
-            </div>
-          )}
+          <ImageWithZoom
+            src={eyeglass.imagenUrl}
+            alt={eyeglass.marca}
+            className="w-full h-full"
+            imgClassName="w-full h-full object-contain"
+            placeholderUrl="https://images.unsplash.com/photo-1574258495973-f010dfbb5371?w=800"
+            fallbackIcon={
+              <div className="w-14 h-14 flex items-center justify-center overflow-hidden">
+                <span className="text-4xl leading-none">👓</span>
+              </div>
+            }
+          />
         </div>
 
         {/* RIGHT CONTENT */}
@@ -75,9 +79,12 @@ function EyeglassCardFrame({
             <h3 className="text-[11px] text-gray-400 font-semibold">
               {eyeglass.codigo}
             </h3>
-            <p className="text-[11px] text-gray-400 font-semibold">
-              {eyeglass.material} • {eyeglass.color}
-            </p>
+            <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
+              <span className="text-[11px] text-gray-400 font-semibold">
+                {eyeglass.material} • {eyeglass.color}
+              </span>
+              <ClassificationBadge text={eyeglass.clasificacion} />
+            </div>
 
             <p className="text-[10px] text-gray-500 mt-1">
               📐 {eyeglass.talla} • {eyeglass.formaFacial}
@@ -124,6 +131,7 @@ export default function ListEyeglasses({ filters }: { filters?: Filters }) {
     const sexo = filters?.sexo?.toUpperCase();
     const forma = filters?.formaFacial?.toUpperCase();
     const search = filters?.search?.toLowerCase() || "";
+    const clasificacion = filters?.clasificacion?.toUpperCase() || "";
 
     const min = filters?.precioMin ?? 0;
     const max = filters?.precioMax ?? 999999;
@@ -133,6 +141,7 @@ export default function ListEyeglasses({ filters }: { filters?: Filters }) {
 
       const matchSexo = !sexo || p.sexo?.toUpperCase() === sexo;
       const matchForma = !forma || p.formaFacial?.toUpperCase() === forma;
+      const matchClasificacion = !clasificacion || p.clasificacion?.toUpperCase() === clasificacion;
 
       const matchPrecio = precio >= min && precio <= max;
 
@@ -143,7 +152,7 @@ export default function ListEyeglasses({ filters }: { filters?: Filters }) {
         p.color?.toLowerCase().includes(search) ||
         p.codigo?.toLowerCase().includes(search);
 
-      return matchSexo && matchForma && matchPrecio && matchSearch;
+      return matchSexo && matchForma && matchPrecio && matchSearch && matchClasificacion;
     });
   }, [eyeglasses, filters]);
 

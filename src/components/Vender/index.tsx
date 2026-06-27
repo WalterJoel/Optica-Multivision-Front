@@ -24,12 +24,14 @@ export default function Vender() {
     precioMax: 9999,
     search: "",
     codigo: "",
+    clasificacion: "",
   });
 
   const [accessoryFilters, setAccessoryFilters] = useState({
     search: "",
     precioMin: 0,
     precioMax: 9999,
+    clasificacion: "",
   });
 
   const categories = [

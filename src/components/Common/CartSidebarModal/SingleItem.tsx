@@ -13,6 +13,7 @@ import {
 } from "@/redux/features/cart-slice";
 
 import { Glasses, Package } from "lucide-react";
+import { ImageWithZoom } from "@/components/Common/ImageWithZoom";
 
 interface SingleItemProps {
   item: CartItem;
@@ -128,10 +129,11 @@ const SingleItem: React.FC<SingleItemProps> = ({
         <div className="flex items-center justify-center rounded-[10px] bg-gray-3 max-w-[90px] w-full h-22.5">
           <div className="w-16 h-16 bg-yellow-light-4 rounded-xl flex items-center justify-center border border-yellow-light-2 overflow-hidden shrink-0">
             {resolvedImg ? (
-              <img
+              <ImageWithZoom
                 src={resolvedImg}
                 alt={item.productName}
-                className="w-full h-full object-cover"
+                className="w-full h-full"
+                imgClassName="w-full h-full object-cover"
               />
             ) : item.isLens ? (
               <div className="w-full h-full flex items-center justify-center bg-blue-light/10 text-blue">

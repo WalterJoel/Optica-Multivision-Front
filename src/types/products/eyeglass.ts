@@ -1,4 +1,4 @@
-import { PRODUCTOS } from "@/commons/constants";
+import { PRODUCTOS, ClasificacionMonturas } from "@/commons/constants";
 
 export interface IEyeglass {
   id: number;
@@ -17,6 +17,7 @@ export interface IEyeglass {
   imagenUrl?: string;
   cantidad: number;
   createdAt?: string;
+  clasificacion: ClasificacionMonturas;
   producto?: {
     id: number;
     nombre: string;
@@ -29,6 +30,7 @@ export interface IEyeglass {
 }
 
 export type ICreateEyeglass = Omit<
-  IEyeglass, "id" | "productoId" | "createdAt" | "producto" | "sedeId"> & { ubicacion?: string };
+  IEyeglass, "id" | "productoId" | "createdAt" | "producto"
+>;
 
 export type IUpdateEyeglass = Partial<ICreateEyeglass> & { productoId?: number; activo?: boolean };

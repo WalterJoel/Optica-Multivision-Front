@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { BaseInput, BaseFile, BaseSelect } from "@/components/Common/Inputs";
 import { BaseButton } from "@/components/Common/Buttons/BaseButton";
 import { StatusModal, LoadingModal } from "@/components/Common/modal";
-import { STATUS_MODAL, PRODUCTOS } from "@/commons/constants";
+import { STATUS_MODAL, PRODUCTOS, ClasificacionMonturas } from "@/commons/constants";
 import { ICreateEyeglass } from "@/types/products";
 import { useCreateEyeglass } from "@/hooks/products/eyeglasses";
 import { useSessionUser } from "@/hooks/session";
@@ -21,8 +21,9 @@ const emptyForm: ICreateEyeglass = {
   sexo: "",
   imagenUrl: "",
   talla: "",
-  ubicacion: "",
+  clasificacion: "" as unknown as ClasificacionMonturas,
   cantidad: "" as unknown as number,
+  sedeId: 0,
 };
 
 export default function CreateEyeglass() {
@@ -63,6 +64,7 @@ export default function CreateEyeglass() {
       precioVenta: Number(form.precioVenta) || 0,
       cantidad: Number(form.cantidad) || 0,
       imagenUrl: imageUrl,
+      sedeId: Number(sedeId),
     });
   };
 
@@ -183,14 +185,19 @@ export default function CreateEyeglass() {
           required
           onChange={onChange}
         />
-        <BaseInput
-          label="Ubicación"
-          name="ubicacion"
-          value={form.ubicacion}
-          placeholder="Ejemplo: Estante 32 ..."
-          type="string"
-
-          onChange={onChange}
+        <BaseSelect
+          label="Clasificación"
+          name="clasificacion"
+          value={form.clasificacion}
+          onChange={onChangeSelect}
+          required
+          options={[
+            { label: "Seleccionar", value: "" },
+            ...Object.values(ClasificacionMonturas).map((val) => ({
+              label: val,
+              value: val,
+            })),
+          ]}
         />
 
         <BaseSelect

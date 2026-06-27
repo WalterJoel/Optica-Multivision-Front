@@ -1,5 +1,7 @@
 "use client";
 
+import { ClassificationBadge } from "@/components/Common/ClassificationBadge";
+import { ImageWithZoom } from "@/components/Common/ImageWithZoom";
 import { BaseButton } from "@/components/Common/Buttons";
 import { useAccessories } from "@/hooks/products/accesories/useAccessories";
 import { IAccessory } from "@/types/products";
@@ -19,6 +21,7 @@ type Filters = {
   precioMin?: number;
   precioMax?: number;
   color?: string;
+  clasificacion?: string;
 };
 
 /* CARD */
@@ -51,17 +54,18 @@ function AccessoryCardFrame({
       <div className="relative bg-white rounded-[1.5rem] w-full flex items-stretch">
         {/* IMAGE */}
         <div className="w-[40%] bg-white flex items-center justify-center border-r border-yellow-light-2 rounded-[1.6rem] overflow-hidden p-2">
-          {accessory.imagenUrl ? (
-            <img
-              src={accessory.imagenUrl}
-              alt={accessory.nombre}
-              className="w-full h-full object-contain"
-            />
-          ) : (
-            <div className="w-14 h-14 flex items-center justify-center overflow-hidden">
-              <span className="text-4xl leading-none">🧰</span>
-            </div>
-          )}
+          <ImageWithZoom
+            src={accessory.imagenUrl}
+            alt={accessory.nombre}
+            className="w-full h-full"
+            imgClassName="w-full h-full object-contain"
+            placeholderUrl="https://images.unsplash.com/photo-1581235720704-06d3acfcb36f?w=800"
+            fallbackIcon={
+              <div className="w-14 h-14 flex items-center justify-center overflow-hidden">
+                <span className="text-4xl leading-none">🧰</span>
+              </div>
+            }
+          />
         </div>
 
         {/* CONTENT */}
@@ -75,9 +79,12 @@ function AccessoryCardFrame({
               {accessory.codigoAccesorio || "Sin código"}
             </h3>
 
-            <p className="text-[11px] text-gray-400 font-semibold">
-              🎨 {accessory.color || "Sin color"}
-            </p>
+            <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
+              <span className="text-[11px] text-gray-400 font-semibold">
+                🎨 {accessory.color || "Sin color"}
+              </span>
+              <ClassificationBadge text={accessory.clasificacion} />
+            </div>
 
 
 
@@ -121,6 +128,7 @@ export default function ListAccessories({ filters }: { filters?: Filters }) {
     const min = filters?.precioMin ?? 0;
     const max = filters?.precioMax ?? 999999;
     const color = filters?.color || "";
+    const clasificacion = filters?.clasificacion?.toUpperCase() || "";
 
     return accessories.filter((item: IAccessory) => {
       const precio = Number(item.precioVenta) || 0;
@@ -135,7 +143,10 @@ export default function ListAccessories({ filters }: { filters?: Filters }) {
       const matchColor =
         !color || item.color?.toLowerCase() === color.toLowerCase();
 
-      return matchSearch && matchPrecio && matchColor;
+      const matchClasificacion =
+        !clasificacion || item.clasificacion?.toUpperCase() === clasificacion;
+
+      return matchSearch && matchPrecio && matchColor && matchClasificacion;
     });
   }, [accessories, filters]);
 

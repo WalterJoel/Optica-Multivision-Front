@@ -4,6 +4,8 @@ import { useEffect, useState, useMemo } from "react";
 import { StatusModal, LoadingModal, ConfirmModal } from "@/components/Common/modal";
 import { STATUS_MODAL } from "@/commons/constants";
 import EditLensModal from "./EditLensModal";
+import { ClassificationBadge } from "@/components/Common/ClassificationBadge";
+import { ImageWithZoom } from "@/components/Common/ImageWithZoom";
 import { ILens } from "@/types/products";
 import { Edit3, Power, Eye, Search } from "lucide-react";
 import { useLenses } from "@/hooks/products";
@@ -117,6 +119,12 @@ export default function ListLenses() {
                 Lente
               </th>
               <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3">
+                Clasificación
+              </th>
+              <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3">
+                Prioridad
+              </th>
+              <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3">
                 Material
               </th>
               <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3">
@@ -144,7 +152,7 @@ export default function ListLenses() {
             {filteredLenses.length === 0 ? (
               <tr>
                 <td
-                  colSpan={8}
+                  colSpan={10}
                   className="px-6 py-24 text-center text-dark-5 font-bold uppercase text-[10px] tracking-widest"
                 >
                   {searchTerm.trim() !== ""
@@ -160,16 +168,15 @@ export default function ListLenses() {
                 >
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 flex items-center justify-center bg-blue-light/20 rounded-xl text-blue shadow-sm group-hover:scale-110 transition-transform">
-                        {l.imagenUrl ? (
-                          <img
-                            src={l.imagenUrl}
-                            alt={l.marca}
-                            className="h-full w-full object-cover rounded-xl"
-                          />
-                        ) : (
-                          <Eye size={20} strokeWidth={2.5} />
-                        )}
+                      <div className="h-10 w-10 flex items-center justify-center bg-blue-light/20 rounded-xl text-blue shadow-sm group-hover:scale-110 transition-transform overflow-hidden">
+                        <ImageWithZoom
+                          src={l.imagenUrl}
+                          alt={l.marca}
+                          className="h-full w-full rounded-xl"
+                          imgClassName="h-full w-full object-cover rounded-xl"
+                          fallbackIcon={<Eye size={20} strokeWidth={2.5} />}
+                          showFloatingButton={false}
+                        />
                       </div>
                       <div className="flex flex-col">
                         <span className="font-black text-dark uppercase text-xs tracking-tight">
@@ -180,6 +187,22 @@ export default function ListLenses() {
                         </span>
                       </div>
                     </div>
+                  </td>
+                  <td className="px-6 py-5">
+                    {l.clasificacion ? (
+                      <ClassificationBadge text={l.clasificacion} />
+                    ) : (
+                      <span className="text-[10px] text-dark-5 font-bold uppercase">-</span>
+                    )}
+                  </td>
+                  <td className="px-6 py-5">
+                    {l.prioridad ? (
+                      <span className="px-2.5 py-1 bg-blue-light/10 text-blue border border-blue-light/20 text-[10px] font-bold rounded-lg uppercase">
+                        {l.prioridad.replace("MOSTRAR_", "MOSTRAR ").replace("_", " ")}
+                      </span>
+                    ) : (
+                      <span className="text-[10px] text-dark-5 font-bold uppercase">-</span>
+                    )}
                   </td>
                   <td className="px-6 py-5 text-dark-2 uppercase font-medium">{l.material}</td>
                   <td className="px-6 py-5 text-dark-2 font-semibold">S/ {Number(l.precio_serie1).toFixed(2)}</td>
