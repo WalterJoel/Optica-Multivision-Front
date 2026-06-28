@@ -185,6 +185,7 @@ export const SaleNotePrint = ({ venta, sede }: SaleNotePrintProps) => {
         <thead>
           <tr>
             <th style={{ ...thStyle, width: "15mm", textAlign: "center" }}>Cant</th>
+            <th style={{ ...thStyle, width: "25mm" }}>Tipo</th>
             <th style={thStyle}>Descripción</th>
             <th style={{ ...thStyle, width: "30mm", textAlign: "right" }}>P. Unit</th>
             <th style={{ ...thStyle, width: "25mm", textAlign: "right" }}>Desc.</th>
@@ -198,15 +199,29 @@ export const SaleNotePrint = ({ venta, sede }: SaleNotePrintProps) => {
             const disc = Number(prod.descuento || 0);
             const sub = price * qty - disc;
 
-            const name = prod.stock?.lente
-              ? `${prod.stock.lente.marca} (${prod.stock.lente.material})`
-              : prod.producto?.nombre || "";
-
             return (
               <tr key={prod.id}>
                 <td style={{ ...tdStyle, textAlign: "center", fontWeight: "bold" }}>{qty}</td>
+                <td style={{ ...tdStyle, fontWeight: "bold", color: "#475569", textTransform: "uppercase" }}>
+                  {prod.tipoProducto}
+                </td>
                 <td style={tdStyle}>
-                  <div style={{ fontWeight: "bold", color: "#1e293b" }}>{name}</div>
+                  <div style={{ fontWeight: "bold", color: "#1e293b" }}>
+                    {prod.stock?.lente ? (
+                      `${prod.stock.lente.marca} (${prod.stock.lente.material})`
+                    ) : prod.producto?.montura ? (
+                      `${prod.producto.nombre} - ${prod.producto.montura.marca} (${prod.producto.montura.material})`
+                    ) : (
+                      prod.producto?.nombre || ""
+                    )}
+                  </div>
+                  {prod.producto?.montura && (
+                    <div style={{ fontSize: "8pt", color: "#64748b", marginTop: "0.5mm" }}>
+                      <span>Código: {prod.producto.montura.codigo || "—"}</span>
+                      <span style={{ margin: "0 2mm" }}>|</span>
+                      <span>Cód. Montura: {prod.producto.montura.codigoMontura || "—"}</span>
+                    </div>
+                  )}
                   {prod.tipoProducto === "LENTE" && (prod.esf || prod.cyl) && (
                     <div style={{ fontSize: "8pt", color: "#64748b", marginTop: "0.5mm", fontFamily: "monospace" }}>
                       {prod.esf ? `ESF: ${Number(prod.esf) > 0 ? `+${prod.esf}` : prod.esf}` : ""}

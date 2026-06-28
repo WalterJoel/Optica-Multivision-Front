@@ -36,9 +36,22 @@ export function useProductosVendidos() {
           "HORA": date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           "TIPO PRODUCTO": item.tipoProducto,
           "CÓD. PRODUCTO": item.productoId || item.stockId,
-          "DESCRIPCIÓN": item.tipoProducto === "LENTE" && item.stock?.lente
-            ? `LENTE ${item.stock.lente.marca} (${item.stock.lente.material})`
-            : item.producto?.nombre || "—",
+          "CÓDIGO": item.tipoProducto === "MONTURA" && item.producto?.montura
+            ? item.producto.montura.codigo || "—"
+            : "—",
+          "CÓDIGO MONTURA": item.tipoProducto === "MONTURA" && item.producto?.montura
+            ? item.producto.montura.codigoMontura || "—"
+            : "—",
+          "DESCRIPCIÓN": (() => {
+            if (item.tipoProducto === "LENTE" && item.stock?.lente) {
+              return `LENTE ${item.stock.lente.marca} (${item.stock.lente.material})`;
+            } else if (item.tipoProducto === "MONTURA" && item.producto?.montura) {
+              return `MONTURA ${item.producto.nombre} - ${item.producto.montura.marca} (${item.producto.montura.material})`;
+            } else if (item.tipoProducto === "ACCESORIO" && item.producto) {
+              return `ACCESORIO ${item.producto.nombre}`;
+            }
+            return item.producto?.nombre || "—";
+          })(),
           "CANTIDAD": item.cantidad,
           "PRECIO UNITARIO": Number(item.precioUnitario),
           "DESCUENTO": Number(item.descuento || 0),

@@ -484,9 +484,19 @@ export const MiniTable = ({
                         {/* Producto / Detalle */}
                         <td className="px-4 py-3 font-semibold">
                           <span className="font-black text-dark block leading-tight">
-                            {prod.stock?.lente
-                              ? `${prod.stock.lente.marca} (${prod.stock.lente.material})`
-                              : prod.producto?.nombre || ""}
+                            {prod.stock?.lente ? (
+                              `${prod.stock.lente.marca} (${prod.stock.lente.material})`
+                            ) : prod.producto?.montura ? (
+                              <div>
+                                <div>{prod.producto.nombre} - {prod.producto.montura.marca} ({prod.producto.montura.material})</div>
+                                <div className="text-[9px] font-bold text-gray-500 mt-1 flex gap-2">
+                                  <span className="bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">Código: {prod.producto.montura.codigo || "—"}</span>
+                                  <span className="bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">Cód. Montura: {prod.producto.montura.codigoMontura || "—"}</span>
+                                </div>
+                              </div>
+                            ) : (
+                              prod.producto?.nombre || ""
+                            )}
                           </span>
                           {/* Mostrar datos refractivos si existen y no son nulos */}
                           {(prod.esf || prod.cyl) && (
@@ -496,33 +506,7 @@ export const MiniTable = ({
                               {prod.cyl ? `CYL: ${Number(prod.cyl) > 0 ? `+${prod.cyl}` : prod.cyl}` : ""}
                             </span>
                           )}
-                          {/* Ubicación / Matriz (Lentes o Productos normales) */}
-                          {prod.tipoProducto === "LENTE" && prod.stock && (
-                            <div className="flex flex-wrap gap-1 mt-1.5">
-                              {prod.stock.matrix && (
-                                <span className="inline-block text-[8px] font-black text-blue bg-blue-light-6 border border-blue-light-5 rounded px-1.5 py-0.5 uppercase tracking-wider">
-                                  Matriz: {prod.stock.matrix}
-                                </span>
-                              )}
-                              {(prod.stock.row !== undefined && prod.stock.row !== null) && (
-                                <span className="inline-block text-[8px] font-black text-dark bg-beige border border-gray-3 rounded px-1.5 py-0.5 uppercase tracking-wider">
-                                  Fila: {prod.stock.row} | Col: {prod.stock.col}
-                                </span>
-                              )}
-                              {prod.stock.ubicacion && (
-                                <span className="inline-block text-[8px] font-black text-yellow-dark bg-yellow/10 border border-yellow-dark/20 rounded px-1.5 py-0.5 uppercase tracking-wider">
-                                  Ubi: {prod.stock.ubicacion}
-                                </span>
-                              )}
-                            </div>
-                          )}
-                          {prod.tipoProducto !== "LENTE" && prod.producto?.ubicacion && (
-                            <div className="mt-1.5">
-                              <span className="inline-block text-[8px] font-black text-yellow-dark bg-yellow/10 border border-yellow-dark/20 rounded px-1.5 py-0.5 uppercase tracking-wider">
-                                Ubicación: {prod.producto.ubicacion}
-                              </span>
-                            </div>
-                          )}
+
                         </td>
                         <td className="px-4 py-3 text-center font-black text-dark">
                           {quantity}
