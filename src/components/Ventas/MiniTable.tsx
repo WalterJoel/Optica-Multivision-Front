@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   ChevronLeft,
   ChevronRight,
@@ -13,24 +13,55 @@ import {
   CreditCard,
   CheckCircle,
   AlertCircle,
-  Power
+  Power,
+  FileText
 } from "lucide-react";
-import { ModalFrameWrapper } from "@/components/Common/modal";
+import { useReactToPrint } from "react-to-print";
+import { ModalFrameWrapper, ConfirmModal } from "@/components/Common/modal";
 import { IResponseSale } from "@/types/sales";
+import { IStore } from "@/types/stores";
+import { SaleNotePrint } from "./SaleNotePrint";
 
 export const MiniTable = ({
   titulo,
   data,
   onDelete,
+  isDeleting,
+  sedes = [],
 }: {
   titulo: string;
   data: IResponseSale[];
-  onDelete: (id: number) => Promise<void>;
+  onDelete: (id: number) => Promise<any>;
+  isDeleting: boolean;
+  sedes?: IStore[];
 }) => {
   const [selectedSale, setSelectedSale] = useState<IResponseSale | null>(null);
+  const [printSale, setPrintSale] = useState<IResponseSale | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
   const itemsPerPage = 8;
+
+  const printRef = useRef<HTMLDivElement | null>(null);
+
+  const handlePrint = useReactToPrint({
+    contentRef: printRef,
+    documentTitle: printSale ? `nota-pedido-${printSale.id}` : "nota-pedido",
+    onAfterPrint: () => setPrintSale(null),
+  });
+
+  useEffect(() => {
+    if (printSale) {
+      handlePrint();
+    }
+  }, [printSale]);
+
+  const handleConfirmDelete = async () => {
+    if (deleteId !== null) {
+      await onDelete(deleteId);
+      setDeleteId(null);
+    }
+  };
 
   // 🔎 Filtrado dinámico
   const filteredData = data.filter((venta) => {
@@ -292,10 +323,16 @@ export const MiniTable = ({
                       </button>
                       <button
                         type="button"
+                        onClick={() => setPrintSale(venta)}
+                        className="p-2.5 rounded-xl bg-blue text-white hover:scale-110 active:scale-95 transition-all shadow-md shadow-blue/20 border border-blue cursor-pointer flex items-center justify-center"
+                        title="Nota de Pedido"
+                      >
+                        <FileText size={16} strokeWidth={3} />
+                      </button>
+                      <button
+                        type="button"
                         onClick={() => {
-                          if (confirm("¿Está seguro de que desea anular esta venta?")) {
-                            onDelete(venta.id);
-                          }
+                          setDeleteId(venta.id);
                         }}
                         className={`p-2.5 rounded-xl transition-all shadow-sm border flex items-center justify-center ${venta.activo
                           ? "bg-white border-red-light-4 text-red hover:bg-red hover:text-white cursor-pointer"
@@ -534,6 +571,36 @@ export const MiniTable = ({
             </button>
           </div>
         </ModalFrameWrapper>
+      )}
+
+      <ConfirmModal
+        isOpen={deleteId !== null}
+        onClose={() => setDeleteId(null)}
+        onConfirm={handleConfirmDelete}
+        title="¿Anular Venta?"
+        message="Esta acción anulará la venta seleccionada de forma permanente. ¿Estás seguro de continuar?"
+        confirmText="Anular Venta"
+        cancelText="Cancelar"
+        loading={isDeleting}
+        variant="danger"
+      />
+
+      {/* Contenedor oculto para impresión directa de Nota de Pedido */}
+      {printSale && (
+        <div
+          style={{
+            position: "absolute",
+            left: "-9999px",
+            top: 0,
+          }}
+        >
+          <div ref={printRef}>
+            <SaleNotePrint
+              venta={printSale}
+              sede={sedes.find((s) => s.id === printSale.sedeId)}
+            />
+          </div>
+        </div>
       )}
     </div>
   );

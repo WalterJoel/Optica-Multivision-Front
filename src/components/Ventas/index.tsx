@@ -6,6 +6,7 @@ import { MiniTable } from "./MiniTable";
 
 import { useSales, useAnularVenta, useProductosVendidos } from "@/hooks/sales";
 import { useSessionUser } from "@/hooks/session";
+import { useStores } from "@/hooks/stores";
 import { StatusModal, LoadingModal } from "@/components/Common/modal";
 import { STATUS_MODAL } from "@/commons/constants";
 import { getLocalDateString } from "@/utils/date";
@@ -14,6 +15,7 @@ import { SedeSelect } from "@/components/Common/SedeSelect";
 export default function CajaPremiumFino() {
   // Hooks
   const { sedeId: userSedeId } = useSessionUser();
+  const { sedes } = useStores();
   const [sedeId, setSedeId] = useState<number>(1);
 
   const today = getLocalDateString();
@@ -139,7 +141,13 @@ export default function CajaPremiumFino() {
 
         {/* TABLAS */}
         <div className="grid grid-cols-1 xl:grid-cols-1 gap-6 sm:gap-8">
-          <MiniTable titulo="Ventas" data={sales} onDelete={anularVenta} />
+          <MiniTable
+            titulo="Ventas"
+            data={sales}
+            onDelete={anularVenta}
+            isDeleting={isAnnulling}
+            sedes={sedes}
+          />
         </div>
       </div>
 

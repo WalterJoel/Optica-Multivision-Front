@@ -60,6 +60,7 @@ export const MiniTable = ({
               <th className="py-4 px-6 text-center">Metodo</th>
               <th className="py-4 px-6 text-center">Fecha / Hora</th>
               <th className="py-4 px-7 text-right">Monto Neto</th>
+              <th className="py-4 px-6 text-center">Acciones</th>
             </tr>
           </thead>
 
@@ -109,27 +110,28 @@ export const MiniTable = ({
 
                   {/* MONTO */}
                   <td className="py-5 px-7 text-right">
-                    <div className="flex items-center justify-end gap-3">
-                      <div className="flex flex-col items-end">
-                        <span
-                          className={`text-[15px] font-black tracking-tighter ${type === "ingreso" ? "text-green" : "text-red"
-                            }`}
-                        >
-                          S/ {Number(m.monto).toFixed(2)}
-                        </span>
-                      </div>
+                    <span
+                      className={`text-[15px] font-black tracking-tighter ${type === "ingreso" ? "text-green" : "text-red"
+                        }`}
+                    >
+                      S/ {Number(m.monto).toFixed(2)}
+                    </span>
+                  </td>
 
-                      {m.ventaId && (
-                        <button
-                          type="button"
-                          onClick={() => handleOpenDetails(m)}
-                          className="p-2.5 rounded-xl bg-yellow-dark text-white hover:scale-110 active:scale-95 transition-all shadow-md shadow-yellow-dark/20 border border-yellow-dark cursor-pointer flex items-center justify-center"
-                          title="Ver detalle de productos"
-                        >
-                          <Eye size={16} strokeWidth={3} />
-                        </button>
-                      )}
-                    </div>
+                  {/* ACCIONES */}
+                  <td className="py-5 px-6 text-center">
+                    {m.ventaId ? (
+                      <button
+                        type="button"
+                        onClick={() => handleOpenDetails(m)}
+                        className="mx-auto p-2.5 rounded-xl bg-yellow-dark text-white hover:scale-110 active:scale-95 transition-all shadow-md shadow-yellow-dark/20 border border-yellow-dark cursor-pointer flex items-center justify-center"
+                        title="Ver detalle de productos"
+                      >
+                        <Eye size={16} strokeWidth={3} />
+                      </button>
+                    ) : (
+                      <span className="text-gray-400 font-bold">-</span>
+                    )}
                   </td>
                 </tr>
               );
