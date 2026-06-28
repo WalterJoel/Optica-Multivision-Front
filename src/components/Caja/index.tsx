@@ -34,8 +34,15 @@ export default function CajaPremiumFino() {
   const ingresos = movimientos.filter((m) => m.tipo === "INGRESO");
   const egresos = movimientos.filter((m) => m.tipo === "EGRESO");
 
-  const totalIngresos = ingresos.reduce((acc, m) => acc + Number(m.monto), 0);
-  const totalEgresos = egresos.reduce((acc, m) => acc + Number(m.monto), 0);
+  const getMovimientoNeto = (m: any): number => {
+    if (m.venta) {
+      return Number(m.venta.total) - Number(m.venta.deuda);
+    }
+    return Number(m.monto);
+  };
+
+  const totalIngresos = ingresos.reduce((acc, m) => acc + getMovimientoNeto(m), 0);
+  const totalEgresos = egresos.reduce((acc, m) => acc + getMovimientoNeto(m), 0);
   const balance = totalIngresos - totalEgresos;
 
   return (

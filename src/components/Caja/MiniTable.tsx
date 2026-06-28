@@ -59,14 +59,19 @@ export const MiniTable = ({
               <th className="py-4 px-7">Concepto / Responsable</th>
               <th className="py-4 px-6 text-center">Metodo</th>
               <th className="py-4 px-6 text-center">Fecha / Hora</th>
+              <th className="py-4 px-6 text-right">Monto Recibido</th>
+              <th className="py-4 px-6 text-right">Deuda</th>
               <th className="py-4 px-7 text-right">Monto Neto</th>
               <th className="py-4 px-6 text-center">Acciones</th>
             </tr>
           </thead>
 
           <tbody className="divide-y-8 divide-beige">
-            {data.map((m) => {
+             {data.map((m) => {
               const date = new Date(m.createdAt);
+              const montoRecibido = Number(m.monto);
+              const deuda = m.venta ? Number(m.venta.deuda) : 0;
+              const montoNeto = m.venta ? (Number(m.venta.total) - Number(m.venta.deuda)) : Number(m.monto);
 
               return (
                 <tr
@@ -108,13 +113,27 @@ export const MiniTable = ({
                     </div>
                   </td>
 
-                  {/* MONTO */}
+                  {/* MONTO RECIBIDO */}
+                  <td className="py-5 px-6 text-right">
+                    <span className="text-[14px] font-bold text-dark-3">
+                      S/ {montoRecibido.toFixed(2)}
+                    </span>
+                  </td>
+
+                  {/* DEUDA */}
+                  <td className="py-5 px-6 text-right">
+                    <span className={`text-[14px] font-bold ${deuda > 0 ? "text-red-dark" : "text-gray-4"}`}>
+                      {deuda > 0 ? `S/ ${deuda.toFixed(2)}` : "—"}
+                    </span>
+                  </td>
+
+                  {/* MONTO NETO */}
                   <td className="py-5 px-7 text-right">
                     <span
                       className={`text-[15px] font-black tracking-tighter ${type === "ingreso" ? "text-green" : "text-red"
                         }`}
                     >
-                      S/ {Number(m.monto).toFixed(2)}
+                      S/ {montoNeto.toFixed(2)}
                     </span>
                   </td>
 

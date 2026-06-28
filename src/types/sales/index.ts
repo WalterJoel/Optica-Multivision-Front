@@ -102,6 +102,19 @@ export interface IProductoVendidoResponse {
     id: number;
     nombre: string;
     ubicacion?: string;
+    montura?: {
+      id: number;
+      codigo: string;
+      codigoMontura: string;
+      marca: string;
+      material: string;
+    } | null;
+    accesorio?: {
+      id: number;
+      codigoAccesorio: string;
+      nombre: string;
+      color?: string;
+    } | null;
   } | null;
   stock?: {
     id: number;
