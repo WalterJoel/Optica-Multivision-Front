@@ -51,7 +51,6 @@ export default function Matrix() {
   const { sedeId } = useSessionUser(); //Sede automatica
   const lenteId = Number(searchParams.get("lenteId"));
   const mode = searchParams.get("mode");
-  console.log(mode, "  MODE<<<<<<<<<<<<<<<<<");
 
   const { lenses, updateStock, stockVersion } = useLenses();
   const { stock, loading, error } = useLenteStock(

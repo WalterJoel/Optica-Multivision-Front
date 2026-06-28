@@ -2,8 +2,10 @@ import { ROUTES_MANIFEST } from "next/dist/shared/lib/constants";
 import { api } from "../api";
 import { ILens, InventoryByStoreResponse } from "@/types/products";
 
-export const getLenses = async (): Promise<ILens[]> => {
-  const { data } = await api.get("/productos/lentes");
+export const getLenses = async (sedeId?: number): Promise<ILens[]> => {
+  const { data } = await api.get("/productos/lentes", {
+    params: { sedeId },
+  });
   return data.map((item: any) => ({
     ...item,
     precio_serie1: Number(item.precio_serie1),

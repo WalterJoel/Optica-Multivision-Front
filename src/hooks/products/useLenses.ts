@@ -5,18 +5,20 @@ import {
   UpdateLensStock,
   getInventoryByStoresService,
 } from "@/services/products";
+import { useSessionUser } from "@/hooks/session";
 
 export function useLenses() {
   const [lenses, setLenses] = useState<ILens[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [stockVersion, setStockVersion] = useState(0); // <--- versión para refrescar stock
+  const { sedeId } = useSessionUser();
 
   // Obtener todos los lentes
   const getAllLenses = async () => {
     try {
       setLoading(true);
-      const data = await getLenses();
+      const data = await getLenses(sedeId ? Number(sedeId) : undefined);
       setLenses(data);
     } catch (err: any) {
       setError(err.message || "Error al cargar lentes");
@@ -40,10 +42,12 @@ export function useLenses() {
     }
   };
 
-  // Cargar lentes al montar el hook
+  // Cargar lentes al montar el hook y al cambiar el sedeId
   useEffect(() => {
-    getAllLenses();
-  }, []);
+    if (sedeId) {
+      getAllLenses();
+    }
+  }, [sedeId]);
 
   return {
     lenses,

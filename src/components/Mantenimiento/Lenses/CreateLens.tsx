@@ -68,6 +68,15 @@ export default function LensForm() {
   const createLens = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const p1 = Number(form.precio_serie1) || 0;
+    const p2 = Number(form.precio_serie2) || 0;
+    const p3 = Number(form.precio_serie3) || 0;
+
+    if (p1 <= 0 || p2 <= 0 || p3 <= 0) {
+      alert("Los precios de las series deben ser mayores a 0");
+      return;
+    }
+
     if (selectedFile) {
       setTriggerUpload(true);
     } else {
@@ -134,8 +143,8 @@ export default function LensForm() {
             name="precio_serie1"
             value={form.precio_serie1}
             placeholder="0.00"
-            pattern="^[0-9]+(\.[0-9]{1,2})?$"
-            title="Solo se permiten hasta 2 decimales (ej. 12.50)"
+            pattern="^(?!^0*(\.0{1,2})?$)[0-9]+(\.[0-9]{1,2})?$"
+            title="Debe ser mayor a 0 y con hasta 2 decimales (ej. 12.50)"
             required
             onChange={handleChange}
           />
@@ -144,8 +153,8 @@ export default function LensForm() {
             name="precio_serie2"
             value={form.precio_serie2}
             placeholder="0.00"
-            pattern="^[0-9]+(\.[0-9]{1,2})?$"
-            title="Solo se permiten hasta 2 decimales (ej. 12.50)"
+            pattern="^(?!^0*(\.0{1,2})?$)[0-9]+(\.[0-9]{1,2})?$"
+            title="Debe ser mayor a 0 y con hasta 2 decimales (ej. 12.50)"
             required
             onChange={handleChange}
           />
@@ -154,8 +163,8 @@ export default function LensForm() {
             name="precio_serie3"
             value={form.precio_serie3}
             placeholder="0.00"
-            pattern="^[0-9]+(\.[0-9]{1,2})?$"
-            title="Solo se permiten hasta 2 decimales (ej. 12.50)"
+            pattern="^(?!^0*(\.0{1,2})?$)[0-9]+(\.[0-9]{1,2})?$"
+            title="Debe ser mayor a 0 y con hasta 2 decimales (ej. 12.50)"
             required
             onChange={handleChange}
           />

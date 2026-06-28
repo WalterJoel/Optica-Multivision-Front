@@ -9,6 +9,7 @@ import { STATUS_MODAL, ClasificacionLentes, PrioridadLentes } from "@/commons/co
 import { useUpdateLens } from "@/hooks/products/lens/useUpdateLens";
 import { Eye, X } from "lucide-react";
 import { useKits } from "@/hooks/kits";
+import { useSessionUser } from "@/hooks/session";
 import {
   BaseSelect,
   IOptionSelect,
@@ -40,6 +41,7 @@ export default function EditLensModal({
   const [form, setForm] = useState(emptyForm);
   const { updateLens, loading, success, statusMessage } = useUpdateLens();
   const { kits, getAllKits } = useKits();
+  const { sedeId } = useSessionUser();
 
   const [openStatusModal, setOpenStatusModal] = useState(false);
   const [typeModal, setTypeModal] = useState("");
@@ -68,6 +70,7 @@ export default function EditLensModal({
       imagenUrl: imageUrl || form.imagenUrl || null,
       clasificacion: form.clasificacion,
       prioridad: form.prioridad || null,
+      sedeId: Number(sedeId),
     };
 
     await updateLens(lens.id, payload);

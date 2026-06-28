@@ -27,6 +27,9 @@ export const DetailModal: React.FC<DetailModalProps> = ({
   const { getInventoryByStores, loading, inventoryByStore } =
     useInventoryByStores();
 
+  console.log('SELECTED', selected)
+  console.log('LENTEID', lenteId)
+
   const handleAddToCart = () => {
     const price = inventoryByStore?.precioCalculado || 0;
 
@@ -67,6 +70,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({
 
   return (
     <ModalFrameWrapper>
+
       <div className="pt-4 pb-10 max-h-[75vh] overflow-y-auto">
         {/* Header */}
         <div className="bg-blue/5 p-4 rounded-xl border border-blue/10 text-center relative overflow-hidden">
