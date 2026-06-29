@@ -123,61 +123,13 @@ const Montaje = () => {
   return (
     <div className="w-full bg-white rounded-2xl shadow-xl border border-gray-100 p-6 h-full">
       <div className="flex h-full flex-col rounded-xl bg-beige p-6 shadow-sm">
-        <h3 className="mb-5 text-lg font-semibold flex items-center gap-2">
+        {/* <h3 className="mb-5 text-lg font-semibold flex items-center gap-2">
           <div className="w-2 h-6 bg-blue rounded-full" />
           Datos de Orden de Montaje
-        </h3>
+        </h3> */}
 
         <div className="flex flex-1 flex-col space-y-5">
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <BaseInput
-              label="Orden ID"
-              name="orderId"
-              type="text"
-              value={form.orderId}
-              onChange={onChange}
-            />
-            <BaseInput
-              label="Óptica"
-              name="optica"
-              type="text"
-              value={form.optica}
-              onChange={onChange}
-            />
-            <BaseInput
-              label="Fecha"
-              name="orderDate"
-              type="date"
-              value={form.orderDate}
-              onChange={onChange}
-            />
 
-          </div>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3 ">
-
-            <BaseInput
-              label="Nombre"
-              name="customerName"
-              type="text"
-              value={form.customerName}
-              onChange={onChange}
-            />
-            <BaseInput
-              label="Celular"
-              name="celular"
-              type="text"
-              value={form.celular}
-              onChange={onChange}
-            />
-
-            <BaseInput
-              label="Dirección"
-              name="direccion"
-              type="text"
-              value={form.direccion}
-              onChange={onChange}
-            />
-          </div>
 
           <div>
             <h4 className="mb-3 font-semibold text-sm text-gray-700">Medidas</h4>
@@ -248,7 +200,7 @@ const Montaje = () => {
           </div>
 
           <BaseInput
-            label="ADD"
+            label="Add"
             name="add"
             type="text"
             value={form.add}
@@ -256,7 +208,7 @@ const Montaje = () => {
           />
 
           <div>
-            <h4 className="mb-3 font-semibold text-sm text-gray-700">Material del lente</h4>
+            <h4 className="mb-3 font-semibold text-sm text-gray-500">Material del lente</h4>
             <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
               {lenteOptions.map((item) => (
                 <label

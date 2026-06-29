@@ -262,6 +262,21 @@ export default function Matrix() {
                     );
                   })}
                 </tbody>
+                <thead>
+                  <tr className="bg-gray-2 text-dark font-black">
+                    <th className="sticky left-0 top-0 z-[50] bg-gray-3 border-r-2 text-[9px] w-[65px]">
+                      ESF \\ CYL
+                    </th>
+                    {cylValues.map((cyl, i) => (
+                      <th
+                        key={i}
+                        className={`min-w-[45px] transition-colors ${hoveredCol === i ? "bg-blue text-white" : ""}`}
+                      >
+                        {cyl.toFixed(2)}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
               </table>
             </div>
           </div>

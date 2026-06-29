@@ -14,13 +14,20 @@ import {
   CheckCircle,
   AlertCircle,
   Power,
-  FileText
+  FileText,
+  Pencil,
+  DollarSign
 } from "lucide-react";
 import { useReactToPrint } from "react-to-print";
-import { ModalFrameWrapper, ConfirmModal } from "@/components/Common/modal";
+import { ModalFrameWrapper, ConfirmModal, StatusModal } from "@/components/Common/modal";
 import { IResponseSale } from "@/types/sales";
 import { IStore } from "@/types/stores";
 import { SaleNotePrint } from "./SaleNotePrint";
+import { EditarVentaModal } from "./EditarVentaModal";
+import { RegistrarPagoModal } from "./RegistrarPagoModal";
+import { useEditarVenta, useRegistrarPago } from "@/hooks/sales";
+import { useSessionUser } from "@/hooks/session";
+import { STATUS_MODAL } from "@/commons/constants";
 
 export const MiniTable = ({
   titulo,
@@ -37,10 +44,20 @@ export const MiniTable = ({
 }) => {
   const [selectedSale, setSelectedSale] = useState<IResponseSale | null>(null);
   const [printSale, setPrintSale] = useState<IResponseSale | null>(null);
+  const [editSale, setEditSale] = useState<IResponseSale | null>(null);
+  const [pagoSale, setPagoSale] = useState<IResponseSale | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [editStatusMsg, setEditStatusMsg] = useState("");
+  const [editStatusType, setEditStatusType] = useState<string | null>(null);
+  const [pagoStatusMsg, setPagoStatusMsg] = useState("");
+  const [pagoStatusType, setPagoStatusType] = useState<string | null>(null);
   const itemsPerPage = 8;
+
+  const { editarVenta, loading: isEditing } = useEditarVenta();
+  const { registrarPago, loading: isPaying } = useRegistrarPago();
+  const { sedeId } = useSessionUser();
 
   const printRef = useRef<HTMLDivElement | null>(null);
 
@@ -161,6 +178,9 @@ export const MiniTable = ({
                 Tipo Venta
               </th>
               <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3 text-center">
+                Cuotas
+              </th>
+              <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3 text-center">
                 Compromiso Pago.
               </th>
               <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3 text-center">
@@ -268,6 +288,17 @@ export const MiniTable = ({
                     </span>
                   </td>
 
+                  {/* Cuotas */}
+                  <td className="px-6 py-5 text-center">
+                    {venta.nroCuotas ? (
+                      <span className="inline-flex items-center px-2.5 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.1em] border shadow-sm bg-blue/10 text-blue border-blue/20">
+                        {venta.nroCuotas} cuota{venta.nroCuotas > 1 ? "s" : ""}
+                      </span>
+                    ) : (
+                      <span className="text-gray-4 font-semibold">—</span>
+                    )}
+                  </td>
+
                   {/* Días Compromiso Pago */}
                   <td className="px-6 py-5 text-center">
                     {venta.diasCompromisoPago ? (
@@ -310,7 +341,7 @@ export const MiniTable = ({
                     </span>
                   </td>
 
-                  {/* Acciones - Tal cual listStores */}
+                  {/* Acciones */}
                   <td className="px-6 py-5 text-right">
                     <div className="flex items-center justify-end gap-2.5">
                       <button
@@ -329,6 +360,25 @@ export const MiniTable = ({
                       >
                         <FileText size={16} strokeWidth={3} />
                       </button>
+                      <button
+                        type="button"
+                        onClick={() => setEditSale(venta)}
+                        className="p-2.5 rounded-xl bg-white border border-blue-light-4 text-blue hover:bg-blue hover:text-white cursor-pointer transition-all shadow-sm flex items-center justify-center"
+                        title="Editar Venta"
+                        disabled={!venta.activo}
+                      >
+                        <Pencil size={16} strokeWidth={3} />
+                      </button>
+                      {venta.estadoPago === "PENDIENTE" && venta.activo && (
+                        <button
+                          type="button"
+                          onClick={() => setPagoSale(venta)}
+                          className="p-2.5 rounded-xl bg-white border border-green-600/30 text-green-600 hover:bg-green-600 hover:text-white cursor-pointer transition-all shadow-sm flex items-center justify-center"
+                          title="Registrar Pago de Cuota"
+                        >
+                          <DollarSign size={16} strokeWidth={3} />
+                        </button>
+                      )}
                       <button
                         type="button"
                         onClick={() => {
@@ -585,6 +635,67 @@ export const MiniTable = ({
             />
           </div>
         </div>
+      )}
+
+      {/* MODAL EDITAR VENTA */}
+      {editSale && (
+        <EditarVentaModal
+          venta={editSale}
+          loading={isEditing}
+          onClose={() => setEditSale(null)}
+          onSave={async (id, payload) => {
+            const result = await editarVenta(id, payload);
+            if (result) {
+              setEditStatusMsg("Venta editada correctamente");
+              setEditStatusType(STATUS_MODAL.SUCCESS_MODAL);
+              setEditSale(null);
+            } else {
+              setEditStatusMsg("Error al editar la venta");
+              setEditStatusType(STATUS_MODAL.ERROR_MODAL);
+            }
+          }}
+        />
+      )}
+
+      {/* STATUS EDICIÓN */}
+      {editStatusType !== null && (
+        <StatusModal
+          isOpen={editStatusType !== null}
+          type={editStatusType}
+          onClose={() => setEditStatusType(null)}
+          message={editStatusMsg}
+        />
+      )}
+
+      {/* MODAL REGISTRAR PAGO */}
+      {pagoSale && (
+        <RegistrarPagoModal
+          venta={pagoSale}
+          sedeId={sedeId}
+          loading={isPaying}
+          onClose={() => setPagoSale(null)}
+          onSave={async (id, payload) => {
+            const result = await registrarPago(id, payload);
+            if (result) {
+              setPagoStatusMsg(result.message);
+              setPagoStatusType(STATUS_MODAL.SUCCESS_MODAL);
+              setPagoSale(null);
+            } else {
+              setPagoStatusMsg("Error al registrar el pago");
+              setPagoStatusType(STATUS_MODAL.ERROR_MODAL);
+            }
+          }}
+        />
+      )}
+
+      {/* STATUS PAGO */}
+      {pagoStatusType !== null && (
+        <StatusModal
+          isOpen={pagoStatusType !== null}
+          type={pagoStatusType}
+          onClose={() => setPagoStatusType(null)}
+          message={pagoStatusMsg}
+        />
       )}
     </div>
   );

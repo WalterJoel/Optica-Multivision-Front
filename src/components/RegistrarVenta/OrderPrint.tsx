@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { LogoMultivision } from "@/components/Common/LogoMultivision";
 
 type EyeData = {
   esf: string;
@@ -103,15 +104,8 @@ const OrderPrint = ({ form }: Props) => {
     <div style={pageStyle}>
       <div style={headerRowStyle}>
         <div>
-          <img
-            src="/logo-multivision.jpeg"
-            alt="Logo Multivisión"
-            style={{
-              width: "55mm",
-              height: "auto",
-              objectFit: "contain",
-            }}
-          />
+          {/* LOGO CENTRADO Y ANCHO */}
+          <LogoMultivision size="sm" margin="mb-5" />
 
           <div style={{ fontSize: "9pt", marginTop: "3mm" }}>
             <strong>Dirección:</strong> Calle Santa Martha 218 Int. 2
@@ -137,7 +131,7 @@ const OrderPrint = ({ form }: Props) => {
         </div>
       </div>
 
-      <div style={{ marginTop: "2mm", marginBottom: "3mm" }}>
+      <div style={{ marginTop: "8mm", marginBottom: "3mm" }}>
         <div style={dataRowStyle}>
           <div>
             <strong>ÓPTICA:</strong> {form.optica}
@@ -206,6 +200,9 @@ const OrderPrint = ({ form }: Props) => {
       </table>
 
       <div style={{ marginBottom: "3mm" }}>
+        <div style={{ marginBottom: "3mm", borderBottom: "1px solid #222", fontWeight: 700 }}>
+          ADD {form.add}
+        </div>
         <div
           style={{
             display: "grid",
@@ -214,13 +211,11 @@ const OrderPrint = ({ form }: Props) => {
             marginBottom: "2mm",
           }}
         >
-          <div style={{ borderBottom: "1px solid #222", fontWeight: 700 }}>
+          <div style={{ fontWeight: 700 }}>
             Material del Lente
           </div>
 
-          <div style={{ borderBottom: "1px solid #222", fontWeight: 700 }}>
-            ADD {form.add}
-          </div>
+
         </div>
 
         <div

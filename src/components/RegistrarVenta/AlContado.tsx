@@ -136,7 +136,7 @@ const AlContado = () => {
                                 )}
                             </div>
 
-                             <div className="grid grid-cols-3 gap-4">
+                            <div className="grid grid-cols-3 gap-4">
                                 <BaseInput
                                     label="Total Venta"
                                     value={`S/ ${cartStoreTotal.toFixed(2)}`}

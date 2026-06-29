@@ -52,7 +52,7 @@ export interface IResponseSale {
   tipoVenta: string;
   estadoPago: string;
   metodoPago: string;
-  diasCompromisoPago?: string | null
+  diasCompromisoPago?: number | null
   montaje: boolean;
   nroCuotas: number | null;
   observaciones: string | null;

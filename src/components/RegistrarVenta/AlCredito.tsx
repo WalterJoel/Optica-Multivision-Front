@@ -20,7 +20,7 @@ import { useAppSelector } from "@/redux/store";
 
 // Selectores de Slices
 import { selectAuth } from "@/redux/features/auth-slice";
-import { selectVenta, setMetodoPago, resetVenta } from "@/redux/features/sale-slice";
+import { selectVenta, setMetodoPago, resetVenta, setClienteId } from "@/redux/features/sale-slice";
 import { selectTotalPrice, selectCartItems, removeAllItemsFromCart } from "@/redux/features/cart-slice";
 
 // Constants
@@ -59,6 +59,7 @@ const AlCredito = () => {
     const [montoRecibido, setMontoRecibido] = useState("");
     const [typeModal, setTypeModal] = useState<string>("");
     const [diasCompromiso, setDiasCompromiso] = useState<number | null>(null);
+    const [clienteError, setClienteError] = useState(false);
 
     //Cliente
     const [searchClientTerm, setSearchClientTerm] = useState("");
@@ -89,6 +90,12 @@ const AlCredito = () => {
     }, [montoRecibido, cartStoreTotal, paymentType]);
 
     const handleRegisterSale = () => {
+        // Validar cliente obligatorio en ventas a crédito
+        if (paymentType === "credit" && !ventaStore.clienteId) {
+            setClienteError(true);
+            return;
+        }
+        setClienteError(false);
         const productosDesdeCart: VentaProducto[] = cartStoreItems.map((item) => ({
             productoId: item.productId,
             tipoProducto: item.productType,
@@ -130,7 +137,8 @@ const AlCredito = () => {
         const displayName = c.tipoCliente === "EMPRESA" ? (c.razonSocial || "") : `${c.nombres || ""} ${c.apellidos || ""}`.trim();
         setSearchClientTerm(displayName);
         setShowListClient(false);
-        // setForm((prev) => ({ ...prev, clienteId: c.id }));
+        dispatch(setClienteId(c.id));
+        setClienteError(false);
     };
 
     useEffect(() => {
@@ -147,6 +155,8 @@ const AlCredito = () => {
                 setMontoRecibido("");
                 setDiasCompromiso(null);
                 setShowOrder(false);
+                setSearchClientTerm("");
+                setClienteError(false);
             }
         }
     }, [loading, success, statusMessage]);
@@ -197,6 +207,59 @@ const AlCredito = () => {
                                         </p>
                                     )}
                                 </div>
+
+                                {/* CLIENTE - Solo visible en crédito */}
+                                {paymentType === "credit" && (
+                                    <div className="relative">
+                                        <label className="mb-1 flex items-center gap-1 text-sm font-bold text-gray-700">
+                                            Cliente <span className="text-red font-bold text-xs">*</span>
+                                            <span className="text-[10px] font-normal text-gray-400 ml-1">(requerido para crédito)</span>
+                                        </label>
+                                        <div className="relative flex items-center">
+                                            <input
+                                                type="text"
+                                                value={searchClientTerm}
+                                                onChange={(e) => {
+                                                    setSearchClientTerm(e.target.value);
+                                                    searchClients(e.target.value);
+                                                    if (!e.target.value) dispatch(setClienteId(null));
+                                                    if (clienteError) setClienteError(false);
+                                                }}
+                                                placeholder="Buscar por nombre o DNI..."
+                                                className={`w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition-all placeholder:text-gray-400 ${
+                                                    clienteError
+                                                        ? "border-red focus:border-red ring-2 ring-red/20"
+                                                        : "border-gray-200 focus:border-blue focus:ring-2 focus:ring-blue/10"
+                                                }`}
+                                            />
+                                        </div>
+                                        {showListClient && clients.length > 0 && (
+                                            <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-44 overflow-y-auto">
+                                                {clients.map((c) => {
+                                                    const name = c.tipoCliente === "EMPRESA"
+                                                        ? c.razonSocial
+                                                        : `${c.nombres || ""} ${c.apellidos || ""}`.trim();
+                                                    return (
+                                                        <button
+                                                            key={c.id}
+                                                            type="button"
+                                                            onClick={() => handleSelectClient(c)}
+                                                            className="w-full px-4 py-2.5 text-left hover:bg-gray-50 transition-colors flex justify-between items-center"
+                                                        >
+                                                            <span className="font-bold text-gray-800 text-sm">{name}</span>
+                                                            <span className="text-[10px] text-gray-400 font-mono">{c.numeroDoc}</span>
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
+                                        {clienteError && (
+                                            <p className="mt-1.5 text-xs font-bold text-red">
+                                                ✕ Debes seleccionar un cliente para ventas a crédito.
+                                            </p>
+                                        )}
+                                    </div>
+                                )}
                                 <div>
                                     <label className="mb-3 flex items-center gap-1.5 text-sm font-bold text-gray-700">
                                         Compromiso de Pago <span className="text-red font-bold text-xs">*</span>
@@ -266,6 +329,7 @@ const AlCredito = () => {
                                         !ventaStore.metodoPago ||
                                         (paymentType === "cash" && (!montoRecibido || Number(montoRecibido) < cartStoreTotal)) ||
                                         (paymentType === "credit" && (nroCuotas === 0 || diasCompromiso === null)) ||
+                                        (paymentType === "credit" && !ventaStore.clienteId) ||
                                         ventaStore.bloqueadoPorDeuda
                                     }
                                     className={`mt-auto w-full rounded-xl py-4 text-white font-bold text-lg shadow-lg transition-all ${loading ||
@@ -273,6 +337,7 @@ const AlCredito = () => {
                                         !ventaStore.metodoPago ||
                                         (paymentType === "cash" && (!montoRecibido || Number(montoRecibido) < cartStoreTotal)) ||
                                         (paymentType === "credit" && (nroCuotas === 0 || diasCompromiso === null)) ||
+                                        (paymentType === "credit" && !ventaStore.clienteId) ||
                                         ventaStore.bloqueadoPorDeuda
                                         ? "bg-gray-400 cursor-not-allowed opacity-60"
                                         : "bg-blue hover:bg-blue-dark active:scale-[0.98]"
