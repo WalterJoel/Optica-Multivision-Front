@@ -7,7 +7,7 @@ import ListStores from "./ListStores";
 import { BaseTabs } from "@/components/Common/Inputs";
 
 export default function SedesPage() {
-  const [tab, setTab] = useState("crear");
+  const [tab, setTab] = useState("lista");
 
   const tabsData = [
     { key: "crear", label: "Crear sede", icon: <Building2 size={18} /> },

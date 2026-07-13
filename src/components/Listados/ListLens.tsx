@@ -4,6 +4,7 @@ import { useLenses } from "@/hooks/products";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ImageWithZoom } from "@/components/Common/ImageWithZoom";
+import { Eye, History } from "lucide-react";
 import { useMemo } from "react";
 import { PrioridadLentes } from "@/commons/constants";
 
@@ -122,15 +123,25 @@ export default function ListLens() {
             ) : (
               sortedLenses.map((lens) => (
                 <LensCardFrame key={lens.id} lens={lens}>
-                  <Link
-                    href={{
-                      pathname: "/matrix",
-                      query: { lenteId: lens.id, mode: "stock" },
-                    }}
-                    className="inline-flex font-medium text-custom-sm py-[7px] px-5 rounded-[5px] bg-blue text-white ease-out duration-200 hover:bg-blue-dark shadow-md"
-                  >
-                    Abrir Matriz
-                  </Link>
+                  <div className="flex items-center justify-center gap-2 w-full">
+                    <Link
+                      href={{
+                        pathname: "/matrix",
+                        query: { lenteId: lens.id, mode: "stock" },
+                      }}
+                      className="flex-1 text-center justify-center inline-flex font-medium text-custom-sm py-[7px] px-5 rounded-[5px] bg-blue text-white ease-out duration-200 hover:bg-blue-dark shadow-md"
+                    >
+                      Abrir Matriz
+                    </Link>
+                    <button
+                      onClick={() => {}}
+                      type="button"
+                      className="p-[7px] rounded-[5px] bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-800 transition duration-200 border border-slate-200 shadow-sm flex items-center justify-center"
+                      title="Historial de movimientos"
+                    >
+                      <History size={18} />
+                    </button>
+                  </div>
                 </LensCardFrame>
               ))
             )}

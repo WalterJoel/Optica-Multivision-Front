@@ -13,7 +13,7 @@ import { useDispatch } from "react-redux";
 import { CartItem } from "@/types/cart";
 import { TipoProducto } from "@/commons/constants";
 import { useSessionUser } from "@/hooks/session";
-import { Package } from "lucide-react";
+import { Package, History } from "lucide-react";
 
 /* FILTERS */
 type Filters = {
@@ -202,12 +202,24 @@ export default function ListAccessories({ filters }: { filters?: Filters }) {
               const cantidad = item.producto?.cantidad ?? item.cantidad ?? 0;
               return (
                 <AccessoryCardFrame key={item.id} accessory={item}>
-                  <BaseButton
-                    onClick={() => handleAddToCart(item)}
-                    disabled={cantidad <= 0}
-                  >
-                    Agregar
-                  </BaseButton>
+                  <div className="flex items-center justify-center gap-2 w-full">
+                    <div className="flex-1">
+                      <BaseButton
+                        onClick={() => handleAddToCart(item)}
+                        disabled={cantidad <= 0}
+                      >
+                        Agregar
+                      </BaseButton>
+                    </div>
+                    <button
+                      onClick={() => {}}
+                      type="button"
+                      className="p-[9px] rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-800 transition duration-200 border border-slate-200 shadow-sm flex items-center justify-center"
+                      title="Historial de movimientos"
+                    >
+                      <History size={18} />
+                    </button>
+                  </div>
                 </AccessoryCardFrame>
               );
             })

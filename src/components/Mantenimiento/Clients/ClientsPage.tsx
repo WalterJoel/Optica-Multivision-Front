@@ -8,7 +8,7 @@ import CreateClient from "./CreateClient";
 import ListClients from "./ListClients";
 
 export default function ClientsPage() {
-  const [tab, setTab] = useState("crear");
+  const [tab, setTab] = useState("lista");
 
   const tabsData = [
     { key: "crear", label: "Crear cliente", icon: <CirclePlus size={22} /> },

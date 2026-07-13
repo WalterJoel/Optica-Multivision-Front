@@ -8,7 +8,7 @@ import CreateAccesory from "./CreateAccesory";
 import ListAccesories from "./ListAccesories";
 
 export default function AccesoriesPage() {
-  const [tab, setTab] = useState("crear");
+  const [tab, setTab] = useState("lista");
 
   const tabsData = [
     { key: "crear", label: "Crear accesorio", icon: <CirclePlus size={22} /> },

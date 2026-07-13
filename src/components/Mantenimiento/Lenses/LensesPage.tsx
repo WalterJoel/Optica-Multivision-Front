@@ -8,7 +8,7 @@ import CreateLens from "./CreateLens";
 import ListLenses from "./ListLenses";
 
 export default function AccesoriesPage() {
-  const [tab, setTab] = useState("crear");
+  const [tab, setTab] = useState("lista");
 
   const tabsData = [
     { key: "crear", label: "Crear Lente", icon: <CirclePlus size={22} /> },

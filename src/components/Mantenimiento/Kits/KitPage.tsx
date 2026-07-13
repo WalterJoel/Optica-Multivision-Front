@@ -7,7 +7,7 @@ import ListKit from "./ListKit";
 import { BaseTabs } from "@/components/Common/Inputs";
 
 export default function KitsPage() {
-  const [tab, setTab] = useState("crear");
+  const [tab, setTab] = useState("lista");
 
   const tabsData = [
     { key: "crear", label: "Crear Kit", icon: <Building2 size={18} /> },

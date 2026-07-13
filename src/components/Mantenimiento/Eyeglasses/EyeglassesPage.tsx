@@ -8,7 +8,7 @@ import CreateEyeglass from "./CreateEyeglass";
 import ListEyeglasses from "./ListEyeglasses";
 
 export default function EyeglassesPage() {
-  const [tab, setTab] = useState("crear");
+  const [tab, setTab] = useState("lista");
 
   const tabsData = [
     { key: "crear", label: "Crear montura", icon: <CirclePlus size={22} /> },

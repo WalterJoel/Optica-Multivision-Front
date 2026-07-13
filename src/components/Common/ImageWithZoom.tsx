@@ -9,6 +9,7 @@ interface ImageWithZoomProps {
   className?: string;
   imgClassName?: string;
   fallbackIcon?: React.ReactNode;
+  showFloatingButton?: boolean;
 }
 
 export function ImageWithZoom({
@@ -17,6 +18,7 @@ export function ImageWithZoom({
   className = "w-full h-full",
   imgClassName = "w-full h-full object-contain",
   fallbackIcon = "📷",
+  showFloatingButton = true,
 }: ImageWithZoomProps) {
   const [isOpen, setIsOpen] = useState(false);
 

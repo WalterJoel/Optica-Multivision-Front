@@ -7,7 +7,7 @@ import ListUsers from "./ListUsers";
 import { BaseTabs } from "@/components/Common/Inputs";
 
 export default function UsersPage() {
-  const [tab, setTab] = useState("crear");
+  const [tab, setTab] = useState("lista");
 
   const tabsData = [
     { key: "crear", label: "Crear usuario", icon: <UserPlus size={18} /> },
