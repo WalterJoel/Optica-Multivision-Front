@@ -9,6 +9,12 @@ export const menuData: Menu[] = [
   },
   {
     id: 1,
+    title: "Traslados",
+    newTab: false,
+    path: "/traslados",
+  },
+  {
+    id: 1,
     title: "Vender",
     newTab: false,
     path: "/vender",
