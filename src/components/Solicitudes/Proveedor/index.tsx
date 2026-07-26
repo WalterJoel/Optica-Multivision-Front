@@ -5,14 +5,17 @@ import { ITraslado } from "@/types/traslados";
 import { useTraslados } from "@/hooks/traslados/useTraslados";
 import { BadgeEstadoTraslado } from "../BadgeEstadoTraslado";
 import { TablaProveedorHistorial } from "./TablaProveedorHistorial";
+import { BaseButton } from "@/components/Common/Buttons/BaseButton";
+import { LoadingModal } from "@/components/Common/modal";
 import { Building2, Calendar } from "lucide-react";
 
 interface ProveedorCardProps {
   traslado: ITraslado;
   onEnviar: (payload: any) => Promise<void>;
+  loading?: boolean;
 }
 
-function ProveedorCard({ traslado, onEnviar }: ProveedorCardProps) {
+function ProveedorCard({ traslado, onEnviar, loading = false }: ProveedorCardProps) {
   const [detallesState, setDetallesState] = useState<
     { detalleId: number; cantidadEnviada: number | "" }[]
   >([]);
@@ -77,8 +80,8 @@ function ProveedorCard({ traslado, onEnviar }: ProveedorCardProps) {
           </span>
           <BadgeEstadoTraslado estado={traslado.estado} />
           <span className="inline-flex items-center gap-1.5 text-xs text-dark-3 font-bold">
-            <Building2 size={14} className="text-emerald-700" />
-            Solicitado por Sede Destino: {traslado.sedeSolicitante?.nombre || `Sede ${traslado.sedeSolicitanteId}`}
+            <Building2 size={14} className="text-blue-light" />
+            Solicitante: {traslado.sedeSolicitante?.nombre || `Sede ${traslado.sedeSolicitanteId}`}
           </span>
         </div>
 
@@ -100,8 +103,7 @@ function ProveedorCard({ traslado, onEnviar }: ProveedorCardProps) {
                 <th className="p-3.5 text-center">SPH</th>
                 <th className="p-3.5 text-center">CYL</th>
                 <th className="p-3.5 text-center">📥 Cant. Solicitada</th>
-                <th className="p-3.5 text-center">🚚 Cant. Enviada</th>
-                <th className="p-3.5 text-center">✅ Cant. Recibida</th>
+                <th className="p-3.5 text-center">🚚 Cant. a Enviar</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-2 text-dark font-medium">
@@ -152,9 +154,6 @@ function ProveedorCard({ traslado, onEnviar }: ProveedorCardProps) {
                         det.cantidadEnviada
                       )}
                     </td>
-                    <td className="p-3.5 text-center font-bold text-dark-3 text-xs">
-                      {det.cantidadRecibida}
-                    </td>
                   </tr>
                 );
               })}
@@ -163,13 +162,15 @@ function ProveedorCard({ traslado, onEnviar }: ProveedorCardProps) {
         </div>
 
         {isDespachoEditable && (
-          <div className="flex justify-center w-full pt-4 pb-2">
-            <button
+          <div className="flex justify-center w-full pt-4 pb-2 max-w-xs mx-auto">
+            <BaseButton
               onClick={handleAction}
-              className="bg-yellow hover:bg-yellow-dark text-dark font-black px-10 py-3.5 rounded-2xl transition-all shadow-md active:scale-95 cursor-pointer text-xs uppercase tracking-wider"
+              disabled={loading}
+              loading={loading}
+              variant="primary"
             >
               Enviar Mercadería
-            </button>
+            </BaseButton>
           </div>
         )}
       </div>
@@ -208,7 +209,7 @@ export function Proveedor({
     try {
       await enviarMercaderia(payload);
       onSuccessAction();
-      fetchTraslados();
+      setEstadoFilter("ENVIADO");
     } catch (err) {
       onErrorAction(err);
     }
@@ -216,7 +217,6 @@ export function Proveedor({
 
   return (
     <div className="space-y-6">
-      {/* Filtros por estado */}
       <div className="flex items-center gap-2 mb-6 flex-wrap">
         {["SOLICITADO", "ENVIADO", "TRASLADADO"].map((st) => (
           <button
@@ -233,7 +233,6 @@ export function Proveedor({
         ))}
       </div>
 
-      {/* Si el filtro es TRASLADADO -> renderizar Tabla Compacta */}
       {estadoFilter === "TRASLADADO" ? (
         <TablaProveedorHistorial traslados={traslados} loading={loading} />
       ) : loading ? (
@@ -251,10 +250,13 @@ export function Proveedor({
               key={t.id}
               traslado={t}
               onEnviar={handleEnviar}
+              loading={loading}
             />
           ))}
         </div>
       )}
+
+      <LoadingModal isOpen={loading} />
     </div>
   );
 }

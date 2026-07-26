@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 import { ITraslado } from "@/types/traslados";
 import { X, CheckCircle2 } from "lucide-react";
 import { ModalFrameWrapper } from "@/components/Common/modal";
+import { BaseButton } from "@/components/Common/Buttons/BaseButton";
+
 
 interface ModalRecibirMercaderiaProps {
   isOpen: boolean;
@@ -162,22 +164,24 @@ export function ModalRecibirMercaderia({
             </table>
           </div>
 
-          <div className="flex justify-center gap-3 pt-2">
-            <button
+          <div className="flex justify-center gap-3 pt-2 max-w-md mx-auto">
+            <BaseButton
               type="button"
               onClick={onClose}
-              className="px-6 py-3.5 rounded-2xl border border-gray-3 text-xs font-bold text-dark hover:bg-gray-100 transition-all"
+              variant="cancel"
             >
               Cancelar
-            </button>
-            <button
+            </BaseButton>
+            <BaseButton
               type="submit"
               disabled={loading}
-              className="bg-yellow hover:bg-yellow-dark text-dark font-black px-10 py-3.5 rounded-2xl transition-all shadow-md active:scale-95 cursor-pointer text-xs uppercase tracking-wider disabled:opacity-50"
+              loading={loading}
+              variant="primary"
             >
-              {loading ? "Procesando..." : "Confirmar Recepción"}
-            </button>
+              Confirmar Recepción
+            </BaseButton>
           </div>
+
         </form>
       </div>
     </ModalFrameWrapper>

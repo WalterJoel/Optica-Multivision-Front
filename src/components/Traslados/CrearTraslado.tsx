@@ -1,17 +1,16 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import {
   ShoppingCart,
   Calendar,
-  Send,
-  Store,
-  User,
   FileSpreadsheet,
   PackageSearch,
 } from "lucide-react";
 import { TipoProducto, OrigenSolicitudTraslado } from "@/commons/constants";
 import { SedeSelect } from "@/components/Common/SedeSelect";
+import { BaseButton } from "@/components/Common/Buttons/BaseButton";
 import { useSessionUser } from "@/hooks/session";
 import { useStores } from "@/hooks/stores";
 import { getLocalDateString } from "@/utils/date";
@@ -30,6 +29,9 @@ export function CrearTraslado() {
   ];
 
   const today = getLocalDateString();
+
+  // Router
+  const router = useRouter();
 
   // Hooks
   const { sedeId: userSedeId, userId, fullName } = useSessionUser();
@@ -117,6 +119,13 @@ export function CrearTraslado() {
     } catch (err: any) {
       setTypeModal(STATUS_MODAL.ERROR_MODAL);
       setOpenModal(true);
+    }
+  };
+
+  const handleCloseStatusModal = () => {
+    setOpenModal(false);
+    if (typeModal === STATUS_MODAL.SUCCESS_MODAL) {
+      router.push("/solicitudes");
     }
   };
 
@@ -222,10 +231,11 @@ export function CrearTraslado() {
               <div className="flex items-center bg-beige-dark/20 p-1 rounded-xl border border-gray-3">
                 <button
                   onClick={() => setOrigenSolicitud(OrigenSolicitudTraslado.REPORTE_VENTAS)}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-extrabold transition-all ${origenSolicitud === OrigenSolicitudTraslado.REPORTE_VENTAS
-                    ? "bg-white text-blue-light shadow-sm border border-gray-200"
-                    : "text-gray-600 hover:text-dark"
-                    }`}
+                  className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-extrabold transition-all cursor-pointer ${
+                    origenSolicitud === OrigenSolicitudTraslado.REPORTE_VENTAS
+                      ? "bg-white text-blue-light shadow-sm border border-gray-200"
+                      : "text-gray-600 hover:text-dark"
+                  }`}
                 >
                   <FileSpreadsheet size={15} />
                   <span>Reporte Ventas</span>
@@ -233,10 +243,11 @@ export function CrearTraslado() {
 
                 <button
                   onClick={() => setOrigenSolicitud(OrigenSolicitudTraslado.PRODUCTOS)}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-extrabold transition-all ${origenSolicitud === OrigenSolicitudTraslado.PRODUCTOS
-                    ? "bg-white text-blue-light shadow-sm border border-gray-200"
-                    : "text-gray-600 hover:text-dark"
-                    }`}
+                  className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-extrabold transition-all cursor-pointer ${
+                    origenSolicitud === OrigenSolicitudTraslado.PRODUCTOS
+                      ? "bg-white text-blue-light shadow-sm border border-gray-200"
+                      : "text-gray-600 hover:text-dark"
+                  }`}
                 >
                   <PackageSearch size={15} />
                   <span> Productos</span>
@@ -262,10 +273,11 @@ export function CrearTraslado() {
                     <button
                       key={cat}
                       onClick={() => setSelectedCategory(cat as TipoProducto)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all ${isActive
-                        ? "bg-white text-blue-light shadow-sm border border-gray-200"
-                        : "text-gray-600 hover:text-dark"
-                        }`}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all cursor-pointer ${
+                        isActive
+                          ? "bg-white text-blue-light shadow-sm border border-gray-200"
+                          : "text-gray-600 hover:text-dark"
+                      }`}
                     >
                       {cat}
                     </button>
@@ -312,14 +324,15 @@ export function CrearTraslado() {
           onSelectionChange={setSelectedRows}
         />
 
-        <div className="flex justify-center pt-4 pb-8">
-          <button
+        <div className="flex justify-center pt-4 pb-8 max-w-xs mx-auto">
+          <BaseButton
             onClick={handleCrearSolicitud}
             disabled={submitting || selectedRows.length === 0}
-            className="bg-yellow hover:bg-yellow-dark text-dark font-black text-xs uppercase tracking-[0.15em] px-10 py-4 rounded-2xl shadow-md transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+            loading={submitting}
+            variant="primary"
           >
-            {submitting ? "Procesando..." : "Crear Traslado"}
-          </button>
+            Crear Traslado
+          </BaseButton>
         </div>
 
         <LoadingModal isOpen={submitting} />
@@ -327,7 +340,7 @@ export function CrearTraslado() {
           isOpen={openModal}
           type={typeModal}
           message={statusMessage}
-          onClose={() => setOpenModal(false)}
+          onClose={handleCloseStatusModal}
         />
       </div>
     </div>

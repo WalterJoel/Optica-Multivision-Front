@@ -5,14 +5,17 @@ import { ITraslado } from "@/types/traslados";
 import { useTraslados } from "@/hooks/traslados/useTraslados";
 import { BadgeEstadoTraslado } from "../BadgeEstadoTraslado";
 import { TablaSolicitanteHistorial } from "./TablaSolicitanteHistorial";
+import { BaseButton } from "@/components/Common/Buttons/BaseButton";
+import { LoadingModal } from "@/components/Common/modal";
 import { Building2, Calendar } from "lucide-react";
 
 interface SolicitanteCardProps {
   traslado: ITraslado;
   onRecibir: (payload: any) => Promise<void>;
+  loading?: boolean;
 }
 
-function SolicitanteCard({ traslado, onRecibir }: SolicitanteCardProps) {
+function SolicitanteCard({ traslado, onRecibir, loading = false }: SolicitanteCardProps) {
   const [detallesState, setDetallesState] = useState<
     { detalleId: number; cantidadRecibida: number | "" }[]
   >([]);
@@ -168,13 +171,15 @@ function SolicitanteCard({ traslado, onRecibir }: SolicitanteCardProps) {
         </div>
 
         {isRecepcionEditable && (
-          <div className="flex justify-center w-full pt-4 pb-2">
-            <button
+          <div className="flex justify-center w-full pt-4 pb-2 max-w-xs mx-auto">
+            <BaseButton
               onClick={handleAction}
-              className="bg-yellow hover:bg-yellow-dark text-dark font-black px-10 py-3.5 rounded-2xl transition-all shadow-md active:scale-95 cursor-pointer text-xs uppercase tracking-wider"
+              disabled={loading}
+              loading={loading}
+              variant="primary"
             >
               Confirmar Recepción
-            </button>
+            </BaseButton>
           </div>
         )}
       </div>
@@ -214,7 +219,7 @@ export function Solicitante({
     try {
       await recibirMercaderia(payload);
       onSuccessAction();
-      fetchTraslados();
+      setEstadoFilter("TRASLADADO");
     } catch (err) {
       onErrorAction(err);
     }
@@ -255,10 +260,13 @@ export function Solicitante({
               key={t.id}
               traslado={t}
               onRecibir={handleRecibir}
+              loading={loading}
             />
           ))}
         </div>
       )}
+
+      <LoadingModal isOpen={loading} />
     </div>
   );
 }
