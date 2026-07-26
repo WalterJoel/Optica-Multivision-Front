@@ -1,10 +1,9 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { IUser } from "@/types/users";
 
 export const useSessionUser = () => {
-  const { data: session, status } = useSession();
+  const { data: session, status, update } = useSession();
 
   const user = session?.user;
   const nombre = user?.name?.split(" ")[0] ?? "";
@@ -16,6 +15,10 @@ export const useSessionUser = () => {
     nombre && apellido
       ? `${nombre.charAt(0)}${apellido.charAt(0)}`.toUpperCase()
       : "";
+
+  const updateSessionSede = async (newSedeId: number, newSedeNombre?: string) => {
+    await update({ sedeId: newSedeId, sedeNombre: newSedeNombre });
+  };
 
   return {
     // estados
@@ -29,16 +32,21 @@ export const useSessionUser = () => {
     email: user?.email ?? undefined,
     name: user?.name ?? undefined,
 
-    // custom fields del JWT (los que agregaste tú)
+    // custom fields del JWT
     role: (user as any)?.role as string | undefined,
     sedeId: (user as any)?.sedeId as number | undefined,
+    sedeNombre: (user as any)?.sedeNombre as string | undefined,
 
-    // token (si lo guardaste en session)
+    // token
     accessToken: (session as any)?.accessToken as string | undefined,
 
     // UI helpers
     fullName,
     foto,
+
+    // acciones de sesion en caliente
+    updateSession: update,
+    updateSessionSede,
 
     // raw
     user,

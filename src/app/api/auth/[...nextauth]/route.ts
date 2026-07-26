@@ -68,8 +68,7 @@ export const authOptions: NextAuthOptions = {
      * Todo esto forma un JWT
      * Se guarda en una cookie
      */
-    async jwt({ token, user }) {
-      //Si usuario logra loguearse
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id as number;
         token.role = user.role;
@@ -79,9 +78,18 @@ export const authOptions: NextAuthOptions = {
         token.name = user.name;
         token.email = user.email;
       }
-      // Sino solo retorna token
+
+      // Actualizar token JWT en caliente al invocar update() desde el cliente
+      if (trigger === "update" && session) {
+        if (session.sedeId !== undefined) token.sedeId = session.sedeId;
+        if (session.sedeNombre !== undefined) token.sedeNombre = session.sedeNombre;
+        if (session.name !== undefined) token.name = session.name;
+        if (session.role !== undefined) token.role = session.role;
+      }
+
       return token;
     },
+
 
     /*
      * Desencripta el JWT de la cookie

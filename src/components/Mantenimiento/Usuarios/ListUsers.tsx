@@ -8,18 +8,22 @@ import { STATUS_MODAL } from "@/commons/constants";
 import EditUserModal from "./EditUserModal";
 import { useUpdateUser } from "@/hooks/users/useUpdateUser";
 import { useToggleUserStatus } from "@/hooks/users/useToggleUserStatus";
+import { useSessionUser } from "@/hooks/session";
 import { Edit3, Power, User as UserIcon, Mail, Search } from "lucide-react";
 
 type Sede = { id: number; nombre: string; activo?: boolean };
 
 export default function ListUsers() {
   // Hooks
+  const { userId: currentUserId, updateSessionSede } = useSessionUser();
+
   const {
     updateUser,
     loading: updating,
     success: upOk,
     statusMessage: upMsg,
   } = useUpdateUser();
+
 
   const {
     toggleStatus,
@@ -127,7 +131,13 @@ export default function ListUsers() {
     if (!selected) return;
     await updateUser(selected.id, payload as any);
     setOpenEdit(false);
+
+    if (selected.id === currentUserId && payload.sedeId) {
+      const targetSede = sedes.find((s) => s.id === payload.sedeId);
+      await updateSessionSede(payload.sedeId, targetSede?.nombre);
+    }
   };
+
 
   const onToggle = async (u: IUser) => {
     await toggleStatus(u.id, !u.activo);
