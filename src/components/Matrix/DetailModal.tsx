@@ -1,11 +1,14 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ModalFrameWrapper } from "@/components/Common/modal";
 import { BaseButton } from "@/components/Common/Buttons";
 import { useInventoryByStores } from "@/hooks/products/useLenses";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
+import { History } from "lucide-react";
+import { ModalHistorialKardex } from "@/components/Kardex/ModalHistorialKardex";
+import { useSessionUser } from "@/hooks/session";
 
 import { addItemToCart } from "@/redux/features/cart-slice";
 import { ILensStockMatrixItem } from "@/types/products";
@@ -24,6 +27,9 @@ export const DetailModal: React.FC<DetailModalProps> = ({
   onClose,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
+  const { sedeId } = useSessionUser();
+  const [showKardex, setShowKardex] = useState(false);
+
   const { getInventoryByStores, loading, inventoryByStore } =
     useInventoryByStores();
 
@@ -70,7 +76,6 @@ export const DetailModal: React.FC<DetailModalProps> = ({
 
   return (
     <ModalFrameWrapper>
-
       <div className="pt-4 pb-10 max-h-[75vh] overflow-y-auto">
         {/* Header */}
         <div className="bg-blue/5 p-4 rounded-xl border border-blue/10 text-center relative overflow-hidden">
@@ -129,19 +134,43 @@ export const DetailModal: React.FC<DetailModalProps> = ({
         </div>
       </div>
 
-      {/* FOOTER FIJO (esto era el problema) */}
+      {/* FOOTER FIJO */}
       <div className="flex flex-col gap-2 pb-6">
-        <BaseButton
-          disabled={selected.cantidad <= 0 || !inventoryByStore}
-          onClick={handleAddToCart}
-        >
-          Agregar al carrito
-        </BaseButton>
+        <div className="flex items-center gap-2">
+          <div className="flex-1">
+            <BaseButton
+              disabled={selected.cantidad <= 0 || !inventoryByStore}
+              onClick={handleAddToCart}
+            >
+              Agregar al carrito
+            </BaseButton>
+          </div>
+          <button
+            onClick={() => setShowKardex(true)}
+            type="button"
+            className="p-[14px] rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-800 transition duration-200 border border-slate-200 shadow-sm flex items-center justify-center cursor-pointer"
+            title="Historial de movimientos"
+          >
+            <History size={20} />
+          </button>
+        </div>
 
         <BaseButton variant="cancel" onClick={onClose}>
           Cancelar
         </BaseButton>
       </div>
+
+      {showKardex && (
+        <ModalHistorialKardex
+          isOpen={showKardex}
+          onClose={() => setShowKardex(false)}
+          stockId={selected.id}
+          tipoProducto={TipoProducto.LENTE}
+          sedeId={sedeId}
+          nombreProducto={`LENTE — ${selected.nombreProducto || ""} (ESF: ${selected.esf}, CYL: ${selected.cyl})`}
+        />
+      )}
     </ModalFrameWrapper>
   );
 };
+

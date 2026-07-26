@@ -14,6 +14,8 @@ import { CartItem } from "@/types/cart";
 import { TipoProducto } from "@/commons/constants";
 import { useSessionUser } from "@/hooks/session";
 import { Package, History } from "lucide-react";
+import { ModalHistorialKardex } from "@/components/Kardex/ModalHistorialKardex";
+
 
 /* FILTERS */
 type Filters = {
@@ -114,8 +116,27 @@ export default function ListAccessories({ filters }: { filters?: Filters }) {
   const { sedeId } = useSessionUser()
   const { accessories, loading, getAllAccessoriesData } = useAccessories(sedeId);
 
+  const [kardexState, setKardexState] = useState<{
+    open: boolean;
+    productoId?: number;
+    nombre?: string;
+  }>({ open: false });
+
+  const handleOpenKardex = (item: IAccessory) => {
+    const pId = item.productoId || item.producto?.id || item.id;
+    setKardexState({
+      open: true,
+      productoId: pId,
+      nombre: item.nombre ? `ACCESORIO — ${item.nombre}` : "ACCESORIO",
+    });
+  };
+
+
   const ITEMS_PER_PAGE = 20;
   const [page, setPage] = useState(1);
+
+
+
 
   useEffect(() => {
     getAllAccessoriesData();
@@ -212,9 +233,9 @@ export default function ListAccessories({ filters }: { filters?: Filters }) {
                       </BaseButton>
                     </div>
                     <button
-                      onClick={() => {}}
+                      onClick={() => handleOpenKardex(item)}
                       type="button"
-                      className="p-[9px] rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-800 transition duration-200 border border-slate-200 shadow-sm flex items-center justify-center"
+                      className="p-[9px] rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-800 transition duration-200 border border-slate-200 shadow-sm flex items-center justify-center cursor-pointer"
                       title="Historial de movimientos"
                     >
                       <History size={18} />
@@ -225,6 +246,18 @@ export default function ListAccessories({ filters }: { filters?: Filters }) {
             })
           )}
         </div>
+
+        {/* MODAL KARDEX */}
+        <ModalHistorialKardex
+          isOpen={kardexState.open}
+          onClose={() => setKardexState({ open: false })}
+          productoId={kardexState.productoId}
+          tipoProducto={TipoProducto.ACCESORIO}
+          sedeId={sedeId}
+          nombreProducto={kardexState.nombre}
+        />
+
+
 
         {/* PAGINATION */}
         {!loading && totalPages > 1 && (

@@ -13,7 +13,9 @@ import { useDispatch } from "react-redux";
 import { CartItem } from "@/types/cart";
 import { TipoProducto } from "@/commons/constants";
 import { useSessionUser } from "@/hooks/session";
-import { Package } from "lucide-react";
+import { Package, History } from "lucide-react";
+import { ModalHistorialKardex } from "@/components/Kardex/ModalHistorialKardex";
+
 
 /* 🆕 TIPADO DE FILTROS (no rompe nada) */
 type Filters = {
@@ -118,8 +120,25 @@ export default function ListEyeglasses({ filters }: { filters?: Filters }) {
   const dispatch = useDispatch<AppDispatch>();
   const { eyeglasses, loading, getAllEyeglassesData } = useEyeglasses(sedeId);
 
+  const [kardexState, setKardexState] = useState<{
+    open: boolean;
+    productoId?: number;
+    nombre?: string;
+  }>({ open: false });
+
+  const handleOpenKardex = (eyeglass: IEyeglass) => {
+    const pId = eyeglass.productoId || eyeglass.producto?.id || eyeglass.id;
+    const title = [eyeglass.marca, eyeglass.codigo].filter(Boolean).join(" ");
+    setKardexState({
+      open: true,
+      productoId: pId,
+      nombre: title ? `MONTURA — ${title}` : "MONTURA",
+    });
+  };
+
   const ITEMS_PER_PAGE = 20;
   const [page, setPage] = useState(1);
+
 
   useEffect(() => {
     getAllEyeglassesData();
@@ -212,17 +231,41 @@ export default function ListEyeglasses({ filters }: { filters?: Filters }) {
               const cantidad = eyeglass.producto?.cantidad ?? eyeglass.cantidad ?? 0;
               return (
                 <EyeglassCardFrame key={eyeglass.id} eyeglass={eyeglass}>
-                  <BaseButton
-                    onClick={() => handleAddToCart(eyeglass)}
-                    disabled={cantidad <= 0}
-                  >
-                    Agregar
-                  </BaseButton>
+                  <div className="flex items-center justify-center gap-2 w-full">
+                    <div className="flex-1">
+                      <BaseButton
+                        onClick={() => handleAddToCart(eyeglass)}
+                        disabled={cantidad <= 0}
+                      >
+                        Agregar
+                      </BaseButton>
+                    </div>
+                    <button
+                      onClick={() => handleOpenKardex(eyeglass)}
+                      type="button"
+                      className="p-[9px] rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-800 transition duration-200 border border-slate-200 shadow-sm flex items-center justify-center cursor-pointer"
+                      title="Historial de movimientos"
+                    >
+                      <History size={18} />
+                    </button>
+                  </div>
                 </EyeglassCardFrame>
               );
             })
           )}
         </div>
+
+        {/* MODAL KARDEX */}
+        <ModalHistorialKardex
+          isOpen={kardexState.open}
+          onClose={() => setKardexState({ open: false })}
+          productoId={kardexState.productoId}
+          tipoProducto={TipoProducto.MONTURA}
+          sedeId={sedeId}
+          nombreProducto={kardexState.nombre}
+        />
+
+
 
         {!loading && totalPages > 1 && (
           <div className="flex justify-center items-center gap-3 mt-8">
