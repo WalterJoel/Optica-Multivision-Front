@@ -6,16 +6,21 @@ import { useTraslados } from "@/hooks/traslados/useTraslados";
 import { BadgeEstadoTraslado } from "../BadgeEstadoTraslado";
 import { TablaSolicitanteHistorial } from "./TablaSolicitanteHistorial";
 import { BaseButton } from "@/components/Common/Buttons/BaseButton";
-import { LoadingModal } from "@/components/Common/modal";
-import { Building2, Calendar } from "lucide-react";
+import { LoadingModal, ConfirmModal } from "@/components/Common/modal";
+import { Building2, Calendar, Trash2 } from "lucide-react";
+import { EstadoTraslado } from "@/commons/constants";
+
 
 interface SolicitanteCardProps {
   traslado: ITraslado;
   onRecibir: (payload: any) => Promise<void>;
+  onEliminar?: (id: number) => Promise<void>;
   loading?: boolean;
 }
 
-function SolicitanteCard({ traslado, onRecibir, loading = false }: SolicitanteCardProps) {
+
+function SolicitanteCard({ traslado, onRecibir, onEliminar, loading = false }: SolicitanteCardProps) {
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [detallesState, setDetallesState] = useState<
     { detalleId: number; cantidadRecibida: number | "" }[]
   >([]);
@@ -64,7 +69,9 @@ function SolicitanteCard({ traslado, onRecibir, loading = false }: SolicitanteCa
     );
   };
 
-  const isRecepcionEditable = traslado.estado === "ENVIADO";
+  const isRecepcionEditable = traslado.estado === EstadoTraslado.ENVIADO;
+  const isEliminarAllowed = traslado.estado === EstadoTraslado.SOLICITADO;
+
 
   const handleAction = async () => {
     await onRecibir({
@@ -90,13 +97,26 @@ function SolicitanteCard({ traslado, onRecibir, loading = false }: SolicitanteCa
           </span>
         </div>
 
-        <div className="flex items-center gap-4 text-xs font-semibold text-dark-5">
+        <div className="flex items-center gap-3 text-xs font-semibold text-dark-5">
+          {isEliminarAllowed && (
+            <button
+              type="button"
+              onClick={() => setShowConfirmDelete(true)}
+              className="px-3 py-1.5 rounded-xl text-red hover:bg-red-light-6 transition duration-200 border border-red/30 flex items-center gap-1.5 text-xs font-bold cursor-pointer"
+              title="Eliminar Solicitud"
+            >
+              <Trash2 size={15} />
+              <span>Eliminar Solicitud</span>
+            </button>
+          )}
+
           <span className="inline-flex items-center gap-1">
             <Calendar size={14} />
             {new Date(traslado.createdAt).toLocaleDateString()}
           </span>
         </div>
       </div>
+
 
       <div className="p-6">
         {(() => {
@@ -224,6 +244,18 @@ function SolicitanteCard({ traslado, onRecibir, loading = false }: SolicitanteCa
             </BaseButton>
           </div>
         )}
+
+        <ConfirmModal
+          isOpen={showConfirmDelete}
+          onClose={() => setShowConfirmDelete(false)}
+          onConfirm={async () => {
+            setShowConfirmDelete(false);
+            if (onEliminar) await onEliminar(traslado.id);
+          }}
+          title="Eliminar Solicitud"
+          message={`¿Estás seguro de eliminar la solicitud de traslado #${traslado.id}? Esta acción no se puede deshacer.`}
+          variant="danger"
+        />
       </div>
     </div>
   );
@@ -241,14 +273,14 @@ export function Solicitante({
   onSuccessAction,
   onErrorAction,
 }: SolicitanteProps) {
-  const { traslados, loading, getTraslados, recibirMercaderia } = useTraslados();
-  const [estadoFilter, setEstadoFilter] = useState<string>("SOLICITADO");
+  const { traslados, loading, getTraslados, recibirMercaderia, eliminarTraslado } = useTraslados();
+  const [estadoFilter, setEstadoFilter] = useState<EstadoTraslado>(EstadoTraslado.SOLICITADO);
 
   const fetchTraslados = () => {
     if (userSedeId) {
       getTraslados({
         sedeSolicitanteId: userSedeId,
-        estado: estadoFilter as any,
+        estado: estadoFilter,
       });
     }
   };
@@ -261,7 +293,17 @@ export function Solicitante({
     try {
       await recibirMercaderia(payload);
       onSuccessAction();
-      setEstadoFilter("TRASLADADO");
+      setEstadoFilter(EstadoTraslado.TRASLADADO);
+    } catch (err) {
+      onErrorAction(err);
+    }
+  };
+
+  const handleEliminar = async (id: number) => {
+    try {
+      await eliminarTraslado(id);
+      onSuccessAction();
+      fetchTraslados();
     } catch (err) {
       onErrorAction(err);
     }
@@ -270,7 +312,7 @@ export function Solicitante({
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2 mb-6 flex-wrap">
-        {["SOLICITADO", "ENVIADO", "TRASLADADO"].map((st) => (
+        {[EstadoTraslado.SOLICITADO, EstadoTraslado.ENVIADO, EstadoTraslado.TRASLADADO].map((st) => (
           <button
             key={st}
             onClick={() => setEstadoFilter(st)}
@@ -285,7 +327,8 @@ export function Solicitante({
         ))}
       </div>
 
-      {estadoFilter === "TRASLADADO" ? (
+      {estadoFilter === EstadoTraslado.TRASLADADO ? (
+
         <TablaSolicitanteHistorial traslados={traslados} loading={loading} />
       ) : loading ? (
         <div className="w-full bg-white rounded-2xl border border-gray-3 p-12 text-center text-dark-5 font-bold uppercase text-xs tracking-wider">
@@ -302,6 +345,7 @@ export function Solicitante({
               key={t.id}
               traslado={t}
               onRecibir={handleRecibir}
+              onEliminar={handleEliminar}
               loading={loading}
             />
           ))}
@@ -312,3 +356,4 @@ export function Solicitante({
     </div>
   );
 }
+

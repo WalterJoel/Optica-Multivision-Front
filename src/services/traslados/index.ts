@@ -36,3 +36,9 @@ export const obtenerTrasladoPorIdService = async (id: number): Promise<ITraslado
   const { data } = await api.get<ITraslado>(`/traslados/${id}`);
   return data;
 };
+
+export const eliminarTrasladoService = async (id: number): Promise<{ message: string; id: number }> => {
+  const { data } = await api.delete<{ message: string; id: number }>(`/traslados/${id}`);
+  return data;
+};
+

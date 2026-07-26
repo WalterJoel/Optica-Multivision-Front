@@ -10,7 +10,9 @@ import {
   enviarMercaderiaService,
   recibirMercaderiaService,
   obtenerTrasladosService,
+  eliminarTrasladoService,
 } from "@/services/traslados";
+
 
 export function useTraslados() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -97,6 +99,25 @@ export function useTraslados() {
     }
   };
 
+  const eliminarTraslado = async (id: number) => {
+    setLoading(true);
+    setSuccess(false);
+    setStatusMessage("");
+    try {
+      const res = await eliminarTrasladoService(id);
+      setSuccess(true);
+      setStatusMessage(res.message || `Solicitud #${id} eliminada correctamente.`);
+      return res;
+    } catch (err: any) {
+      const msg = err.response?.data?.message || "Error al eliminar la solicitud de traslado";
+      setStatusMessage(msg);
+      setSuccess(false);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     traslados,
     loading,
@@ -106,6 +127,8 @@ export function useTraslados() {
     crearTraslado,
     enviarMercaderia,
     recibirMercaderia,
+    eliminarTraslado,
     setStatusMessage,
   };
 }
+
