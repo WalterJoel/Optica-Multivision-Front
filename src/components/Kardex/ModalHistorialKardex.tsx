@@ -4,9 +4,8 @@ import { useEffect, useState, useCallback } from "react";
 import { History, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { ModalFrameWrapper } from "@/components/Common/modal/ModalFrameWrapper";
 import { obtenerHistorialKardex } from "@/services/kardex";
-import { IKardexRegistro, OrigenEventoKardex } from "@/types/kardex";
+import { IKardexRegistro } from "@/types/kardex";
 import { TipoProducto } from "@/commons/constants";
-
 
 interface ModalHistorialKardexProps {
   isOpen: boolean;
@@ -59,8 +58,6 @@ export function ModalHistorialKardex({
     }
   }, [isOpen, sedeId, productoId, stockId, tipoProducto, page]);
 
-
-
   useEffect(() => {
     if (isOpen) {
       setPage(1);
@@ -72,31 +69,6 @@ export function ModalHistorialKardex({
   }, [fetchHistorial]);
 
   if (!isOpen) return null;
-
-  const renderBadgeOrigen = (origen: OrigenEventoKardex | string) => {
-    const labels: Record<string, string> = {
-      [OrigenEventoKardex.VENTA_REALIZADA]: "VENTA",
-      [OrigenEventoKardex.VENTA_KIT_ACCESORIO]: "VENTA KIT",
-      [OrigenEventoKardex.VENTA_ANULADA]: "ANULACIÓN VENTA",
-      [OrigenEventoKardex.ANULACION_KIT_ACCESORIO]: "ANULACIÓN KIT",
-      [OrigenEventoKardex.TRASLADO_ENVIADO]: "TRASLADO ENVIADO",
-      [OrigenEventoKardex.TRASLADO_RECIBIDO]: "TRASLADO RECIBIDO",
-      [OrigenEventoKardex.CREACION_INICIAL]: "REGISTRO INICIAL",
-      [OrigenEventoKardex.INICIALIZACION_MATRIZ]: "REGISTRO MATRIZ",
-      [OrigenEventoKardex.AJUSTE_MANUAL]: "AJUSTE MANUAL",
-      [OrigenEventoKardex.CARGA_EXCEL]: "CARGA EXCEL",
-    };
-
-    const text = labels[origen] || String(origen).replace(/_/g, " ");
-
-    return (
-      <span className="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-blue-light-5 text-blue border border-blue/20 inline-block">
-        {text}
-      </span>
-    );
-  };
-
-
 
   return (
     <ModalFrameWrapper size="xl" onClose={onClose} variant="blue">
@@ -127,7 +99,6 @@ export function ModalHistorialKardex({
 
         {/* TABLA HISTORIAL ACOTADA Y CON SCROLL */}
         <div className="max-h-[520px] overflow-y-auto border border-gray-3 rounded-2xl shadow-sm">
-
           <table className="w-full text-left text-xs border-collapse">
             <thead className="sticky top-0 bg-beige z-10 shadow-xs">
               <tr className="bg-beige text-dark-3 font-black uppercase text-[10px] tracking-wider border-b border-gray-3">
@@ -169,7 +140,9 @@ export function ModalHistorialKardex({
                         {fechaFormatted}
                       </td>
                       <td className="py-1.5 px-3 text-center">
-                        {renderBadgeOrigen(reg.origenEvento)}
+                        <span className="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-blue-light-5 text-blue border border-blue/20 inline-block">
+                          {reg.origenEvento}
+                        </span>
                       </td>
                       <td className="py-1.5 px-3 text-center font-bold text-dark-5 text-xs">
                         {reg.cantidadAnterior}
@@ -189,8 +162,6 @@ export function ModalHistorialKardex({
                           </span>
                         )}
                       </td>
-
-
                       <td className="py-1.5 px-3 text-center font-black text-dark text-xs">
                         {reg.cantidadFinal}
                       </td>
@@ -229,8 +200,8 @@ export function ModalHistorialKardex({
               </button>
             </div>
           </div>
-        )}      </div>
+        )}
+      </div>
     </ModalFrameWrapper>
   );
 }
-
