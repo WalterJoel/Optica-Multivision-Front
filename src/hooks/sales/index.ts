@@ -5,3 +5,5 @@ export * from "./useRevisarDeudas";
 export * from "./useProductosVendidos";
 export * from "./useEditarVenta";
 export * from "./useRegistrarPago";
+export * from "./useVentasPorTipo";
+

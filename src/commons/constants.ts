@@ -8,6 +8,19 @@ export enum TipoProducto {
   MONTURA = "MONTURA",
   ACCESORIO = "ACCESORIO",
 }
+
+export enum EstadoTraslado {
+  SOLICITADO = "SOLICITADO",
+  ENVIADO = "ENVIADO",
+  TRASLADADO = "TRASLADADO",
+  CANCELADO = "CANCELADO",
+}
+
+export enum OrigenSolicitudTraslado {
+  REPORTE_VENTAS = "REPORTE_VENTAS",
+  PRODUCTOS = "PRODUCTOS",
+}
+
 export const IMG_LENTE =
   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGnQPr3op1MGXxOFrwPtuxTYNQM_1H3ZLsGA&s";
 

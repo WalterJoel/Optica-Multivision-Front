@@ -1,4 +1,4 @@
-import { IProductoVendidoResponse } from "@/types/sales";
+import { IProductoVendidoResponse, IVentaPorTipoItem } from "@/types/sales";
 import { api } from "../api";
 
 export const getAllVentasService = async (sedeId: number) => {
@@ -13,6 +13,18 @@ export const buscarVentasService = async (
 ) => {
   const { data } = await api.get(`/ventas/buscarVentasPorRango`, {
     params: { sedeId, fechaInicio, fechaFin },
+  });
+  return data;
+};
+
+export const buscarVentasPorRangoTipoService = async (
+  sedeId: number,
+  fechaInicio: string,
+  fechaFin: string,
+  tipo: string,
+): Promise<IVentaPorTipoItem[]> => {
+  const { data } = await api.get<IVentaPorTipoItem[]>(`/ventas/buscarVentasPorRangoTipo`, {
+    params: { sedeId, fechaInicio, fechaFin, tipo },
   });
   return data;
 };
@@ -32,4 +44,5 @@ export const revisarDeudasService = async (clienteId: number) => {
   const { data } = await api.get(`/ventas/revisarDeudas/${clienteId}`);
   return data;
 };
+
 

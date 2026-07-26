@@ -130,3 +130,19 @@ export interface IProductoVendidoResponse {
     };
   } | null;
 }
+
+export interface IVentaPorTipoItem {
+  id: number;
+  productoId?: number | null; // Cuando es montura y accesorio
+  stockId?: number | null;  // Cuando es un lente
+  lenteId?: number | null;
+  codigo?: string;
+  marca?: string;
+  material?: string;
+  nombre?: string;
+  sph?: string | number | null;
+  cyl?: string | number | null;
+  cantidad: number;
+}
+
+
