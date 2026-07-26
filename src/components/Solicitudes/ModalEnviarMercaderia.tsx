@@ -114,74 +114,124 @@ export function ModalEnviarMercaderia({
         </div>
 
         {/* CONTENIDO FORM */}
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="border border-gray-3 rounded-2xl overflow-hidden shadow-sm">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="bg-beige text-dark-3 font-black uppercase text-[10px] tracking-wider border-b border-gray-3">
-                  <th className="p-3.5">Producto / Ítem</th>
-                  <th className="p-3.5 text-center">Solicitada 📥</th>
-                  <th className="p-3.5 text-center">Cantidad a Enviar 🚚</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-2 text-dark font-medium">
-                {traslado.detalles.map((det) => {
-                  const stateItem = detallesState.find((s) => s.detalleId === det.id);
-                  const nombreItem =
-                    det.producto?.nombre ||
-                    det.producto?.montura?.codigo ||
-                    det.producto?.accesorio?.nombre ||
-                    `Lente ${det.stock?.lente?.marca || ""} ${det.stock?.esf || ""}`;
+        {(() => {
+          const hasLente = traslado.detalles?.some(
+            (d) => d.tipoProducto === "LENTE" || d.stockId != null
+          );
 
-                  return (
-                    <tr key={det.id} className="hover:bg-beige/40">
-                      <td className="p-3.5">
-                        <span className="font-bold text-dark uppercase block">{nombreItem}</span>
-                        <span className="text-[10px] text-dark-5 font-semibold">Ref Detalle: #{det.id}</span>
-                      </td>
-                      <td className="px-4 py-2 text-center font-bold text-dark-3 text-xs">
-                        {det.cantidadSolicitada}
-                      </td>
-                      <td className="px-4 py-2 text-center">
-                        <div className="flex items-center justify-center">
-                          <input
-                            type="number"
-                            min={0}
-                            value={stateItem?.cantidadEnviada}
-                            onFocus={(e) => e.target.select()}
-                            onChange={(e) => handleCantidadChange(det.id, e.target.value)}
-                            onBlur={() => handleBlurQuantity(det.id)}
-                            className="w-16 h-9 px-2 text-center font-black text-xs text-dark border-2 border-blue-light/50 rounded-xl bg-white focus:border-blue-light focus:ring-2 focus:ring-blue-light/20 outline-none shadow-sm transition-all hover:border-blue-light cursor-pointer"
-                          />
-                        </div>
-                      </td>
+          return (
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="border border-gray-3 rounded-2xl overflow-hidden shadow-sm">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-beige text-dark-3 font-black uppercase text-[10px] tracking-wider border-b border-gray-3">
+                      <th className="p-3.5">Código / Nombre</th>
+                      <th className="p-3.5 text-center">Marca</th>
+                      <th className="p-3.5 text-center">Material</th>
+                      {hasLente && (
+                        <>
+                          <th className="p-3.5 text-center">SPH</th>
+                          <th className="p-3.5 text-center">CYL</th>
+                        </>
+                      )}
+                      <th className="p-3.5 text-center">Solicitada 📥</th>
+                      <th className="p-3.5 text-center">Cantidad a Enviar 🚚</th>
                     </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+                  </thead>
+                  <tbody className="divide-y divide-gray-2 text-dark font-medium">
+                    {traslado.detalles.map((det) => {
+                      const stateItem = detallesState.find((s) => s.detalleId === det.id);
 
-          <div className="flex justify-center gap-3 pt-2 max-w-md mx-auto">
-            <BaseButton
-              type="button"
-              onClick={onClose}
-              variant="cancel"
-            >
-              Cancelar
-            </BaseButton>
-            <BaseButton
-              type="submit"
-              disabled={loading}
-              loading={loading}
-              variant="primary"
-            >
-              Enviar Mercadería
-            </BaseButton>
-          </div>
+                      const codigoVal =
+                        det.producto?.montura?.codigo ||
+                        det.producto?.accesorio?.codigoAccesorio ||
+                        det.producto?.accesorio?.nombre ||
+                        det.producto?.nombre ||
+                        "-";
 
-        </form>
+                      const marcaVal =
+                        det.producto?.montura?.marca ||
+                        det.producto?.accesorio?.marca ||
+                        det.stock?.lente?.marca ||
+                        "-";
+
+                      const materialVal =
+                        det.producto?.montura?.material ||
+                        det.producto?.accesorio?.material ||
+                        det.stock?.lente?.material ||
+                        "-";
+
+                      const isLente = det.tipoProducto === "LENTE";
+                      const sphVal = isLente ? (det.stock?.esf ?? "-") : "-";
+                      const cylVal = isLente ? (det.stock?.cyl ?? "-") : "-";
+
+                      return (
+                        <tr key={det.id} className="hover:bg-beige/40">
+                          <td className="p-3.5 font-bold uppercase text-dark">
+                            {codigoVal}
+                          </td>
+                          <td className="p-3.5 text-center uppercase font-bold text-dark-3">
+                            {marcaVal}
+                          </td>
+                          <td className="p-3.5 text-center uppercase font-bold text-dark-3">
+                            {materialVal}
+                          </td>
+                          {hasLente && (
+                            <>
+                              <td className="p-3.5 text-center font-bold text-dark text-xs">
+                                {sphVal}
+                              </td>
+                              <td className="p-3.5 text-center font-bold text-dark text-xs">
+                                {cylVal}
+                              </td>
+                            </>
+                          )}
+                          <td className="px-4 py-2 text-center font-bold text-dark-3 text-xs">
+                            {det.cantidadSolicitada}
+                          </td>
+                          <td className="px-4 py-2 text-center">
+                            <div className="flex items-center justify-center">
+                              <input
+                                type="number"
+                                min={0}
+                                value={stateItem?.cantidadEnviada}
+                                onFocus={(e) => e.target.select()}
+                                onChange={(e) => handleCantidadChange(det.id, e.target.value)}
+                                onBlur={() => handleBlurQuantity(det.id)}
+                                className="w-24 h-9 px-2.5 text-center font-black text-xs text-dark border-2 border-blue-light/50 rounded-xl bg-white focus:border-blue-light focus:ring-2 focus:ring-blue-light/20 outline-none shadow-sm transition-all hover:border-blue-light cursor-pointer"
+
+                              />
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="flex justify-center gap-3 pt-2 max-w-md mx-auto">
+                <BaseButton
+                  type="button"
+                  onClick={onClose}
+                  variant="cancel"
+                >
+                  Cancelar
+                </BaseButton>
+                <BaseButton
+                  type="submit"
+                  disabled={loading}
+                  loading={loading}
+                  variant="primary"
+                >
+                  Enviar Mercadería
+                </BaseButton>
+              </div>
+            </form>
+          );
+        })()}
       </div>
     </ModalFrameWrapper>
   );
+
 }
