@@ -13,8 +13,10 @@ import { useDispatch } from "react-redux";
 import { CartItem } from "@/types/cart";
 import { TipoProducto } from "@/commons/constants";
 import { useSessionUser } from "@/hooks/session";
-import { Package, History } from "lucide-react";
+import { Package, History, Store } from "lucide-react";
 import { ModalHistorialKardex } from "@/components/Kardex/ModalHistorialKardex";
+import { ModalStockOtrasSedes } from "@/components/Products/ModalStockOtrasSedes";
+
 
 
 /* FILTERS */
@@ -132,7 +134,23 @@ export default function ListAccessories({ filters }: { filters?: Filters }) {
   };
 
 
+  const [stockSedesState, setStockSedesState] = useState<{
+    open: boolean;
+    productoId?: number;
+    nombre?: string;
+  }>({ open: false });
+
+  const handleOpenStockOtrasSedes = (item: IAccessory) => {
+    const pId = item.productoId || item.producto?.id || item.id;
+    setStockSedesState({
+      open: true,
+      productoId: pId,
+      nombre: item.nombre ? `ACCESORIO — ${item.nombre}` : "ACCESORIO",
+    });
+  };
+
   const ITEMS_PER_PAGE = 20;
+
   const [page, setPage] = useState(1);
 
 
@@ -233,6 +251,14 @@ export default function ListAccessories({ filters }: { filters?: Filters }) {
                       </BaseButton>
                     </div>
                     <button
+                      onClick={() => handleOpenStockOtrasSedes(item)}
+                      type="button"
+                      className="p-[9px] rounded-xl bg-blue/10 hover:bg-blue/20 text-blue transition duration-200 border border-blue/20 shadow-sm flex items-center justify-center cursor-pointer"
+                      title="Ver stock en otras sedes"
+                    >
+                      <Store size={18} />
+                    </button>
+                    <button
                       onClick={() => handleOpenKardex(item)}
                       type="button"
                       className="p-[9px] rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-800 transition duration-200 border border-slate-200 shadow-sm flex items-center justify-center cursor-pointer"
@@ -256,6 +282,15 @@ export default function ListAccessories({ filters }: { filters?: Filters }) {
           sedeId={sedeId}
           nombreProducto={kardexState.nombre}
         />
+
+        {/* MODAL STOCK OTRAS SEDES */}
+        <ModalStockOtrasSedes
+          isOpen={stockSedesState.open}
+          onClose={() => setStockSedesState({ open: false })}
+          productoId={stockSedesState.productoId}
+          nombreProducto={stockSedesState.nombre}
+        />
+
 
 
 
