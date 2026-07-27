@@ -1,4 +1,4 @@
-import { PRODUCTOS, ClasificacionLentes, PrioridadLentes } from "@/commons/constants";
+import { PRODUCTOS, ClasificacionLentes } from "@/commons/constants";
 export interface ILens {
   id: number;
   marca: string;
@@ -11,7 +11,6 @@ export interface ILens {
   imagenUrl?: string | null;
   activo?: boolean;
   clasificacion: ClasificacionLentes;
-  prioridad?: PrioridadLentes | null;
 }
 
 export type CreateLens = Omit<ILens, "id" | "productoId"> & {

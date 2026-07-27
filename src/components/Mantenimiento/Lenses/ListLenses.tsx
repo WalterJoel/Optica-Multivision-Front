@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { StatusModal, LoadingModal, ConfirmModal } from "@/components/Common/modal";
-import { STATUS_MODAL, PrioridadLentes } from "@/commons/constants";
+import { STATUS_MODAL } from "@/commons/constants";
 import EditLensModal from "./EditLensModal";
 import { ClassificationBadge } from "@/components/Common/ClassificationBadge";
 import { ImageWithZoom } from "@/components/Common/ImageWithZoom";
@@ -122,9 +122,6 @@ export default function ListLenses() {
                 Clasificación
               </th>
               <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3">
-                Prioridad
-              </th>
-              <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3">
                 Material
               </th>
               <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3">
@@ -191,15 +188,6 @@ export default function ListLenses() {
                   <td className="px-6 py-5">
                     {l.clasificacion ? (
                       <ClassificationBadge text={l.clasificacion} />
-                    ) : (
-                      <span className="text-[10px] text-dark-5 font-bold uppercase">-</span>
-                    )}
-                  </td>
-                  <td className="px-6 py-5">
-                    {l.prioridad && PrioridadLentes[l.prioridad] ? (
-                      <span className="px-2.5 py-1 bg-blue-light/10 text-blue border border-blue-light/20 text-[10px] font-bold rounded-lg uppercase">
-                        {PrioridadLentes[l.prioridad].replace("MOSTRAR_", "MOSTRAR ").replace("_", " ")}
-                      </span>
                     ) : (
                       <span className="text-[10px] text-dark-5 font-bold uppercase">-</span>
                     )}

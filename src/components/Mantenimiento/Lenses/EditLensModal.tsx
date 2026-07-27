@@ -5,7 +5,7 @@ import { BaseInput, BaseFile } from "@/components/Common/Inputs";
 import { BaseButton } from "@/components/Common/Buttons/BaseButton";
 import { ILens, CreateLens } from "@/types/products";
 import { ModalFrameWrapper, StatusModal, LoadingModal } from "@/components/Common/modal";
-import { STATUS_MODAL, ClasificacionLentes, PrioridadLentes } from "@/commons/constants";
+import { STATUS_MODAL, ClasificacionLentes } from "@/commons/constants";
 import { useUpdateLens } from "@/hooks/products/lens/useUpdateLens";
 import { Eye, X } from "lucide-react";
 import { useKits } from "@/hooks/kits";
@@ -24,7 +24,6 @@ const emptyForm = {
   kitId: null as number | null,
   imagenUrl: null as string | null,
   clasificacion: "" as unknown as ClasificacionLentes,
-  prioridad: null as PrioridadLentes | null,
 };
 
 export default function EditLensModal({
@@ -69,7 +68,6 @@ export default function EditLensModal({
       kitId: form.kitId,
       imagenUrl: imageUrl || form.imagenUrl || null,
       clasificacion: form.clasificacion,
-      prioridad: form.prioridad || null,
       sedeId: Number(sedeId),
     };
 
@@ -98,7 +96,6 @@ export default function EditLensModal({
         kitId: lens.kitId ?? null,
         imagenUrl: lens.imagenUrl ?? null,
         clasificacion: lens.clasificacion ?? "" as unknown as ClasificacionLentes,
-        prioridad: lens.prioridad ?? null,
       });
       setSelectedFile(null);
     }
@@ -259,29 +256,6 @@ export default function EditLensModal({
                     setForm((prev) => ({
                       ...prev,
                       clasificacion: e.target.value as ClasificacionLentes,
-                    }))
-                  }
-                />
-                <BaseSelect
-                  label="Prioridad de Visualización"
-                  name="prioridad"
-                  value={form.prioridad ?? ""}
-                  options={[
-                    { label: "Sin prioridad (Orden por defecto)", value: "" },
-                    ...Object.values(PrioridadLentes)
-                      .filter((val) => typeof val === "number")
-                      .map((val) => {
-                        const key = PrioridadLentes[val as number];
-                        return {
-                          label: key.replace("MOSTRAR_", "MOSTRAR ").replace("_", " "),
-                          value: val,
-                        };
-                      }),
-                  ]}
-                  onChange={(e) =>
-                    setForm((prev) => ({
-                      ...prev,
-                      prioridad: e.target.value === "" ? null : (Number(e.target.value) as PrioridadLentes),
                     }))
                   }
                 />

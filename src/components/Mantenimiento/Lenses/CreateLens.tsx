@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useCreateLens } from "@/hooks/products";
 import { BaseInput, BaseFile } from "@/components/Common/Inputs";
-import { PRODUCTOS, STATUS_MODAL, ClasificacionLentes, PrioridadLentes } from "@/commons/constants";
+import { PRODUCTOS, STATUS_MODAL, ClasificacionLentes } from "@/commons/constants";
 import { CreateLens } from "@/types/products";
 import { StatusModal, LoadingModal } from "@/components/Common/modal";
 import {
@@ -25,7 +25,6 @@ const initialForm: CreateLens = {
   imagenUrl: null,
   tipo: PRODUCTOS.LENTE,
   clasificacion: "" as unknown as ClasificacionLentes,
-  prioridad: null as PrioridadLentes | null,
   sedeId: 0,
 };
 
@@ -58,7 +57,6 @@ export default function LensForm() {
       precio_serie2: Number(form.precio_serie2) || 0,
       precio_serie3: Number(form.precio_serie3) || 0,
       imagenUrl: imageUrl || null,
-      prioridad: form.prioridad || null,
       sedeId: Number(sedeId),
     };
 
@@ -199,29 +197,6 @@ export default function LensForm() {
               setForm((prev) => ({
                 ...prev,
                 clasificacion: e.target.value as ClasificacionLentes,
-              }))
-            }
-          />
-          <BaseSelect
-            label="Prioridad de Visualización"
-            name="prioridad"
-            value={form.prioridad ?? ""}
-            options={[
-              { label: "Sin prioridad (Orden por defecto)", value: "" },
-              ...Object.values(PrioridadLentes)
-                .filter((val) => typeof val === "number")
-                .map((val) => {
-                  const key = PrioridadLentes[val as number];
-                  return {
-                    label: key.replace("MOSTRAR_", "MOSTRAR ").replace("_", " "),
-                    value: val,
-                  };
-                }),
-            ]}
-            onChange={(e) =>
-              setForm((prev) => ({
-                ...prev,
-                prioridad: e.target.value === "" ? null : (Number(e.target.value) as PrioridadLentes),
               }))
             }
           />
