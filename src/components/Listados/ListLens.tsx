@@ -3,7 +3,6 @@
 import { useLenses } from "@/hooks/products";
 import { useRouter } from "next/navigation";
 import { ImageWithZoom } from "@/components/Common/ImageWithZoom";
-import { useMemo } from "react";
 import { BaseButton } from "@/components/Common/Buttons";
 
 function LensCardFrame({
@@ -91,18 +90,6 @@ export default function ListLens() {
   const router = useRouter();
   const { lenses, loading } = useLenses();
 
-  // Ordenar por prioridad: PrioridadLentes (1 a 5), luego el resto
-  const sortedLenses = useMemo(() => {
-    return [...lenses].sort((a, b) => {
-      const aVal = a.prioridad !== null && a.prioridad !== undefined ? Number(a.prioridad) : 999;
-      const bVal = b.prioridad !== null && b.prioridad !== undefined ? Number(b.prioridad) : 999;
-
-      if (aVal !== bVal) {
-        return aVal - bVal;
-      }
-      return (a.marca || "").localeCompare(b.marca || "");
-    });
-  }, [lenses]);
 
   const handleOpenMatrix = (id: number) => {
     router.push(`/matrix?lenteId=${id}&mode=stock`);
@@ -117,7 +104,7 @@ export default function ListLens() {
               Cargando...
             </div>
           ) : (
-            sortedLenses.map((lens) => (
+            lenses.map((lens) => (
               <LensCardFrame key={lens.id} lens={lens}>
                 <BaseButton
                   onClick={() => handleOpenMatrix(lens.id)}
