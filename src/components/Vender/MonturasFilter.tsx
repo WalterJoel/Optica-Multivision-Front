@@ -1,6 +1,6 @@
 "use client";
 
-import { ClasificacionMonturas } from "@/commons/constants";
+import { ClasificacionMonturas, SexoMontura } from "@/commons/constants";
 
 type Props = {
   filters: any;
@@ -47,10 +47,11 @@ export default function MonturaFilters({ filters, setFilters }: Props) {
           className="h-10 px-3 rounded-xl border border-blue-light-5 text-sm bg-white"
         >
           <option value="">Sexo</option>
-          <option value="HOMBRE">Hombre</option>
-          <option value="MUJER">Mujer</option>
-          <option value="UNISEX">Unisex</option>
+          <option value={SexoMontura.M}>M (Masculino)</option>
+          <option value={SexoMontura.F}>F (Femenino)</option>
+          <option value={SexoMontura.UNISEX}>Unisex</option>
         </select>
+
 
         {/* FORMA */}
         <select

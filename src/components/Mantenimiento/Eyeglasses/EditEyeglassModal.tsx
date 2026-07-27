@@ -5,7 +5,8 @@ import { BaseInput, BaseFile, BaseSelect } from "@/components/Common/Inputs";
 import { BaseButton } from "@/components/Common/Buttons/BaseButton";
 import { IEyeglass, IUpdateEyeglass } from "@/types/products";
 import { ModalFrameWrapper, StatusModal, LoadingModal } from "@/components/Common/modal";
-import { STATUS_MODAL, ClasificacionMonturas } from "@/commons/constants";
+import { STATUS_MODAL, ClasificacionMonturas, SexoMontura } from "@/commons/constants";
+
 import { useUpdateEyeglass } from "@/hooks/products/eyeglasses";
 import { Glasses, X } from "lucide-react";
 
@@ -308,11 +309,12 @@ export default function EditEyeglassModal({
                   required
                   options={[
                     { label: "Seleccionar", value: "" },
-                    { label: "Masculino", value: "M" },
-                    { label: "Femenino", value: "F" },
-                    { label: "Unisex", value: "UNISEX" },
+                    { label: "M (Masculino)", value: SexoMontura.M },
+                    { label: "F (Femenino)", value: SexoMontura.F },
+                    { label: "Unisex", value: SexoMontura.UNISEX },
                   ]}
                 />
+
               </div>
 
               <BaseFile

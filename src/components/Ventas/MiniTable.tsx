@@ -47,6 +47,7 @@ export const MiniTable = ({
   const [editSale, setEditSale] = useState<IResponseSale | null>(null);
   const [pagoSale, setPagoSale] = useState<IResponseSale | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [activoFilter, setActivoFilter] = useState<"ACTIVAS" | "ANULADAS">("ACTIVAS");
   const [currentPage, setCurrentPage] = useState(1);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editStatusMsg, setEditStatusMsg] = useState("");
@@ -82,6 +83,11 @@ export const MiniTable = ({
 
   // 🔎 Filtrado dinámico
   const filteredData = data.filter((venta) => {
+    // 1. Filtro por campo 'activo'
+    if (activoFilter === "ACTIVAS" && venta.activo === false) return false;
+    if (activoFilter === "ANULADAS" && venta.activo !== false) return false;
+
+    // 2. Filtro por texto de búsqueda
     if (!searchTerm) return true;
     const term = searchTerm.toLowerCase();
 
@@ -130,13 +136,40 @@ export const MiniTable = ({
   return (
     <div className="w-full rounded-2xl border border-gray-3 bg-white shadow-sm overflow-hidden flex flex-col relative">
       {/* HEADER */}
-      <div className="px-6 py-5 flex justify-between items-center border-b border-gray-2 bg-white">
-        <div className="flex items-center gap-3">
-          <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          <h3 className="text-[12px] font-black text-dark-2 uppercase tracking-[2px]">
-            {titulo} ({filteredData.length})
-          </h3>
+      <div className="px-6 py-5 flex justify-between items-center border-b border-gray-2 bg-white flex-wrap gap-4">
+        <div className="flex items-center gap-4 flex-wrap">
+          <div className="flex items-center gap-3">
+            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <h3 className="text-[12px] font-black text-dark-2 uppercase tracking-[2px]">
+              {titulo} ({filteredData.length})
+            </h3>
+          </div>
+
+          {/* BOTONES DE FILTRO ACTIVAS / ANULADAS */}
+          <div className="flex items-center gap-2">
+            {[
+              { id: "ACTIVAS", label: "No Anuladas" },
+              { id: "ANULADAS", label: "Anuladas" },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => {
+                  setActivoFilter(tab.id as any);
+                  setCurrentPage(1);
+                }}
+                className={`px-3 py-1.5 rounded-xl text-[11px] font-bold border transition-all cursor-pointer ${
+                  activoFilter === tab.id
+                    ? "bg-white border-blue-light text-blue-light shadow-sm"
+                    : "bg-white/60 border-gray-3 text-dark-5 hover:bg-white"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
+
 
         <div className="flex items-center bg-beige-dark/40 rounded-xl px-3 py-1.5 border border-transparent focus-within:border-blue-light-3 transition-all">
           <Search size={14} className="text-blue-light-2" />
@@ -152,6 +185,7 @@ export const MiniTable = ({
           />
         </div>
       </div>
+
 
       {/* TABLE */}
       <div className="overflow-x-auto">
@@ -227,8 +261,14 @@ export const MiniTable = ({
                       <div className="h-9 w-9 flex items-center justify-center bg-blue-light/10 rounded-xl text-blue font-bold shadow-sm">
                         #{venta.id}
                       </div>
+                      {!venta.activo && (
+                        <span className="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-red-light-6 text-red border border-red-light-4">
+                          ANULADA
+                        </span>
+                      )}
                     </div>
                   </td>
+
 
                   {/* Fecha */}
                   <td className="px-6 py-5 text-dark-2 font-semibold">

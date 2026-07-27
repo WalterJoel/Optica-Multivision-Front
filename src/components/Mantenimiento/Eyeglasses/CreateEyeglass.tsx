@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { BaseInput, BaseFile, BaseSelect } from "@/components/Common/Inputs";
 import { BaseButton } from "@/components/Common/Buttons/BaseButton";
 import { StatusModal, LoadingModal } from "@/components/Common/modal";
-import { STATUS_MODAL, PRODUCTOS, ClasificacionMonturas } from "@/commons/constants";
+import { STATUS_MODAL, PRODUCTOS, ClasificacionMonturas, SexoMontura } from "@/commons/constants";
+
 import { ICreateEyeglass } from "@/types/products";
 import { useCreateEyeglass } from "@/hooks/products/eyeglasses";
 import { useSessionUser } from "@/hooks/session";
@@ -222,11 +223,12 @@ export default function CreateEyeglass() {
           required
           options={[
             { label: "Seleccionar", value: "" },
-            { label: "Masculino", value: "M" },
-            { label: "Femenino", value: "F" },
-            { label: "Unisex", value: "UNISEX" },
+            { label: "M (Masculino)", value: SexoMontura.M },
+            { label: "F (Femenino)", value: SexoMontura.F },
+            { label: "Unisex", value: SexoMontura.UNISEX },
           ]}
         />
+
       </div>
 
       <BaseFile

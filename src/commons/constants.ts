@@ -23,12 +23,19 @@ export enum OrigenEventoKardex {
 }
 
 
+export enum SexoMontura {
+  F = "F",
+  M = "M",
+  UNISEX = "UNISEX",
+}
+
 export enum EstadoTraslado {
   SOLICITADO = "SOLICITADO",
   ENVIADO = "ENVIADO",
   TRASLADADO = "TRASLADADO",
   CANCELADO = "CANCELADO",
 }
+
 
 export enum OrigenSolicitudTraslado {
   REPORTE_VENTAS = "REPORTE_VENTAS",
