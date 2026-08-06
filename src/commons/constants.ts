@@ -112,6 +112,12 @@ export enum ClasificacionMonturas {
   OTROS = 'OTROS',
 }
 
+export enum FormaFacial {
+  OVALADO = 'OVALADO',
+  CUADRADO = 'CUADRADO',
+  REDONDO = 'REDONDO',
+}
+
 
 export enum ClasificacionAccesorios {
   COFRES_Y_ESTUCHES = 'COFRES_Y_ESTUCHES',
@@ -126,12 +132,4 @@ export enum ClasificacionLentes {
   POLICARBONATO = 'POLICARBONATO',
   CRISTAL = 'CRISTAL',
   OTROS = 'OTROS',
-}
-
-export enum PrioridadLentes {
-  MOSTRAR_PRIMERO = 1,
-  MOSTRAR_SEGUNDO = 2,
-  MOSTRAR_TERCERO = 3,
-  MOSTRAR_CUARTO = 4,
-  MOSTRAR_QUINTO = 5,
 }

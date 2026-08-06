@@ -1,29 +1,55 @@
+import ExcelJS from "exceljs";
 import { TipoProducto } from "@/commons/constants";
-import * as XLSX from "xlsx";
+import { MONTURA_CREAR_COLUMNS, aplicarValidacionesMonturasExcel } from "../validacionesExcel";
 
-// Plantilla vacia para crear monturas
-export const descargarPlantillaExcelVacia = (sedeId: number) => {
-  const plantillaVacia = [
-    {
-      CODIGO: "", // Ejemplo: M-01 (CODIGO que coloca el dueño del negocio - puede repetirse)
-      "CODIGO MONTURA": "", // Ejemplo: REY-2026 (CODIGO que coloca el dueño del negocio - puede repetirse)
-      "PRECIO COMPRA": "", // Ejemplo: 45.50
-      "PRECIO VENTA": "", // Ejemplo: 120.00
-      MARCA: "", // Ejemplo: Ray-Ban
-      MATERIAL: "", // Ejemplo: Acetato
-      TALLA: "", // Ejemplo: 52-18-140
-      COLOR: "", // Ejemplo: Negro
-      CANTIDAD: "", // Ejemplo: 10
-      TIPO: TipoProducto.MONTURA, // Prellenado por defecto para guiar al usuario
-      SEDE: sedeId, // Debe ser numerico y lo dejamos fijado con la sede actual
-    },
-  ];
+// Plantilla vacía para crear monturas con validación de enums y desplegables
+export const descargarPlantillaExcelVacia = async (sedeId: number) => {
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet("Carga Masiva");
 
-  // Crear libro y hoja de trabajo
-  const hoja = XLSX.utils.json_to_sheet(plantillaVacia);
-  const libro = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(libro, hoja, "Carga Masiva");
+  // Configuración de columnas y encabezados
+  worksheet.columns = MONTURA_CREAR_COLUMNS;
 
-  // Forzar la descarga
-  XLSX.writeFile(libro, "Plantilla_Carga_Monturas.xlsx");
+  // Fila de guía / ejemplo inicial
+  worksheet.addRow({
+    codigo: "",
+    codigoMontura: "",
+    precioCompra: "",
+    precioVenta: "",
+    marca: "",
+    material: "",
+    talla: "",
+    color: "",
+    clasificacion: "",
+    sexo: "",
+    formaFacial: "",
+    cantidad: "",
+    tipo: TipoProducto.MONTURA,
+    sede: sedeId,
+  });
+
+  // Prellenar TIPO y SEDE para las filas de guía
+  for (let row = 3; row <= 500; row++) {
+    worksheet.getCell(`M${row}`).value = TipoProducto.MONTURA;
+    worksheet.getCell(`N${row}`).value = sedeId;
+  }
+
+  // Aplicar validaciones reutilizables
+  aplicarValidacionesMonturasExcel(worksheet, 500);
+
+  // Estilo para la fila de encabezado
+  worksheet.getRow(1).font = { bold: true };
+
+  // Escribir el libro de Excel en buffer y descargar
+  const buffer = await workbook.xlsx.writeBuffer();
+  const blob = new Blob([buffer], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  });
+
+  const url = window.URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = "Plantilla_Carga_Monturas.xlsx";
+  anchor.click();
+  window.URL.revokeObjectURL(url);
 };

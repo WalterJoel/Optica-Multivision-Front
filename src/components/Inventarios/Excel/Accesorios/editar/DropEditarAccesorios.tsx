@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import * as XLSX from "xlsx";
+import ExcelJS from "exceljs";
 
 import {
   UploadCloud,
@@ -18,6 +18,7 @@ import { LoadingModal, StatusModal } from "@/components/Common/modal";
 import { useAccesoriosExcel, useEditarAccesoriosExcel } from "@/hooks/excel";
 import { STATUS_MODAL } from "@/commons/constants";
 import { useSessionUser } from "@/hooks/session";
+import { ACCESORIO_EDITAR_COLUMNS, aplicarValidacionesAccesoriosExcel } from "../validacionesExcel";
 
 export const DropEditarAccesorios = () => {
   const { sedeId } = useSessionUser();
@@ -65,12 +66,31 @@ export const DropEditarAccesorios = () => {
 
       if (!data?.length) return;
 
-      const worksheet = XLSX.utils.json_to_sheet(data);
-      const workbook = XLSX.utils.book_new();
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet("Accesorios");
 
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Accesorios");
+      worksheet.columns = ACCESORIO_EDITAR_COLUMNS;
 
-      XLSX.writeFile(workbook, `accesorios_sede_${sedeId}.xlsx`);
+      data.forEach((item: any) => {
+        worksheet.addRow(item);
+      });
+
+      const maxRows = Math.max(data.length + 200, 500);
+      aplicarValidacionesAccesoriosExcel(worksheet, maxRows);
+
+      worksheet.getRow(1).font = { bold: true };
+
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      const url = window.URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = `accesorios_sede_${sedeId}.xlsx`;
+      anchor.click();
+      window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error(error);
     } finally {

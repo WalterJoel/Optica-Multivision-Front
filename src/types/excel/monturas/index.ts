@@ -1,7 +1,7 @@
 export interface MonturaExcelRow {
   PRODUCTOID: number;
-  "PRECIO COMPRA": string;
-  "PRECIO VENTA": string;
+  "PRECIO COMPRA": string | number;
+  "PRECIO VENTA": string | number;
   TALLA: string;
   CODIGO: string;
   "CODIGO MONTURA": string;
@@ -9,6 +9,9 @@ export interface MonturaExcelRow {
   CANTIDAD: number;
   COLOR: string;
   MATERIAL: string;
+  CLASIFICACION?: string;
+  SEXO?: string;
+  "FORMA FACIAL"?: string;
   TIPO: string;
   SEDE: string;
   SEDEID: number;

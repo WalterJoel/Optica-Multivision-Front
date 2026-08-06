@@ -1,6 +1,6 @@
 "use client";
 
-import { ClasificacionMonturas, SexoMontura } from "@/commons/constants";
+import { ClasificacionMonturas, SexoMontura, FormaFacial } from "@/commons/constants";
 
 type Props = {
   filters: any;
@@ -47,9 +47,15 @@ export default function MonturaFilters({ filters, setFilters }: Props) {
           className="h-10 px-3 rounded-xl border border-blue-light-5 text-sm bg-white"
         >
           <option value="">Sexo</option>
-          <option value={SexoMontura.M}>M (Masculino)</option>
-          <option value={SexoMontura.F}>F (Femenino)</option>
-          <option value={SexoMontura.UNISEX}>Unisex</option>
+          {Object.values(SexoMontura).map((val) => (
+            <option key={val} value={val}>
+              {val === SexoMontura.M
+                ? "M (Masculino)"
+                : val === SexoMontura.F
+                ? "F (Femenino)"
+                : "Unisex"}
+            </option>
+          ))}
         </select>
 
 
@@ -62,9 +68,11 @@ export default function MonturaFilters({ filters, setFilters }: Props) {
           className="h-10 px-3 rounded-xl border border-blue-light-5 text-sm bg-white"
         >
           <option value="">Forma</option>
-          <option value="OVALADO">Ovalado</option>
-          <option value="REDONDO">Redondo</option>
-          <option value="CUADRADO">Cuadrado</option>
+          {Object.values(FormaFacial).map((val) => (
+            <option key={val} value={val}>
+              {val.charAt(0) + val.slice(1).toLowerCase()}
+            </option>
+          ))}
         </select>
 
         {/* LIMPIAR */}

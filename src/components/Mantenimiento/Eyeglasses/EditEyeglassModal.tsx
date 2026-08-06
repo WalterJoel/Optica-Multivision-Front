@@ -5,7 +5,7 @@ import { BaseInput, BaseFile, BaseSelect } from "@/components/Common/Inputs";
 import { BaseButton } from "@/components/Common/Buttons/BaseButton";
 import { IEyeglass, IUpdateEyeglass } from "@/types/products";
 import { ModalFrameWrapper, StatusModal, LoadingModal } from "@/components/Common/modal";
-import { STATUS_MODAL, ClasificacionMonturas, SexoMontura } from "@/commons/constants";
+import { STATUS_MODAL, ClasificacionMonturas, SexoMontura, FormaFacial } from "@/commons/constants";
 
 import { useUpdateEyeglass } from "@/hooks/products/eyeglasses";
 import { Glasses, X } from "lucide-react";
@@ -295,9 +295,10 @@ export default function EditEyeglassModal({
                   required
                   options={[
                     { label: "Seleccionar", value: "" },
-                    { label: "Ovalado", value: "OVALADO" },
-                    { label: "Cuadrado", value: "CUADRADO" },
-                    { label: "Redondo", value: "REDONDO" },
+                    ...Object.values(FormaFacial).map((val) => ({
+                      label: val.charAt(0) + val.slice(1).toLowerCase(),
+                      value: val,
+                    })),
                   ]}
                 />
 
@@ -309,9 +310,15 @@ export default function EditEyeglassModal({
                   required
                   options={[
                     { label: "Seleccionar", value: "" },
-                    { label: "M (Masculino)", value: SexoMontura.M },
-                    { label: "F (Femenino)", value: SexoMontura.F },
-                    { label: "Unisex", value: SexoMontura.UNISEX },
+                    ...Object.values(SexoMontura).map((val) => ({
+                      label:
+                        val === SexoMontura.M
+                          ? "M (Masculino)"
+                          : val === SexoMontura.F
+                          ? "F (Femenino)"
+                          : "Unisex",
+                      value: val,
+                    })),
                   ]}
                 />
 
