@@ -36,7 +36,6 @@ export const MONTURA_EDITAR_COLUMNS = [
   { header: "CANTIDAD", key: "CANTIDAD", width: 12 },
   { header: "TIPO", key: "TIPO", width: 12 },
   { header: "SEDE", key: "SEDE", width: 12 },
-  { header: "SEDEID", key: "SEDEID", width: 10 },
 ];
 
 /**
