@@ -10,7 +10,7 @@ export const descargarPlantillaExcelVacia = async (sedeId: number) => {
   // Configuración de columnas y encabezados
   worksheet.columns = MONTURA_CREAR_COLUMNS;
 
-  // Fila de guía / ejemplo inicial
+  // Fila de guía / ejemplo inicial en fila 2
   worksheet.addRow({
     codigo: "",
     codigoMontura: "",
@@ -28,13 +28,7 @@ export const descargarPlantillaExcelVacia = async (sedeId: number) => {
     sede: sedeId,
   });
 
-  // Prellenar TIPO y SEDE para las filas de guía
-  for (let row = 3; row <= 500; row++) {
-    worksheet.getCell(`M${row}`).value = TipoProducto.MONTURA;
-    worksheet.getCell(`N${row}`).value = sedeId;
-  }
-
-  // Aplicar validaciones reutilizables
+  // Aplicar validaciones reutilizables (listas desplegables en celdas hasta la fila 500)
   aplicarValidacionesMonturasExcel(worksheet, 500);
 
   // Estilo para la fila de encabezado

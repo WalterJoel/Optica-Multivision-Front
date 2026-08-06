@@ -10,7 +10,7 @@ export const descargarPlantillaExcelVacia = async (sedeId: number) => {
   // Configuración de columnas y encabezados
   worksheet.columns = ACCESORIO_CREAR_COLUMNS;
 
-  // Fila de guía inicial
+  // Fila de guía inicial en fila 2
   worksheet.addRow({
     codigo: "",
     nombre: "",
@@ -23,13 +23,7 @@ export const descargarPlantillaExcelVacia = async (sedeId: number) => {
     sede: sedeId,
   });
 
-  // Prellenar TIPO y SEDE para las filas de guía
-  for (let row = 3; row <= 500; row++) {
-    worksheet.getCell(`H${row}`).value = TipoProducto.ACCESORIO;
-    worksheet.getCell(`I${row}`).value = sedeId;
-  }
-
-  // Aplicar validaciones reutilizables
+  // Aplicar validaciones reutilizables (listas desplegables en celdas hasta la fila 500)
   aplicarValidacionesAccesoriosExcel(worksheet, 500);
 
   // Estilo para la fila de encabezado
