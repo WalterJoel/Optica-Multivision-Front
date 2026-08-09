@@ -22,7 +22,7 @@ import { useReactToPrint } from "react-to-print";
 import { ModalFrameWrapper, ConfirmModal, StatusModal } from "@/components/Common/modal";
 import { IResponseSale } from "@/types/sales";
 import { IStore } from "@/types/stores";
-import { SaleNotePrint } from "./SaleNotePrint";
+import { SaleNoteTicketPrint } from "./SaleNoteTicketPrint";
 import { EditarVentaModal } from "./EditarVentaModal";
 import { RegistrarPagoModal } from "./RegistrarPagoModal";
 import { useEditarVenta, useRegistrarPago } from "@/hooks/sales";
@@ -669,7 +669,7 @@ export const MiniTable = ({
           }}
         >
           <div ref={printRef}>
-            <SaleNotePrint
+            <SaleNoteTicketPrint
               venta={printSale}
               sede={sedes.find((s) => s.id === printSale.sedeId)}
             />
