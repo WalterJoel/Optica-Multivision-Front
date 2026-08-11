@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   ShoppingCart,
   Calendar,
   FileSpreadsheet,
   PackageSearch,
+  Search,
 } from "lucide-react";
 import { TipoProducto, OrigenSolicitudTraslado } from "@/commons/constants";
 import { SedeSelect } from "@/components/Common/SedeSelect";
@@ -15,6 +16,7 @@ import { useSessionUser } from "@/hooks/session";
 import { useStores } from "@/hooks/stores";
 import { getLocalDateString } from "@/utils/date";
 import { useVentasPorTipo } from "@/hooks/sales";
+import { useBuscarProductosTraslado } from "@/hooks/traslados/useBuscarProductosTraslado";
 import { useTraslados } from "@/hooks/traslados/useTraslados";
 import { TableTraslados, ITablaTrasladoRow } from "./TableTraslados";
 import { StatusModal, LoadingModal } from "@/components/Common/modal";
@@ -36,13 +38,17 @@ export function CrearTraslado() {
   // Hooks
   const { sedeId: userSedeId, userId, fullName } = useSessionUser();
   const { sedes } = useStores();
-  const { fetchVentasPorTipo, clearItems, items, loading: loadingItems } = useVentasPorTipo();
+  const { fetchVentasPorTipo, clearItems: clearVentasItems, items: ventasItems, loading: loadingVentas } = useVentasPorTipo();
+  const { fetchProductosForTransfer, clearItems: clearProductosItems, items: productosItems, loading: loadingProductos } = useBuscarProductosTraslado();
   const { crearTraslado, loading: submitting, statusMessage, setStatusMessage } =
     useTraslados();
 
   // States
   const [fechaInicio, setFechaInicio] = useState<string>(today);
   const [fechaFin, setFechaFin] = useState<string>(today);
+  const [busquedaProducto, setBusquedaProducto] = useState<string>("");
+  const [showSearchResults, setShowSearchResults] = useState<boolean>(false);
+  const [manualItems, setManualItems] = useState<IVentaPorTipoItem[]>([]);
   const [openModal, setOpenModal] = useState(false);
   const [typeModal, setTypeModal] = useState("");
   const [selectedRows, setSelectedRows] = useState<ITablaTrasladoRow[]>([]);
@@ -53,6 +59,23 @@ export function CrearTraslado() {
   const [selectedCategory, setSelectedCategory] = useState<TipoProducto>(
     TipoProducto.MONTURA
   );
+
+  const searchContainerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(event.target as Node)
+      ) {
+        setShowSearchResults(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   // Memos
   const nombreSedeDestino = useMemo(() => {
@@ -68,14 +91,50 @@ export function CrearTraslado() {
   // Functions
   const resetForm = () => {
     setSelectedRows([]);
-    clearItems();
+    clearVentasItems();
+    clearProductosItems();
+    setManualItems([]);
     setFechaInicio(today);
     setFechaFin(today);
+    setBusquedaProducto("");
+    setShowSearchResults(false);
     setSelectedCategory(TipoProducto.MONTURA);
     setOrigenSolicitud(OrigenSolicitudTraslado.REPORTE_VENTAS);
     if (userSedeId) {
       setProveedoraSedeId(userSedeId === 1 ? 2 : 1);
     }
+  };
+
+  const handleAddProductToTransfer = (prod: IVentaPorTipoItem) => {
+    setManualItems((prev) => {
+      const existsIndex = prev.findIndex((item) => {
+        if (selectedCategory === TipoProducto.LENTE) {
+          return item.stockId === prod.stockId;
+        }
+        return item.productoId === prod.productoId;
+      });
+
+      if (existsIndex >= 0) {
+        const updated = [...prev];
+        const currentQty = updated[existsIndex].cantidad ?? 1;
+        updated[existsIndex] = {
+          ...updated[existsIndex],
+          cantidad: currentQty + 1,
+        };
+        return updated;
+      }
+
+      return [
+        ...prev,
+        {
+          ...prod,
+          cantidad: 1,
+        },
+      ];
+    });
+
+    setBusquedaProducto("");
+    setShowSearchResults(false);
   };
 
   const handleCrearSolicitud = async () => {
@@ -136,6 +195,16 @@ export function CrearTraslado() {
     }
   }, [userSedeId]);
 
+  // Al cambiar de categoría o sede proveedora en "PRODUCTOS", reseteamos manualItems
+  useEffect(() => {
+    if (origenSolicitud === OrigenSolicitudTraslado.PRODUCTOS) {
+      setManualItems([]);
+      setBusquedaProducto("");
+      setShowSearchResults(false);
+    }
+  }, [selectedCategory, proveedoraSedeId, origenSolicitud]);
+
+  // Cargar ítems de ventas cuando el origen es REPORTE_VENTAS
   useEffect(() => {
     if (
       origenSolicitud === OrigenSolicitudTraslado.REPORTE_VENTAS &&
@@ -153,6 +222,27 @@ export function CrearTraslado() {
     fechaFin,
     selectedCategory,
     fetchVentasPorTipo,
+  ]);
+
+  // Cargar resultados del buscador cuando se escribe texto
+  useEffect(() => {
+    if (
+      origenSolicitud === OrigenSolicitudTraslado.PRODUCTOS &&
+      proveedoraSedeId &&
+      selectedCategory &&
+      busquedaProducto.trim() !== ""
+    ) {
+      fetchProductosForTransfer(proveedoraSedeId, selectedCategory, busquedaProducto);
+    } else if (origenSolicitud === OrigenSolicitudTraslado.PRODUCTOS) {
+      clearProductosItems();
+    }
+  }, [
+    origenSolicitud,
+    proveedoraSedeId,
+    selectedCategory,
+    busquedaProducto,
+    fetchProductosForTransfer,
+    clearProductosItems,
   ]);
 
   return (
@@ -286,7 +376,7 @@ export function CrearTraslado() {
               </div>
             </div>
 
-            {origenSolicitud === OrigenSolicitudTraslado.REPORTE_VENTAS && (
+            {origenSolicitud === OrigenSolicitudTraslado.REPORTE_VENTAS ? (
               <div className="flex flex-col gap-1">
                 <span className="text-[9px] font-black uppercase text-dark tracking-wider">
                   Fecha
@@ -313,14 +403,91 @@ export function CrearTraslado() {
                   </div>
                 </div>
               </div>
+            ) : (
+              <div ref={searchContainerRef} className="relative flex flex-col gap-1 min-w-[280px]">
+                <span className="text-[9px] font-black uppercase text-dark tracking-wider">
+                  Buscar en Proveedora ({nombreSedeProveedora})
+                </span>
+                <div className="flex items-center gap-2 bg-white border border-gray-3 rounded-xl px-3 py-1.5 shadow-sm">
+                  <Search size={15} className="text-blue-light flex-shrink-0" />
+                  <input
+                    type="text"
+                    value={busquedaProducto}
+                    onFocus={() => setShowSearchResults(true)}
+                    onChange={(e) => {
+                      setBusquedaProducto(e.target.value);
+                      setShowSearchResults(true);
+                    }}
+                    placeholder="Código, marca, material o dioptría..."
+                    className="bg-transparent outline-none text-xs font-bold text-dark w-full placeholder:text-gray-4"
+                  />
+                  {busquedaProducto && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setBusquedaProducto("");
+                        clearProductosItems();
+                      }}
+                      className="text-gray-4 hover:text-dark text-xs font-black px-1 cursor-pointer"
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+
+                {/* DESPLEGABLE DE RESULTADOS DE BÚSQUEDA */}
+                {showSearchResults && busquedaProducto.trim() !== "" && (
+                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-blue-light-4 rounded-2xl shadow-2xl z-50 overflow-hidden max-h-64 overflow-y-auto">
+                    {loadingProductos ? (
+                      <div className="p-3 text-center text-xs font-bold text-gray-5 animate-pulse">
+                        Buscando en {nombreSedeProveedora}...
+                      </div>
+                    ) : productosItems.length === 0 ? (
+                      <div className="p-3 text-center text-xs font-bold text-gray-5">
+                        No se encontraron productos coincidentes
+                      </div>
+                    ) : (
+                      <div className="divide-y divide-gray-100">
+                        {productosItems.map((prod, idx) => (
+                          <div
+                            key={`${prod.productoId || prod.stockId || idx}`}
+                            onClick={() => handleAddProductToTransfer(prod)}
+                            className="p-3 hover:bg-emerald-50 transition-colors cursor-pointer flex items-center justify-between gap-3 text-xs"
+                          >
+                            <div className="flex flex-col">
+                              <span className="font-black text-dark uppercase">
+                                {prod.codigo ? `${prod.codigo} - ` : ""}
+                                {prod.nombre || `${prod.marca || ""} ${prod.material || ""}`.trim() || "Producto"}
+                              </span>
+                              {(prod.sph || prod.cyl) && (
+                                <span className="text-[10px] font-mono font-bold text-blue">
+                                  {prod.sph ? `SPH: ${prod.sph}` : ""} {prod.cyl ? `CYL: ${prod.cyl}` : ""}
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2 shrink-0">
+                              <span className="bg-emerald-100 text-emerald-800 border border-emerald-300 px-2 py-0.5 rounded-md text-[10px] font-bold">
+                                Stock: {prod.cantidad}
+                              </span>
+                              <span className="bg-blue hover:bg-blue-dark text-white font-black text-[10px] px-2.5 py-1 rounded-lg shadow-sm transition-all">
+                                + Agregar
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </div>
 
         <TableTraslados
-          items={items}
+          items={origenSolicitud === OrigenSolicitudTraslado.REPORTE_VENTAS ? ventasItems : manualItems}
           tipoProducto={selectedCategory}
-          loading={loadingItems}
+          loading={origenSolicitud === OrigenSolicitudTraslado.REPORTE_VENTAS ? loadingVentas : false}
           onSelectionChange={setSelectedRows}
         />
 

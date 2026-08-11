@@ -42,3 +42,15 @@ export const eliminarTrasladoService = async (id: number): Promise<{ message: st
   return data;
 };
 
+export const buscarProductoParaTrasladoService = async (
+  sedeId: number,
+  tipo: string,
+  busqueda?: string,
+) => {
+  const { data } = await api.get("/productos/buscarProductoParaTraslado", {
+    params: { sedeId, tipo, busqueda },
+  });
+  return data;
+};
+
+
