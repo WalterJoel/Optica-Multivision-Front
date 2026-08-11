@@ -133,9 +133,9 @@ export const SaleNoteTicketPrint = ({ venta, sede }: SaleNoteTicketPrintProps) =
       >
         <thead>
           <tr style={{ borderBottom: "1px solid #000" }}>
-            <th style={{ textAlign: "left", width: "5mm", paddingBottom: "1mm" }}>CANT</th>
+            <th style={{ textAlign: "left", width: "8mm", paddingBottom: "1mm", paddingRight: "1mm" }}>CANT</th>
             <th style={{ textAlign: "left", paddingBottom: "1mm" }}>DESC</th>
-            <th style={{ textAlign: "right", width: "10mm", paddingBottom: "1mm" }}>P.UNIT</th>
+            <th style={{ textAlign: "right", width: "11mm", paddingBottom: "1mm" }}>P.UNIT</th>
             <th style={{ textAlign: "right", width: "11mm", paddingBottom: "1mm" }}>TOTAL</th>
           </tr>
         </thead>
@@ -147,7 +147,7 @@ export const SaleNoteTicketPrint = ({ venta, sede }: SaleNoteTicketPrintProps) =
             const sub = Number(prod.subtotal || price * qty - disc);
 
             const prodName = prod.stock?.lente ? (
-              `${prod.stock.lente.marca || "Lente"} (${prod.stock.lente.material || ""})`
+              prod.stock.lente.marca || "Lente"
             ) : prod.producto?.montura ? (
               `${prod.producto.nombre || ""} ${prod.producto.montura.marca || ""}`
             ) : (
@@ -183,7 +183,7 @@ export const SaleNoteTicketPrint = ({ venta, sede }: SaleNoteTicketPrintProps) =
                         )}
                         {prod.tipoProducto === "LENTE" && (prod.esf || prod.cyl) && (
                           <div>
-                            {prod.esf ? `OD/OI ESF: ${Number(prod.esf) > 0 ? `+${prod.esf}` : prod.esf}` : ""}
+                            {prod.esf ? `ESF: ${Number(prod.esf) > 0 ? `+${prod.esf}` : prod.esf}` : ""}
                             {prod.esf && prod.cyl ? " | " : ""}
                             {prod.cyl ? `CYL: ${Number(prod.cyl) > 0 ? `+${prod.cyl}` : prod.cyl}` : ""}
                           </div>
@@ -202,15 +202,15 @@ export const SaleNoteTicketPrint = ({ venta, sede }: SaleNoteTicketPrintProps) =
       {/* RESUMEN DE PAGO */}
       <div style={{ fontSize: "7.5pt", display: "flex", flexDirection: "column", gap: "1mm", marginBottom: "2mm" }}>
         <div style={{ display: "flex", justifyContent: "space-between", fontWeight: "bold" }}>
-          <span>TOTAL A PAGAR:</span>
+          <span>TOTAL </span>
           <span>S/. {totalMonto.toFixed(2)}</span>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <span>A CUENTA / ABONO:</span>
+          <span>A CUENTA </span>
           <span>S/. {montoPagado.toFixed(2)}</span>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", fontWeight: "bold", fontSize: "8pt" }}>
-          <span>SALDO PENDIENTE:</span>
+          <span>SALDO </span>
           <span>S/. {deudaMonto.toFixed(2)}</span>
         </div>
       </div>

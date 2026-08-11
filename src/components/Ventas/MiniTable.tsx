@@ -575,7 +575,7 @@ export const MiniTable = ({
                         <td className="px-4 py-3 font-semibold">
                           <span className="font-black text-dark block leading-tight">
                             {prod.stock?.lente ? (
-                              `${prod.stock.lente.marca} (${prod.stock.lente.material})`
+                              prod.stock.lente.marca
                             ) : prod.producto?.montura ? (
                               <div>
                                 <div>{prod.producto.nombre} - {prod.producto.montura.marca} ({prod.producto.montura.material})</div>
