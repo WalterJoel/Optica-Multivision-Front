@@ -1,11 +1,13 @@
 import { useState, useRef } from "react";
 import { ILens } from "@/types/products/lens";
 import { searchLens } from "@/services/products/lens";
+import { useSessionUser } from "@/hooks/session";
 
 export function useSearchLens() {
   const [loading, setLoading] = useState(false);
   const [lens, setLens] = useState<ILens[]>([]);
   const [showList, setShowList] = useState(false);
+  const { sedeId } = useSessionUser();
 
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -23,7 +25,7 @@ export function useSearchLens() {
 
     debounceRef.current = setTimeout(async () => {
       try {
-        const data = await searchLens(value);
+        const data = await searchLens(value, sedeId);
         setLens(data);
         setShowList(true);
       } catch (error) {

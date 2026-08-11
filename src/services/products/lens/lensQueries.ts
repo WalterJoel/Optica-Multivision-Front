@@ -3,6 +3,7 @@ import { ISearchLensResponse, ILens } from "@/types/products";
 
 export const searchLens = async (
   busqueda: string,
+  sedeId?: number | null,
   limite: number = 50,
   desplazamiento: number = 0,
 ): Promise<ILens[]> => {
@@ -11,6 +12,7 @@ export const searchLens = async (
     {
       params: {
         busqueda,
+        sedeId,
         limite,
         desplazamiento,
       },

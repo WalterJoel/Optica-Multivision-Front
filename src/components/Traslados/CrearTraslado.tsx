@@ -16,6 +16,7 @@ import { useSessionUser } from "@/hooks/session";
 import { useStores } from "@/hooks/stores";
 import { getLocalDateString } from "@/utils/date";
 import { useVentasPorTipo } from "@/hooks/sales";
+import { IVentaPorTipoItem } from "@/types/sales";
 import { useBuscarProductosTraslado } from "@/hooks/traslados/useBuscarProductosTraslado";
 import { useTraslados } from "@/hooks/traslados/useTraslados";
 import { TableTraslados, ITablaTrasladoRow } from "./TableTraslados";
