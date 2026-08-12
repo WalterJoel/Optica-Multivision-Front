@@ -28,6 +28,7 @@ import { RegistrarPagoModal } from "./RegistrarPagoModal";
 import { useEditarVenta, useRegistrarPago } from "@/hooks/sales";
 import { useSessionUser } from "@/hooks/session";
 import { STATUS_MODAL } from "@/commons/constants";
+import { formatearMedidasLente } from "@/utils/lenses";
 
 export const MiniTable = ({
   titulo,
@@ -591,9 +592,7 @@ export const MiniTable = ({
                           {/* Mostrar datos refractivos si existen y no son nulos */}
                           {(prod.esf || prod.cyl) && (
                             <span className="inline-block mt-1 text-[9px] font-bold font-mono text-yellow-dark bg-yellow/10 border border-yellow-dark/20 rounded px-1.5 py-0.5 mr-1.5">
-                              {prod.esf ? `ESF: ${Number(prod.esf) > 0 ? `+${prod.esf}` : prod.esf}` : ""}
-                              {prod.esf && prod.cyl ? " | " : ""}
-                              {prod.cyl ? `CYL: ${Number(prod.cyl) > 0 ? `+${prod.cyl}` : prod.cyl}` : ""}
+                              {formatearMedidasLente(prod.esf, prod.cyl)}
                             </span>
                           )}
 

@@ -3,6 +3,7 @@
 import React from "react";
 import { IResponseSale } from "@/types/sales";
 import { IStore } from "@/types/stores";
+import { formatearMedidasLente } from "@/utils/lenses";
 
 interface SaleNoteTicketPrintProps {
   venta: IResponseSale;
@@ -172,20 +173,18 @@ export const SaleNoteTicketPrint = ({ venta, sede }: SaleNoteTicketPrintProps) =
                 </tr>
                 {/* Detalles secundarios en miniatura */}
                 {((prod.producto?.montura?.codigo || prod.producto?.montura?.codigoMontura) ||
-                  (prod.tipoProducto === "LENTE" && (prod.esf || prod.cyl))) && (
+                  prod.tipoProducto === "LENTE") && (
                     <tr>
                       <td />
-                      <td colSpan={3} style={{ fontSize: "6pt", color: "#333", paddingBottom: "1mm" }}>
+                      <td colSpan={3} style={{ fontSize: "7pt", fontWeight: "bold", paddingBottom: "1mm" }}>
                         {prod.producto?.montura && (
                           <div>
                             Cód: {prod.producto.montura.codigo || prod.producto.montura.codigoMontura || "—"}
                           </div>
                         )}
-                        {prod.tipoProducto === "LENTE" && (prod.esf || prod.cyl) && (
+                        {prod.tipoProducto === "LENTE" && (
                           <div>
-                            {prod.esf ? `ESF: ${Number(prod.esf) > 0 ? `+${prod.esf}` : prod.esf}` : ""}
-                            {prod.esf && prod.cyl ? " | " : ""}
-                            {prod.cyl ? `CYL: ${Number(prod.cyl) > 0 ? `+${prod.cyl}` : prod.cyl}` : ""}
+                            {formatearMedidasLente(prod.esf, prod.cyl)}
                           </div>
                         )}
                       </td>

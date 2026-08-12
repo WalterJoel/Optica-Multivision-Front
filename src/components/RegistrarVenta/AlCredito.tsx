@@ -13,6 +13,7 @@ import {
     BaseTabs,
     BaseTarea,
 } from "@/components/Common/Inputs";
+import { BaseButton } from "@/components/Common/Buttons/BaseButton";
 
 // Hooks y Store
 import { useCreateSale } from "@/hooks/sales";
@@ -226,11 +227,10 @@ const AlCredito = () => {
                                                     if (clienteError) setClienteError(false);
                                                 }}
                                                 placeholder="Buscar por nombre o DNI..."
-                                                className={`w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition-all placeholder:text-gray-400 ${
-                                                    clienteError
+                                                className={`w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition-all placeholder:text-gray-400 ${clienteError
                                                         ? "border-red focus:border-red ring-2 ring-red/20"
                                                         : "border-gray-200 focus:border-blue focus:ring-2 focus:ring-blue/10"
-                                                }`}
+                                                    }`}
                                             />
                                         </div>
                                         {showListClient && clients.length > 0 && (
@@ -321,7 +321,7 @@ const AlCredito = () => {
                                         <span>{ventaStore.deudaMensaje}</span>
                                     </div>
                                 )}
-                                <button
+                                <BaseButton
                                     onClick={handleRegisterSale}
                                     disabled={
                                         loading ||
@@ -332,19 +332,9 @@ const AlCredito = () => {
                                         (paymentType === "credit" && !ventaStore.clienteId) ||
                                         ventaStore.bloqueadoPorDeuda
                                     }
-                                    className={`mt-auto w-full rounded-xl py-4 text-white font-bold text-lg shadow-lg transition-all ${loading ||
-                                        cartStoreTotal === 0 ||
-                                        !ventaStore.metodoPago ||
-                                        (paymentType === "cash" && (!montoRecibido || Number(montoRecibido) < cartStoreTotal)) ||
-                                        (paymentType === "credit" && (nroCuotas === 0 || diasCompromiso === null)) ||
-                                        (paymentType === "credit" && !ventaStore.clienteId) ||
-                                        ventaStore.bloqueadoPorDeuda
-                                        ? "bg-gray-400 cursor-not-allowed opacity-60"
-                                        : "bg-blue hover:bg-blue-dark active:scale-[0.98]"
-                                        }`}
                                 >
-                                    {loading ? "PROCESANDO..." : "REGISTRAR OPERACIÓN"}
-                                </button>
+                                    {loading ? "PROCESANDO..." : "REGISTRAR VENTA"}
+                                </BaseButton>
                             </div>
                         </div>
                     </div>

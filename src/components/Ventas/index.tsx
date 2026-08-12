@@ -54,7 +54,7 @@ export default function CajaPremiumFino() {
   useEffect(() => {
     if (!isAnnulling && (annulOk || annulMsg)) {
       setTypeModal(
-         annulOk ? STATUS_MODAL.SUCCESS_MODAL : STATUS_MODAL.ERROR_MODAL,
+        annulOk ? STATUS_MODAL.SUCCESS_MODAL : STATUS_MODAL.ERROR_MODAL,
       );
       setModalMsg(annulMsg);
       setOpenModal(true);
