@@ -7,5 +7,5 @@ export const formatearMedida = (val: any) => {
 };
 
 export const formatearMedidasLente = (esf: any, cyl: any) => {
-  return `ESF ${formatearMedida(esf)} / CYL ${formatearMedida(cyl)}`;
+  return `${formatearMedida(esf)} / ${formatearMedida(cyl)}`;
 };

@@ -5,6 +5,7 @@ import { ITraslado } from "@/types/traslados";
 import { X, Building2, Calendar, FileText } from "lucide-react";
 import { ModalFrameWrapper } from "@/components/Common/modal";
 import { BadgeEstadoTraslado } from "./BadgeEstadoTraslado";
+import { formatearMedida } from "@/utils/lenses";
 
 interface ModalDetalleTrasladoProps {
   isOpen: boolean;
@@ -124,8 +125,8 @@ export function ModalDetalleTraslado({
                       "-";
 
                     const isLente = det.tipoProducto === "LENTE";
-                    const sphVal = isLente ? (det.stock?.esf ?? "-") : "-";
-                    const cylVal = isLente ? (det.stock?.cyl ?? "-") : "-";
+                    const sphVal = isLente ? formatearMedida(det.stock?.esf) : "-";
+                    const cylVal = isLente ? formatearMedida(det.stock?.cyl) : "-";
 
                     return (
                       <tr key={det.id} className="hover:bg-beige/40">

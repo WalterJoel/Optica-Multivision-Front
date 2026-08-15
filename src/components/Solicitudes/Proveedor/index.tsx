@@ -7,6 +7,7 @@ import { BadgeEstadoTraslado } from "../BadgeEstadoTraslado";
 import { TablaProveedorHistorial } from "./TablaProveedorHistorial";
 import { BaseButton } from "@/components/Common/Buttons/BaseButton";
 import { LoadingModal } from "@/components/Common/modal";
+import { formatearMedida } from "@/utils/lenses";
 import { Building2, Calendar } from "lucide-react";
 
 interface ProveedorCardProps {
@@ -142,8 +143,8 @@ function ProveedorCard({ traslado, onEnviar, loading = false }: ProveedorCardPro
                       "-";
 
                     const isLente = det.tipoProducto === "LENTE";
-                    const sphVal = isLente ? (det.stock?.esf ?? "-") : "-";
-                    const cylVal = isLente ? (det.stock?.cyl ?? "-") : "-";
+                    const sphVal = isLente ? formatearMedida(det.stock?.esf) : "-";
+                    const cylVal = isLente ? formatearMedida(det.stock?.cyl) : "-";
 
                     return (
                       <tr key={det.id} className="hover:bg-beige/20">
@@ -264,11 +265,10 @@ export function Proveedor({
           <button
             key={st}
             onClick={() => setEstadoFilter(st)}
-            className={`px-3.5 py-1.5 rounded-xl text-[11px] font-bold border transition-all cursor-pointer ${
-              estadoFilter === st
-                ? "bg-white border-blue-light text-blue-light shadow-sm"
-                : "bg-white/60 border-gray-3 text-dark-5 hover:bg-white"
-            }`}
+            className={`px-3.5 py-1.5 rounded-xl text-[11px] font-bold border transition-all cursor-pointer ${estadoFilter === st
+              ? "bg-white border-blue-light text-blue-light shadow-sm"
+              : "bg-white/60 border-gray-3 text-dark-5 hover:bg-white"
+              }`}
           >
             {st}
           </button>

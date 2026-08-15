@@ -9,6 +9,7 @@ import { BaseButton } from "@/components/Common/Buttons/BaseButton";
 import { LoadingModal, ConfirmModal } from "@/components/Common/modal";
 import { Building2, Calendar, Trash2 } from "lucide-react";
 import { EstadoTraslado } from "@/commons/constants";
+import { formatearMedida } from "@/utils/lenses";
 
 
 interface SolicitanteCardProps {
@@ -168,8 +169,8 @@ function SolicitanteCard({ traslado, onRecibir, onEliminar, loading = false }: S
                       "-";
 
                     const isLente = det.tipoProducto === "LENTE";
-                    const sphVal = isLente ? (det.stock?.esf ?? "-") : "-";
-                    const cylVal = isLente ? (det.stock?.cyl ?? "-") : "-";
+                    const sphVal = isLente ? formatearMedida(det.stock?.esf) : "-";
+                    const cylVal = isLente ? formatearMedida(det.stock?.cyl) : "-";
 
                     return (
                       <tr key={det.id} className="hover:bg-beige/20">

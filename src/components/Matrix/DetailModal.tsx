@@ -14,6 +14,7 @@ import { addItemToCart } from "@/redux/features/cart-slice";
 import { ILensStockMatrixItem } from "@/types/products";
 import { CartItem } from "@/types/cart";
 import { TipoProducto } from "@/commons/constants";
+import { formatearMedidasLente } from "@/utils/lenses";
 
 type DetailModalProps = {
   selected: ILensStockMatrixItem;
@@ -82,9 +83,8 @@ export const DetailModal: React.FC<DetailModalProps> = ({
           <p className="text-[10px] text-blue font-bold uppercase tracking-widest">
             Graduación Seleccionada
           </p>
-
           <p className="text-2xl font-black text-blue">
-            ESF {selected.esf} / CYL {selected.cyl.toFixed(2)}
+            {formatearMedidasLente(selected.esf, selected.cyl)}
           </p>
 
           <div className="mt-2 inline-block px-3 py-1 bg-white rounded-lg border border-blue/20 shadow-sm">
