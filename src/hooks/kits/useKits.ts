@@ -9,12 +9,12 @@ export function useKits() {
   const [success, setSuccess] = useState<boolean>(false);
   const [kits, setKits] = useState<IKit[]>([]);
 
-  const getAllKits = async () => {
+  const getAllKits = async (sedeId?: number) => {
     setLoading(true);
     setSuccess(false);
 
     try {
-      const data = await getAllKitsService();
+      const data = await getAllKitsService(sedeId);
       setKits(data);
       setSuccess(true);
       setMessage("listado de Kits correto");

@@ -18,6 +18,7 @@ import Discount from "../Cart/Discount";
 import Montaje from "./Montaje";
 import { TicketVenta } from "../Ventas/TicketVenta";
 import { ModalVentaExitosa } from "./ModalVentaExitosa";
+import { BaseButton } from "../Common/Buttons";
 
 const AlContado = () => {
     // Hooks

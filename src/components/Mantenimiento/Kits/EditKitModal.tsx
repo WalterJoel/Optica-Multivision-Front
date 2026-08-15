@@ -8,6 +8,7 @@ import { BaseTarea } from "@/components/Common/Inputs";
 import { AddAccessoryModal } from "./AddAccessoryModal";
 import { IKit, IKitAccesory, ICreateKitAccesory } from "@/types/kits";
 import { useUpdateKit } from "@/hooks/kits/useUpdateKit";
+import { useSessionUser } from "@/hooks/session";
 import { Plus, Trash2, Briefcase } from "lucide-react";
 import {
   StatusModal,
@@ -44,6 +45,7 @@ export default function EditKitModal({
   onClose,
   onRefresh,
 }: EditKitModalProps) {
+  const { sedeId } = useSessionUser();
   const [form, setForm] = useState(emptyForm);
   const [accesorios, setAccesorios] = useState<IKitAccesory[]>([]);
   const [newAccesory, setNewAccesory] = useState<IKitAccesory>(emptyAccesory);
@@ -150,6 +152,7 @@ export default function EditKitModal({
     }
 
     const payload: Partial<ICreateKitAccesory> = {
+      sedeId: kit.sedeId,
       nombre: form.nombre,
       descripcion: form.descripcion,
       precio: form.precio,

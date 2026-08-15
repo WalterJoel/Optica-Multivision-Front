@@ -6,9 +6,11 @@ import { IKit } from "@/types/kits";
 import EditKitModal from "./EditKitModal";
 import { Edit3, Power, Search, Briefcase } from "lucide-react";
 import { StatusModal, LoadingModal, ConfirmModal } from "@/components/Common/modal";
+import { useSessionUser } from "@/hooks/session";
 import { STATUS_MODAL } from "@/commons/constants";
 
 export default function ListKit() {
+  const { sedeId } = useSessionUser();
   const { kits, loading, getAllKits } = useKits();
   const {
     updateKitStatus,
@@ -29,8 +31,8 @@ export default function ListKit() {
   const [modalMsg, setModalMsg] = useState("");
 
   useEffect(() => {
-    getAllKits();
-  }, []);
+    getAllKits(sedeId);
+  }, [sedeId]);
 
   const openEditModal = (item: IKit) => {
     setSelected(item);

@@ -14,6 +14,7 @@ interface ITableKitAccesories {
 
 export interface IKit {
   id: number;
+  sedeId?: number;
   nombre: string;
   precio: number; // precio total del kit
   activo: boolean;
@@ -37,6 +38,7 @@ export interface IKitAccesory {
 }
 
 export interface ICreateKit {
+  sedeId?: number;
   nombre: string;
   precio: number;
   descripcion: string;
@@ -46,6 +48,7 @@ export interface ICreateAccesory {
   accesorioId: number;
 }
 export interface ICreateKitAccesory {
+  sedeId?: number;
   nombre: string;
   precio: number;
   descripcion: string;

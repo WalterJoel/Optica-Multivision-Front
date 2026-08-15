@@ -13,6 +13,7 @@ import {
   IKitAccesory,
 } from "@/types/kits";
 import { useCreateKit } from "@/hooks/kits/useCreateKit";
+import { useSessionUser } from "@/hooks/session";
 import { Plus, Trash2 } from "lucide-react";
 import {
   StatusModal,
@@ -36,6 +37,7 @@ const emptyAccesory: IKitAccesory = {
 };
 
 export default function CreateKit() {
+  const { sedeId } = useSessionUser();
   const [form, setForm] = useState<ICreateKit>(emptyForm);
   const [accesorios, setAccesorios] = useState<IKitAccesory[]>([]);
   const [newAccesory, setNewAccesory] = useState<IKitAccesory>(emptyAccesory);
@@ -104,6 +106,7 @@ export default function CreateKit() {
     }
 
     const payload: ICreateKitAccesory = {
+      sedeId: Number(sedeId),
       nombre: form.nombre,
       descripcion: form.descripcion,
       precio: form.precio,
