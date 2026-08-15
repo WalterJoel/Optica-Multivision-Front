@@ -5,7 +5,7 @@ import { IResponseSale } from "@/types/sales";
 import { IStore } from "@/types/stores";
 import { formatearMedidasLente } from "@/utils/lenses";
 
-interface SaleNoteTicketPrintProps {
+interface TicketVentaProps {
   venta: IResponseSale;
   sede?: IStore;
 }
@@ -23,7 +23,7 @@ const pageStyle: React.CSSProperties = {
   lineHeight: 1.15,
 };
 
-export const SaleNoteTicketPrint = ({ venta, sede }: SaleNoteTicketPrintProps) => {
+export const TicketVenta = ({ venta, sede }: TicketVentaProps) => {
   const date = new Date(venta.createdAt);
   const formattedDate =
     date.toLocaleDateString("es-PE", {
@@ -223,9 +223,8 @@ export const SaleNoteTicketPrint = ({ venta, sede }: SaleNoteTicketPrintProps) =
         </div>
       )}
 
-
     </div>
   );
 };
 
-export default SaleNoteTicketPrint;
+export default TicketVenta;

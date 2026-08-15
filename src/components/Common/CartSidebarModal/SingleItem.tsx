@@ -10,10 +10,12 @@ import {
   selectTotalPrice,
   removeItemFromCart,
   updateCartItemQuantity,
+  updateCartItemPrice,
 } from "@/redux/features/cart-slice";
 
 import { Glasses, Package } from "lucide-react";
 import { ImageWithZoom } from "@/components/Common/ImageWithZoom";
+import { formatearMedidasLente } from "@/utils/lenses";
 
 interface SingleItemProps {
   item: CartItem;
@@ -26,18 +28,33 @@ const SingleItem: React.FC<SingleItemProps> = ({
 }) => {
   const dispatch = useDispatch<AppDispatch>();
 
+  // Elimina el producto del carrito
   const handleRemoveFromCart = () => {
     dispatch(removeItemFromCart(item.id));
   };
 
   const [quantity, setQuantity] = useState(item.quantity);
   const [inputValue, setInputValue] = useState(item.quantity.toString());
+  const [priceInput, setPriceInput] = useState(
+    Number(item.price).toFixed(2)
+  );
 
+  // Sincroniza la cantidad cuando cambia el prop del item
   useEffect(() => {
     setQuantity(item.quantity);
     setInputValue(item.quantity.toString());
   }, [item.quantity]);
 
+  // Actualiza el precio local solo si difiere numéricamente para evitar borrar el punto/coma mientras se escribe
+  useEffect(() => {
+    const currentNumeric = parseFloat(priceInput.replace(",", "."));
+    const itemNumeric = Number(item.price);
+    if (isNaN(currentNumeric) || Math.abs(currentNumeric - itemNumeric) > 0.0001) {
+      setPriceInput(isNaN(itemNumeric) ? "0.00" : itemNumeric.toString());
+    }
+  }, [item.price]);
+
+  // Incrementa la cantidad del producto respetando el stock
   const handleIncreaseQuantity = () => {
     const maxStock = item.stock ?? 9999;
     if (quantity < maxStock) {
@@ -48,6 +65,7 @@ const SingleItem: React.FC<SingleItemProps> = ({
     }
   };
 
+  // Disminuye la cantidad del producto
   const handleDecreaseQuantity = () => {
     if (quantity > 1) {
       const newQty = quantity - 1;
@@ -57,6 +75,7 @@ const SingleItem: React.FC<SingleItemProps> = ({
     }
   };
 
+  // Maneja el cambio manual de la cantidad desde el input
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     if (/^\d*$/.test(val)) {
@@ -72,12 +91,39 @@ const SingleItem: React.FC<SingleItemProps> = ({
     }
   };
 
+  // Valida la cantidad al perder el foco
   const handleInputBlur = () => {
     const parsed = parseInt(inputValue, 10);
     if (isNaN(parsed) || parsed < 1) {
       setQuantity(1);
       setInputValue("1");
       dispatch(updateCartItemQuantity({ id: item.id, quantity: 1 }));
+    }
+  };
+
+  // Maneja el cambio del precio permitiendo hasta 2 decimales
+  const handlePriceInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawVal = e.target.value;
+    const normalizedVal = rawVal.replace(",", ".");
+    if (/^\d*\.?\d{0,2}$/.test(normalizedVal)) {
+      setPriceInput(rawVal);
+      const parsed = parseFloat(normalizedVal);
+      if (!isNaN(parsed) && parsed >= 0) {
+        dispatch(updateCartItemPrice({ id: item.id, price: parsed }));
+      }
+    }
+  };
+
+  // Formatea el precio a 2 decimales al perder el foco
+  const handlePriceInputBlur = () => {
+    const normalizedVal = priceInput.replace(",", ".");
+    const parsed = parseFloat(normalizedVal);
+    if (isNaN(parsed) || parsed < 0) {
+      const defaultPrice = Number(item.price) || 0;
+      setPriceInput(defaultPrice.toFixed(2));
+      dispatch(updateCartItemPrice({ id: item.id, price: defaultPrice }));
+    } else {
+      setPriceInput(parsed.toFixed(2));
     }
   };
 
@@ -124,8 +170,8 @@ const SingleItem: React.FC<SingleItemProps> = ({
     .trim();
 
   return (
-    <div className="flex items-center justify-between gap-5">
-      <div className="w-full flex items-center gap-6">
+    <div className="flex items-center justify-between gap-3">
+      <div className="flex-1 flex items-center gap-4 min-w-0">
         <div className="flex items-center justify-center rounded-[10px] bg-gray-3 max-w-[90px] w-full h-22.5">
           <div className="w-16 h-16 bg-yellow-light-4 rounded-xl flex items-center justify-center border border-yellow-light-2 overflow-hidden shrink-0">
             {resolvedImg ? (
@@ -155,26 +201,43 @@ const SingleItem: React.FC<SingleItemProps> = ({
           <h3 className="font-medium text-dark mb-1 ease-out duration-200 hover:text-blue">
             {displayName}
           </h3>
-          {item.discount && item.discount > 0 ? (
-            <div className="flex flex-col gap-0.5">
-              <div className="flex items-center gap-2">
-                <span className="text-custom-sm font-bold text-green">
-                  S/. {(Number(item.price) - Number(item.discount)).toFixed(2)}
+          <div className="flex flex-col gap-1 mt-0.5">
+            <div className="flex items-center gap-2">
+              {Number(item.discount || 0) > 0 ? (
+                <div className="flex items-center gap-1">
+                  <span className="text-[10px] font-bold text-green uppercase tracking-wider">Final:</span>
+                  <span className="text-custom-sm font-extrabold text-green">
+                    S/. {Math.max(0, Number(item.price) - Number(item.discount)).toFixed(2)}
+                  </span>
+                </div>
+              ) : (
+                <span className="text-xs font-semibold text-dark-2">Precio:</span>
+              )}
+
+              <div className="relative flex items-center bg-gray-2/60 hover:bg-gray-2 border border-gray-3 focus-within:border-blue focus-within:bg-white focus-within:ring-2 focus-within:ring-blue/20 rounded-lg px-2 py-1 transition-all shadow-2xs group">
+                <span className="text-xs font-bold text-blue mr-0.5 select-none">
+                  S/.
                 </span>
-                <span className="text-xs text-gray-400 line-through">
-                  S/. {Number(item.price).toFixed(2)}
-                </span>
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  value={priceInput}
+                  onChange={handlePriceInputChange}
+                  onBlur={handlePriceInputBlur}
+                  className="w-16 bg-transparent text-xs font-bold text-dark outline-none cursor-text"
+                />
               </div>
+            </div>
+
+            {Number(item.discount || 0) > 0 && (
               <span className="inline-block text-[9px] font-bold text-green bg-green-light-6 border border-green-light-5 px-1.5 py-0.5 rounded-md w-fit">
                 Desc: - S/. {Number(item.discount).toFixed(2)}
               </span>
-            </div>
-          ) : (
-            <p className="text-custom-sm">Price: S/. {Number(item.price).toFixed(2)}</p>
-          )}
+            )}
+          </div>
           {item.isLens && (
             <p className="text-dark-2 text-[11px] font-bold mt-0.5">
-              ESF {item.esf ?? "-"} / CYL {item.cyl ?? "-"}
+              {formatearMedidasLente(item.esf, item.cyl)}
             </p>
           )}
         </div>
@@ -225,7 +288,7 @@ const SingleItem: React.FC<SingleItemProps> = ({
       <button
         onClick={handleRemoveFromCart}
         aria-label="button for remove product from cart"
-        className="flex items-center justify-center rounded-lg max-w-[38px] w-full h-9.5 bg-gray-2 border border-gray-3 text-dark ease-out duration-200 hover:bg-red-light-6 hover:border-red-light-4 hover:text-red"
+        className="flex items-center justify-center rounded-lg max-w-[38px] w-full h-9.5 shrink-0 bg-gray-2 border border-gray-3 text-dark ease-out duration-200 hover:bg-red-light-6 hover:border-red-light-4 hover:text-red"
       >
         <svg
           className="fill-current"

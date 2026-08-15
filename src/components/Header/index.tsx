@@ -238,7 +238,7 @@ const Header = () => {
               </span>
             </div>
             <span className="text-base font-[1000] tracking-tighter hidden sm:inline">
-              S/. {totalPrice}
+              S/. {Number(totalPrice).toFixed(2)}
             </span>
           </button>
 

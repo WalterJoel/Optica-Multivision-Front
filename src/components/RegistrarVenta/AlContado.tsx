@@ -1,28 +1,30 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import { useReactToPrint } from "react-to-print";
 import { LoadingModal, StatusModal } from "@/components/Common/modal";
 import { BaseInput, BaseTarea } from "@/components/Common/Inputs";
 import { useCreateSale } from "@/hooks/sales";
+import { useStores } from "@/hooks/stores";
 import { useAppSelector } from "@/redux/store";
 import { useDispatch } from "react-redux";
 // Selectores de Slices
 import { selectVenta, resetVenta } from "@/redux/features/sale-slice";
 import { selectTotalPrice, selectCartItems, removeAllItemsFromCart } from "@/redux/features/cart-slice";
 // Constants
-import { TipoVenta, EstadoPago, STATUS_MODAL } from "@/commons/constants";
-import { ICreateSale, VentaProducto } from "@/types/sales";
+import { TipoVenta, EstadoPago, STATUS_MODAL, TipoProducto, MetodoPago } from "@/commons/constants";
+import { ICreateSale, VentaProducto, IResponseSale } from "@/types/sales";
 import PaymentMethodSelector from "./PaymentMethodSelector";
 import { useSessionUser } from "@/hooks/session";
 import Discount from "../Cart/Discount";
 import Montaje from "./Montaje";
-import { BaseButton } from "../Common/Buttons";
+import { TicketVenta } from "../Ventas/TicketVenta";
+import { ModalVentaExitosa } from "./ModalVentaExitosa";
 
 const AlContado = () => {
     // Hooks
     const dispatch = useDispatch();
-    const { addSale, loading, statusMessage, success } = useCreateSale();
-    const { sedeId, userId } = useSessionUser();
+    const { addSale, loading, statusMessage, success, createdSale } = useCreateSale();
+    const { sedeId, userId, fullName } = useSessionUser();
+    const { sedes } = useStores();
 
     // Stores
     const ventaStore = useAppSelector(selectVenta);
@@ -37,7 +39,22 @@ const AlContado = () => {
     const [montoRecibido, setMontoRecibido] = useState("");
     const [typeModal, setTypeModal] = useState<string>("");
 
+    // Impresión de ticket
+    const [ventaParaImprimir, setVentaParaImprimir] = useState<IResponseSale | null>(null);
+    const [ultimaVentaImprimir, setUltimaVentaImprimir] = useState<IResponseSale | null>(null);
+    const refImpresion = useRef<HTMLDivElement>(null);
 
+    const ejecutarImpresion = useReactToPrint({
+        contentRef: refImpresion,
+        documentTitle: ventaParaImprimir ? `ticket-venta-${ventaParaImprimir.id}` : "ticket-venta",
+        onAfterPrint: () => setVentaParaImprimir(null),
+    });
+
+    useEffect(() => {
+        if (ventaParaImprimir) {
+            ejecutarImpresion();
+        }
+    }, [ventaParaImprimir]);
 
     const handleRegisterSale = () => {
         console.log("Registrando venta al contado - Sede:", sedeId, "Usuario:", userId, "Cliente:", ventaStore.clienteId);
@@ -88,7 +105,9 @@ const AlContado = () => {
                 success ? STATUS_MODAL.SUCCESS_MODAL : STATUS_MODAL.ERROR_MODAL,
             );
             setOpenModal(true);
-            if (success) {
+            if (success && createdSale) {
+                setUltimaVentaImprimir(createdSale);
+
                 dispatch(removeAllItemsFromCart());
                 dispatch(resetVenta());
                 setmontaje(false);
@@ -97,7 +116,7 @@ const AlContado = () => {
                 setChange(0);
             }
         }
-    }, [loading, success, statusMessage]);
+    }, [loading, success, statusMessage, createdSale]);
 
     return (
         <>
@@ -206,12 +225,38 @@ const AlContado = () => {
             </div >
 
             <LoadingModal isOpen={loading} />
-            <StatusModal
-                isOpen={openModal}
-                type={typeModal}
-                message={statusMessage}
-                onClose={() => setOpenModal(false)}
-            />
+            {success ? (
+                <ModalVentaExitosa
+                    estaAbierto={openModal}
+                    mensaje={statusMessage}
+                    onCerrar={() => setOpenModal(false)}
+                    onImprimirTicket={() => {
+                        if (ultimaVentaImprimir) {
+                            setVentaParaImprimir(ultimaVentaImprimir);
+                        }
+                        setOpenModal(false);
+                    }}
+                />
+            ) : (
+                <StatusModal
+                    isOpen={openModal}
+                    type={typeModal}
+                    message={statusMessage}
+                    onClose={() => setOpenModal(false)}
+                />
+            )}
+
+            {/* Ticket de Impresión (Oculto en pantalla, visible solo al imprimir) */}
+            {ventaParaImprimir && (
+                <div className="hidden print:block">
+                    <div ref={refImpresion}>
+                        <TicketVenta
+                            venta={ventaParaImprimir}
+                            sede={sedes.find((s) => s.id === ventaParaImprimir.sedeId)}
+                        />
+                    </div>
+                </div>
+            )}
         </>
     );
 };

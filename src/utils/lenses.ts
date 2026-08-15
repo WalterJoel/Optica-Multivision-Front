@@ -1,9 +1,11 @@
 export const formatearMedida = (val: any) => {
-  if (!val) return "0";
+  if (val === null || val === undefined || val === "") return "0.00";
   const num = Number(val);
-  return num > 0 ? `+${val}` : String(val);
+  if (isNaN(num)) return "0.00";
+  const formatted = num.toFixed(2);
+  return num > 0 ? `+${formatted}` : formatted;
 };
 
 export const formatearMedidasLente = (esf: any, cyl: any) => {
-  return `${formatearMedida(esf)} | ${formatearMedida(cyl)}`;
+  return `ESF ${formatearMedida(esf)} / CYL ${formatearMedida(cyl)}`;
 };

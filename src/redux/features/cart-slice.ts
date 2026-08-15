@@ -78,6 +78,19 @@ export const cart = createSlice({
       }
     },
 
+    // Permite actualizar el precio de un producto al momento solo de vender (afecta únicamente al carrito de esta venta, no a la base de datos)
+    updateCartItemPrice: (
+      state,
+      action: PayloadAction<{ id: number; price: number }>,
+    ) => {
+      const { id, price } = action.payload;
+      const item = state.items.find((item) => item.id === id);
+
+      if (item) {
+        item.price = Math.max(0, price);
+      }
+    },
+
     removeAllItemsFromCart: (state) => {
       state.items = [];
     },
@@ -86,14 +99,15 @@ export const cart = createSlice({
 
 export const selectCartItems = (state: RootState) => state.cartReducer.items;
 
-export const selectTotalPrice = createSelector([selectCartItems], (items) =>
-  items.reduce((total, item) => {
-    const price = Number(item.price);
+export const selectTotalPrice = createSelector([selectCartItems], (items) => {
+  const total = items.reduce((sum, item) => {
+    const price = Number(item.price) || 0;
     const discount = Number(item.discount || 0);
     const finalPrice = Math.max(0, price - discount);
-    return total + finalPrice * item.quantity;
-  }, 0),
-);
+    return sum + finalPrice * item.quantity;
+  }, 0);
+  return Number(total.toFixed(2));
+});
 
 export const {
   addItemToCart,
@@ -101,6 +115,7 @@ export const {
   removeDiscountFromItem,
   removeItemFromCart,
   updateCartItemQuantity,
+  updateCartItemPrice,
   removeAllItemsFromCart,
 } = cart.actions;
 

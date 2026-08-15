@@ -1,9 +1,8 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { useReactToPrint } from "react-to-print";
 
 // Components
 import { LoadingModal, StatusModal } from "@/components/Common/modal";
@@ -14,9 +13,12 @@ import {
     BaseTarea,
 } from "@/components/Common/Inputs";
 import { BaseButton } from "@/components/Common/Buttons/BaseButton";
+import { TicketVenta } from "../Ventas/TicketVenta";
+import { ModalVentaExitosa } from "./ModalVentaExitosa";
 
 // Hooks y Store
 import { useCreateSale } from "@/hooks/sales";
+import { useStores } from "@/hooks/stores";
 import { useAppSelector } from "@/redux/store";
 
 // Selectores de Slices
@@ -25,8 +27,8 @@ import { selectVenta, setMetodoPago, resetVenta, setClienteId } from "@/redux/fe
 import { selectTotalPrice, selectCartItems, removeAllItemsFromCart } from "@/redux/features/cart-slice";
 
 // Constants
-import { TipoVenta, EstadoPago, STATUS_MODAL } from "@/commons/constants";
-import { ICreateSale, VentaProducto } from "@/types/sales";
+import { TipoVenta, EstadoPago, STATUS_MODAL, TipoProducto, MetodoPago } from "@/commons/constants";
+import { ICreateSale, VentaProducto, IResponseSale } from "@/types/sales";
 import PaymentMethodSelector from "./PaymentMethodSelector";
 import CuotasSelector from "./CuotasSelector";
 import { ISearchClient } from "@/types/clients";
@@ -39,12 +41,13 @@ type PaymentType = "cash" | "credit";
 
 const AlCredito = () => {
     const dispatch = useDispatch();
-    const { addSale, loading, statusMessage, success } = useCreateSale();
+    const { addSale, loading, statusMessage, success, createdSale } = useCreateSale();
 
-    const { sedeId, userId } = useSessionUser();
+    const { sedeId, userId, fullName } = useSessionUser();
+    const { sedes } = useStores();
 
     const ventaStore = useAppSelector(selectVenta); // Escuchamos el store de venta
-    console.log(ventaStore, " CENTA STORE -->>>>>>>>>>");
+
     const cartStoreItems = useAppSelector(selectCartItems);
     const cartStoreTotal = useAppSelector(selectTotalPrice);
 
@@ -61,6 +64,23 @@ const AlCredito = () => {
     const [typeModal, setTypeModal] = useState<string>("");
     const [diasCompromiso, setDiasCompromiso] = useState<number | null>(null);
     const [clienteError, setClienteError] = useState(false);
+
+    // Impresión de ticket
+    const [ventaParaImprimir, setVentaParaImprimir] = useState<IResponseSale | null>(null);
+    const [ultimaVentaImprimir, setUltimaVentaImprimir] = useState<IResponseSale | null>(null);
+    const refImpresion = useRef<HTMLDivElement>(null);
+
+    const ejecutarImpresion = useReactToPrint({
+        contentRef: refImpresion,
+        documentTitle: ventaParaImprimir ? `ticket-venta-${ventaParaImprimir.id}` : "ticket-venta",
+        onAfterPrint: () => setVentaParaImprimir(null),
+    });
+
+    useEffect(() => {
+        if (ventaParaImprimir) {
+            ejecutarImpresion();
+        }
+    }, [ventaParaImprimir]);
 
     //Cliente
     const [searchClientTerm, setSearchClientTerm] = useState("");
@@ -148,7 +168,9 @@ const AlCredito = () => {
                 success ? STATUS_MODAL.SUCCESS_MODAL : STATUS_MODAL.ERROR_MODAL,
             );
             setOpenModal(true);
-            if (success) {
+            if (success && createdSale) {
+                setUltimaVentaImprimir(createdSale);
+
                 dispatch(removeAllItemsFromCart());
                 dispatch(resetVenta());
                 setNroCuotas(0);
@@ -160,7 +182,7 @@ const AlCredito = () => {
                 setClienteError(false);
             }
         }
-    }, [loading, success, statusMessage]);
+    }, [loading, success, statusMessage, createdSale]);
 
     return (
         <section className="w-full">
@@ -228,8 +250,8 @@ const AlCredito = () => {
                                                 }}
                                                 placeholder="Buscar por nombre o DNI..."
                                                 className={`w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition-all placeholder:text-gray-400 ${clienteError
-                                                        ? "border-red focus:border-red ring-2 ring-red/20"
-                                                        : "border-gray-200 focus:border-blue focus:ring-2 focus:ring-blue/10"
+                                                    ? "border-red focus:border-red ring-2 ring-red/20"
+                                                    : "border-gray-200 focus:border-blue focus:ring-2 focus:ring-blue/10"
                                                     }`}
                                             />
                                         </div>
@@ -377,12 +399,38 @@ const AlCredito = () => {
                 </div>
             </div>
             <LoadingModal isOpen={loading} />
-            <StatusModal
-                isOpen={openModal}
-                type={typeModal}
-                message={statusMessage}
-                onClose={() => setOpenModal(false)}
-            />
+            {success ? (
+                <ModalVentaExitosa
+                    estaAbierto={openModal}
+                    mensaje={statusMessage}
+                    onCerrar={() => setOpenModal(false)}
+                    onImprimirTicket={() => {
+                        if (ultimaVentaImprimir) {
+                            setVentaParaImprimir(ultimaVentaImprimir);
+                        }
+                        setOpenModal(false);
+                    }}
+                />
+            ) : (
+                <StatusModal
+                    isOpen={openModal}
+                    type={typeModal}
+                    message={statusMessage}
+                    onClose={() => setOpenModal(false)}
+                />
+            )}
+
+            {/* Ticket de Impresión (Oculto en pantalla, visible solo al imprimir) */}
+            {ventaParaImprimir && (
+                <div className="hidden print:block">
+                    <div ref={refImpresion}>
+                        <TicketVenta
+                            venta={ventaParaImprimir}
+                            sede={sedes.find((s) => s.id === ventaParaImprimir.sedeId)}
+                        />
+                    </div>
+                </div>
+            )}
         </section>
     );
 };

@@ -28,6 +28,7 @@ export const BaseButton = ({
 }: ButtonProps) => {
   const baseStyles = `
     ${fullWidth ? "w-full" : "w-auto"}
+    inline-flex items-center justify-center gap-2
     transition-all
     disabled:opacity-50
     disabled:cursor-not-allowed
