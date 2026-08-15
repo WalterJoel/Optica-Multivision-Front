@@ -36,12 +36,14 @@ export const MiniTable = ({
   onDelete,
   isDeleting,
   sedes = [],
+  onRefresh,
 }: {
   titulo: string;
   data: IResponseSale[];
   onDelete: (id: number) => Promise<any>;
   isDeleting: boolean;
   sedes?: IStore[];
+  onRefresh?: () => void;
 }) => {
   const [selectedSale, setSelectedSale] = useState<IResponseSale | null>(null);
   const [printSale, setPrintSale] = useState<IResponseSale | null>(null);
@@ -410,11 +412,11 @@ export const MiniTable = ({
                       >
                         <Pencil size={16} strokeWidth={3} />
                       </button>
-                      {venta.estadoPago === "PENDIENTE" && venta.activo && (
+                      {venta.estadoPago === "PENDIENTE" && Number(venta.deuda) > 0 && venta.activo && (
                         <button
                           type="button"
                           onClick={() => setPagoSale(venta)}
-                          className="p-2.5 rounded-xl bg-white border border-green-600/30 text-green-600 hover:bg-green-600 hover:text-white cursor-pointer transition-all shadow-sm flex items-center justify-center"
+                          className="p-2.5 rounded-xl bg-yellow/10 border border-yellow-dark/30 text-yellow-dark hover:bg-yellow-dark hover:text-white cursor-pointer transition-all shadow-sm flex items-center justify-center"
                           title="Registrar Pago de Cuota"
                         >
                           <DollarSign size={16} strokeWidth={3} />
@@ -701,7 +703,10 @@ export const MiniTable = ({
         <StatusModal
           isOpen={editStatusType !== null}
           type={editStatusType}
-          onClose={() => setEditStatusType(null)}
+          onClose={() => {
+            setEditStatusType(null);
+            if (onRefresh) onRefresh();
+          }}
           message={editStatusMsg}
         />
       )}
@@ -732,7 +737,10 @@ export const MiniTable = ({
         <StatusModal
           isOpen={pagoStatusType !== null}
           type={pagoStatusType}
-          onClose={() => setPagoStatusType(null)}
+          onClose={() => {
+            setPagoStatusType(null);
+            if (onRefresh) onRefresh();
+          }}
           message={pagoStatusMsg}
         />
       )}

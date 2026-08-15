@@ -147,6 +147,7 @@ export default function CajaPremiumFino() {
             onDelete={anularVenta}
             isDeleting={isAnnulling}
             sedes={sedes}
+            onRefresh={() => getAllSales(fechaInicio, fechaFin)}
           />
         </div>
       </div>

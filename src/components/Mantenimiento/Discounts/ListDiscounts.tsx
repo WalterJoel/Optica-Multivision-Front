@@ -133,7 +133,7 @@ export default function ListDiscounts() {
       );
       setModalMsg(updateMessage);
       setOpenModal(true);
-      if (updateOk) getAllDiscounts();
+      if (updateOk && sedeId) getAllDiscounts(sedeId);
     }
   }, [updating, updateOk, updateMessage]);
 
