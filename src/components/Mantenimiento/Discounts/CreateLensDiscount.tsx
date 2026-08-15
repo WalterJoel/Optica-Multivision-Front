@@ -13,6 +13,7 @@ import { ISearchClient } from "@/types/clients";
 import { ICreateDiscount, ISeries } from "@/types/discounts";
 import { PRODUCTOS, STATUS_MODAL } from "@/commons/constants";
 import { LoadingModal, StatusModal } from "@/components/Common/modal";
+import { useSessionUser } from "@/hooks/session";
 import { Info } from "lucide-react";
 
 const emptyForm: ICreateDiscount = {
@@ -26,6 +27,7 @@ const emptyForm: ICreateDiscount = {
 
 const SeriesDescuentos = () => {
   // --- States ---
+  const { sedeId } = useSessionUser();
   const [form, setForm] = useState<ICreateDiscount>(emptyForm);
   const [searchLensTerm, setSearchLensTerm] = useState("");
   const [searchClientTerm, setSearchClientTerm] = useState("");
@@ -117,7 +119,10 @@ const SeriesDescuentos = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await addDiscount(form);
+    await addDiscount({
+      ...form,
+      sedeId: Number(sedeId),
+    });
   };
 
   const resetAll = () => {

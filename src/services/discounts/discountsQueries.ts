@@ -6,7 +6,9 @@ export const searchDiscountsByProducts = async (payload) => {
   return data;
 };
 
-export const getDiscountsService = async (): Promise<IDescuento[]> => {
-  const { data } = await api.get<IDescuento[]>("/descuentos");
+export const getDiscountsService = async (sedeId?: number): Promise<IDescuento[]> => {
+  const { data } = await api.get<IDescuento[]>("/descuentos", {
+    params: sedeId ? { sedeId } : {},
+  });
   return data;
 };

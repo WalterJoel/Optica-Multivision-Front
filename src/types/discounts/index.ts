@@ -1,5 +1,6 @@
 export interface ICreateDiscount {
   clienteId: number;
+  sedeId?: number;
   productoId?: number | null;
   lenteId?: number | null;
   serie?: number | null;
@@ -29,6 +30,7 @@ export interface IResponseDiscountByProduct {
 export interface IDescuento {
   id: number;
   clienteId: number;
+  sedeId?: number;
   productoId?: number | null;
   lenteId?: number | null;
   serie?: number | null;

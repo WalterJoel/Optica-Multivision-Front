@@ -8,9 +8,11 @@ import { IDescuento } from "@/types/discounts";
 import { Edit3, Power, Tags, Search } from "lucide-react";
 import { useDiscounts, useUpdateDiscount } from "@/hooks/discounts";
 import { useClients } from "@/hooks/clients";
+import { useSessionUser } from "@/hooks/session";
 
 export default function ListDiscounts() {
   // Hooks
+  const { sedeId } = useSessionUser();
   const { discounts, loading, getAllDiscounts } = useDiscounts();
   const { clientes, loadClientes } = useClients();
   const {
@@ -31,9 +33,11 @@ export default function ListDiscounts() {
 
   // Load initial data
   useEffect(() => {
-    getAllDiscounts();
+    if (sedeId) {
+      getAllDiscounts(sedeId);
+    }
     loadClientes();
-  }, []);
+  }, [sedeId]);
 
   const getClientName = (clientId: number) => {
     const client = clientes.find((c) => c.id === clientId);

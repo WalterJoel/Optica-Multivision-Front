@@ -12,6 +12,7 @@ import { PRODUCTOS, STATUS_MODAL } from "@/commons/constants";
 import { LoadingModal, StatusModal } from "@/components/Common/modal";
 import { useSearchEyeglass } from "@/hooks/products/eyeglasses";
 import { IEyeglass } from "@/types/products/eyeglass";
+import { useSessionUser } from "@/hooks/session";
 import { Info } from "lucide-react";
 
 const emptyForm: ICreateDiscount = {
@@ -23,6 +24,7 @@ const emptyForm: ICreateDiscount = {
 
 const CreateMonturaDiscount = () => {
   // --- States ---
+  const { sedeId } = useSessionUser();
   const [form, setForm] = useState<ICreateDiscount>(emptyForm);
   const [searchMonturaTerm, setSearchMonturaTerm] = useState("");
   const [searchClientTerm, setSearchClientTerm] = useState("");
@@ -78,6 +80,7 @@ const CreateMonturaDiscount = () => {
     e.preventDefault();
     await addDiscount({
       ...form,
+      sedeId: Number(sedeId),
       tipoProducto: PRODUCTOS.MONTURA,
     });
   };

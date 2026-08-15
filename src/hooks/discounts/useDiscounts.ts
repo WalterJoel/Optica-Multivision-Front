@@ -7,12 +7,12 @@ export function useDiscounts() {
   const [statusMessage, setMessage] = useState<string>("");
   const [discounts, setDiscounts] = useState<IDescuento[]>([]);
 
-  const getAllDiscounts = useCallback(async () => {
+  const getAllDiscounts = useCallback(async (sedeId?: number) => {
     setLoading(true);
     setMessage("");
 
     try {
-      const data = await getDiscountsService();
+      const data = await getDiscountsService(sedeId);
       setDiscounts(data || []);
       setMessage("Descuentos obtenidos correctamente");
     } catch (err: any) {

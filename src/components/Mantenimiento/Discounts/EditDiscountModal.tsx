@@ -60,6 +60,7 @@ export default function EditDiscountModal({
     e.preventDefault();
     if (!discount) return;
     const payload: any = {
+      sedeId: discount.sedeId,
       montoDescuento: Number(form.montoDescuento) || 0,
     };
     if (discount.tipoProducto === "LENTE") {
