@@ -78,7 +78,7 @@ const AlContado = () => {
             userId: userId ? Number(userId) : 0,
             clienteId: ventaStore.clienteId ? Number(ventaStore.clienteId) : null,
             metodoPago: ventaStore.metodoPago,
-            montoPagado: Number(montoRecibido),
+            montoPagado: cartStoreTotal,
             productos: productosDesdeCart,
             total: cartStoreTotal,
             tipoVenta: TipoVenta.CONTADO,

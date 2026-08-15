@@ -205,8 +205,8 @@ export const TicketVenta = ({ venta, sede }: TicketVentaProps) => {
           <span>S/. {totalMonto.toFixed(2)}</span>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <span>A CUENTA </span>
-          <span>S/. {montoPagado.toFixed(2)}</span>
+          <span>{deudaMonto > 0 ? "A CUENTA" : "PAGADO"} </span>
+          <span>S/. {Math.min(montoPagado, totalMonto).toFixed(2)}</span>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", fontWeight: "bold", fontSize: "8pt" }}>
           <span>SALDO </span>

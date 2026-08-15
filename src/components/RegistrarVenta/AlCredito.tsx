@@ -131,17 +131,21 @@ const AlCredito = () => {
             esf: item.esf || null,
         }));
 
+        const abonoReal = paymentType === "cash"
+            ? cartStoreTotal
+            : Math.min(Number(montoRecibido || 0), cartStoreTotal);
+
         const payload: ICreateSale = {
             sedeId: sedeId,
             userId: userId,
             clienteId: ventaStore.clienteId,
             metodoPago: ventaStore.metodoPago,
-            montoPagado: Number(montoRecibido),
+            montoPagado: abonoReal,
             productos: productosDesdeCart,
             total: cartStoreTotal,
             tipoVenta: paymentType === "cash" ? TipoVenta.CONTADO : TipoVenta.CREDITO,
             estadoPago:
-                Number(montoRecibido) >= cartStoreTotal
+                abonoReal >= cartStoreTotal
                     ? EstadoPago.PAGADO
                     : EstadoPago.PENDIENTE,
             montaje: showOrder,
