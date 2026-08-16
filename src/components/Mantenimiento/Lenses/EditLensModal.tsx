@@ -50,8 +50,10 @@ export default function EditLensModal({
 
   // Fetch kits
   useEffect(() => {
-    getAllKits();
-  }, []);
+    if (sedeId) {
+      getAllKits(Number(sedeId));
+    }
+  }, [sedeId]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((p) => ({ ...p, [e.target.name]: e.target.value }));

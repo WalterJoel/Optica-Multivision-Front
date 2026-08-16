@@ -11,9 +11,11 @@ import { Edit3, Power, Eye, Search } from "lucide-react";
 import { useLenses } from "@/hooks/products";
 import { useUpdateLens } from "@/hooks/products/lens/useUpdateLens";
 import { useKits } from "@/hooks/kits";
+import { useSessionUser } from "@/hooks/session";
 
 export default function ListLenses() {
   // Hooks
+  const { sedeId } = useSessionUser();
   const { lenses, loading, getAllLenses } = useLenses();
   const { kits, getAllKits } = useKits();
   const {
@@ -34,8 +36,10 @@ export default function ListLenses() {
 
   // Load kits for names
   useEffect(() => {
-    getAllKits();
-  }, []);
+    if (sedeId) {
+      getAllKits(Number(sedeId));
+    }
+  }, [sedeId]);
 
   // Memos
   const filteredLenses = useMemo(() => {

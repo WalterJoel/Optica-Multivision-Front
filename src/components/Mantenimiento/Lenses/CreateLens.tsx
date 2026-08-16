@@ -107,8 +107,10 @@ export default function LensForm() {
   }, [loading, success, statusMessage]);
 
   useEffect(() => {
-    getAllKits();
-  }, []);
+    if (sedeId) {
+      getAllKits(Number(sedeId));
+    }
+  }, [sedeId]);
 
   return (
     <>
