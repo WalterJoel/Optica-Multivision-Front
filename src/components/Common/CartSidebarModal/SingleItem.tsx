@@ -198,8 +198,13 @@ const SingleItem: React.FC<SingleItemProps> = ({
         </div>
         <div>
           {getProductTypeBadge()}
-          <h3 className="font-medium text-dark mb-1 ease-out duration-200 hover:text-blue">
-            {displayName}
+          <h3 className="font-medium text-dark mb-1 ease-out duration-200 hover:text-blue flex items-center gap-1.5 flex-wrap">
+            <span>{displayName}</span>
+            {item.isLens && (
+              <span className="text-dark-2 text-[11px] font-bold">
+                {formatearMedidasLente(item.esf, item.cyl)}
+              </span>
+            )}
           </h3>
           <div className="flex flex-col gap-1 mt-0.5">
             <div className="flex items-center gap-2">
@@ -235,11 +240,7 @@ const SingleItem: React.FC<SingleItemProps> = ({
               </span>
             )}
           </div>
-          {item.isLens && (
-            <p className="text-dark-2 text-[11px] font-bold mt-0.5">
-              {formatearMedidasLente(item.esf, item.cyl)}
-            </p>
-          )}
+
         </div>
         {/* CANTIDAD */}
         <div className="flex-1 flex justify-center">
