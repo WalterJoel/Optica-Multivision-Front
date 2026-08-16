@@ -6,16 +6,17 @@ import { useMovimientosCaja } from "@/hooks/caja-movimiento/useMovimientosCaja";
 import { useSessionUser } from "@/hooks/session/useSessionUser";
 import { getLocalDateString } from "@/utils/date";
 import { SedeSelect } from "@/components/Common/SedeSelect";
+import { LoadingModal } from "@/components/Common/modal";
 import { MiniTable } from "./MiniTable";
 import CajaResumenCard from "./CajaResumenCard";
 
 
 export default function CajaPremiumFino() {
-  const { movimientos, getMovimientosCaja } = useMovimientosCaja();
+  const { movimientos, getMovimientosCaja, loading } = useMovimientosCaja();
   const { sedeId: userSedeId } = useSessionUser();
 
   const today = getLocalDateString();
-  const [sedeId, setSedeId] = useState<number>(1);
+  const [sedeId, setSedeId] = useState<number | null>(null);
   const [fechaInicio, setFechaInicio] = useState<string>(today);
   const [fechaFin, setFechaFin] = useState<string>(today);
 
@@ -127,6 +128,9 @@ export default function CajaPremiumFino() {
           />
         </div>
       </div>
+
+      {/* MODAL DE CARGA */}
+      <LoadingModal isOpen={loading} />
     </div>
   );
 }

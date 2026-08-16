@@ -16,7 +16,7 @@ export default function CajaPremiumFino() {
   // Hooks
   const { sedeId: userSedeId } = useSessionUser();
   const { sedes } = useStores();
-  const [sedeId, setSedeId] = useState<number>(1);
+  const [sedeId, setSedeId] = useState<number | null>(null);
 
   const today = getLocalDateString();
   const [fechaInicio, setFechaInicio] = useState<string>(today);
@@ -37,14 +37,14 @@ export default function CajaPremiumFino() {
   const [typeModal, setTypeModal] = useState("");
   const [modalMsg, setModalMsg] = useState("");
 
-  // Sincronizar la sede inicial del usuario
+  // Sincronizar la sede del usuario si existe
   useEffect(() => {
     if (userSedeId) {
       setSedeId(userSedeId);
     }
   }, [userSedeId]);
 
-  // Ejecutar búsqueda cuando cambien los filtros
+  // Cargar ventas al cambiar la sede o el rango de fechas
   useEffect(() => {
     if (sedeId) {
       getAllSales(fechaInicio, fechaFin);

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import {
   ChevronLeft,
   ChevronRight,
@@ -27,7 +27,7 @@ import { EditarVentaModal } from "./EditarVentaModal";
 import { RegistrarPagoModal } from "./RegistrarPagoModal";
 import { useEditarVenta, useRegistrarPago } from "@/hooks/sales";
 import { useSessionUser } from "@/hooks/session";
-import { STATUS_MODAL } from "@/commons/constants";
+import { STATUS_MODAL, ITEMS_PER_PAGE } from "@/commons/constants";
 import { formatearMedidasLente } from "@/utils/lenses";
 
 export const MiniTable = ({
@@ -57,7 +57,6 @@ export const MiniTable = ({
   const [editStatusType, setEditStatusType] = useState<string | null>(null);
   const [pagoStatusMsg, setPagoStatusMsg] = useState("");
   const [pagoStatusType, setPagoStatusType] = useState<string | null>(null);
-  const itemsPerPage = 8;
 
   const { editarVenta, loading: isEditing } = useEditarVenta();
   const { registrarPago, loading: isPaying } = useRegistrarPago();
@@ -91,15 +90,14 @@ export const MiniTable = ({
     if (activoFilter === "ANULADAS" && venta.activo !== false) return false;
 
     // 2. Filtro por texto de búsqueda
-    if (!searchTerm) return true;
-    const term = searchTerm.toLowerCase();
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) return true;
 
     const clienteNombre = venta.cliente
       ? venta.cliente.tipoCliente === "EMPRESA"
         ? (venta.cliente.razonSocial || "").toLowerCase()
         : `${venta.cliente.nombres || ""} ${venta.cliente.apellidos || ""}`.toLowerCase()
-      : "";
-    const clienteDoc = (venta.cliente?.numeroDoc || "").toLowerCase();
+      : "público general";
 
     const vendedorNombre = venta.user
       ? `${venta.user.nombre || ""} ${venta.user.apellido || ""}`.toLowerCase()
@@ -112,16 +110,20 @@ export const MiniTable = ({
       (venta.estadoPago || "").toLowerCase().includes(term) ||
       venta.userId.toString().includes(term) ||
       clienteNombre.includes(term) ||
-      clienteDoc.includes(term) ||
       vendedorNombre.includes(term)
     );
   });
 
-  // 📄 Paginación dinámica
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage) || 1;
+  // Suma total computada dinámicamente de las ventas filtradas
+  const totalMontoFiltrado = useMemo(() => {
+    return filteredData.reduce((acc, venta) => acc + Number(venta.total || 0), 0);
+  }, [filteredData]);
+
+  // Paginación dinámica
+  const totalPages = Math.max(1, Math.ceil(filteredData.length / ITEMS_PER_PAGE));
   const paginatedData = filteredData.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
   );
 
   const handlePrev = () => {
@@ -146,6 +148,11 @@ export const MiniTable = ({
             <h3 className="text-[12px] font-black text-dark-2 uppercase tracking-[2px]">
               {titulo} ({filteredData.length})
             </h3>
+
+            {/* BADGE DE SUMA TOTAL COMPUTADA DE LAS VENTAS FILTRADAS */}
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-black bg-blue-light/10 text-blue border border-blue-light/20 shadow-xs uppercase tracking-wider">
+              Total: S/. {totalMontoFiltrado.toFixed(2)}
+            </span>
           </div>
 
           {/* BOTONES DE FILTRO ACTIVAS / ANULADAS */}
@@ -161,11 +168,10 @@ export const MiniTable = ({
                   setActivoFilter(tab.id as any);
                   setCurrentPage(1);
                 }}
-                className={`px-3 py-1.5 rounded-xl text-[11px] font-bold border transition-all cursor-pointer ${
-                  activoFilter === tab.id
-                    ? "bg-white border-blue-light text-blue-light shadow-sm"
-                    : "bg-white/60 border-gray-3 text-dark-5 hover:bg-white"
-                }`}
+                className={`px-3 py-1.5 rounded-xl text-[11px] font-bold border transition-all cursor-pointer ${activoFilter === tab.id
+                  ? "bg-white border-blue-light text-blue-light shadow-sm"
+                  : "bg-white/60 border-gray-3 text-dark-5 hover:bg-white"
+                  }`}
               >
                 {tab.label}
               </button>

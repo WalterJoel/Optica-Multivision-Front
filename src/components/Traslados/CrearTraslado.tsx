@@ -53,7 +53,7 @@ export function CrearTraslado() {
   const [openModal, setOpenModal] = useState(false);
   const [typeModal, setTypeModal] = useState("");
   const [selectedRows, setSelectedRows] = useState<ITablaTrasladoRow[]>([]);
-  const [proveedoraSedeId, setProveedoraSedeId] = useState<number>(1);
+  const [proveedoraSedeId, setProveedoraSedeId] = useState<number | null>(null);
   const [origenSolicitud, setOrigenSolicitud] = useState<OrigenSolicitudTraslado>(
     OrigenSolicitudTraslado.REPORTE_VENTAS
   );

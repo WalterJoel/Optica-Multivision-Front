@@ -133,3 +133,5 @@ export enum ClasificacionLentes {
   CRISTAL = 'CRISTAL',
   OTROS = 'OTROS',
 }
+
+export const ITEMS_PER_PAGE = 10;
