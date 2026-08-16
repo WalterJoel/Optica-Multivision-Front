@@ -6,6 +6,7 @@ import {
 } from "@/commons/constants";
 import { IUser } from "../users";
 import { IClient } from "../clients";
+import { IKit } from "../kits";
 
 export interface VentaProducto {
   productoId?: number;
@@ -65,10 +66,34 @@ export interface IResponseSale {
   cliente?: IClient | null;
 }
 
+interface ILente {
+  id: number;
+  kitId?: number | null;
+  marca: string;
+  material: string;
+  clasificacion?: string;
+  imagenUrl?: string;
+  kit?: IKit | null;
+}
+
+interface IStock {
+  id: number;
+  lenteId: number;
+  sedeId?: number;
+  matrix?: string;
+  row?: number;
+  col?: number;
+  esf?: string;
+  cyl?: string;
+  cantidad?: number;
+  ubicacion?: string;
+  lente?: ILente | null;
+}
+
 export interface ProductSale {
   id: number;
   ventaId: number;
-  productoId: number;
+  productoId: number | null;
   tipoProducto: TipoProducto;
   precioUnitario: string;
   subtotal: string;
@@ -79,7 +104,7 @@ export interface ProductSale {
   cyl?: string | null;
   createdAt: string;
   producto?: any;
-  stock?: any;
+  stock?: IStock | null;
 }
 
 export interface IProductoVendidoResponse {
@@ -116,19 +141,7 @@ export interface IProductoVendidoResponse {
       color?: string;
     } | null;
   } | null;
-  stock?: {
-    id: number;
-    lenteId: number;
-    matrix?: string;
-    row?: number;
-    col?: number;
-    ubicacion?: string;
-    lente?: {
-      id: number;
-      marca: string;
-      material: string;
-    };
-  } | null;
+  stock?: IStock | null;
 }
 
 export interface IVentaPorTipoItem {

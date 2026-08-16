@@ -83,11 +83,10 @@ export default function DetalleVentaModal({
                   <span>
                     Estado de Pago:{" "}
                     <strong
-                      className={`font-black uppercase ${
-                        venta.estadoPago === "PAGADO"
-                          ? "text-green"
-                          : "text-yellow-dark"
-                      }`}
+                      className={`font-black uppercase ${venta.estadoPago === "PAGADO"
+                        ? "text-green"
+                        : "text-yellow-dark"
+                        }`}
                     >
                       {venta.estadoPago}
                     </strong>

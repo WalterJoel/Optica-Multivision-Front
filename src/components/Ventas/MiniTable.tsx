@@ -72,7 +72,10 @@ export const MiniTable = ({
 
   useEffect(() => {
     if (printSale) {
-      handlePrint();
+      const timer = setTimeout(() => {
+        handlePrint();
+      }, 100);
+      return () => clearTimeout(timer);
     }
   }, [printSale]);
 
@@ -611,6 +614,14 @@ export const MiniTable = ({
                             </span>
                           )}
 
+                          {/* Badge indicador de Kit vinculado */}
+                          {prod.stock?.lente?.kit && (
+                            <div className="mt-1.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider bg-emerald-100/80 text-emerald-900 border border-emerald-300 shadow-xs w-fit">
+                              <span className="text-xs">🎁</span>
+                              <span>{prod.stock.lente.kit.nombre}</span>
+                            </div>
+                          )}
+
                         </td>
                         <td className="px-4 py-3 text-center font-black text-dark">
                           {quantity}
@@ -650,13 +661,6 @@ export const MiniTable = ({
               </div>
             </div>
 
-            {/* Closing Button */}
-            <button
-              onClick={() => setSelectedSale(null)}
-              className="w-full py-3.5 bg-blue hover:bg-blue-dark text-white rounded-2xl font-black uppercase text-[11px] tracking-wider shadow-md hover:shadow-lg transition-all cursor-pointer hover:-translate-y-0.5 active:translate-y-0"
-            >
-              Cerrar Detalle
-            </button>
           </div>
         </ModalFrameWrapper>
       )}
