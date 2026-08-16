@@ -275,7 +275,9 @@ export default function ListDiscounts() {
         isOpen={openEdit}
         discount={selected}
         onClose={() => setOpenEdit(false)}
-        onRefresh={getAllDiscounts}
+        onRefresh={() => {
+          if (sedeId) getAllDiscounts(sedeId);
+        }}
       />
 
       <ConfirmModal

@@ -62,8 +62,8 @@ export default function ListKit() {
       );
       setModalMsg(toggleMsg);
       setOpenModal(true);
-      if (toggleSuccess) {
-        getAllKits();
+      if (toggleSuccess && sedeId) {
+        getAllKits(sedeId);
       }
     }
   }, [toggling, toggleSuccess, toggleMsg]);
@@ -238,7 +238,9 @@ export default function ListKit() {
         isOpen={openEdit}
         kit={selected}
         onClose={closeEditModal}
-        onRefresh={getAllKits}
+        onRefresh={() => {
+          if (sedeId) getAllKits(sedeId);
+        }}
       />
 
       <ConfirmModal
