@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { ShoppingCart } from "lucide-react";
 import { TipoProducto } from "@/commons/constants";
 
@@ -11,10 +12,21 @@ import ListAccesories from "../Listados/ListAccesories";
 import MonturaFilters from "./MonturasFilter";
 import AccessoryFilters from "./AccesoriosFilter";
 
+import BarraFlujoVenta from "@/components/Common/BarraFlujoVenta";
+
 export default function Vender() {
+  const searchParams = useSearchParams();
+  const catParam = searchParams.get("cat");
+
   const [selectedCategory, setSelectedCategory] = useState(
-    TipoProducto.LENTE,
+    (catParam as TipoProducto) || TipoProducto.MONTURA
   );
+
+  useEffect(() => {
+    if (catParam && (Object.values(TipoProducto) as string[]).includes(catParam)) {
+      setSelectedCategory(catParam as TipoProducto);
+    }
+  }, [catParam]);
 
   /* FILTROS SEPARADOS */
   const [monturaFilters, setMonturaFilters] = useState({

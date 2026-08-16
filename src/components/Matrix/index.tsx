@@ -6,11 +6,12 @@ import { BaseButton } from "@/components/Common/Buttons";
 import { StatusModal } from "@/components/Common/modal";
 import { STATUS_MODAL } from "@/commons/constants";
 import { useLenteStock, useLenses } from "@/hooks/products";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { DetailModal } from "./DetailModal";
 import { ILensStockMatrixItem } from "@/types/products";
 import { useSessionUser } from "@/hooks/session";
 import { Database } from "lucide-react";
+import BarraFlujoVenta from "@/components/Common/BarraFlujoVenta";
 
 const cylValues = [
   0, -0.25, -0.5, -0.75, -1.0, -1.25, -1.5, -1.75, -2.0, -2.25, -2.5, -2.75,
@@ -50,6 +51,7 @@ const esfValuesPositivo = [
 ];
 
 export default function Matrix() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const { sedeId } = useSessionUser(); //Sede automatica
   const lenteId = Number(searchParams.get("lenteId"));
@@ -125,8 +127,8 @@ export default function Matrix() {
     <div className="bg-beige pt-32 pb-16 px-4 sm:px-6 lg:px-8 min-h-screen mt-15">
       <div className="max-w-[1700px] mx-auto">
         {/* HEADER */}
-        <header className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-12 gap-6">
-          {/* LEFT */}
+        <header className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-6">
+          {/* LEFT (Title with Lens Name) */}
           <div className="flex items-center gap-5">
             <div className="relative">
               <div className="absolute inset-0 bg-blue-light blur-2xl opacity-10 rounded-full" />
@@ -139,25 +141,30 @@ export default function Matrix() {
               <div className="flex items-center gap-2 mb-1">
                 <span className="w-6 h-[5px] bg-yellow-dark" />
                 <p className="text-[10px] sm:text-[11px] font-black text-blue-light uppercase tracking-[3px]">
-                  Inventario
+                  Lente seleccionado
                 </p>
               </div>
 
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-dark tracking-tighter uppercase leading-none">
-                Matriz de <span className="text-blue-light italic">Stock</span>
+                {activeLens ? (
+                  <>
+                    {activeLens.marca}{" "}
+                    <span className="text-blue-light italic">
+                      ({activeLens.material})
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    Matriz de{" "}
+                    <span className="text-blue-light italic">Stock</span>
+                  </>
+                )}
               </h1>
             </div>
           </div>
 
-          {/* RIGHT (Selected Lens details) */}
-          {activeLens && (
-            <div className="bg-white border-2 border-blue-light-4 rounded-2xl px-6 py-4 shadow-md hover:shadow-lg transition-all w-full sm:w-auto min-w-[280px]">
-              <span className="block text-[9px] font-black text-blue-light uppercase tracking-[2px] leading-none mb-1.5">Lente Seleccionado</span>
-              <h2 className="text-sm font-black text-dark uppercase tracking-tight leading-none">
-                {activeLens.marca} <span className="text-blue-light italic">({activeLens.material})</span>
-              </h2>
-            </div>
-          )}
+          {/* RIGHT (Pastillas de Categoría) */}
+          <BarraFlujoVenta />
         </header>
 
         <div className="space-y-4">
