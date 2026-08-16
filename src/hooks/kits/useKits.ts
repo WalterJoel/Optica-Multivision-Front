@@ -2,28 +2,19 @@ import { useState } from "react";
 
 import { getAllKitsService } from "@/services/kits";
 import { IKit } from "@/types/kits";
-import { useSessionUser } from "@/hooks/session";
 
 export function useKits() {
   const [loading, setLoading] = useState(false);
   const [statusMessage, setMessage] = useState<string>("");
   const [success, setSuccess] = useState<boolean>(false);
   const [kits, setKits] = useState<IKit[]>([]);
-  const { sedeId: sessionSedeId } = useSessionUser();
 
-  const getAllKits = async (sedeId?: number) => {
-    const targetSedeId =
-      sedeId ?? (sessionSedeId ? Number(sessionSedeId) : undefined);
-
-    if (!targetSedeId) {
-      return;
-    }
-
+  const getAllKits = async (sedeId: number) => {
     setLoading(true);
     setSuccess(false);
 
     try {
-      const data = await getAllKitsService(targetSedeId);
+      const data = await getAllKitsService(sedeId);
       setKits(data);
       setSuccess(true);
       setMessage("listado de Kits correcto");

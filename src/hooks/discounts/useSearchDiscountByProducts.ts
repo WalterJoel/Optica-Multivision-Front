@@ -8,7 +8,11 @@ export function useSearchDiscountByProducts() {
   const [success, setSuccess] = useState<boolean>(false);
   const [discounts, setDiscounts] = useState<IResponseDiscountByProduct[]>([]);
 
-  const searchDiscounts = async (payload) => {
+  const searchDiscounts = async (payload: {
+    clienteId: number;
+    sedeId: number;
+    productos: any[];
+  }) => {
     setLoading(true);
     setSuccess(false);
     setDiscounts([]); // Limpiar resultados previos
@@ -27,11 +31,11 @@ export function useSearchDiscountByProducts() {
       }
     } catch (err: any) {
       const backendMessage = err.response?.data?.message;
-      setMessage(
-        backendMessage
-          ? "Error al listar Discounts: " + backendMessage
-          : "Error al listar Discounts",
-      );
+      const formattedMessage = Array.isArray(backendMessage)
+        ? backendMessage.join(", ")
+        : backendMessage;
+
+      setMessage(formattedMessage || "Error al listar descuentos");
     } finally {
       setLoading(false);
     }

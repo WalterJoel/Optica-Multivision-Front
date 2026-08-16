@@ -7,7 +7,7 @@ export function useDiscounts() {
   const [statusMessage, setMessage] = useState<string>("");
   const [discounts, setDiscounts] = useState<IDescuento[]>([]);
 
-  const getAllDiscounts = useCallback(async (sedeId?: number) => {
+  const getAllDiscounts = useCallback(async (sedeId: number) => {
     setLoading(true);
     setMessage("");
 

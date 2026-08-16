@@ -7,6 +7,7 @@ import { ISearchClient } from "@/types/clients";
 import { useAppSelector } from "@/redux/store";
 import { useSearchDiscountByProducts } from "@/hooks/discounts";
 import { useRevisarDeudas } from "@/hooks/sales";
+import { useSessionUser } from "@/hooks/session";
 import {
   setClienteId,
   setBloqueadoPorDeuda,
@@ -28,6 +29,7 @@ const Discount = () => {
   const dispatch = useDispatch();
   const cartItems = useAppSelector((state) => state.cartReducer.items);
   const ventaStore = useAppSelector(selectVenta);
+  const { sedeId } = useSessionUser();
 
   // 2. Local State Hooks
   const [searchTerm, setSearchTerm] = useState("");
@@ -103,6 +105,7 @@ const Discount = () => {
 
     searchDiscounts({
       clienteId: client.id,
+      sedeId: Number(sedeId),
       productos: productosPayload,
     });
   };
