@@ -208,19 +208,16 @@ const SingleItem: React.FC<SingleItemProps> = ({
           </h3>
           <div className="flex flex-col gap-1 mt-0.5">
             <div className="flex items-center gap-2">
-              {Number(item.discount || 0) > 0 ? (
-                <div className="flex items-center gap-1">
-                  <span className="text-[10px] font-bold text-green uppercase tracking-wider">Final:</span>
-                  <span className="text-custom-sm font-extrabold text-green">
-                    S/. {Math.max(0, Number(item.price) - Number(item.discount)).toFixed(2)}
-                  </span>
-                </div>
-              ) : (
-                <span className="text-xs font-semibold text-dark-2">Precio:</span>
-              )}
+              <span className="text-xs font-semibold text-dark-2">Precio:</span>
 
-              <div className="relative flex items-center bg-gray-2/60 hover:bg-gray-2 border border-gray-3 focus-within:border-blue focus-within:bg-white focus-within:ring-2 focus-within:ring-blue/20 rounded-lg px-2 py-1 transition-all shadow-2xs group">
-                <span className="text-xs font-bold text-blue mr-0.5 select-none">
+              <div
+                className={`relative flex items-center bg-gray-2/60 hover:bg-gray-2 border border-gray-3 focus-within:border-blue focus-within:bg-white focus-within:ring-2 focus-within:ring-blue/20 rounded-lg px-2 py-1 transition-all shadow-2xs group ${Number(item.discount || 0) > 0 ? "line-through text-gray-400 opacity-70" : ""
+                  }`}
+              >
+                <span
+                  className={`text-xs font-bold mr-0.5 select-none ${Number(item.discount || 0) > 0 ? "text-gray-400 opacity-70" : "text-blue"
+                    }`}
+                >
                   S/.
                 </span>
                 <input
@@ -229,15 +226,23 @@ const SingleItem: React.FC<SingleItemProps> = ({
                   value={priceInput}
                   onChange={handlePriceInputChange}
                   onBlur={handlePriceInputBlur}
-                  className="w-16 bg-transparent text-xs font-bold text-dark outline-none cursor-text"
+                  className={`w-14 bg-transparent text-xs font-bold outline-none cursor-text ${Number(item.discount || 0) > 0 ? "line-through text-gray-400 opacity-70" : "text-dark"
+                    }`}
                 />
               </div>
             </div>
 
             {Number(item.discount || 0) > 0 && (
-              <span className="inline-block text-[9px] font-bold text-green bg-green-light-6 border border-green-light-5 px-1.5 py-0.5 rounded-md w-fit">
-                Desc: - S/. {Number(item.discount).toFixed(2)}
-              </span>
+              <div className="flex items-center gap-2 whitespace-nowrap">
+                {/* Badge de descuento */}
+                <span className="inline-block text-[10px] font-bold text-white bg-green-dark px-2 py-0.5 rounded-md shadow-2xs">
+                  Dscto: -{Number(item.discount).toFixed(2)}
+                </span>
+                {/* Monto Descuento  */}
+                <span className="text-base font-extrabold text-green-dark">
+                  S/. {Math.max(0, Number(item.price) - Number(item.discount)).toFixed(2)}
+                </span>
+              </div>
             )}
           </div>
 

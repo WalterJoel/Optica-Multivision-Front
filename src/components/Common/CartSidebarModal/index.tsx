@@ -98,7 +98,7 @@ const CartSidebarModal = () => {
                   <span>Total Original:</span>
                   <span className="line-through">S/. {cartItems.reduce((acc, item) => acc + Number(item.price) * item.quantity, 0).toFixed(2)}</span>
                 </div>
-                <div className="flex items-center justify-between text-green">
+                <div className="flex items-center justify-between text-green-dark">
                   <span>Descuento Total:</span>
                   <span>- S/. {cartItems.reduce((acc, item) => acc + Number(item.discount || 0) * item.quantity, 0).toFixed(2)}</span>
                 </div>
