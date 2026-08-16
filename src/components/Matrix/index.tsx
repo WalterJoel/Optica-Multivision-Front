@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 import Breadcrumb from "../Common/Breadcrumb";
+import { BaseButton } from "@/components/Common/Buttons";
+import { StatusModal } from "@/components/Common/modal";
+import { STATUS_MODAL } from "@/commons/constants";
 import { useLenteStock, useLenses } from "@/hooks/products";
 import { useSearchParams } from "next/navigation";
 import { DetailModal } from "./DetailModal";
@@ -67,12 +70,15 @@ export default function Matrix() {
   const [changes, setChanges] = useState<Record<number, string>>({});
   const [hoveredCol, setHoveredCol] = useState<number | null>(null);
   const [selected, setSelected] = useState<ILensStockMatrixItem>(null);
+  const [openStatusModal, setOpenStatusModal] = useState(false);
+  const [statusType, setStatusType] = useState("");
+  const [statusMessage, setStatusMessage] = useState("");
 
   if (!lenteId || !sedeId)
     return (
       <div className="p-10 text-center font-bold">Falta Lente ID o Sede ID</div>
     );
-  if (loading)
+  if (loading && !stock)
     return (
       <div className="p-10 text-center animate-pulse">
         Cargando stock de matriz...
@@ -92,19 +98,26 @@ export default function Matrix() {
     matrixType === "NEGATIVO" ? esfValuesNegativo : esfValuesPositivo;
 
   const handleSave = async () => {
-    if (Object.keys(changes).length === 0)
-      return alert("No hay cambios que guardar");
+    if (Object.keys(changes).length === 0) {
+      setStatusType(STATUS_MODAL.ERROR_MODAL);
+      setStatusMessage("No hay cambios que guardar");
+      setOpenStatusModal(true);
+      return;
+    }
     const payload = Object.entries(changes).map(([id, val]) => ({
       id: Number(id),
       cantidad: Number(val || 0),
     }));
     try {
       await updateStock(payload);
-
-      alert("¡Stock actualizado correctamente!");
+      setStatusType(STATUS_MODAL.SUCCESS_MODAL);
+      setStatusMessage("¡Stock actualizado correctamente!");
+      setOpenStatusModal(true);
       setChanges({});
-    } catch (err) {
-      alert("Hubo un error al guardar los cambios");
+    } catch (err: any) {
+      setStatusType(STATUS_MODAL.ERROR_MODAL);
+      setStatusMessage(err?.message || "Hubo un error al guardar los cambios");
+      setOpenStatusModal(true);
     }
   };
 
@@ -282,13 +295,10 @@ export default function Matrix() {
           </div>
         </div>
         {mode !== "stock" && (
-          <div className="mt-4 flex justify-center">
-            <button
-              onClick={handleSave}
-              className="rounded-lg bg-blue px-8 py-2 text-sm text-white font-bold hover:bg-opacity-90 transition-all shadow-lg"
-            >
-              Guardar Matriz
-            </button>
+          <div className="mt-9 flex justify-center">
+            <BaseButton onClick={handleSave} fullWidth={false}>
+              Guardar
+            </BaseButton>
           </div>
         )}
         {/* Modal de Detalle con campo Precio */}
@@ -298,7 +308,13 @@ export default function Matrix() {
             lenteId={lenteId}
             onClose={() => setSelected(null)}
           />
-        )}{" "}
+        )}
+        <StatusModal
+          isOpen={openStatusModal}
+          type={statusType}
+          message={statusMessage}
+          onClose={() => setOpenStatusModal(false)}
+        />
       </div>
     </div>
   );

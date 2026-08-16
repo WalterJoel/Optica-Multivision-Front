@@ -2,6 +2,7 @@
 
 import Breadcrumb from "@/components/Common/Breadcrumb";
 import { BaseButton } from "@/components/Common/Buttons";
+import { ImageWithZoom } from "@/components/Common/ImageWithZoom";
 import { useLenses } from "@/hooks/products";
 import { useRouter } from "next/navigation";
 
@@ -42,9 +43,15 @@ function LensCardFrame({
             </span>
           </div>
 
-          {/* ICONO (un poco más grande para compensar card ancho) */}
-          <div className="w-16 h-16 bg-yellow-light-4 rounded-xl flex items-center justify-center border border-yellow-light-2">
-            <span className="text-4xl">👓</span>
+          {/* FOTO / ICONO */}
+          <div className="w-20 h-20 bg-yellow-light-4 rounded-xl flex items-center justify-center border border-yellow-light-2 overflow-hidden p-2">
+            <ImageWithZoom
+              src={lens.imagenUrl}
+              alt={lens.marca}
+              className="w-full h-full"
+              imgClassName="w-full h-full object-contain"
+              fallbackIcon={<span className="text-4xl">👓</span>}
+            />
           </div>
 
           {/* NOMBRE + MATERIAL */}
