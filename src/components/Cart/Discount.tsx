@@ -97,6 +97,7 @@ const Discount = () => {
     dispatch(setDeudaMensaje(null));
 
     const productosPayload = cartItems.map((item) => ({
+      cartItemId: item.id, // Identidad única del carrito
       productoId: item.productId,
       esLente: item.isLens,
       cyl: item.isLens ? item.cyl : null,
@@ -114,23 +115,22 @@ const Discount = () => {
     e.preventDefault();
   };
 
-  const handleToggleDiscount = (discount: IResponseDiscountByProduct) => {
-    const { productoId, montoDescuento, id: idDescuento } = discount;
+  const obtenerItemCarritoParaDescuento = (d: IResponseDiscountByProduct) => {
+    return cartItems.find((item) => item.id === d.cartItemId);
+  };
 
-    const item = cartItems.find((item) => item.productId === productoId);
-
+  const alternarDescuento = (descuento: IResponseDiscountByProduct) => {
+    const item = obtenerItemCarritoParaDescuento(descuento);
     if (!item) return;
 
-    const alreadyApplied = item.discount && item.discount > 0;
-
-    if (alreadyApplied) {
+    if (item.discount && item.discount > 0) {
       dispatch(removeDiscountFromItem({ itemId: item.id }));
     } else {
       dispatch(
         applyDiscountToItem({
           itemId: item.id,
-          discount: montoDescuento,
-          discountId: idDescuento,
+          discount: descuento.montoDescuento,
+          discountId: descuento.id,
         }),
       );
     }
@@ -150,7 +150,7 @@ const Discount = () => {
   useEffect(() => {
     if (discounts && discounts.length > 0) {
       discounts.forEach((d) => {
-        const item = cartItems.find((item) => item.productId === d.productoId);
+        const item = obtenerItemCarritoParaDescuento(d);
         if (item && (!item.discount || item.discount === 0)) {
           dispatch(
             applyDiscountToItem({
@@ -241,16 +241,14 @@ const Discount = () => {
 
                 <ul className="space-y-2">
                   {discounts.map((d) => {
-                    const item = cartItems.find(
-                      (item) => item.productId === d.productoId,
-                    );
+                    const item = obtenerItemCarritoParaDescuento(d);
 
                     const alreadyApplied = item?.discount && item.discount > 0;
                     const productType = item?.productType || (d.esLente ? "LENTE" : "MONTURA");
 
                     return (
                       <li
-                        key={`${d.productoId}-${d.serie ?? "no-serie"}`}
+                        key={`discount-${d.cartItemId}`}
                         className="flex justify-between items-center bg-blue-light-6 px-4 py-2 rounded-xl"
                       >
                         <div>
@@ -264,7 +262,7 @@ const Discount = () => {
                         </div>
 
                         <BaseButton
-                          onClick={() => handleToggleDiscount(d)}
+                          onClick={() => alternarDescuento(d)}
                           fullWidth={false}
                           className={`w-10 h-10 flex items-center justify-center transition-all duration-300 ${alreadyApplied
                             ? "bg-green-50 text-green-500 border border-green-200"

@@ -20,10 +20,12 @@ export interface ISeries {
 
 export interface IResponseDiscountByProduct {
   id: number;
-  productoId: number;
+  cartItemId: number;
+  productoId?: number | null;
+  lenteId?: number | null;
   nombreProducto: string;
   esLente: boolean;
-  serie: number;
+  serie?: number | null;
   montoDescuento: number;
 }
 
