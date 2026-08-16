@@ -46,7 +46,7 @@ export function useProductosVendidos() {
             if (item.tipoProducto === "LENTE" && item.stock?.lente) {
               return `LENTE ${item.stock.lente.marca} (${item.stock.lente.material})`;
             } else if (item.tipoProducto === "MONTURA" && item.producto?.montura) {
-              return `MONTURA ${item.producto.nombre} - ${item.producto.montura.marca} (${item.producto.montura.material})`;
+              return `MONTURA ${item.producto.montura.marca} (${item.producto.montura.material})`;
             } else if (item.tipoProducto === "ACCESORIO" && item.producto) {
               return `ACCESORIO ${item.producto.nombre}`;
             }

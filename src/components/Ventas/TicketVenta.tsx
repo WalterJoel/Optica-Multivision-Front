@@ -179,7 +179,7 @@ export const TicketVenta = ({ venta, sede }: TicketVentaProps) => {
                       <td colSpan={3} style={{ fontSize: "7pt", fontWeight: "bold", paddingBottom: "1mm" }}>
                         {prod.producto?.montura && (
                           <div>
-                            Cód: {prod.producto.montura.codigo || prod.producto.montura.codigoMontura || "—"}
+                            Cód: {prod.producto.montura.codigo || prod.producto.montura.codigoMontura}
                           </div>
                         )}
                         {prod.tipoProducto === "LENTE" && (
