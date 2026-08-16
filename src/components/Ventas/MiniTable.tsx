@@ -483,7 +483,7 @@ export const MiniTable = ({
 
       {/* MODAL DETALLE DE PRODUCTOS */}
       {selectedSale && (
-        <ModalFrameWrapper size="md">
+        <ModalFrameWrapper size="xl">
           <div className="pt-2 pb-6">
             {/* Header */}
             <div className="flex justify-between items-center mb-6">

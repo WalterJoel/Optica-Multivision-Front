@@ -31,7 +31,7 @@ export default function DetalleVentaModal({
   const { venta, monto, descripcion } = movimiento;
 
   return (
-    <ModalFrameWrapper variant="blue" size="md">
+    <ModalFrameWrapper variant="blue" size="xl">
       <div className="flex flex-col pb-4 pt-2">
         {/* Header */}
         <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-2">
