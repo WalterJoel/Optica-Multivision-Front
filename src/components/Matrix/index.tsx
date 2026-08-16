@@ -12,6 +12,8 @@ import { ILensStockMatrixItem } from "@/types/products";
 import { useSessionUser } from "@/hooks/session";
 import { Database } from "lucide-react";
 import BarraFlujoVenta from "@/components/Common/BarraFlujoVenta";
+import ExportButtons from "@/components/Common/ExportButtons";
+import { exportarMatrizExcel, exportarMatrizPdf } from "./imprimir/imprimirExcelPdf";
 
 const cylValues = [
   0, -0.25, -0.5, -0.75, -1.0, -1.25, -1.5, -1.75, -2.0, -2.25, -2.5, -2.75,
@@ -127,7 +129,7 @@ export default function Matrix() {
     <div className="bg-beige pt-32 pb-16 px-4 sm:px-6 lg:px-8 min-h-screen mt-15">
       <div className="max-w-[1700px] mx-auto">
         {/* HEADER */}
-        <header className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-6">
+        <header className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-6 no-print">
           {/* LEFT (Title with Lens Name) */}
           <div className="flex items-center gap-5">
             <div className="relative">
@@ -168,8 +170,8 @@ export default function Matrix() {
         </header>
 
         <div className="space-y-4">
-          {/* Selectores */}
-          <div className="flex gap-2 justify-center">
+            {/* Selectores */}
+            <div className="flex gap-2 justify-center">
             {["NEGATIVO", "POSITIVO"].map((type) => (
               <button
                 key={type}
@@ -177,10 +179,11 @@ export default function Matrix() {
                   setMatrixType(type as any);
                   setSelected(null);
                 }}
-                className={`rounded-full border px-6 py-2 text-xs font-bold transition-all ${matrixType === type
-                  ? "bg-blue text-white border-blue shadow-md"
-                  : "bg-white text-dark hover:bg-gray-1"
-                  }`}
+                className={`rounded-full border px-6 py-2 text-xs font-bold transition-all ${
+                  matrixType === type
+                    ? "bg-blue text-white border-blue shadow-md"
+                    : "bg-white text-dark hover:bg-gray-1"
+                }`}
               >
                 {type === "NEGATIVO" ? "NEGATIVOS" : "POSITIVOS"}
               </button>
@@ -285,7 +288,7 @@ export default function Matrix() {
                 <thead>
                   <tr className="bg-gray-2 text-dark font-black">
                     <th className="sticky left-0 top-0 z-[50] bg-gray-3 border-r-2 text-[9px] w-[65px]">
-                      ESF \\ CYL
+                      ESF \ CYL
                     </th>
                     {cylValues.map((cyl, i) => (
                       <th
@@ -301,13 +304,20 @@ export default function Matrix() {
             </div>
           </div>
         </div>
-        {mode !== "stock" && (
-          <div className="mt-9 flex justify-center">
+
+        {/* BOTONES DE ACCIÓN AL PIE DE LA MATRIZ */}
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-4 no-print">
+          <ExportButtons
+            onExportExcel={() => exportarMatrizExcel(activeLens, stock)}
+            onExportPdf={() => exportarMatrizPdf(activeLens, stock)}
+          />
+
+          {mode !== "stock" && (
             <BaseButton onClick={handleSave} fullWidth={false}>
               Guardar
             </BaseButton>
-          </div>
-        )}
+          )}
+        </div>
         {/* Modal de Detalle con campo Precio */}
         {mode === "stock" && selected && (
           <DetailModal

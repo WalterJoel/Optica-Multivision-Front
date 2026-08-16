@@ -273,9 +273,16 @@ export const MiniTable = ({
                   </td>
 
 
-                  {/* Fecha */}
-                  <td className="px-6 py-5 text-dark-2 font-semibold">
-                    {date.toLocaleDateString()}
+                  {/* Fecha y Hora */}
+                  <td className="px-6 py-5">
+                    <div className="flex flex-col">
+                      <span className="font-bold text-dark text-xs">
+                        {date.toLocaleDateString()}
+                      </span>
+                      <span className="text-[10px] font-mono font-bold text-gray-500 mt-0.5">
+                        {date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true })}
+                      </span>
+                    </div>
                   </td>
 
                   {/* Cliente */}
