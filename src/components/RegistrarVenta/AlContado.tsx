@@ -24,7 +24,7 @@ const AlContado = () => {
     // Hooks
     const dispatch = useDispatch();
     const { addSale, loading, statusMessage, success, createdSale } = useCreateSale();
-    const { sedeId, userId, fullName } = useSessionUser();
+    const { sedeId, userId } = useSessionUser();
     const { sedes } = useStores();
 
     // Stores
@@ -41,21 +41,12 @@ const AlContado = () => {
     const [typeModal, setTypeModal] = useState<string>("");
 
     // Impresión de ticket
-    const [ventaParaImprimir, setVentaParaImprimir] = useState<IResponseSale | null>(null);
-    const [ultimaVentaImprimir, setUltimaVentaImprimir] = useState<IResponseSale | null>(null);
     const refImpresion = useRef<HTMLDivElement>(null);
 
     const ejecutarImpresion = useReactToPrint({
         contentRef: refImpresion,
-        documentTitle: ventaParaImprimir ? `ticket-venta-${ventaParaImprimir.id}` : "ticket-venta",
-        onAfterPrint: () => setVentaParaImprimir(null),
+        documentTitle: createdSale ? `ticket-venta-${createdSale.id}` : "ticket-venta",
     });
-
-    useEffect(() => {
-        if (ventaParaImprimir) {
-            ejecutarImpresion();
-        }
-    }, [ventaParaImprimir]);
 
     const handleRegisterSale = () => {
         console.log("Registrando venta al contado - Sede:", sedeId, "Usuario:", userId, "Cliente:", ventaStore.clienteId);
@@ -106,9 +97,7 @@ const AlContado = () => {
                 success ? STATUS_MODAL.SUCCESS_MODAL : STATUS_MODAL.ERROR_MODAL,
             );
             setOpenModal(true);
-            if (success && createdSale) {
-                setUltimaVentaImprimir(createdSale);
-
+            if (success) {
                 dispatch(removeAllItemsFromCart());
                 dispatch(resetVenta());
                 setmontaje(false);
@@ -117,7 +106,7 @@ const AlContado = () => {
                 setChange(0);
             }
         }
-    }, [loading, success, statusMessage, createdSale]);
+    }, [loading, success, statusMessage]);
 
     return (
         <>
@@ -232,9 +221,7 @@ const AlContado = () => {
                     mensaje={statusMessage}
                     onCerrar={() => setOpenModal(false)}
                     onImprimirTicket={() => {
-                        if (ultimaVentaImprimir) {
-                            setVentaParaImprimir(ultimaVentaImprimir);
-                        }
+                        ejecutarImpresion();
                         setOpenModal(false);
                     }}
                 />
@@ -248,12 +235,12 @@ const AlContado = () => {
             )}
 
             {/* Ticket de Impresión (Oculto en pantalla, visible solo al imprimir) */}
-            {ventaParaImprimir && (
+            {createdSale && (
                 <div className="hidden print:block">
                     <div ref={refImpresion}>
                         <TicketVenta
-                            venta={ventaParaImprimir}
-                            sede={sedes.find((s) => s.id === ventaParaImprimir.sedeId)}
+                            venta={createdSale}
+                            sede={sedes.find((s) => s.id === createdSale.sedeId)}
                         />
                     </div>
                 </div>

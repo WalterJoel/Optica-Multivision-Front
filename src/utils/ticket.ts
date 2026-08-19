@@ -1,4 +1,4 @@
-import { IResponseSale } from "@/types/sales";
+import { IResponseSale, IVentaKitResponse, IKitAgrupadoTicket } from "@/types/sales";
 import { TipoProducto } from "@/commons/constants";
 
 interface ParamsArmarTicket {
@@ -63,4 +63,36 @@ export const armarVentaTicket = ({
       };
     }),
   } as IResponseSale;
+};
+
+/**
+ * Agrupa los kits entregados en una venta (ventaKits) por kitId.
+ * Suma la cantidad total de cada kit y calcula su subtotal.
+ */
+export const agruparVentaKits = (
+  ventaKits?: IVentaKitResponse[]
+): IKitAgrupadoTicket[] => {
+  if (!ventaKits?.length) return [];
+
+  const map = new Map<number, IKitAgrupadoTicket>();
+
+  ventaKits.forEach((vk) => {
+    if (!vk.kit) return;
+
+    const kitId = vk.kitId;
+    const precio = Number(vk.kit.precio);
+    const cantidad = vk.cantidad;
+    const acumulado = map.get(kitId)?.cantidadTotal ?? 0;
+    const cantTotal = acumulado + cantidad;
+
+    map.set(kitId, {
+      kitId,
+      nombre: vk.kit.nombre,
+      precioUnitario: precio,
+      cantidadTotal: cantTotal,
+      subtotal: cantTotal * precio,
+    });
+  });
+
+  return Array.from(map.values());
 };

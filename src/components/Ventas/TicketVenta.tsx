@@ -4,6 +4,7 @@ import React from "react";
 import { IResponseSale } from "@/types/sales";
 import { IStore } from "@/types/stores";
 import { formatearMedidasLente } from "@/utils/lenses";
+import { agruparVentaKits } from "@/utils/ticket";
 
 interface TicketVentaProps {
   venta: IResponseSale;
@@ -53,6 +54,8 @@ export const TicketVenta = ({ venta, sede }: TicketVentaProps) => {
   const totalMonto = Number(venta.total || 0);
   const montoPagado = Number(venta.montoPagado || 0);
   const deudaMonto = Number(venta.deuda || 0);
+
+  const kitsAgrupados = agruparVentaKits(venta.ventaKits);
 
   return (
     <div style={pageStyle} className="ticket-print-container">
@@ -193,6 +196,24 @@ export const TicketVenta = ({ venta, sede }: TicketVentaProps) => {
               </React.Fragment>
             );
           })}
+
+          {/* KITS DE REGALO ENTREGADOS */}
+          {kitsAgrupados.map((kitItem) => (
+            <tr key={`kit-${kitItem.kitId}`}>
+              <td style={{ verticalAlign: "top", fontWeight: "bold", paddingTop: "1mm" }}>
+                {kitItem.cantidadTotal}
+              </td>
+              <td style={{ verticalAlign: "top", paddingTop: "1mm", wordBreak: "break-word" }}>
+                <span style={{ fontWeight: "bold" }}>{kitItem.nombre}</span>
+              </td>
+              <td style={{ verticalAlign: "top", textAlign: "right", paddingTop: "1mm" }}>
+                {kitItem.precioUnitario.toFixed(2)}
+              </td>
+              <td style={{ verticalAlign: "top", textAlign: "right", fontWeight: "bold", paddingTop: "1mm" }}>
+                {kitItem.subtotal.toFixed(2)}
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
 

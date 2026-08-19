@@ -7,6 +7,7 @@ import {
 import { IUser } from "../users";
 import { IClient } from "../clients";
 import { IKit } from "../kits";
+import { IStore } from "../stores";
 
 export interface VentaProducto {
   productoId?: number;
@@ -41,6 +42,27 @@ export interface ICreateSale {
   diasCompromisoPago?: number | null;
 }
 
+export interface IVentaKitResponse {
+  id: number;
+  ventaId: number;
+  kitId: number;
+  cantidad: number;
+  kit?: {
+    id: number;
+    nombre: string;
+    precio: string | number;
+    descripcion?: string;
+  } | null;
+}
+
+export interface IKitAgrupadoTicket {
+  kitId: number;
+  nombre: string;
+  precioUnitario: number;
+  cantidadTotal: number;
+  subtotal: number;
+}
+
 export interface IResponseSale {
   id: number;
   sedeId: number;
@@ -64,6 +86,8 @@ export interface IResponseSale {
   productos: ProductSale[];
   user?: IUser;
   cliente?: IClient | null;
+  sede?: IStore | null;
+  ventaKits?: IVentaKitResponse[];
 }
 
 interface ILente {
