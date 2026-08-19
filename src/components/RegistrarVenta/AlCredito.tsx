@@ -9,7 +9,6 @@ import { LoadingModal, StatusModal } from "@/components/Common/modal";
 import {
     BaseInput,
     BaseSearchInput,
-    BaseTabs,
     BaseTarea,
 } from "@/components/Common/Inputs";
 import { BaseButton } from "@/components/Common/Buttons/BaseButton";
@@ -37,8 +36,6 @@ import { useSessionUser } from "@/hooks/session";
 import PaymentDaysSelector from "./DaysSelector";
 import Discount from "../Cart/Discount";
 
-type PaymentType = "cash" | "credit";
-
 const AlCredito = () => {
     const dispatch = useDispatch();
     const { addSale, loading, statusMessage, success, createdSale } = useCreateSale();
@@ -52,8 +49,6 @@ const AlCredito = () => {
     const cartStoreTotal = useAppSelector(selectTotalPrice);
 
     // Estados locales de UI
-    const [paymentType, setPaymentType] = useState<PaymentType>("credit");
-    const [change, setChange] = useState(0);
     const [debt, setDebt] = useState(0);
     const [showOrder, setShowOrder] = useState(false);
 
@@ -85,11 +80,6 @@ const AlCredito = () => {
     //Cliente
     const [searchClientTerm, setSearchClientTerm] = useState("");
 
-    const paymentTabs = [
-        { key: "cash", label: "Al Contado" },
-        { key: "credit", label: "Al Crédito" },
-    ];
-
     const {
         searchClients,
         clients,
@@ -100,19 +90,12 @@ const AlCredito = () => {
     useEffect(() => {
         const payment = parseFloat(montoRecibido) || 0;
         const total = cartStoreTotal || 0;
-
-        if (paymentType === "cash") {
-            setChange(Math.max(0, payment - total));
-            setDebt(0);
-        } else {
-            setDebt(Math.max(0, total - payment));
-            setChange(0);
-        }
-    }, [montoRecibido, cartStoreTotal, paymentType]);
+        setDebt(Math.max(0, total - payment));
+    }, [montoRecibido, cartStoreTotal]);
 
     const handleRegisterSale = () => {
         // Validar cliente obligatorio en ventas a crédito
-        if (paymentType === "credit" && !ventaStore.clienteId) {
+        if (!ventaStore.clienteId) {
             setClienteError(true);
             return;
         }
@@ -131,9 +114,7 @@ const AlCredito = () => {
             esf: item.esf || null,
         }));
 
-        const abonoReal = paymentType === "cash"
-            ? cartStoreTotal
-            : Math.min(Number(montoRecibido || 0), cartStoreTotal);
+        const abonoReal = Math.min(Number(montoRecibido || 0), cartStoreTotal);
 
         const payload: ICreateSale = {
             sedeId: sedeId,
@@ -143,16 +124,16 @@ const AlCredito = () => {
             montoPagado: abonoReal,
             productos: productosDesdeCart,
             total: cartStoreTotal,
-            tipoVenta: paymentType === "cash" ? TipoVenta.CONTADO : TipoVenta.CREDITO,
+            tipoVenta: TipoVenta.CREDITO,
             estadoPago:
                 abonoReal >= cartStoreTotal
                     ? EstadoPago.PAGADO
                     : EstadoPago.PENDIENTE,
             montaje: showOrder,
-            nroCuotas: paymentType === "credit" ? nroCuotas : null,
-            diasCompromisoPago: paymentType === "credit" ? diasCompromiso : null,
+            nroCuotas: nroCuotas,
+            diasCompromisoPago: diasCompromiso,
             observaciones: observacionesLocal,
-            deuda: paymentType === "credit" ? debt : 0,
+            deuda: debt,
         };
 
         addSale(payload);
@@ -210,14 +191,6 @@ const AlCredito = () => {
                                 </label>
                             </div>
 
-                            <div className="mb-6">
-                                <BaseTabs
-                                    tabs={paymentTabs}
-                                    activeTab={paymentType}
-                                    onChange={(value) => setPaymentType(value as PaymentType)}
-                                />
-                            </div>
-
                             <div className="flex flex-col space-y-5 flex-1">
                                 {/* Buscar Cliente */}
                                 <div>
@@ -235,57 +208,55 @@ const AlCredito = () => {
                                     )}
                                 </div>
 
-                                {/* CLIENTE - Solo visible en crédito */}
-                                {paymentType === "credit" && (
-                                    <div className="relative">
-                                        <label className="mb-1 flex items-center gap-1 text-sm font-bold text-gray-700">
-                                            Cliente <span className="text-red font-bold text-xs">*</span>
-                                            <span className="text-[10px] font-normal text-gray-400 ml-1">(requerido para crédito)</span>
-                                        </label>
-                                        <div className="relative flex items-center">
-                                            <input
-                                                type="text"
-                                                value={searchClientTerm}
-                                                onChange={(e) => {
-                                                    setSearchClientTerm(e.target.value);
-                                                    searchClients(e.target.value);
-                                                    if (!e.target.value) dispatch(setClienteId(null));
-                                                    if (clienteError) setClienteError(false);
-                                                }}
-                                                placeholder="Buscar por nombre o DNI..."
-                                                className={`w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition-all placeholder:text-gray-400 ${clienteError
-                                                    ? "border-red focus:border-red ring-2 ring-red/20"
-                                                    : "border-gray-200 focus:border-blue focus:ring-2 focus:ring-blue/10"
-                                                    }`}
-                                            />
-                                        </div>
-                                        {showListClient && clients.length > 0 && (
-                                            <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-44 overflow-y-auto">
-                                                {clients.map((c) => {
-                                                    const name = c.tipoCliente === "EMPRESA"
-                                                        ? c.razonSocial
-                                                        : `${c.nombres || ""} ${c.apellidos || ""}`.trim();
-                                                    return (
-                                                        <button
-                                                            key={c.id}
-                                                            type="button"
-                                                            onClick={() => handleSelectClient(c)}
-                                                            className="w-full px-4 py-2.5 text-left hover:bg-gray-50 transition-colors flex justify-between items-center"
-                                                        >
-                                                            <span className="font-bold text-gray-800 text-sm">{name}</span>
-                                                            <span className="text-[10px] text-gray-400 font-mono">{c.numeroDoc}</span>
-                                                        </button>
-                                                    );
-                                                })}
-                                            </div>
-                                        )}
-                                        {clienteError && (
-                                            <p className="mt-1.5 text-xs font-bold text-red">
-                                                ✕ Debes seleccionar un cliente para ventas a crédito.
-                                            </p>
-                                        )}
+                                {/* CLIENTE - Requerido para crédito */}
+                                <div className="relative">
+                                    <label className="mb-1 flex items-center gap-1 text-sm font-bold text-gray-700">
+                                        Cliente <span className="text-red font-bold text-xs">*</span>
+                                        <span className="text-[10px] font-normal text-gray-400 ml-1">(requerido para crédito)</span>
+                                    </label>
+                                    <div className="relative flex items-center">
+                                        <input
+                                            type="text"
+                                            value={searchClientTerm}
+                                            onChange={(e) => {
+                                                setSearchClientTerm(e.target.value);
+                                                searchClients(e.target.value);
+                                                if (!e.target.value) dispatch(setClienteId(null));
+                                                if (clienteError) setClienteError(false);
+                                            }}
+                                            placeholder="Buscar por nombre o DNI..."
+                                            className={`w-full rounded-xl border px-4 py-2.5 text-sm outline-none transition-all placeholder:text-gray-400 ${clienteError
+                                                ? "border-red focus:border-red ring-2 ring-red/20"
+                                                : "border-gray-200 focus:border-blue focus:ring-2 focus:ring-blue/10"
+                                                }`}
+                                        />
                                     </div>
-                                )}
+                                    {showListClient && clients.length > 0 && (
+                                        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-44 overflow-y-auto">
+                                            {clients.map((c) => {
+                                                const name = c.tipoCliente === "EMPRESA"
+                                                    ? c.razonSocial
+                                                    : `${c.nombres || ""} ${c.apellidos || ""}`.trim();
+                                                return (
+                                                    <button
+                                                        key={c.id}
+                                                        type="button"
+                                                        onClick={() => handleSelectClient(c)}
+                                                        className="w-full px-4 py-2.5 text-left hover:bg-gray-50 transition-colors flex justify-between items-center"
+                                                    >
+                                                        <span className="font-bold text-gray-800 text-sm">{name}</span>
+                                                        <span className="text-[10px] text-gray-400 font-mono">{c.numeroDoc}</span>
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
+                                    {clienteError && (
+                                        <p className="mt-1.5 text-xs font-bold text-red">
+                                            ✕ Debes seleccionar un cliente para ventas a crédito.
+                                        </p>
+                                    )}
+                                </div>
                                 <div>
                                     <label className="mb-3 flex items-center gap-1.5 text-sm font-bold text-gray-700">
                                         Compromiso de Pago <span className="text-red font-bold text-xs">*</span>
@@ -299,24 +270,17 @@ const AlCredito = () => {
                                     )}
                                 </div>
 
-                                {paymentType === "cash" && montoRecibido && Number(montoRecibido) < cartStoreTotal && (
-                                    <p className="text-xs font-semibold text-red animate-pulse">
-                                        ⚠️ El monto recibido debe ser mayor o igual al total de la venta (S/. {cartStoreTotal.toFixed(2)}).
-                                    </p>
-                                )}
-                                {paymentType === "credit" && (
-                                    <div className="w-full">
-                                        <label className="mb-3 flex items-center gap-1.5 text-sm font-bold text-gray-700">
-                                            Número de Cuotas <span className="text-red font-bold text-xs">*</span>
-                                        </label>
-                                        <CuotasSelector value={nroCuotas} onChange={setNroCuotas} />
-                                        {nroCuotas === 0 && (
-                                            <p className="mt-2 text-xs font-semibold text-red animate-pulse">
-                                                ⚠️ Por favor, seleccione el número de cuotas.
-                                            </p>
-                                        )}
-                                    </div>
-                                )}
+                                <div className="w-full">
+                                    <label className="mb-3 flex items-center gap-1.5 text-sm font-bold text-gray-700">
+                                        Número de Cuotas <span className="text-red font-bold text-xs">*</span>
+                                    </label>
+                                    <CuotasSelector value={nroCuotas} onChange={setNroCuotas} />
+                                    {nroCuotas === 0 && (
+                                        <p className="mt-2 text-xs font-semibold text-red animate-pulse">
+                                            ⚠️ Por favor, seleccione el número de cuotas.
+                                        </p>
+                                    )}
+                                </div>
                                 <div className="grid grid-cols-3 gap-4">
                                     <BaseInput
                                         label="Total Venta"
@@ -324,15 +288,14 @@ const AlCredito = () => {
                                         readOnly
                                     />
                                     <BaseInput
-                                        label="Monto Recibido"
+                                        label="Abono Inicial"
                                         type="number"
                                         value={montoRecibido}
-                                        required={paymentType === "cash"}
                                         onChange={(e) => setMontoRecibido(e.target.value)}
                                     />
                                     <BaseInput
-                                        label={paymentType === "cash" ? "Vuelto" : "Por Cobrar"}
-                                        value={`S/ ${paymentType === "cash" ? change.toFixed(2) : debt.toFixed(2)}`}
+                                        label="Por Cobrar"
+                                        value={`S/ ${debt.toFixed(2)}`}
                                         readOnly
                                     />
                                 </div>
@@ -353,9 +316,9 @@ const AlCredito = () => {
                                         loading ||
                                         cartStoreTotal === 0 ||
                                         !ventaStore.metodoPago ||
-                                        (paymentType === "cash" && (!montoRecibido || Number(montoRecibido) < cartStoreTotal)) ||
-                                        (paymentType === "credit" && (nroCuotas === 0 || diasCompromiso === null)) ||
-                                        (paymentType === "credit" && !ventaStore.clienteId) ||
+                                        nroCuotas === 0 ||
+                                        diasCompromiso === null ||
+                                        !ventaStore.clienteId ||
                                         ventaStore.bloqueadoPorDeuda
                                     }
                                 >
