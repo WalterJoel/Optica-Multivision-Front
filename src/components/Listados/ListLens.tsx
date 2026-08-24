@@ -23,7 +23,7 @@ function LensCardFrame({
   const colors = borderPairs[variant];
 
   return (
-    <div className="relative w-full max-w-[380px] mx-auto overflow-hidden rounded-[1.6rem] p-[2px] shadow-md hover:shadow-lg transition">
+    <div className="relative w-full min-h-[180px] overflow-hidden rounded-[1.6rem] p-[2px] shadow-md hover:shadow-lg transition flex">
       {/* BORDER */}
       <div className="absolute inset-0 flex">
         <div className={`w-1/2 h-full ${colors.left}`} />
@@ -31,51 +31,58 @@ function LensCardFrame({
       </div>
 
       {/* BODY */}
-      <div className="relative bg-white rounded-[1.5rem] w-full">
-        <div className="p-4 flex flex-col items-center text-center gap-2">
-          {/* LOGO */}
-          <div className="flex items-center gap-1">
-            <div className="w-1 h-3 bg-blue rounded-full" />
-            <div className="w-1 h-3 bg-yellow rounded-full" />
-            <span className="text-[9px] font-black text-slate-300 uppercase">
-              Multivision
-            </span>
-          </div>
+      <div className="relative bg-white rounded-[1.5rem] w-full flex items-stretch">
+        {/* LEFT IMAGE */}
+        <div className="w-[40%] bg-white flex items-center justify-center border-r border-yellow-light-2 rounded-[1.6rem] overflow-hidden p-2">
+          <ImageWithZoom
+            src={lens.imagenUrl}
+            alt={lens.marca}
+            className="w-full h-full"
+            imgClassName="w-full h-full object-contain"
+            fallbackIcon={
+              <div className="w-14 h-14 flex items-center justify-center overflow-hidden">
+                <span className="text-4xl leading-none">👁️</span>
+              </div>
+            }
+          />
+        </div>
 
-          {/* FOTO / ICONO */}
-          <div className="w-20 h-20 bg-yellow-light-4 rounded-xl flex items-center justify-center border border-yellow-light-2 overflow-hidden p-2">
-            <ImageWithZoom
-              src={lens.imagenUrl}
-              alt={lens.marca}
-              className="w-full h-full"
-              imgClassName="w-full h-full object-contain"
-              fallbackIcon={<span className="text-4xl">👁️</span>}
-            />
-          </div>
+        {/* RIGHT CONTENT */}
+        <div className="w-[60%] p-4 flex flex-col justify-between">
+          <div>
+            {/* LOGO */}
+            <div className="flex items-center gap-1 mb-1">
+              <div className="w-1 h-3 bg-blue rounded-full" />
+              <div className="w-1 h-3 bg-yellow rounded-full" />
+              <span className="text-[9px] font-black text-slate-300 uppercase">
+                Multivision
+              </span>
+            </div>
 
-          {/* NOMBRE + MATERIAL */}
-          <div className="leading-none">
-            <h3 className="text-[17px] font-black text-slate-900 uppercase">
-              {lens.marca}
-            </h3>
-            <span className="text-[10px] text-slate-400 font-bold uppercase">
-              {lens.material}
-            </span>
-          </div>
+            {/* NOMBRE + MATERIAL */}
+            <div>
+              <h3 className="text-sm font-black text-dark uppercase line-clamp-1">
+                {lens.marca}
+              </h3>
+              <span className="text-[10px] text-slate-400 font-bold uppercase block">
+                {lens.material}
+              </span>
+            </div>
 
-          {/* PRECIOS (más compactos horizontalmente) */}
-          <div className="flex items-center gap-2 text-[11px] mt-1">
-            <span className="font-black text-blue">
-              S/ {lens.precio_serie1}
-            </span>
-            <span className="text-slate-300">|</span>
-            <span className="font-bold text-slate-600">
-              S/ {lens.precio_serie2}
-            </span>
-            <span className="text-slate-300">|</span>
-            <span className="font-bold text-slate-600">
-              S/ {lens.precio_serie3}
-            </span>
+            {/* PRECIOS */}
+            <div className="flex flex-wrap items-center gap-1.5 text-[11px] mt-2">
+              <span className="font-black text-blue">
+                S/ {lens.precio_serie1}
+              </span>
+              <span className="text-slate-300">|</span>
+              <span className="font-bold text-slate-600">
+                S/ {lens.precio_serie2}
+              </span>
+              <span className="text-slate-300">|</span>
+              <span className="font-bold text-slate-600">
+                S/ {lens.precio_serie3}
+              </span>
+            </div>
           </div>
 
           {/* BOTÓN */}
@@ -97,8 +104,8 @@ export default function ListLens() {
 
   return (
     <section className="py-12 bg-gray-2">
-      <div className="max-w-[1740px] mx-auto px-4 sm:px-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 justify-items-center gap-6">
+      <div className="max-w-[1700px] mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 auto-rows-fr">
           {loading ? (
             <div className="col-span-full text-center text-blue text-xs font-bold">
               Cargando...

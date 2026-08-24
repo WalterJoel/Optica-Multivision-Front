@@ -16,8 +16,7 @@ export default function BarraFlujoVenta() {
       name: TipoProducto.MONTURA,
       path: "/vender?cat=MONTURA",
       isActive:
-        pathname.startsWith("/vender") &&
-        (catParam === TipoProducto.MONTURA || !catParam),
+        pathname.startsWith("/vender") && catParam === TipoProducto.MONTURA,
     },
     {
       name: TipoProducto.LENTE,
@@ -25,7 +24,8 @@ export default function BarraFlujoVenta() {
       isActive:
         pathname.startsWith("/lentes") ||
         pathname.startsWith("/matrix") ||
-        (pathname.startsWith("/vender") && catParam === TipoProducto.LENTE),
+        (pathname.startsWith("/vender") &&
+          (catParam === TipoProducto.LENTE || !catParam)),
     },
     {
       name: TipoProducto.ACCESORIO,

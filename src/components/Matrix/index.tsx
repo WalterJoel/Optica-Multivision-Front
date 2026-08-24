@@ -323,6 +323,7 @@ export default function Matrix() {
           <DetailModal
             selected={selected}
             lenteId={lenteId}
+            imagenUrl={activeLens?.imagenUrl}
             onClose={() => setSelected(null)}
           />
         )}

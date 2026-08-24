@@ -19,12 +19,14 @@ import { formatearMedidasLente } from "@/utils/lenses";
 type DetailModalProps = {
   selected: ILensStockMatrixItem;
   lenteId: number;
+  imagenUrl?: string | null;
   onClose: () => void;
 };
 
 export const DetailModal: React.FC<DetailModalProps> = ({
   selected,
   lenteId,
+  imagenUrl,
   onClose,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -53,13 +55,10 @@ export const DetailModal: React.FC<DetailModalProps> = ({
       cyl: selected.cyl,
       esf: selected.esf,
       isLens: true, //TODO: MEJORAR
+      imagenUrl: imagenUrl || null,
       imgs: {
-        thumbnails: [
-          "https://www.flaticon.es/icono-gratis/anteojos-con-media-montura_27114",
-        ],
-        previews: [
-          "https://www.flaticon.es/icono-gratis/anteojos-con-media-montura_27114",
-        ],
+        thumbnails: [imagenUrl || ""],
+        previews: [imagenUrl || ""],
       },
     };
 

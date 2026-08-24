@@ -12,14 +12,12 @@ import ListAccesories from "../Listados/ListAccesories";
 import MonturaFilters from "./MonturasFilter";
 import AccessoryFilters from "./AccesoriosFilter";
 
-import BarraFlujoVenta from "@/components/Common/BarraFlujoVenta";
-
 export default function Vender() {
   const searchParams = useSearchParams();
   const catParam = searchParams.get("cat");
 
   const [selectedCategory, setSelectedCategory] = useState(
-    (catParam as TipoProducto) || TipoProducto.MONTURA
+    (catParam as TipoProducto) || TipoProducto.LENTE
   );
 
   useEffect(() => {
