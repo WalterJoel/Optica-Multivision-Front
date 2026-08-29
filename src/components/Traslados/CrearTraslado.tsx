@@ -107,9 +107,12 @@ export function CrearTraslado() {
   };
 
   const handleAddProductToTransfer = (prod: IVentaPorTipoItem) => {
+    const itemTipo = prod.tipoProducto || selectedCategory;
+
     setManualItems((prev) => {
       const existsIndex = prev.findIndex((item) => {
-        if (selectedCategory === TipoProducto.LENTE) {
+        const itemTipoPrev = item.tipoProducto || (item.stockId ? TipoProducto.LENTE : selectedCategory);
+        if (itemTipoPrev === TipoProducto.LENTE || (!item.productoId && item.stockId)) {
           return item.stockId === prod.stockId;
         }
         return item.productoId === prod.productoId;
@@ -129,6 +132,7 @@ export function CrearTraslado() {
         ...prev,
         {
           ...prod,
+          tipoProducto: itemTipo,
           cantidad: 1,
         },
       ];
@@ -164,12 +168,16 @@ export function CrearTraslado() {
         sedeSolicitanteId: userSedeId,
         usuarioSolicitanteId: userId,
         observaciones: `Solicitud (${origenSolicitud}) creada desde la web para ${selectedRows.length} ítem(s).`,
-        detalles: selectedRows.map((row) => ({
-          tipoProducto: selectedCategory,
-          productoId: selectedCategory !== TipoProducto.LENTE ? row.productoId : undefined,
-          stockId: selectedCategory === TipoProducto.LENTE ? row.stockId : undefined,
-          cantidadSolicitada: typeof row.selectedQuantity === "number" && row.selectedQuantity >= 1 ? row.selectedQuantity : 1,
-        })),
+        detalles: selectedRows.map((row) => {
+          const itemTipo = row.tipoProducto || (row.stockId ? TipoProducto.LENTE : selectedCategory);
+          const isLente = itemTipo === TipoProducto.LENTE || (!row.productoId && Boolean(row.stockId));
+          return {
+            tipoProducto: itemTipo,
+            productoId: !isLente ? row.productoId : undefined,
+            stockId: isLente ? row.stockId : undefined,
+            cantidadSolicitada: typeof row.selectedQuantity === "number" && row.selectedQuantity >= 1 ? row.selectedQuantity : 1,
+          };
+        }),
       };
 
       await crearTraslado(payload);
@@ -196,14 +204,16 @@ export function CrearTraslado() {
     }
   }, [userSedeId]);
 
-  // Al cambiar de categoría o sede proveedora en "PRODUCTOS", reseteamos manualItems
+  // Reseteamos búsqueda al cambiar de categoría, sede proveedora u origen
   useEffect(() => {
-    if (origenSolicitud === OrigenSolicitudTraslado.PRODUCTOS) {
-      setManualItems([]);
-      setBusquedaProducto("");
-      setShowSearchResults(false);
-    }
+    setBusquedaProducto("");
+    setShowSearchResults(false);
   }, [selectedCategory, proveedoraSedeId, origenSolicitud]);
+
+  // Limpiamos manualItems solo si cambia la sede proveedora o el origen de solicitud
+  useEffect(() => {
+    setManualItems([]);
+  }, [proveedoraSedeId, origenSolicitud]);
 
   // Cargar ítems de ventas cuando el origen es REPORTE_VENTAS
   useEffect(() => {
@@ -230,12 +240,19 @@ export function CrearTraslado() {
     if (
       origenSolicitud === OrigenSolicitudTraslado.PRODUCTOS &&
       proveedoraSedeId &&
-      selectedCategory &&
-      busquedaProducto.trim() !== ""
+      selectedCategory
     ) {
-      fetchProductosForTransfer(proveedoraSedeId, selectedCategory, busquedaProducto);
-    } else if (origenSolicitud === OrigenSolicitudTraslado.PRODUCTOS) {
-      clearProductosItems();
+      const term = busquedaProducto.trim();
+      const esLente = selectedCategory === TipoProducto.LENTE;
+      const debeBuscar = esLente
+        ? term.split(/\s+/).filter(Boolean).length >= 2
+        : term !== "";
+
+      if (debeBuscar) {
+        fetchProductosForTransfer(proveedoraSedeId, selectedCategory, busquedaProducto);
+      } else {
+        clearProductosItems();
+      }
     }
   }, [
     origenSolicitud,
@@ -322,11 +339,10 @@ export function CrearTraslado() {
               <div className="flex items-center bg-beige-dark/20 p-1 rounded-xl border border-gray-3">
                 <button
                   onClick={() => setOrigenSolicitud(OrigenSolicitudTraslado.REPORTE_VENTAS)}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-extrabold transition-all cursor-pointer ${
-                    origenSolicitud === OrigenSolicitudTraslado.REPORTE_VENTAS
-                      ? "bg-white text-blue-light shadow-sm border border-gray-200"
-                      : "text-gray-600 hover:text-dark"
-                  }`}
+                  className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-extrabold transition-all cursor-pointer ${origenSolicitud === OrigenSolicitudTraslado.REPORTE_VENTAS
+                    ? "bg-white text-blue-light shadow-sm border border-gray-200"
+                    : "text-gray-600 hover:text-dark"
+                    }`}
                 >
                   <FileSpreadsheet size={15} />
                   <span>Reporte Ventas</span>
@@ -334,11 +350,10 @@ export function CrearTraslado() {
 
                 <button
                   onClick={() => setOrigenSolicitud(OrigenSolicitudTraslado.PRODUCTOS)}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-extrabold transition-all cursor-pointer ${
-                    origenSolicitud === OrigenSolicitudTraslado.PRODUCTOS
-                      ? "bg-white text-blue-light shadow-sm border border-gray-200"
-                      : "text-gray-600 hover:text-dark"
-                  }`}
+                  className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-extrabold transition-all cursor-pointer ${origenSolicitud === OrigenSolicitudTraslado.PRODUCTOS
+                    ? "bg-white text-blue-light shadow-sm border border-gray-200"
+                    : "text-gray-600 hover:text-dark"
+                    }`}
                 >
                   <PackageSearch size={15} />
                   <span> Productos</span>
@@ -364,11 +379,10 @@ export function CrearTraslado() {
                     <button
                       key={cat}
                       onClick={() => setSelectedCategory(cat as TipoProducto)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all cursor-pointer ${
-                        isActive
-                          ? "bg-white text-blue-light shadow-sm border border-gray-200"
-                          : "text-gray-600 hover:text-dark"
-                      }`}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all cursor-pointer ${isActive
+                        ? "bg-white text-blue-light shadow-sm border border-gray-200"
+                        : "text-gray-600 hover:text-dark"
+                        }`}
                     >
                       {cat}
                     </button>
@@ -460,18 +474,14 @@ export function CrearTraslado() {
                                 {prod.codigo ? `${prod.codigo} - ` : ""}
                                 {prod.nombre || `${prod.marca || ""} ${prod.material || ""}`.trim() || "Producto"}
                               </span>
-                              {(prod.sph || prod.cyl) && (
-                                <span className="text-[10px] font-mono font-bold text-blue">
-                                  {prod.sph ? `SPH: ${prod.sph}` : ""} {prod.cyl ? `CYL: ${prod.cyl}` : ""}
-                                </span>
-                              )}
+
+                              <span className="text-[10px] font-mono font-bold text-blue">
+                                SPH: {(prod.sph)} | CYL: {prod.cyl}
+                              </span>
                             </div>
                             <div className="flex items-center gap-2 shrink-0">
                               <span className="bg-emerald-100 text-emerald-800 border border-emerald-300 px-2 py-0.5 rounded-md text-[10px] font-bold">
                                 Stock: {prod.cantidad}
-                              </span>
-                              <span className="bg-blue hover:bg-blue-dark text-white font-black text-[10px] px-2.5 py-1 rounded-lg shadow-sm transition-all">
-                                + Agregar
                               </span>
                             </div>
                           </div>
