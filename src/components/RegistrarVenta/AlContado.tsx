@@ -186,7 +186,7 @@ const AlContado = () => {
                                 onClick={handleRegisterSale}
                                 disabled={
                                     loading ||
-                                    cartStoreTotal === 0 ||
+                                    cartStoreItems.length === 0 ||
                                     !montoRecibido ||
                                     Number(montoRecibido) < cartStoreTotal ||
                                     !ventaStore.metodoPago ||

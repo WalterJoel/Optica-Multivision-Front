@@ -181,7 +181,7 @@ const Discount = () => {
           <div className="p-8 sm:p-10 flex flex-col h-full">
             {/* Buscador */}
             <div className="mb-6">
-              <span className="block text-sm font-medium text-gray-500 mb-1.5">Buscar Cliente</span>
+              <span className="block text-sm font-medium text-gray-500 mb-1.5">Buscar Cliente - Descuento</span>
               <div className="flex items-center gap-3">
                 <div className="flex-1">
                   <BaseSearchInput
@@ -208,22 +208,22 @@ const Discount = () => {
                     }}
                     results={clients}
                     showList={showList}
-                     renderItem={(c: ISearchClient) => {
-                       const displayName = c.tipoCliente === "EMPRESA" ? (c.razonSocial || "") : `${c.nombres || ""} ${c.apellidos || ""}`.trim();
-                       return (
-                         <div
-                           onMouseDown={() => handleSelectClient(c)}
-                           className="w-full flex items-center justify-between gap-4 cursor-pointer p-1"
-                         >
-                           <span className="truncate text-sm font-medium">
-                             {displayName}
-                           </span>
-                           <span className="text-[10px] font-mono text-blue bg-blue-light/10 px-2 py-0.5 rounded border border-blue/20">
-                             {c.tipoCliente === "EMPRESA" ? "RUC" : "DNI"}: {c.numeroDoc}
-                           </span>
-                         </div>
-                       );
-                     }}
+                    renderItem={(c: ISearchClient) => {
+                      const displayName = c.tipoCliente === "EMPRESA" ? (c.razonSocial || "") : `${c.nombres || ""} ${c.apellidos || ""}`.trim();
+                      return (
+                        <div
+                          onMouseDown={() => handleSelectClient(c)}
+                          className="w-full flex items-center justify-between gap-4 cursor-pointer p-1"
+                        >
+                          <span className="truncate text-sm font-medium">
+                            {displayName}
+                          </span>
+                          <span className="text-[10px] font-mono text-blue bg-blue-light/10 px-2 py-0.5 rounded border border-blue/20">
+                            {c.tipoCliente === "EMPRESA" ? "RUC" : "DNI"}: {c.numeroDoc}
+                          </span>
+                        </div>
+                      );
+                    }}
                   />
                 </div>
                 {(loading || loadingDeudas) && (

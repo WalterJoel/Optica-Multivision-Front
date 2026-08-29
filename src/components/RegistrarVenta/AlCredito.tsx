@@ -303,7 +303,7 @@ const AlCredito = () => {
                                     onClick={handleRegisterSale}
                                     disabled={
                                         loading ||
-                                        cartStoreTotal === 0 ||
+                                        cartStoreItems.length === 0 ||
                                         !ventaStore.metodoPago ||
                                         nroCuotas === 0 ||
                                         diasCompromiso === null ||
