@@ -10,7 +10,7 @@ import {
   Eye,
 } from "lucide-react";
 import { formatToPeruDateString, formatToPeruTimeString } from "@/utils/date";
-import { ITEMS_PER_PAGE } from "@/commons/constants";
+import { ITEMS_PER_PAGE, TipoVenta, TipoCliente } from "@/commons/constants";
 import DetalleVentaModal from "./DetalleVentaModal";
 
 export const MiniTable = ({
@@ -33,15 +33,29 @@ export const MiniTable = ({
   };
 
   // Filtrado y paginación
-  const term = searchTerm.trim().toLowerCase();
-  const filteredData = !term
-    ? data
-    : data.filter(
-        (m) =>
-          (m.descripcion || "").toLowerCase().includes(term) ||
-          (m.metodoPago || "").toLowerCase().includes(term) ||
-          String(m.id || "").includes(term)
+  const filteredData = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) return data;
+
+    return data.filter((m) => {
+      const clienteNombre = m.venta?.cliente
+        ? m.venta.cliente.tipoCliente === TipoCliente.EMPRESA
+          ? (m.venta.cliente.razonSocial).toLowerCase()
+          : `${m.venta.cliente.nombres} ${m.venta.cliente.apellidos}`.toLowerCase()
+        : "";
+
+      return (
+        (m.descripcion || "").toLowerCase().includes(term) ||
+        (m.metodoPago || "").toLowerCase().includes(term) ||
+        String(m.id || "").includes(term) ||
+        clienteNombre.includes(term)
       );
+    });
+  }, [data, searchTerm]);
+
+  const totalMontoFiltrado = useMemo(() => {
+    return filteredData.reduce((acc, m) => acc + Number(m.monto || 0), 0);
+  }, [filteredData]);
 
   const totalPages = Math.max(1, Math.ceil(filteredData.length / ITEMS_PER_PAGE));
   const paginatedData = filteredData.slice(
@@ -70,6 +84,11 @@ export const MiniTable = ({
             <h3 className="text-[12px] font-black text-dark-2 uppercase tracking-[2px]">
               {titulo} ({filteredData.length})
             </h3>
+
+            {/* BADGE DE SUMA TOTAL COMPUTADA DE LAS VENTAS FILTRADAS */}
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-black bg-blue-light/10 text-blue border border-blue-light/20 shadow-xs uppercase tracking-wider">
+              Total: S/. {totalMontoFiltrado.toFixed(2)}
+            </span>
           </div>
         </div>
 
@@ -94,11 +113,12 @@ export const MiniTable = ({
           <thead>
             <tr className="bg-beige text-[10px] font-black text-dark-3 uppercase tracking-[0.2em] border-b border-gray-3">
               <th className="px-6 py-4">Concepto / Responsable</th>
+              <th className="px-6 py-4">Cliente</th>
+              <th className="px-6 py-4 text-center">Tipo Venta</th>
               <th className="px-6 py-4 text-center">Método</th>
               <th className="px-6 py-4 text-center">Fecha / Hora</th>
               <th className="px-6 py-4 text-right">Monto Recibido</th>
               <th className="px-6 py-4 text-right">Deuda</th>
-              <th className="px-6 py-4 text-right">Monto Neto</th>
               <th className="px-6 py-4 text-center">Acciones</th>
             </tr>
           </thead>
@@ -108,9 +128,13 @@ export const MiniTable = ({
               const date = new Date(m.createdAt);
               const montoRecibido = Number(m.monto || 0);
               const deuda = m.venta ? Number(m.venta.deuda || 0) : 0;
-              const montoNeto = m.venta
-                ? Number(m.venta.total || 0) - Number(m.venta.deuda || 0)
-                : Number(m.monto || 0);
+              const esCredito = m.venta ? (m.venta.tipoVenta || "").toUpperCase() === TipoVenta.CREDITO : false;
+
+              const clienteNombre = m.venta?.cliente
+                ? m.venta.cliente.tipoCliente === TipoCliente.EMPRESA
+                  ? m.venta.cliente.razonSocial
+                  : `${m.venta.cliente.nombres} ${m.venta.cliente.apellidos}`.trim()
+                : null;
 
               return (
                 <tr
@@ -122,6 +146,33 @@ export const MiniTable = ({
                     <span className="font-bold text-dark text-xs uppercase group-hover:text-blue transition-colors">
                       {m.descripcion}
                     </span>
+                  </td>
+
+                  {/* CLIENTE */}
+                  <td className="px-6 py-3.5">
+                    {clienteNombre ? (
+                      <span className="font-bold text-dark text-xs uppercase">
+                        {clienteNombre}
+                      </span>
+                    ) : (
+                      <span className="text-gray-4 font-semibold">—</span>
+                    )}
+                  </td>
+
+                  {/* TIPO VENTA */}
+                  <td className="px-6 py-3.5 text-center">
+                    {m.venta ? (
+                      <span
+                        className={`inline-flex items-center px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-[0.1em] border shadow-xs ${esCredito
+                          ? "bg-blue-light-6 text-blue border-blue-light-5"
+                          : "bg-green-light-6 text-green-dark border-green-light-5"
+                          }`}
+                      >
+                        {m.venta.tipoVenta}
+                      </span>
+                    ) : (
+                      <span className="text-gray-4 font-semibold">—</span>
+                    )}
                   </td>
 
                   {/* METODO */}
@@ -165,16 +216,6 @@ export const MiniTable = ({
                     </span>
                   </td>
 
-                  {/* MONTO NETO */}
-                  <td className="px-6 py-3.5 text-right">
-                    <span
-                      className={`font-black text-[13px] tracking-tight ${type === "ingreso" ? "text-emerald-600" : "text-red"
-                        }`}
-                    >
-                      S/. {montoNeto.toFixed(2)}
-                    </span>
-                  </td>
-
                   {/* ACCIONES */}
                   <td className="px-6 py-3.5 text-center">
                     {m.ventaId ? (
@@ -197,7 +238,7 @@ export const MiniTable = ({
             {paginatedData.length === 0 && (
               <tr>
                 <td
-                  colSpan={7}
+                  colSpan={8}
                   className="px-6 py-8 text-center text-xs font-bold text-gray-4 uppercase tracking-wider"
                 >
                   No hay movimientos registrados

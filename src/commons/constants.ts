@@ -65,6 +65,11 @@ export enum TipoVenta {
   CREDITO = "CREDITO",
 }
 
+export enum TipoCliente {
+  PERSONA = "PERSONA",
+  EMPRESA = "EMPRESA",
+}
+
 export enum EstadoPago {
   PAGADO = "PAGADO",
   PENDIENTE = "PENDIENTE",

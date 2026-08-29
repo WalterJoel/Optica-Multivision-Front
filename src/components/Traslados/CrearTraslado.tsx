@@ -107,12 +107,12 @@ export function CrearTraslado() {
   };
 
   const handleAddProductToTransfer = (prod: IVentaPorTipoItem) => {
-    const itemTipo = prod.tipoProducto || selectedCategory;
+
 
     setManualItems((prev) => {
       const existsIndex = prev.findIndex((item) => {
-        const itemTipoPrev = item.tipoProducto || (item.stockId ? TipoProducto.LENTE : selectedCategory);
-        if (itemTipoPrev === TipoProducto.LENTE || (!item.productoId && item.stockId)) {
+        if (selectedCategory === TipoProducto.LENTE) {
+
           return item.stockId === prod.stockId;
         }
         return item.productoId === prod.productoId;
@@ -132,7 +132,7 @@ export function CrearTraslado() {
         ...prev,
         {
           ...prod,
-          tipoProducto: itemTipo,
+
           cantidad: 1,
         },
       ];
@@ -168,16 +168,16 @@ export function CrearTraslado() {
         sedeSolicitanteId: userSedeId,
         usuarioSolicitanteId: userId,
         observaciones: `Solicitud (${origenSolicitud}) creada desde la web para ${selectedRows.length} ítem(s).`,
-        detalles: selectedRows.map((row) => {
-          const itemTipo = row.tipoProducto || (row.stockId ? TipoProducto.LENTE : selectedCategory);
-          const isLente = itemTipo === TipoProducto.LENTE || (!row.productoId && Boolean(row.stockId));
-          return {
-            tipoProducto: itemTipo,
-            productoId: !isLente ? row.productoId : undefined,
-            stockId: isLente ? row.stockId : undefined,
-            cantidadSolicitada: typeof row.selectedQuantity === "number" && row.selectedQuantity >= 1 ? row.selectedQuantity : 1,
-          };
-        }),
+        detalles: selectedRows.map((row) => ({
+          tipoProducto: selectedCategory,
+          productoId: selectedCategory !== TipoProducto.LENTE ? row.productoId : undefined,
+          stockId: selectedCategory === TipoProducto.LENTE ? row.stockId : undefined,
+          cantidadSolicitada: typeof row.selectedQuantity === "number" && row.selectedQuantity >= 1 ? row.selectedQuantity : 1,
+        })),
+
+
+
+
       };
 
       await crearTraslado(payload);
@@ -204,16 +204,19 @@ export function CrearTraslado() {
     }
   }, [userSedeId]);
 
-  // Reseteamos búsqueda al cambiar de categoría, sede proveedora u origen
+  // Al cambiar de categoría o sede proveedora en "PRODUCTOS", reseteamos manualItems
   useEffect(() => {
-    setBusquedaProducto("");
-    setShowSearchResults(false);
+    if (origenSolicitud === OrigenSolicitudTraslado.PRODUCTOS) {
+      setManualItems([]);
+      setBusquedaProducto("");
+      setShowSearchResults(false);
+    }
   }, [selectedCategory, proveedoraSedeId, origenSolicitud]);
 
-  // Limpiamos manualItems solo si cambia la sede proveedora o el origen de solicitud
-  useEffect(() => {
-    setManualItems([]);
-  }, [proveedoraSedeId, origenSolicitud]);
+
+
+
+
 
   // Cargar ítems de ventas cuando el origen es REPORTE_VENTAS
   useEffect(() => {
@@ -240,19 +243,20 @@ export function CrearTraslado() {
     if (
       origenSolicitud === OrigenSolicitudTraslado.PRODUCTOS &&
       proveedoraSedeId &&
-      selectedCategory
+      selectedCategory &&
+      busquedaProducto.trim() !== ""
     ) {
-      const term = busquedaProducto.trim();
-      const esLente = selectedCategory === TipoProducto.LENTE;
-      const debeBuscar = esLente
-        ? term.split(/\s+/).filter(Boolean).length >= 2
-        : term !== "";
+      fetchProductosForTransfer(proveedoraSedeId, selectedCategory, busquedaProducto);
+    } else if (origenSolicitud === OrigenSolicitudTraslado.PRODUCTOS) {
+      clearProductosItems();
 
-      if (debeBuscar) {
-        fetchProductosForTransfer(proveedoraSedeId, selectedCategory, busquedaProducto);
-      } else {
-        clearProductosItems();
-      }
+
+
+
+
+
+
+
     }
   }, [
     origenSolicitud,
