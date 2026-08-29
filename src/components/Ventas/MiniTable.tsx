@@ -218,9 +218,6 @@ export const MiniTable = ({
                 Vendedor
               </th>
               <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3">
-                Método Pago
-              </th>
-              <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3">
                 Tipo Venta
               </th>
               <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3 text-center">
@@ -325,14 +322,6 @@ export const MiniTable = ({
                         </span>
                       </div>
                     </div>
-                  </td>
-
-                  {/* Método Pago */}
-                  <td className="px-6 py-5">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.1em] border shadow-sm bg-white border-blue-light-5 text-dark-4">
-                      <CreditCard size={10} className="text-blue-light" />
-                      {venta.metodoPago || "—"}
-                    </span>
                   </td>
 
                   {/* Tipo Venta */}
