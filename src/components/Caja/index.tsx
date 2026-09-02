@@ -32,14 +32,16 @@ export default function CajaPremiumFino() {
     }
   }, [sedeId, fechaInicio, fechaFin]);
 
-  const ingresos = movimientos.filter((m) => m.tipo === "INGRESO");
-  const egresos = movimientos.filter((m) => m.tipo === "EGRESO");
+  // [RN-003] Filtrar movimientos pertenecientes a ventas activas (excluir anuladas)
+  const ingresos = movimientos.filter(
+    (m) => m.tipo === "INGRESO" && (m.venta ? m.venta.activo !== false : true)
+  );
+  const egresos = movimientos.filter(
+    (m) => m.tipo === "EGRESO" && (m.venta ? m.venta.activo !== false : true)
+  );
 
   const getMovimientoNeto = (m: any): number => {
-    if (m.venta) {
-      return Number(m.venta.total) - Number(m.venta.deuda);
-    }
-    return Number(m.monto);
+    return Number(m.monto || 0);
   };
 
   const totalIngresos = ingresos.reduce((acc, m) => acc + getMovimientoNeto(m), 0);
