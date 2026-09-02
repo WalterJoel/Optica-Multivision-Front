@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { useSessionUser } from "@/hooks/session";
-import { useTraslados } from "@/hooks/traslados/useTraslados";
 import { StatusModal } from "@/components/Common/modal";
 import { STATUS_MODAL } from "@/commons/constants";
 import { Solicitante } from "./Solicitante";
@@ -11,18 +10,19 @@ import { Inbox, Truck } from "lucide-react";
 
 export default function Solicitudes() {
   const { sedeId: userSedeId, userId } = useSessionUser();
-  const { statusMessage } = useTraslados();
-
   const [activeTab, setActiveTab] = useState<"RECEPCIONES" | "DESPACHOS">("RECEPCIONES");
   const [openStatusModal, setOpenStatusModal] = useState(false);
   const [typeModal, setTypeModal] = useState("");
+  const [modalMessage, setModalMessage] = useState("");
 
-  const handleSuccessAction = () => {
+  const handleSuccessAction = (message?: string) => {
+    setModalMessage(message ?? "");
     setTypeModal(STATUS_MODAL.SUCCESS_MODAL);
     setOpenStatusModal(true);
   };
 
-  const handleErrorAction = (err: any) => {
+  const handleErrorAction = (message?: string) => {
+    setModalMessage(message ?? "");
     setTypeModal(STATUS_MODAL.ERROR_MODAL);
     setOpenStatusModal(true);
   };
@@ -98,7 +98,7 @@ export default function Solicitudes() {
         <StatusModal
           isOpen={openStatusModal}
           type={typeModal}
-          message={statusMessage}
+          message={modalMessage}
           onClose={() => setOpenStatusModal(false)}
         />
       </div>

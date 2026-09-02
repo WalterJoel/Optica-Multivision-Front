@@ -47,14 +47,15 @@ export function useTraslados() {
     setStatusMessage("");
     try {
       const res = await crearTrasladoService(payload);
+      const msg = `Solicitud de traslado #${res.id} creada correctamente.`;
       setSuccess(true);
-      setStatusMessage(`Solicitud de traslado #${res.id} creada correctamente.`);
+      setStatusMessage(msg);
       return res;
     } catch (err: any) {
       const msg = err.response?.data?.message || "Error al crear la solicitud de traslado";
       setStatusMessage(msg);
       setSuccess(false);
-      throw err;
+      return null;
     } finally {
       setLoading(false);
     }
@@ -66,14 +67,15 @@ export function useTraslados() {
     setStatusMessage("");
     try {
       const res = await enviarMercaderiaService(payload);
+      const msg = `Mercadería del traslado #${res.id} despachada correctamente.`;
       setSuccess(true);
-      setStatusMessage(`Mercadería del traslado #${res.id} despachada correctamente.`);
+      setStatusMessage(msg);
       return res;
     } catch (err: any) {
       const msg = err.response?.data?.message || "Error al despachar la mercadería";
       setStatusMessage(msg);
       setSuccess(false);
-      throw err;
+      return null;
     } finally {
       setLoading(false);
     }
@@ -85,15 +87,15 @@ export function useTraslados() {
     setStatusMessage("");
     try {
       const res = await recibirMercaderiaService(payload);
+      const msg = `Mercadería del traslado #${res.id} recibida y procesada en inventario.`;
       setSuccess(true);
-      setStatusMessage(`Mercadería del traslado #${res.id} recibida y procesada en inventario.`);
-
+      setStatusMessage(msg);
       return res;
     } catch (err: any) {
       const msg = err.response?.data?.message || "Error al recibir la mercadería";
       setStatusMessage(msg);
       setSuccess(false);
-      throw err;
+      return null;
     } finally {
       setLoading(false);
     }
@@ -105,14 +107,15 @@ export function useTraslados() {
     setStatusMessage("");
     try {
       const res = await eliminarTrasladoService(id);
+      const msg = res.message || `Solicitud #${id} eliminada correctamente.`;
       setSuccess(true);
-      setStatusMessage(res.message || `Solicitud #${id} eliminada correctamente.`);
+      setStatusMessage(msg);
       return res;
     } catch (err: any) {
       const msg = err.response?.data?.message || "Error al eliminar la solicitud de traslado";
       setStatusMessage(msg);
       setSuccess(false);
-      throw err;
+      return null;
     } finally {
       setLoading(false);
     }
@@ -131,4 +134,3 @@ export function useTraslados() {
     setStatusMessage,
   };
 }
-

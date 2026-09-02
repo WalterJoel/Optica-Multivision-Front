@@ -232,7 +232,7 @@ export function Proveedor({
   onSuccessAction,
   onErrorAction,
 }: ProveedorProps) {
-  const { traslados, loading, getTraslados, enviarMercaderia } = useTraslados();
+  const { traslados, loading, getTraslados, enviarMercaderia, statusMessage } = useTraslados();
   const [estadoFilter, setEstadoFilter] = useState<string>("SOLICITADO");
 
   const fetchTraslados = () => {
@@ -249,12 +249,12 @@ export function Proveedor({
   }, [userSedeId, estadoFilter]);
 
   const handleEnviar = async (payload: any) => {
-    try {
-      await enviarMercaderia(payload);
+    const res = await enviarMercaderia(payload);
+    if (res) {
       onSuccessAction();
       setEstadoFilter("ENVIADO");
-    } catch (err) {
-      onErrorAction(err);
+    } else {
+      onErrorAction(statusMessage);
     }
   };
 

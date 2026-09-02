@@ -161,30 +161,26 @@ export function CrearTraslado() {
       return;
     }
 
-    try {
-      const payload = {
-        origenSolicitud,
-        sedeProveedoraId: proveedoraSedeId,
-        sedeSolicitanteId: userSedeId,
-        usuarioSolicitanteId: userId,
-        observaciones: `Solicitud (${origenSolicitud}) creada desde la web para ${selectedRows.length} ítem(s).`,
-        detalles: selectedRows.map((row) => ({
-          tipoProducto: selectedCategory,
-          productoId: selectedCategory !== TipoProducto.LENTE ? row.productoId : undefined,
-          stockId: selectedCategory === TipoProducto.LENTE ? row.stockId : undefined,
-          cantidadSolicitada: typeof row.selectedQuantity === "number" && row.selectedQuantity >= 1 ? row.selectedQuantity : 1,
-        })),
+    const payload = {
+      origenSolicitud,
+      sedeProveedoraId: proveedoraSedeId,
+      sedeSolicitanteId: userSedeId,
+      usuarioSolicitanteId: userId,
+      observaciones: `Solicitud (${origenSolicitud}) creada desde la web para ${selectedRows.length} ítem(s).`,
+      detalles: selectedRows.map((row) => ({
+        tipoProducto: selectedCategory,
+        productoId: selectedCategory !== TipoProducto.LENTE ? row.productoId : undefined,
+        stockId: selectedCategory === TipoProducto.LENTE ? row.stockId : undefined,
+        cantidadSolicitada: typeof row.selectedQuantity === "number" && row.selectedQuantity >= 1 ? row.selectedQuantity : 1,
+      })),
+    };
 
-
-
-
-      };
-
-      await crearTraslado(payload);
+    const res = await crearTraslado(payload);
+    if (res) {
       setTypeModal(STATUS_MODAL.SUCCESS_MODAL);
       setOpenModal(true);
       resetForm();
-    } catch (err: any) {
+    } else {
       setTypeModal(STATUS_MODAL.ERROR_MODAL);
       setOpenModal(true);
     }

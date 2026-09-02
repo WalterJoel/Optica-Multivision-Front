@@ -274,7 +274,7 @@ export function Solicitante({
   onSuccessAction,
   onErrorAction,
 }: SolicitanteProps) {
-  const { traslados, loading, getTraslados, recibirMercaderia, eliminarTraslado } = useTraslados();
+  const { traslados, loading, getTraslados, recibirMercaderia, eliminarTraslado, statusMessage } = useTraslados();
   const [estadoFilter, setEstadoFilter] = useState<EstadoTraslado>(EstadoTraslado.SOLICITADO);
 
   const fetchTraslados = () => {
@@ -291,22 +291,22 @@ export function Solicitante({
   }, [userSedeId, estadoFilter]);
 
   const handleRecibir = async (payload: any) => {
-    try {
-      await recibirMercaderia(payload);
+    const res = await recibirMercaderia(payload);
+    if (res) {
       onSuccessAction();
       setEstadoFilter(EstadoTraslado.TRASLADADO);
-    } catch (err) {
-      onErrorAction(err);
+    } else {
+      onErrorAction(statusMessage);
     }
   };
 
   const handleEliminar = async (id: number) => {
-    try {
-      await eliminarTraslado(id);
+    const res = await eliminarTraslado(id);
+    if (res) {
       onSuccessAction();
       fetchTraslados();
-    } catch (err) {
-      onErrorAction(err);
+    } else {
+      onErrorAction(statusMessage);
     }
   };
 
