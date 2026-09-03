@@ -72,7 +72,8 @@ export function useTraslados() {
       setStatusMessage(msg);
       return res;
     } catch (err: any) {
-      const msg = err.response?.data?.message || "Error al despachar la mercadería";
+      console.log(err, ' ------------>ER  ')
+      const msg = err.response?.data?.message;
       setStatusMessage(msg);
       setSuccess(false);
       return null;
