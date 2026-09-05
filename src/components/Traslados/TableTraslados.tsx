@@ -158,47 +158,47 @@ export function TableTraslados({
         <table className="w-full text-left text-xs border-spacing-0">
           <thead>
             <tr className="bg-beige backdrop-blur-sm">
-              <th className="px-3 py-2.5 text-[10px] font-black uppercase tracking-wider text-dark-3 border-b border-gray-3 text-center w-10">
+              <th className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-dark-3 border-b border-gray-3 text-center w-10">
                 N°
               </th>
-              <th className="px-4 py-2.5 text-[10px] font-black uppercase tracking-wider text-dark-3 border-b border-gray-3">
+              <th className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-dark-3 border-b border-gray-3">
                 Código
               </th>
               {tipoProducto === TipoProducto.MONTURA && (
                 <>
-                  <th className="px-4 py-2.5 text-[10px] font-black uppercase tracking-wider text-dark-3 border-b border-gray-3">
+                  <th className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-dark-3 border-b border-gray-3">
                     Marca
                   </th>
-                  <th className="px-4 py-2.5 text-[10px] font-black uppercase tracking-wider text-dark-3 border-b border-gray-3">
+                  <th className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-dark-3 border-b border-gray-3">
                     Material
                   </th>
                 </>
               )}
               {tipoProducto === TipoProducto.ACCESORIO && (
-                <th className="px-4 py-2.5 text-[10px] font-black uppercase tracking-wider text-dark-3 border-b border-gray-3">
+                <th className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-dark-3 border-b border-gray-3">
                   Nombre
                 </th>
               )}
               {tipoProducto === TipoProducto.LENTE && (
                 <>
-                  <th className="px-4 py-2.5 text-[10px] font-black uppercase tracking-wider text-dark-3 border-b border-gray-3">
+                  <th className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-dark-3 border-b border-gray-3">
                     Marca
                   </th>
-                  <th className="px-4 py-2.5 text-[10px] font-black uppercase tracking-wider text-dark-3 border-b border-gray-3">
+                  <th className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-dark-3 border-b border-gray-3">
                     Material
                   </th>
-                  <th className="px-4 py-2.5 text-[10px] font-black uppercase tracking-wider text-dark-3 border-b border-gray-3 text-center">
+                  <th className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-dark-3 border-b border-gray-3 text-center">
                     SPH
                   </th>
-                  <th className="px-4 py-2.5 text-[10px] font-black uppercase tracking-wider text-dark-3 border-b border-gray-3 text-center">
+                  <th className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-dark-3 border-b border-gray-3 text-center">
                     CYL
                   </th>
                 </>
               )}
-              <th className="px-4 py-2.5 text-[10px] font-black uppercase tracking-wider text-dark-3 border-b border-gray-3 text-center">
+              <th className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-dark-3 border-b border-gray-3 text-center">
                 Cantidad
               </th>
-              <th className="px-4 py-2.5 text-[10px] font-black uppercase tracking-wider text-dark-3 border-b border-gray-3 text-center">
+              <th className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-dark-3 border-b border-gray-3 text-center">
                 <div className="flex items-center justify-center gap-1.5 cursor-pointer">
                   <input
                     type="checkbox"
@@ -207,7 +207,7 @@ export function TableTraslados({
                       if (input) input.indeterminate = someSelected;
                     }}
                     onChange={(e) => handleToggleSelectAll(e.target.checked)}
-                    className="w-5 h-5 cursor-pointer accent-emerald-600 rounded"
+                    className="w-4 h-4 cursor-pointer accent-emerald-600 rounded"
                     title="Seleccionar todo"
                   />
                   <span>Seleccionar</span>
@@ -221,7 +221,7 @@ export function TableTraslados({
               <tr>
                 <td
                   colSpan={tipoProducto === TipoProducto.LENTE ? 8 : 7}
-                  className="px-4 py-10 text-center text-dark-5 font-bold uppercase text-[11px] tracking-widest"
+                  className="px-3 py-6 text-center text-dark-5 font-bold uppercase text-[11px] tracking-widest"
                 >
                   Cargando productos...
                 </td>
@@ -230,7 +230,7 @@ export function TableTraslados({
               <tr>
                 <td
                   colSpan={tipoProducto === TipoProducto.LENTE ? 8 : 7}
-                  className="px-4 py-10 text-center text-dark-5 font-bold uppercase text-[11px] tracking-widest"
+                  className="px-3 py-6 text-center text-dark-5 font-bold uppercase text-[11px] tracking-widest"
                 >
                   No se encontraron productos para los filtros seleccionados
                 </td>
@@ -243,11 +243,11 @@ export function TableTraslados({
                     row.isSelected ? "bg-emerald-50/50" : "hover:bg-beige/30"
                   }`}
                 >
-                  <td className="px-3 py-2 text-center font-extrabold text-xs text-dark-5">
+                  <td className="px-3 py-1 text-center font-extrabold text-xs text-dark-5">
                     {index + 1}
                   </td>
 
-                  <td className="px-4 py-2">
+                  <td className="px-3 py-1">
                     <span className="font-black text-dark text-xs uppercase">
                       {row.codigo}
                     </span>
@@ -255,39 +255,39 @@ export function TableTraslados({
 
                   {tipoProducto === TipoProducto.MONTURA && (
                     <>
-                      <td className="px-4 py-2 font-semibold text-dark-2 text-xs uppercase">
+                      <td className="px-3 py-1 font-semibold text-dark-2 text-xs uppercase">
                         {row.marca || "-"}
                       </td>
-                      <td className="px-4 py-2 font-semibold text-dark-2 text-xs uppercase">
+                      <td className="px-3 py-1 font-semibold text-dark-2 text-xs uppercase">
                         {row.material || "-"}
                       </td>
                     </>
                   )}
 
                   {tipoProducto === TipoProducto.ACCESORIO && (
-                    <td className="px-4 py-2 font-semibold text-dark-2 text-xs uppercase">
+                    <td className="px-3 py-1 font-semibold text-dark-2 text-xs uppercase">
                       {row.nombre || "-"}
                     </td>
                   )}
 
                   {tipoProducto === TipoProducto.LENTE && (
                     <>
-                      <td className="px-4 py-2 font-semibold text-dark-2 text-xs uppercase">
+                      <td className="px-3 py-1 font-semibold text-dark-2 text-xs uppercase">
                         {row.marca || "-"}
                       </td>
-                      <td className="px-4 py-2 font-semibold text-dark-2 text-xs uppercase">
+                      <td className="px-3 py-1 font-semibold text-dark-2 text-xs uppercase">
                         {row.material || "-"}
                       </td>
-                      <td className="px-4 py-2 font-bold text-dark text-xs text-center">
+                      <td className="px-3 py-1 font-bold text-dark text-xs text-center">
                         {row.sph != null ? formatearMedida(row.sph) : "-"}
                       </td>
-                      <td className="px-4 py-2 font-bold text-dark text-xs text-center">
+                      <td className="px-3 py-1 font-bold text-dark text-xs text-center">
                         {row.cyl != null ? formatearMedida(row.cyl) : "-"}
                       </td>
                     </>
                   )}
 
-                  <td className="px-4 py-2 text-center">
+                  <td className="px-3 py-1 text-center">
                     <div className="flex items-center justify-center">
                       <input
                         type="number"
@@ -298,18 +298,18 @@ export function TableTraslados({
                           handleQuantityChange(row._rowKey, e.target.value)
                         }
                         onBlur={() => handleBlurQuantity(row._rowKey)}
-                        className="w-16 h-9 px-2 text-center font-black text-xs text-dark border-2 border-blue-light/50 rounded-xl bg-white focus:border-blue-light focus:ring-2 focus:ring-blue-light/20 outline-none shadow-sm transition-all hover:border-blue-light cursor-pointer"
+                        className="w-16 h-7 px-2 py-0.5 text-center font-black text-xs text-dark border-2 border-blue-light/50 rounded-lg bg-white focus:border-blue-light focus:ring-2 focus:ring-blue-light/20 outline-none shadow-sm transition-all hover:border-blue-light cursor-pointer"
                       />
                     </div>
                   </td>
 
-                  <td className="px-4 py-2 text-center">
+                  <td className="px-3 py-1 text-center">
                     <div className="flex items-center justify-center">
                       <input
                         type="checkbox"
                         checked={row.isSelected}
                         onChange={() => handleToggleSelect(row._rowKey)}
-                        className="w-5 h-5 cursor-pointer accent-emerald-600 rounded"
+                        className="w-4 h-4 cursor-pointer accent-emerald-600 rounded"
                         title={row.isSelected ? "Desmarcar" : "Marcar"}
                       />
                     </div>

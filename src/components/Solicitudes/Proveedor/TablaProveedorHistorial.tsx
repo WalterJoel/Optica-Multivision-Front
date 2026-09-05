@@ -56,13 +56,13 @@ export function TablaProveedorHistorial({
         <table className="w-full text-left text-xs border-spacing-0">
           <thead>
             <tr className="bg-beige text-dark-3 font-black uppercase text-[10px] tracking-wider border-b border-gray-3">
-              <th className="px-4 py-3 text-center w-12">N°</th>
-              <th className="px-4 py-3">ID Despacho</th>
-              <th className="px-4 py-3">Fecha de Creación</th>
-              <th className="px-4 py-3">Sede Destino (Solicitante)</th>
-              <th className="px-4 py-3 text-center">Ítems Despachados</th>
-              <th className="px-4 py-3 text-center">Estado</th>
-              <th className="px-4 py-3 text-center">Acción</th>
+              <th className="px-3 py-1.5 text-center w-12">N°</th>
+              <th className="px-3 py-1.5">ID Despacho</th>
+              <th className="px-3 py-1.5">Fecha de Creación</th>
+              <th className="px-3 py-1.5">Sede Destino (Solicitante)</th>
+              <th className="px-3 py-1.5 text-center">Ítems Despachados</th>
+              <th className="px-3 py-1.5 text-center">Estado</th>
+              <th className="px-3 py-1.5 text-center">Acción</th>
             </tr>
           </thead>
 
@@ -86,41 +86,41 @@ export function TablaProveedorHistorial({
                   onClick={() => setSelectedTraslado(t)}
                   className="hover:bg-beige/40 cursor-pointer transition-colors group"
                 >
-                  <td className="px-4 py-3 text-center font-bold text-gray-500">
+                  <td className="px-3 py-1.5 text-center font-bold text-gray-500">
                     {index + 1}
                   </td>
-                  <td className="px-4 py-3 font-black text-dark text-xs">
+                  <td className="px-3 py-1.5 font-black text-dark text-xs">
                     #{t.id}
                   </td>
-                  <td className="px-4 py-3 text-gray-600 font-semibold">
+                  <td className="px-3 py-1.5 text-gray-600 font-semibold">
                     <span className="inline-flex items-center gap-1.5">
                       <Calendar size={13} className="text-gray-400" />
                       {new Date(t.createdAt).toLocaleDateString()}
                     </span>
                   </td>
-                  <td className="px-4 py-3 font-bold text-dark-3 uppercase">
+                  <td className="px-3 py-1.5 font-bold text-dark-3 uppercase">
                     <span className="inline-flex items-center gap-1.5">
                       <Building2 size={13} className="text-emerald-700" />
                       {t.sedeSolicitante?.nombre || `Sede #${t.sedeSolicitanteId}`}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-center font-bold text-blue-light text-xs">
+                  <td className="px-3 py-1.5 text-center font-bold text-blue-light text-xs">
                     {t.detalles?.length || 0} producto(s)
                   </td>
-                  <td className="px-4 py-3 text-center">
-                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-200">
+                  <td className="px-3 py-1.5 text-center">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-200">
                       <CheckCircle2 size={12} /> Trasladado
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-center">
+                  <td className="px-3 py-1.5 text-center">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         setSelectedTraslado(t);
                       }}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-light/10 text-blue-light hover:bg-blue-light hover:text-white font-bold text-[11px] transition-all shadow-sm cursor-pointer"
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-light/10 text-blue-light hover:bg-blue-light hover:text-white font-bold text-[11px] transition-all shadow-sm cursor-pointer"
                     >
-                      <Eye size={14} />
+                      <Eye size={13} />
                       <span>Ver Detalle</span>
                     </button>
                   </td>

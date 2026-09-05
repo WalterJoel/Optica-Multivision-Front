@@ -88,19 +88,19 @@ export function ModalDetalleTraslado({
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
                   <tr className="bg-beige text-dark-3 font-black uppercase text-[10px] tracking-wider border-b border-gray-3">
-                    <th className="p-3.5">Código / Nombre</th>
-                    <th className="p-3.5 text-center">Marca</th>
-                    <th className="p-3.5 text-center">Material</th>
-                    <th className="p-3.5 text-center">Tipo</th>
+                    <th className="px-3 py-1.5">Código / Nombre</th>
+                    <th className="px-3 py-1.5 text-center">Marca</th>
+                    <th className="px-3 py-1.5 text-center">Material</th>
+                    <th className="px-3 py-1.5 text-center">Tipo</th>
                     {hasLente && (
                       <>
-                        <th className="p-3.5 text-center">SPH</th>
-                        <th className="p-3.5 text-center">CYL</th>
+                        <th className="px-3 py-1.5 text-center">SPH</th>
+                        <th className="px-3 py-1.5 text-center">CYL</th>
                       </>
                     )}
-                    <th className="p-3.5 text-center">📥 Solicitada</th>
-                    <th className="p-3.5 text-center">🚚 Enviada</th>
-                    <th className="p-3.5 text-center">✅ Recibida</th>
+                    <th className="px-3 py-1.5 text-center">📥 Solicitada</th>
+                    <th className="px-3 py-1.5 text-center">🚚 Enviada</th>
+                    <th className="px-3 py-1.5 text-center">✅ Recibida</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-2 text-dark font-medium">
@@ -130,35 +130,35 @@ export function ModalDetalleTraslado({
 
                     return (
                       <tr key={det.id} className="hover:bg-beige/40">
-                        <td className="p-3.5 font-bold uppercase text-dark">
+                        <td className="px-3 py-1.5 font-bold uppercase text-dark">
                           {codigoVal}
                         </td>
-                        <td className="p-3.5 text-center uppercase font-bold text-dark-3">
+                        <td className="px-3 py-1.5 text-center uppercase font-bold text-dark-3">
                           {marcaVal}
                         </td>
-                        <td className="p-3.5 text-center uppercase font-bold text-dark-3">
+                        <td className="px-3 py-1.5 text-center uppercase font-bold text-dark-3">
                           {materialVal}
                         </td>
-                        <td className="p-3.5 text-center text-[10px] font-bold text-dark-5">
+                        <td className="px-3 py-1.5 text-center text-[10px] font-bold text-dark-5">
                           {det.tipoProducto}
                         </td>
                         {hasLente && (
                           <>
-                            <td className="p-3.5 text-center font-bold text-dark text-xs">
+                            <td className="px-3 py-1.5 text-center font-bold text-dark text-xs">
                               {sphVal}
                             </td>
-                            <td className="p-3.5 text-center font-bold text-dark text-xs">
+                            <td className="px-3 py-1.5 text-center font-bold text-dark text-xs">
                               {cylVal}
                             </td>
                           </>
                         )}
-                        <td className="p-3.5 text-center font-bold text-dark-3 text-xs">
+                        <td className="px-3 py-1.5 text-center font-bold text-dark-3 text-xs">
                           {det.cantidadSolicitada}
                         </td>
-                        <td className="p-3.5 text-center font-bold text-dark-3 text-xs">
+                        <td className="px-3 py-1.5 text-center font-bold text-dark-3 text-xs">
                           {det.cantidadEnviada}
                         </td>
-                        <td className="p-3.5 text-center font-bold text-dark-3 text-xs">
+                        <td className="px-3 py-1.5 text-center font-bold text-dark-3 text-xs">
                           {det.cantidadRecibida}
                         </td>
                       </tr>

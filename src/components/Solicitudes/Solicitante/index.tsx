@@ -130,19 +130,19 @@ function SolicitanteCard({ traslado, onRecibir, onEliminar, loading = false }: S
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
                   <tr className="bg-beige/40 text-dark-3 font-black uppercase text-[10px] tracking-wider border-b border-gray-3">
-                    <th className="p-3.5">Código / Nombre</th>
-                    <th className="p-3.5 text-center">Marca</th>
-                    <th className="p-3.5 text-center">Material</th>
-                    <th className="p-3.5 text-center">Tipo</th>
+                    <th className="px-3 py-1.5">Código / Nombre</th>
+                    <th className="px-3 py-1.5 text-center">Marca</th>
+                    <th className="px-3 py-1.5 text-center">Material</th>
+                    <th className="px-3 py-1.5 text-center">Tipo</th>
                     {hasLente && (
                       <>
-                        <th className="p-3.5 text-center">SPH</th>
-                        <th className="p-3.5 text-center">CYL</th>
+                        <th className="px-3 py-1.5 text-center">SPH</th>
+                        <th className="px-3 py-1.5 text-center">CYL</th>
                       </>
                     )}
-                    <th className="p-3.5 text-center">📥 Cant. Solicitada</th>
-                    <th className="p-3.5 text-center">🚚 Cant. Enviada</th>
-                    <th className="p-3.5 text-center">✅ Cant. Recibida</th>
+                    <th className="px-3 py-1.5 text-center">📥 Cant. Solicitada</th>
+                    <th className="px-3 py-1.5 text-center">🚚 Cant. Enviada</th>
+                    <th className="px-3 py-1.5 text-center">✅ Cant. Recibida</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-2 text-dark font-medium">
@@ -174,35 +174,35 @@ function SolicitanteCard({ traslado, onRecibir, onEliminar, loading = false }: S
 
                     return (
                       <tr key={det.id} className="hover:bg-beige/20">
-                        <td className="p-3.5 font-bold uppercase text-dark">
+                        <td className="px-3 py-1.5 font-bold uppercase text-dark">
                           {codigoVal}
                         </td>
-                        <td className="p-3.5 text-center uppercase font-bold text-dark-3">
+                        <td className="px-3 py-1.5 text-center uppercase font-bold text-dark-3">
                           {marcaVal}
                         </td>
-                        <td className="p-3.5 text-center uppercase font-bold text-dark-3">
+                        <td className="px-3 py-1.5 text-center uppercase font-bold text-dark-3">
                           {materialVal}
                         </td>
-                        <td className="p-3.5 text-center text-[10px] font-bold text-dark-5">
+                        <td className="px-3 py-1.5 text-center text-[10px] font-bold text-dark-5">
                           {det.tipoProducto}
                         </td>
                         {hasLente && (
                           <>
-                            <td className="p-3.5 text-center font-bold text-dark text-xs">
+                            <td className="px-3 py-1.5 text-center font-bold text-dark text-xs">
                               {sphVal}
                             </td>
-                            <td className="p-3.5 text-center font-bold text-dark text-xs">
+                            <td className="px-3 py-1.5 text-center font-bold text-dark text-xs">
                               {cylVal}
                             </td>
                           </>
                         )}
-                        <td className="p-3.5 text-center font-bold text-dark-3 text-xs">
+                        <td className="px-3 py-1.5 text-center font-bold text-dark-3 text-xs">
                           {det.cantidadSolicitada}
                         </td>
-                        <td className="p-3.5 text-center font-bold text-dark-3 text-xs">
+                        <td className="px-3 py-1.5 text-center font-bold text-dark-3 text-xs">
                           {det.cantidadEnviada}
                         </td>
-                        <td className="p-3.5 text-center font-bold text-dark-3 text-xs">
+                        <td className="px-3 py-1.5 text-center font-bold text-dark-3 text-xs">
                           {isRecepcionEditable ? (
                             <div className="flex items-center justify-center">
                               <input
@@ -214,8 +214,7 @@ function SolicitanteCard({ traslado, onRecibir, onEliminar, loading = false }: S
                                   handleCantidadChange(det.id, e.target.value)
                                 }
                                 onBlur={() => handleBlurQuantity(det.id)}
-                                className="w-24 h-9 px-2.5 text-center font-black text-xs text-dark border-2 border-blue-light/50 rounded-xl bg-white focus:border-blue-light focus:ring-2 focus:ring-blue-light/20 outline-none shadow-sm transition-all hover:border-blue-light cursor-pointer"
-
+                                className="w-20 h-7 px-2 py-0.5 text-center font-black text-xs text-dark border-2 border-blue-light/50 rounded-lg bg-white focus:border-blue-light focus:ring-2 focus:ring-blue-light/20 outline-none shadow-sm transition-all hover:border-blue-light cursor-pointer"
                               />
                             </div>
                           ) : (
