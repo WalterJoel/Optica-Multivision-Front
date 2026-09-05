@@ -223,7 +223,7 @@ function ProveedorCard({ traslado, onEnviar, loading = false }: ProveedorCardPro
 
 interface ProveedorProps {
   userSedeId: number;
-  onSuccessAction: () => void;
+  onSuccessAction: (msg?: string) => void;
   onErrorAction: (err: any) => void;
 }
 

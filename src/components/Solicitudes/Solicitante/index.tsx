@@ -265,7 +265,7 @@ function SolicitanteCard({ traslado, onRecibir, onEliminar, loading = false }: S
 interface SolicitanteProps {
   userSedeId: number;
   userId: number;
-  onSuccessAction: () => void;
+  onSuccessAction: (msg?: string) => void;
   onErrorAction: (err: any) => void;
 }
 
