@@ -6,6 +6,8 @@ import { ModalFrameWrapper } from "@/components/Common/modal";
 import { BaseInput } from "@/components/Common/Inputs";
 import { IResponseSale } from "@/types/sales";
 import { useSearchClient } from "@/hooks/clients";
+import CuotasSelector from "@/components/RegistrarVenta/CuotasSelector";
+import { TipoVenta } from "@/commons/constants";
 
 interface EditarVentaModalProps {
   venta: IResponseSale;
@@ -23,6 +25,7 @@ export const EditarVentaModal: React.FC<EditarVentaModalProps> = ({
   const [observaciones, setObservaciones] = useState(venta.observaciones || "");
   const [montaje, setMontaje] = useState(venta.montaje ?? false);
   const [metodoPago, setMetodoPago] = useState(venta.metodoPago || "");
+  const [nroCuotas, setNroCuotas] = useState<number>(venta.nroCuotas ?? 2);
   const [diasCompromisoPago, setDiasCompromisoPago] = useState<number | null>(
     venta.diasCompromisoPago ?? null
   );
@@ -55,7 +58,7 @@ export const EditarVentaModal: React.FC<EditarVentaModalProps> = ({
 
   const handleSubmit = async () => {
     // Validar cliente obligatorio en ventas CRÉDITO
-    if (venta.tipoVenta === "CREDITO" && !clienteId) {
+    if (venta.tipoVenta === TipoVenta.CREDITO && !clienteId) {
       setClienteError(true);
       return;
     }
@@ -65,8 +68,9 @@ export const EditarVentaModal: React.FC<EditarVentaModalProps> = ({
       montaje,
       metodoPago,
     };
-    if (venta.tipoVenta === "CREDITO") {
+    if (venta.tipoVenta === TipoVenta.CREDITO) {
       payload.diasCompromisoPago = diasCompromisoPago;
+      payload.nroCuotas = nroCuotas;
     }
     if (clienteId !== venta.clienteId) {
       payload.clienteId = clienteId;
@@ -107,7 +111,7 @@ export const EditarVentaModal: React.FC<EditarVentaModalProps> = ({
           <div className="relative">
             <label className="text-sm font-medium text-gray-500 mb-1 block">
               Cliente
-              {venta.tipoVenta === "CREDITO" && (
+              {venta.tipoVenta === TipoVenta.CREDITO && (
                 <span className="text-red font-bold ml-1">*</span>
               )}
               <span className="text-[10px] text-gray-4 ml-1">(busca por nombre o documento)</span>
@@ -122,14 +126,13 @@ export const EditarVentaModal: React.FC<EditarVentaModalProps> = ({
                   if (clienteError) setClienteError(false);
                 }}
                 placeholder="Buscar cliente..."
-                className={`w-full pl-9 pr-4 rounded-2xl border bg-white p-4.5 outline-none focus:ring-4 transition-all duration-300 placeholder:text-gray-4 text-dark shadow-sm text-sm ${
-                  clienteError
+                className={`w-full pl-9 pr-4 rounded-2xl border bg-white p-4.5 outline-none focus:ring-4 transition-all duration-300 placeholder:text-gray-4 text-dark shadow-sm text-sm ${clienteError
                     ? "border-red focus:border-red focus:ring-red/10"
-                    : "border-gray-3 focus:border-blue focus:ring-blue/5"
-                }`}
+                    : "border-gray-3 focus:border-yellow-dark focus:ring-yellow/10"
+                  }`}
               />
               {searchLoading && (
-                <Loader2 size={14} className="absolute right-3.5 animate-spin text-blue" />
+                <Loader2 size={14} className="absolute right-3.5 animate-spin text-yellow-dark" />
               )}
             </div>
             {showList && clients.length > 0 && (
@@ -152,7 +155,7 @@ export const EditarVentaModal: React.FC<EditarVentaModalProps> = ({
                 })}
               </div>
             )}
-            {clienteError && venta.tipoVenta === "CREDITO" && (
+            {clienteError && venta.tipoVenta === TipoVenta.CREDITO && (
               <p className="mt-1.5 text-[11px] font-bold text-red flex items-center gap-1">
                 <span>✕</span> Debes seleccionar un cliente para ventas a crédito.
               </p>
@@ -167,7 +170,7 @@ export const EditarVentaModal: React.FC<EditarVentaModalProps> = ({
               onChange={(e) => setObservaciones(e.target.value)}
               rows={3}
               placeholder="Notas de entrega, aclaraciones..."
-              className="w-full rounded-2xl border border-gray-3 bg-white px-4 py-3 outline-none focus:border-blue focus:ring-4 focus:ring-blue/5 transition-all duration-300 placeholder:text-gray-4 text-dark shadow-sm text-sm resize-none"
+              className="w-full rounded-2xl border border-gray-3 bg-white px-4 py-3 outline-none focus:border-yellow-dark focus:ring-4 focus:ring-yellow/10 transition-all duration-300 placeholder:text-gray-4 text-dark shadow-sm text-sm resize-none"
             />
           </div>
 
@@ -180,7 +183,7 @@ export const EditarVentaModal: React.FC<EditarVentaModalProps> = ({
             <button
               type="button"
               onClick={() => setMontaje((prev) => !prev)}
-              className={`relative w-12 h-6 rounded-full transition-all duration-300 ${montaje ? "bg-blue" : "bg-gray-3"}`}
+              className={`relative w-12 h-6 rounded-full transition-all duration-300 ${montaje ? "bg-yellow-dark" : "bg-gray-3"}`}
             >
               <span
                 className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-all duration-300 ${montaje ? "translate-x-6" : "translate-x-0"}`}
@@ -197,11 +200,10 @@ export const EditarVentaModal: React.FC<EditarVentaModalProps> = ({
                   key={m}
                   type="button"
                   onClick={() => setMetodoPago(m)}
-                  className={`py-2.5 rounded-2xl border text-sm font-black uppercase tracking-wide transition-all ${
-                    metodoPago === m
+                  className={`py-2.5 rounded-2xl border text-sm font-black uppercase tracking-wide transition-all ${metodoPago === m
                       ? "bg-blue border-blue text-white shadow-md"
                       : "bg-white border-gray-3 text-gray-4 hover:border-blue hover:text-blue"
-                  }`}
+                    }`}
                 >
                   {m}
                 </button>
@@ -209,33 +211,40 @@ export const EditarVentaModal: React.FC<EditarVentaModalProps> = ({
             </div>
           </div>
 
-          {/* DÍAS COMPROMISO (solo crédito) */}
-          {venta.tipoVenta === "CREDITO" && (
-            <div>
-              <label className="text-sm font-medium text-gray-500 mb-1 block">Días de Compromiso de Pago</label>
-              <select
-                value={diasCompromisoPago ?? ""}
-                onChange={(e) =>
-                  setDiasCompromisoPago(e.target.value === "" ? null : Number(e.target.value))
-                }
-                className="w-full rounded-2xl border border-gray-3 bg-white px-4 py-3 outline-none focus:border-blue focus:ring-4 focus:ring-blue/5 transition-all duration-300 text-dark shadow-sm text-sm"
-              >
-                <option value="">-- Sin compromiso --</option>
-                <option value={1}>1 día</option>
-                <option value={7}>7 días</option>
-                <option value={15}>15 días</option>
-                <option value={30}>30 días</option>
-              </select>
-            </div>
+          {/* DÍAS COMPROMISO Y CUOTAS (solo crédito) */}
+          {venta.tipoVenta === TipoVenta.CREDITO && (
+            <>
+              <div>
+                <label className="text-sm font-medium text-gray-500 mb-1 block">Días de Compromiso de Pago</label>
+                <select
+                  value={diasCompromisoPago ?? ""}
+                  onChange={(e) =>
+                    setDiasCompromisoPago(e.target.value === "" ? null : Number(e.target.value))
+                  }
+                  className="w-full rounded-2xl border border-gray-3 bg-white px-4 py-3 outline-none focus:border-yellow-dark focus:ring-4 focus:ring-yellow/10 transition-all duration-300 text-dark shadow-sm text-sm"
+                >
+                  <option value="">-- Sin compromiso --</option>
+                  <option value={1}>1 día</option>
+                  <option value={7}>7 días</option>
+                  <option value={15}>15 días</option>
+                  <option value={30}>30 días</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-gray-500 mb-1.5 block">Número de Cuotas</label>
+                <CuotasSelector value={nroCuotas} onChange={setNroCuotas} />
+              </div>
+            </>
           )}
         </div>
 
         {/* ACTIONS */}
-        <div className="flex gap-3 mt-6">
+        <div className="flex gap-3.5 mt-8">
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 py-3 rounded-2xl border border-gray-3 font-black text-[11px] uppercase tracking-wider text-dark hover:bg-beige transition-all cursor-pointer"
+            className="flex-1 py-3 rounded-2xl border-2 border-gray-3 font-black text-xs uppercase tracking-wider text-dark hover:bg-beige transition-all cursor-pointer active:scale-95"
           >
             Cancelar
           </button>
@@ -243,7 +252,7 @@ export const EditarVentaModal: React.FC<EditarVentaModalProps> = ({
             type="button"
             onClick={handleSubmit}
             disabled={loading}
-            className="flex-1 py-3 bg-blue hover:bg-blue-dark text-white rounded-2xl font-black text-[11px] uppercase tracking-wider shadow-md hover:shadow-lg transition-all cursor-pointer disabled:opacity-60 flex items-center justify-center gap-2"
+            className="flex-1 py-3 bg-yellow-dark hover:bg-yellow text-white rounded-2xl font-black text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition-all cursor-pointer disabled:opacity-60 flex items-center justify-center gap-2 active:scale-95"
           >
             {loading ? (
               <>
@@ -251,7 +260,7 @@ export const EditarVentaModal: React.FC<EditarVentaModalProps> = ({
                 Guardando...
               </>
             ) : (
-              "Guardar Cambios"
+              "Guardar"
             )}
           </button>
         </div>

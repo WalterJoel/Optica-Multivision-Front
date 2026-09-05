@@ -36,6 +36,8 @@ import { useSessionUser } from "@/hooks/session";
 import PaymentDaysSelector from "./DaysSelector";
 import Discount from "../Cart/Discount";
 
+const NRO_CUOTAS_DEFECTO = 2;
+
 const AlCredito = () => {
     const dispatch = useDispatch();
     const { addSale, loading, statusMessage, success, createdSale } = useCreateSale();
@@ -53,7 +55,7 @@ const AlCredito = () => {
     const [showOrder, setShowOrder] = useState(false);
 
     const [openModal, setOpenModal] = useState<boolean>(false);
-    const [nroCuotas, setNroCuotas] = useState<number>(0);
+    const [nroCuotas, setNroCuotas] = useState<number>(NRO_CUOTAS_DEFECTO);
     const [observacionesLocal, setObservacionesLocal] = useState("");
     const [montoRecibido, setMontoRecibido] = useState("");
     const [typeModal, setTypeModal] = useState<string>("");
@@ -147,7 +149,7 @@ const AlCredito = () => {
             if (success) {
                 dispatch(removeAllItemsFromCart());
                 dispatch(resetVenta());
-                setNroCuotas(0);
+                setNroCuotas(NRO_CUOTAS_DEFECTO);
                 setObservacionesLocal("");
                 setMontoRecibido("");
                 setDiasCompromiso(null);
