@@ -2,6 +2,7 @@ import { useState } from "react";
 import { buscarProductosVendidosPorRangoService } from "@/services/sales";
 import { IProductoVendidoResponse } from "@/types/sales";
 import * as XLSX from "xlsx";
+import { formatearMedida } from "@/utils/lenses";
 
 export function useProductosVendidos() {
   const [loading, setLoading] = useState(false);
@@ -56,8 +57,8 @@ export function useProductosVendidos() {
           "PRECIO UNITARIO": Number(item.precioUnitario),
           "DESCUENTO": Number(item.descuento || 0),
           "SUBTOTAL": Number(item.subtotal),
-          "ESFERA (ESF)": item.esf || "—",
-          "CILINDRO (CYL)": item.cyl || "—",
+          "ESFERA (ESF)": item.esf != null ? formatearMedida(item.esf) : "—",
+          "CILINDRO (CYL)": item.cyl != null ? formatearMedida(item.cyl) : "—",
           "MATRIZ (LENTE)": item.stock?.matrix || "—",
           "FILA (LENTE)": item.stock?.row !== undefined && item.stock?.row !== null ? item.stock.row : "—",
           "COLUMNA (LENTE)": item.stock?.col !== undefined && item.stock?.col !== null ? item.stock.col : "—",

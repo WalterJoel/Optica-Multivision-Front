@@ -4,6 +4,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { TipoProducto } from "@/commons/constants";
 import { IVentaPorTipoItem } from "@/types/sales";
 import { Search, PackageCheck } from "lucide-react";
+import { formatearMedida } from "@/utils/lenses";
 
 export interface ITablaTrasladoRow extends IVentaPorTipoItem {
   _rowKey: string;
@@ -278,10 +279,10 @@ export function TableTraslados({
                         {row.material || "-"}
                       </td>
                       <td className="px-4 py-2 font-bold text-dark text-xs text-center">
-                        {row.sph ?? "-"}
+                        {row.sph != null ? formatearMedida(row.sph) : "-"}
                       </td>
                       <td className="px-4 py-2 font-bold text-dark text-xs text-center">
-                        {row.cyl ?? "-"}
+                        {row.cyl != null ? formatearMedida(row.cyl) : "-"}
                       </td>
                     </>
                   )}

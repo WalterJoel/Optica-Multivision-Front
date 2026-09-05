@@ -14,7 +14,7 @@ import { addItemToCart } from "@/redux/features/cart-slice";
 import { ILensStockMatrixItem } from "@/types/products";
 import { CartItem } from "@/types/cart";
 import { TipoProducto } from "@/commons/constants";
-import { formatearMedidasLente } from "@/utils/lenses";
+import { formatearMedida, formatearMedidasLente } from "@/utils/lenses";
 
 type DetailModalProps = {
   selected: ILensStockMatrixItem;
@@ -166,7 +166,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({
           stockId={selected.id}
           tipoProducto={TipoProducto.LENTE}
           sedeId={sedeId}
-          nombreProducto={`LENTE — ${selected.nombreProducto || ""} (ESF: ${selected.esf}, CYL: ${selected.cyl})`}
+          nombreProducto={`LENTE — ${selected.nombreProducto || ""} (ESF: ${formatearMedida(selected.esf)}, CYL: ${formatearMedida(selected.cyl)})`}
         />
       )}
     </ModalFrameWrapper>

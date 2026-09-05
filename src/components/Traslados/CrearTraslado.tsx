@@ -22,6 +22,7 @@ import { useTraslados } from "@/hooks/traslados/useTraslados";
 import { TableTraslados, ITablaTrasladoRow } from "./TableTraslados";
 import { StatusModal, LoadingModal } from "@/components/Common/modal";
 import { STATUS_MODAL } from "@/commons/constants";
+import { formatearMedida } from "@/utils/lenses";
 
 export function CrearTraslado() {
   // Constantes
@@ -476,7 +477,7 @@ export function CrearTraslado() {
                               </span>
 
                               <span className="text-[10px] font-mono font-bold text-blue">
-                                SPH: {(prod.sph)} | CYL: {prod.cyl}
+                                SPH: {formatearMedida(prod.sph)} | CYL: {formatearMedida(prod.cyl)}
                               </span>
                             </div>
                             <div className="flex items-center gap-2 shrink-0">
