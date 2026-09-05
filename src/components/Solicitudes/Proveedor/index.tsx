@@ -250,11 +250,11 @@ export function Proveedor({
 
   const handleEnviar = async (payload: any) => {
     const res = await enviarMercaderia(payload);
-    if (res) {
-      onSuccessAction();
+    if (res?.success) {
+      onSuccessAction(res.message);
       setEstadoFilter("ENVIADO");
     } else {
-      onErrorAction(statusMessage);
+      onErrorAction(res?.error);
     }
   };
 

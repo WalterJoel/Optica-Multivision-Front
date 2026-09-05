@@ -87,7 +87,7 @@ export function StatusModal({
         </h2>
 
         {/* Mensaje con Scroll */}
-        <p className="text-dark-3 font-medium text-sm leading-relaxed mb-10 px-4 max-h-[150px] overflow-y-auto pr-2 custom-scrollbar">
+        <p className="text-dark-3 font-medium text-sm leading-relaxed mb-10 px-4 max-h-[150px] overflow-y-auto pr-2 custom-scrollbar whitespace-pre-line">
           {message}
         </p>
         {/* Botón Principal */}

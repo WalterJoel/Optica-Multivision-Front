@@ -70,13 +70,12 @@ export function useTraslados() {
       const msg = `Mercadería del traslado #${res.id} despachada correctamente.`;
       setSuccess(true);
       setStatusMessage(msg);
-      return res;
+      return { success: true, data: res, message: msg };
     } catch (err: any) {
-      console.log(err, ' ------------>ER  ')
-      const msg = err.response?.data?.message;
+      const msg = err.response?.data?.message || "Error al despachar la mercadería";
       setStatusMessage(msg);
       setSuccess(false);
-      return null;
+      return { success: false, error: msg };
     } finally {
       setLoading(false);
     }
