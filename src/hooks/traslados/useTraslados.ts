@@ -16,6 +16,7 @@ import {
 
 export function useTraslados() {
   const [loading, setLoading] = useState<boolean>(false);
+  const [actionLoading, setActionLoading] = useState<boolean>(false);
   const [traslados, setTraslados] = useState<ITraslado[]>([]);
   const [statusMessage, setStatusMessage] = useState<string>("");
   const [success, setSuccess] = useState<boolean>(false);
@@ -42,7 +43,7 @@ export function useTraslados() {
   );
 
   const crearTraslado = async (payload: ICrearTrasladoPayload) => {
-    setLoading(true);
+    setActionLoading(true);
     setSuccess(false);
     setStatusMessage("");
     try {
@@ -57,12 +58,12 @@ export function useTraslados() {
       setSuccess(false);
       return null;
     } finally {
-      setLoading(false);
+      setActionLoading(false);
     }
   };
 
   const enviarMercaderia = async (payload: IEnviarMercaderiaPayload) => {
-    setLoading(true);
+    setActionLoading(true);
     setSuccess(false);
     setStatusMessage("");
     try {
@@ -73,16 +74,22 @@ export function useTraslados() {
       return { success: true, data: res, message: msg };
     } catch (err: any) {
       const msg = err.response?.data?.message || "Error al despachar la mercadería";
+      const detallesSinStock = err.response?.data?.detalles || [];
+      // Obtener IDs de detalles que fallaron por stock
+      const invalidDetalleIds = detallesSinStock
+        .filter((d: any) => !d.suficiente)
+        .map((d: any) => Number(d.detalleId ?? d.id));
+
       setStatusMessage(msg);
       setSuccess(false);
-      return { success: false, error: msg };
+      return { success: false, error: msg, invalidDetalleIds };
     } finally {
-      setLoading(false);
+      setActionLoading(false);
     }
   };
 
   const recibirMercaderia = async (payload: IRecibirMercaderiaPayload) => {
-    setLoading(true);
+    setActionLoading(true);
     setSuccess(false);
     setStatusMessage("");
     try {
@@ -97,12 +104,12 @@ export function useTraslados() {
       setSuccess(false);
       return null;
     } finally {
-      setLoading(false);
+      setActionLoading(false);
     }
   };
 
   const eliminarTraslado = async (id: number) => {
-    setLoading(true);
+    setActionLoading(true);
     setSuccess(false);
     setStatusMessage("");
     try {
@@ -117,13 +124,14 @@ export function useTraslados() {
       setSuccess(false);
       return null;
     } finally {
-      setLoading(false);
+      setActionLoading(false);
     }
   };
 
   return {
     traslados,
     loading,
+    actionLoading,
     statusMessage,
     success,
     getTraslados,

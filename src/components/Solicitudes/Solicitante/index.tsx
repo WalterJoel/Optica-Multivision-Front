@@ -273,7 +273,7 @@ export function Solicitante({
   onSuccessAction,
   onErrorAction,
 }: SolicitanteProps) {
-  const { traslados, loading, getTraslados, recibirMercaderia, eliminarTraslado, statusMessage } = useTraslados();
+  const { traslados, loading, actionLoading, getTraslados, recibirMercaderia, eliminarTraslado, statusMessage } = useTraslados();
   const [estadoFilter, setEstadoFilter] = useState<EstadoTraslado>(EstadoTraslado.SOLICITADO);
 
   const fetchTraslados = () => {
@@ -346,13 +346,13 @@ export function Solicitante({
               traslado={t}
               onRecibir={handleRecibir}
               onEliminar={handleEliminar}
-              loading={loading}
+              loading={actionLoading}
             />
           ))}
         </div>
       )}
 
-      <LoadingModal isOpen={loading} />
+      <LoadingModal isOpen={actionLoading} />
     </div>
   );
 }

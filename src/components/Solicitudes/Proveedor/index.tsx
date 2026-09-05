@@ -9,10 +9,11 @@ import { BaseButton } from "@/components/Common/Buttons/BaseButton";
 import { LoadingModal } from "@/components/Common/modal";
 import { formatearMedida } from "@/utils/lenses";
 import { Building2, Calendar } from "lucide-react";
+import { TipoProducto } from "@/commons/constants";
 
 interface ProveedorCardProps {
   traslado: ITraslado;
-  onEnviar: (payload: any) => Promise<void>;
+  onEnviar: (payload: any) => Promise<any>;
   loading?: boolean;
 }
 
@@ -20,6 +21,8 @@ function ProveedorCard({ traslado, onEnviar, loading = false }: ProveedorCardPro
   const [detallesState, setDetallesState] = useState<
     { detalleId: number; cantidadEnviada: number | "" }[]
   >([]);
+  // IDs de filas sin stock
+  const [sinStockIds, setSinStockIds] = useState<number[]>([]);
 
   useEffect(() => {
     if (traslado && traslado.detalles) {
@@ -63,13 +66,20 @@ function ProveedorCard({ traslado, onEnviar, loading = false }: ProveedorCardPro
   const isDespachoEditable = traslado.estado === "SOLICITADO";
 
   const handleAction = async () => {
-    await onEnviar({
+    const res: any = await onEnviar({
       trasladoId: traslado.id,
       detalles: detallesState.map((d) => ({
         detalleId: d.detalleId,
         cantidadEnviada: typeof d.cantidadEnviada === "number" ? d.cantidadEnviada : 0,
       })),
     });
+
+    // Guardar filas con error para pintar en rojo
+    if (res && !res.success && res.invalidDetalleIds) {
+      setSinStockIds(res.invalidDetalleIds.map((id: any) => Number(id)));
+    } else {
+      setSinStockIds([]);
+    }
   };
 
   return (
@@ -142,39 +152,52 @@ function ProveedorCard({ traslado, onEnviar, loading = false }: ProveedorCardPro
                       det.stock?.lente?.material ||
                       "-";
 
-                    const isLente = det.tipoProducto === "LENTE";
+                    const isLente = det.tipoProducto === TipoProducto.LENTE;
                     const sphVal = isLente ? formatearMedida(det.stock?.esf) : "-";
                     const cylVal = isLente ? formatearMedida(det.stock?.cyl) : "-";
 
+                    const esInvalida = sinStockIds.map(Number).includes(Number(det.id));
+
+                    // Clases para celdas normales vs sin stock (usando paleta personalizada de tailwind.config.ts)
+                    const cellBg = esInvalida ? "bg-red-vinolight text-red-vino border-t-2 border-b-2 border-red font-bold" : "";
+
                     return (
-                      <tr key={det.id} className="hover:bg-beige/20">
-                        <td className="px-3 py-1.5 font-bold uppercase text-dark">
+                      // Pinto de rojo si no tiene stock
+                      <tr
+                        key={det.id}
+                        className={
+                          esInvalida
+                            ? "bg-red-vinolight text-red-vino border-y-2 border-red font-bold"
+                            : "hover:bg-beige/20"
+                        }
+                      >
+                        <td className={`px-3 py-1.5 font-bold uppercase ${cellBg || "text-dark"}`}>
                           {codigoVal}
                         </td>
-                        <td className="px-3 py-1.5 text-center uppercase font-bold text-dark-3">
+                        <td className={`px-3 py-1.5 text-center uppercase font-bold ${cellBg || "text-dark-3"}`}>
                           {marcaVal}
                         </td>
-                        <td className="px-3 py-1.5 text-center uppercase font-bold text-dark-3">
+                        <td className={`px-3 py-1.5 text-center uppercase font-bold ${cellBg || "text-dark-3"}`}>
                           {materialVal}
                         </td>
-                        <td className="px-3 py-1.5 text-center text-[10px] font-bold text-dark-5">
+                        <td className={`px-3 py-1.5 text-center text-[10px] font-bold ${cellBg || "text-dark-5"}`}>
                           {det.tipoProducto}
                         </td>
                         {hasLente && (
                           <>
-                            <td className="px-3 py-1.5 text-center font-bold text-dark text-xs">
+                            <td className={`px-3 py-1.5 text-center font-bold text-xs ${cellBg || "text-dark"}`}>
                               {sphVal}
                             </td>
-                            <td className="px-3 py-1.5 text-center font-bold text-dark text-xs">
+                            <td className={`px-3 py-1.5 text-center font-bold text-xs ${cellBg || "text-dark"}`}>
                               {cylVal}
                             </td>
                           </>
                         )}
 
-                        <td className="px-3 py-1.5 text-center font-bold text-dark-3 text-xs">
+                        <td className={`px-3 py-1.5 text-center font-bold text-xs ${cellBg || "text-dark-3"}`}>
                           {det.cantidadSolicitada}
                         </td>
-                        <td className="px-3 py-1.5 text-center font-bold text-dark-3 text-xs">
+                        <td className={`px-3 py-1.5 text-center font-bold text-xs ${cellBg || "text-dark-3"}`}>
                           {isDespachoEditable ? (
                             <div className="flex items-center justify-center">
                               <input
@@ -186,7 +209,10 @@ function ProveedorCard({ traslado, onEnviar, loading = false }: ProveedorCardPro
                                   handleCantidadChange(det.id, e.target.value)
                                 }
                                 onBlur={() => handleBlurQuantity(det.id)}
-                                className="w-20 h-7 px-2 py-0.5 text-center font-black text-xs text-dark border-2 border-blue-light/50 rounded-lg bg-white focus:border-blue-light focus:ring-2 focus:ring-blue-light/20 outline-none shadow-sm transition-all hover:border-blue-light cursor-pointer"
+                                className={`w-20 h-7 px-2 py-0.5 text-center font-black text-xs border-2 rounded-lg outline-none shadow-sm transition-all cursor-pointer ${esInvalida
+                                  ? "border-red bg-white text-red-vino focus:border-red focus:ring-2 focus:ring-red/20 font-bold"
+                                  : "border-blue-light/50 bg-white text-dark focus:border-blue-light focus:ring-2 focus:ring-blue-light/20 hover:border-blue-light"
+                                  }`}
                               />
                             </div>
                           ) : (
@@ -231,7 +257,7 @@ export function Proveedor({
   onSuccessAction,
   onErrorAction,
 }: ProveedorProps) {
-  const { traslados, loading, getTraslados, enviarMercaderia, statusMessage } = useTraslados();
+  const { traslados, loading, actionLoading, getTraslados, enviarMercaderia, statusMessage } = useTraslados();
   const [estadoFilter, setEstadoFilter] = useState<string>("SOLICITADO");
 
   const fetchTraslados = () => {
@@ -255,6 +281,7 @@ export function Proveedor({
     } else {
       onErrorAction(res?.error);
     }
+    return res;
   };
 
   return (
@@ -291,13 +318,13 @@ export function Proveedor({
               key={t.id}
               traslado={t}
               onEnviar={handleEnviar}
-              loading={loading}
+              loading={actionLoading}
             />
           ))}
         </div>
       )}
 
-      <LoadingModal isOpen={loading} />
+      <LoadingModal isOpen={actionLoading} />
     </div>
   );
 }

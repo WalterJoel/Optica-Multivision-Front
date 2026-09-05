@@ -42,7 +42,7 @@ export function CrearTraslado() {
   const { sedes } = useStores();
   const { fetchVentasPorTipo, clearItems: clearVentasItems, items: ventasItems, loading: loadingVentas } = useVentasPorTipo();
   const { fetchProductosForTransfer, clearItems: clearProductosItems, items: productosItems, loading: loadingProductos } = useBuscarProductosTraslado();
-  const { crearTraslado, loading: submitting, statusMessage, setStatusMessage } =
+  const { crearTraslado, actionLoading: submitting, statusMessage, setStatusMessage } =
     useTraslados();
 
   // States
