@@ -476,9 +476,11 @@ export function CrearTraslado() {
                                 {prod.nombre || `${prod.marca || ""} ${prod.material || ""}`.trim() || "Producto"}
                               </span>
 
-                              <span className="text-[10px] font-mono font-bold text-blue">
-                                SPH: {formatearMedida(prod.sph)} | CYL: {formatearMedida(prod.cyl)}
-                              </span>
+                              {selectedCategory === TipoProducto.LENTE && (
+                                <span className="text-[10px] font-mono font-bold text-blue">
+                                  SPH: {formatearMedida(prod.sph)} | CYL: {formatearMedida(prod.cyl)}
+                                </span>
+                              )}
                             </div>
                             <div className="flex items-center gap-2 shrink-0">
                               <span className="bg-emerald-100 text-emerald-800 border border-emerald-300 px-2 py-0.5 rounded-md text-[10px] font-bold">

@@ -38,7 +38,7 @@ export function ModalRecibirMercaderia({
       setDetallesState(
         traslado.detalles.map((d) => ({
           detalleId: d.id,
-          cantidadRecibida: d.cantidadEnviada > 0 ? d.cantidadEnviada : d.cantidadSolicitada,
+          cantidadRecibida: d.cantidadRecibida ?? d.cantidadEnviada ?? 0,
         }))
       );
       setObservaciones("");

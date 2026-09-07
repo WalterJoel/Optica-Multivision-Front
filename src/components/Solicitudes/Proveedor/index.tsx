@@ -29,7 +29,7 @@ function ProveedorCard({ traslado, onEnviar, loading = false }: ProveedorCardPro
       setDetallesState(
         traslado.detalles.map((d) => ({
           detalleId: d.id,
-          cantidadEnviada: d.cantidadEnviada > 0 ? d.cantidadEnviada : d.cantidadSolicitada,
+          cantidadEnviada: d.cantidadEnviada ?? 0,
         }))
       );
     }

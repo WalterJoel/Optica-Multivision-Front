@@ -31,12 +31,7 @@ function SolicitanteCard({ traslado, onRecibir, onEliminar, loading = false }: S
       setDetallesState(
         traslado.detalles.map((d) => ({
           detalleId: d.id,
-          cantidadRecibida:
-            d.cantidadRecibida > 0
-              ? d.cantidadRecibida
-              : d.cantidadEnviada > 0
-              ? d.cantidadEnviada
-              : d.cantidadSolicitada,
+          cantidadRecibida: d.cantidadRecibida ?? d.cantidadEnviada ?? 0,
         }))
       );
     }
