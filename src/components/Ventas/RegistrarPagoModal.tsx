@@ -4,6 +4,9 @@ import React, { useState } from "react";
 import { X, DollarSign, Loader2 } from "lucide-react";
 import { ModalFrameWrapper } from "@/components/Common/modal";
 import { IResponseSale } from "@/types/sales";
+import { MetodoPago } from "@/commons/constants";
+
+const METODOS = Object.values(MetodoPago);
 
 interface RegistrarPagoModalProps {
   venta: IResponseSale;
@@ -12,8 +15,6 @@ interface RegistrarPagoModalProps {
   onSave: (id: number, payload: { montoPagado: number; metodoPago: string; sedeId: number }) => Promise<any>;
   loading: boolean;
 }
-
-const METODOS = ["EFECTIVO", "YAPE", "PLIN", "TRANSFERENCIA"];
 
 export const RegistrarPagoModal: React.FC<RegistrarPagoModalProps> = ({
   venta,
@@ -31,48 +32,33 @@ export const RegistrarPagoModal: React.FC<RegistrarPagoModalProps> = ({
   const montoPagadoActual = Number(venta.montoPagado);
   const nroCuotas = venta.nroCuotas || 1;
 
-  /*
-   * REGLA DE NEGOCIO - REGISTRO DE PAGOS Y CUOTAS:
-   * 1. Si la venta tiene varias cuotas (ej. 3 cuotas), el cliente puede liquidar (cancelar el 100% de la deuda)
-   *    en cualquier cuota previa (1era o 2da).
-   * 2. Si el cliente está en la ÚLTIMA cuota (ej: la 2da de 2, o la 3era de 3), es OBLIGATORIO
-   *    cancelar la totalidad de la deuda restante (deudaActual) para saldar por completo la venta.
-   */
-  const montoCuota = nroCuotas > 0 ? total / nroCuotas : total;
-  const cuotasPagadas = montoCuota > 0 ? Math.floor(montoPagadoActual / montoCuota) : 0;
+  const cuotasPagadas = total > 0 ? Math.floor((montoPagadoActual / total) * nroCuotas) : 0;
   const cuotaActualNumero = Math.min(cuotasPagadas + 1, nroCuotas);
-  const cuotasRestantes = Math.max(nroCuotas - cuotasPagadas, 1);
-  const isUltimaCuota = cuotasRestantes <= 1;
+  const isUltimaCuota = cuotaActualNumero >= nroCuotas;
 
-  const handleSubmit = async () => {
-    const montoNum = parseFloat(monto);
+  const montoNum = parseFloat(monto);
 
-    if (deudaActual <= 0) {
-      setError("La venta ya no tiene deuda pendiente.");
-      return;
-    }
-    if (!monto || isNaN(montoNum) || montoNum <= 0) {
-      setError("Ingresa un monto válido mayor a 0.");
-      return;
-    }
-    // REGLA DE NEGOCIO: En la última cuota es obligatorio cancelar la totalidad de la deuda restante.
-    if (isUltimaCuota && montoNum < deudaActual) {
-      setError(`Es la última cuota: debes abonar el monto completo de S/ ${deudaActual.toFixed(2)}.`);
-      return;
-    }
-    if (!metodoPago) {
-      setError("Selecciona un método de pago.");
-      return;
-    }
+  // El monto es válido si:
+  // 1. Es un número válido mayor a 0
+  // 2. No supera la deuda actual
+  // 3. En la última cuota, no es menor al saldo total restante
+  const isMontoValido =
+    !isNaN(montoNum) &&
+    montoNum > 0 &&
+    montoNum <= deudaActual &&
+    (!isUltimaCuota || montoNum >= deudaActual);
 
-    const montoFinal = Math.min(montoNum, deudaActual);
+  const handleSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!isMontoValido || !metodoPago) return;
+
     setError("");
-    await onSave(venta.id, { montoPagado: montoFinal, metodoPago, sedeId });
+    await onSave(venta.id, { montoPagado: montoNum, metodoPago, sedeId });
   };
 
   return (
     <ModalFrameWrapper size="md" variant="yellow">
-      <div className="p-4 sm:p-6">
+      <form onSubmit={handleSubmit} className="p-4 sm:p-6">
         {/* HEADER */}
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-3.5">
@@ -89,6 +75,7 @@ export const RegistrarPagoModal: React.FC<RegistrarPagoModalProps> = ({
             </div>
           </div>
           <button
+            type="button"
             onClick={onClose}
             className="p-2 rounded-2xl text-slate-400 hover:text-dark hover:bg-slate-100 transition-all border border-slate-200 cursor-pointer"
           >
@@ -147,7 +134,12 @@ export const RegistrarPagoModal: React.FC<RegistrarPagoModalProps> = ({
           />
           {monto && parseFloat(monto) > deudaActual && (
             <p className="mt-1.5 text-xs text-yellow-dark font-bold">
-              ⚠ El monto supera la deuda. Se registrará solo S/ {deudaActual.toFixed(2)}.
+              ⚠ El monto supera la deuda actual (S/ {deudaActual.toFixed(2)}).
+            </p>
+          )}
+          {monto && isUltimaCuota && parseFloat(monto) < deudaActual && (
+            <p className="mt-1.5 text-xs text-yellow-dark font-bold">
+              ⚠ Al ser la última cuota, debes cancelar el 100% de la deuda (S/ {deudaActual.toFixed(2)}).
             </p>
           )}
         </div>
@@ -198,10 +190,9 @@ export const RegistrarPagoModal: React.FC<RegistrarPagoModalProps> = ({
             Cancelar
           </button>
           <button
-            type="button"
-            onClick={handleSubmit}
-            disabled={loading || deudaActual <= 0}
-            className="flex-1 py-3.5 bg-yellow-dark hover:bg-yellow text-white rounded-2xl font-black text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition-all cursor-pointer disabled:opacity-60 flex items-center justify-center gap-2 active:scale-95"
+            type="submit"
+            disabled={loading || deudaActual <= 0 || !metodoPago || !isMontoValido}
+            className="flex-1 py-3.5 bg-yellow-dark hover:bg-yellow text-white rounded-2xl font-black text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 active:scale-95"
           >
             {loading ? (
               <>
@@ -213,7 +204,7 @@ export const RegistrarPagoModal: React.FC<RegistrarPagoModalProps> = ({
             )}
           </button>
         </div>
-      </div>
+      </form>
     </ModalFrameWrapper>
   );
 };
