@@ -31,7 +31,7 @@ function SolicitanteCard({ traslado, onRecibir, onEliminar, loading = false }: S
       setDetallesState(
         traslado.detalles.map((d) => ({
           detalleId: d.id,
-          cantidadRecibida: d.cantidadRecibida ?? d.cantidadEnviada ?? 0,
+          cantidadRecibida: d.cantidadEnviada,
         }))
       );
     }
@@ -203,7 +203,7 @@ function SolicitanteCard({ traslado, onRecibir, onEliminar, loading = false }: S
                               <input
                                 type="number"
                                 min={0}
-                                value={stateItem?.cantidadRecibida ?? 0}
+                                value={stateItem?.cantidadRecibida ?? ""}
                                 onFocus={(e) => e.target.select()}
                                 onChange={(e) =>
                                   handleCantidadChange(det.id, e.target.value)
@@ -311,11 +311,10 @@ export function Solicitante({
           <button
             key={st}
             onClick={() => setEstadoFilter(st)}
-            className={`px-3.5 py-1.5 rounded-xl text-[11px] font-bold border transition-all cursor-pointer ${
-              estadoFilter === st
-                ? "bg-white border-blue-light text-blue-light shadow-sm"
-                : "bg-white/60 border-gray-3 text-dark-5 hover:bg-white"
-            }`}
+            className={`px-3.5 py-1.5 rounded-xl text-[11px] font-bold border transition-all cursor-pointer ${estadoFilter === st
+              ? "bg-white border-blue-light text-blue-light shadow-sm"
+              : "bg-white/60 border-gray-3 text-dark-5 hover:bg-white"
+              }`}
           >
             {st}
           </button>
