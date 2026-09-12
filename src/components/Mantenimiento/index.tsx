@@ -98,62 +98,18 @@ const MyAccount = () => {
               </div>
             </div>
 
-            {/* CONTENT */}
+            {/* CONTENT (Lazy tab rendering) */}
             <div className="flex-grow flex flex-col">
-              <div
-                className={`w-full bg-white rounded-xl shadow-1 flex-grow ${activeTab === "sedes" ? "flex flex-col" : "hidden"}`}
-              >
-                <SedesPage />
-              </div>
-
-              <div
-                className={`w-full bg-white rounded-xl shadow-1 flex-grow ${activeTab === "clientes" ? "flex flex-col" : "hidden"}`}
-              >
-                <ClientsPage />
-              </div>
-
-              <div
-                className={`w-full bg-white rounded-xl shadow-1 flex-grow ${activeTab === "users" ? "flex flex-col" : "hidden"}`}
-              >
-                <UsersTab />
-              </div>
-
-
-
-              <div
-                className={`w-full bg-white rounded-xl shadow-1 flex-grow ${activeTab === "movimiento" ? "flex flex-col" : "hidden"}`}
-              >
-                <MovimientoCajaPage />
-              </div>
-
-              <div
-                className={`w-full bg-white rounded-xl shadow-1 flex-grow ${activeTab === "combos" ? "flex flex-col" : "hidden"}`}
-              >
-                <KitPage />
-              </div>
-
-              <div
-                className={`w-full bg-white rounded-xl shadow-1 flex-grow ${activeTab === "accesories" ? "flex flex-col" : "hidden"}`}
-              >
-                <AccesoriesPage />
-              </div>
-
-              <div
-                className={`w-full bg-white rounded-xl shadow-1 flex-grow ${activeTab === "eyeglasses" ? "flex flex-col" : "hidden"}`}
-              >
-                <EyeglassesPage />
-              </div>
-
-              <div
-                className={`w-full bg-white rounded-xl shadow-1 flex-grow ${activeTab === "discounts" ? "flex flex-col" : "hidden"}`}
-              >
-                <DiscountPage />
-              </div>
-
-              <div
-                className={`w-full bg-white rounded-xl shadow-1 flex-grow ${activeTab === "lens" ? "flex flex-col" : "hidden"}`}
-              >
-                <LensesPage />
+              <div className="w-full bg-white rounded-xl shadow-1 flex-grow flex flex-col">
+                {activeTab === "clientes" && <ClientsPage />}
+                {activeTab === "sedes" && <SedesPage />}
+                {activeTab === "users" && <UsersTab />}
+                {activeTab === "movimiento" && <MovimientoCajaPage />}
+                {activeTab === "combos" && <KitPage />}
+                {activeTab === "accesories" && <AccesoriesPage />}
+                {activeTab === "eyeglasses" && <EyeglassesPage />}
+                {activeTab === "discounts" && <DiscountPage />}
+                {activeTab === "lens" && <LensesPage />}
               </div>
             </div>
           </div>
