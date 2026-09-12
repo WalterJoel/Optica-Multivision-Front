@@ -142,24 +142,9 @@ export default function EditKitModal({
 
     if (!kit) return;
 
-    if (accesorios.length === 0) {
-      setInfoConfig({
-        message: "No ingresaste ningún accesorio aún",
-        code: "KIT VACIO",
-      });
-      setIsInfoOpen(true);
-      return;
-    }
-
     const payload: Partial<ICreateKitAccesory> = {
-      sedeId: kit.sedeId,
       nombre: form.nombre,
       descripcion: form.descripcion,
-      precio: form.precio,
-      accesorios: accesorios.map((a) => ({
-        accesorioId: a.id,
-        cantidad: a.cantidad,
-      })),
     };
 
     await updateKit(kit.id, payload);
@@ -206,7 +191,7 @@ export default function EditKitModal({
           </div>
 
           <form onSubmit={submitEditForm} className="flex flex-col gap-6 pb-6">
-            {/* Sección 1: Datos Básicos */}
+            {/* Sección 1: Nombre del Kit */}
             <div className="bg-beige/40 border border-slate-200/80 border-dashed rounded-2xl p-5">
               <div className="flex items-center gap-2 mb-4">
                 <span className="w-5 h-[3px] bg-yellow-dark rounded-full" />
@@ -215,30 +200,14 @@ export default function EditKitModal({
                 </h4>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <BaseInput
-                  label="Nombre del Kit"
-                  name="nombre"
-                  value={form.nombre}
-                  placeholder="Kit de Limpieza Premium"
-                  required
-                  onChange={onChange}
-                />
-
-                <div className="flex flex-col w-full">
-                  <BaseInput
-                    label="Precio Total (S/)"
-                    name="precio"
-                    type="number"
-                    value={form.precio}
-                    disabled
-                    onChange={onChange}
-                  />
-                  <span className="text-[10px] text-gray-500 font-semibold mt-1 ml-1">
-                    * Se calcula automáticamente al agregar/quitar accesorios abajo.
-                  </span>
-                </div>
-              </div>
+              <BaseInput
+                label="Nombre del Kit"
+                name="nombre"
+                value={form.nombre}
+                placeholder="Kit de Limpieza Premium"
+                required
+                onChange={onChange}
+              />
 
               <div className="mt-4">
                 <BaseTarea
@@ -248,12 +217,11 @@ export default function EditKitModal({
                   minLength={10}
                   placeholder="Ejm: Incluye estuche rígido y líquido de limpieza..."
                   onChange={onChange}
-                  required
                 />
               </div>
             </div>
 
-            {/* Sección 2: Lista de Accesorios */}
+            {/* Sección 2: Lista de Accesorios (Solo lectura) */}
             <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
               <div className="flex items-center justify-between gap-4 mb-4 flex-wrap">
                 <div className="flex items-center gap-2">
@@ -262,16 +230,6 @@ export default function EditKitModal({
                     Accesorios del Kit
                   </h4>
                 </div>
-
-                <BaseButtonIcon
-                  type="button"
-                  variant="primary"
-                  center={false}
-                  onClick={() => setOpenModalAccesory(true)}
-                  className="rounded-xl scale-95"
-                >
-                  <Plus size={18} />
-                </BaseButtonIcon>
               </div>
 
               <div className="border border-gray-3 rounded-2xl overflow-hidden shadow-sm">
@@ -287,9 +245,6 @@ export default function EditKitModal({
                       <th className="p-4 text-center text-xs uppercase tracking-wider">
                         Precio Unitario
                       </th>
-                      <th className="p-4 text-center text-xs uppercase tracking-wider">
-                        Acciones
-                      </th>
                     </tr>
                   </thead>
 
@@ -297,7 +252,7 @@ export default function EditKitModal({
                     {accesorios.length === 0 ? (
                       <tr>
                         <td
-                          colSpan={4}
+                          colSpan={3}
                           className="p-8 text-center text-dark-5 font-bold uppercase text-[10px] tracking-widest"
                         >
                           No hay accesorios agregados aún
@@ -316,15 +271,6 @@ export default function EditKitModal({
                           </td>
                           <td className="p-4 text-center font-bold text-dark">
                             S/ {Number(acc.precioVenta).toFixed(2)}
-                          </td>
-                          <td className="p-4 text-center">
-                            <BaseButtonIcon
-                              type="button"
-                              variant="danger"
-                              onClick={() => eliminarAccesorio(acc.id)}
-                            >
-                              <Trash2 size={16} />
-                            </BaseButtonIcon>
                           </td>
                         </tr>
                       ))
