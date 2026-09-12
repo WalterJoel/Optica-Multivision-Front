@@ -29,7 +29,7 @@ function ProveedorCard({ traslado, onEnviar, loading = false }: ProveedorCardPro
       setDetallesState(
         traslado.detalles.map((d) => ({
           detalleId: d.id,
-          cantidadEnviada: d.cantidadEnviada ?? 0,
+          cantidadEnviada: d.cantidadSolicitada, // POR DEFECTO TIENE QUE SER LA CANTIDAD SOLICITADA SOLO PARA PROVEEDOR
         }))
       );
     }
@@ -203,7 +203,7 @@ function ProveedorCard({ traslado, onEnviar, loading = false }: ProveedorCardPro
                               <input
                                 type="number"
                                 min={0}
-                                value={stateItem?.cantidadEnviada ?? 0}
+                                value={stateItem?.cantidadEnviada ?? ""}
                                 onFocus={(e) => e.target.select()}
                                 onChange={(e) =>
                                   handleCantidadChange(det.id, e.target.value)
