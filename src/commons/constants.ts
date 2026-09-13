@@ -97,11 +97,18 @@ export enum EstadoPedido {
   ENTREGADO = "ENTREGADO",
 }
 
+export enum Roles {
+  ADMIN = "ADMIN",
+  VENDEDOR = "VENDEDOR",
+  ALMACEN = "ALMACEN",
+  TALLER = "TALLER",
+}
+
 export const ROLE_OPTIONS = [
-  { value: "ADMIN", label: "Administrador" },
-  { value: "VENDEDOR", label: "Vendedor" },
-  { value: "ALMACEN", label: "Almacén" },
-  { value: "TALLER", label: "Taller" },
+  { value: Roles.ADMIN, label: "Administrador" },
+  { value: Roles.VENDEDOR, label: "Vendedor" },
+  { value: Roles.ALMACEN, label: "Almacén" },
+  { value: Roles.TALLER, label: "Taller" },
 ];
 
 export enum ClasificacionMonturas {

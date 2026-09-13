@@ -28,12 +28,13 @@ import DiscountPage from "./Discounts/DiscountPage";
 import MovimientoCajaPage from "./MovimientosCaja/MovimientoCajaPage";
 import { useSessionUser } from "@/hooks/session";
 import LensesPage from "./Lenses/LensesPage";
+import { tienePermiso, PERMISOS_PESTAÑAS_MANTENIMIENTO } from "@/commons/permissions";
 
 const MyAccount = () => {
   const [activeTab, setActiveTab] = useState("clientes");
 
   //Hooks
-  const { fullName, user } = useSessionUser();
+  const { fullName, user, role } = useSessionUser();
 
   const menuButton = (id: string, label: string, Icon: any) => (
     <button
@@ -75,24 +76,15 @@ const MyAccount = () => {
 
                 <div className="p-4 sm:p-7.5 xl:p-9">
                   <div className="flex flex-wrap xl:flex-nowrap xl:flex-col gap-4">
-                    {menuButton("clientes", "Clientes", User)}
-                    {menuButton("sedes", "Sedes", Building2)}
-                    {menuButton("users", "Usuarios", Users)}
-
-
-                    {menuButton(
-                      "movimiento",
-                      "Movimientos de Caja",
-                      MoveUpRight,
-                    )}
-
-                    {menuButton("combos", "Combos", Boxes)}
-
-                    {menuButton("accesories", "Accesorios", Package)}
-                    {menuButton("eyeglasses", "Monturas", ScanEye)}
-                    {menuButton("lens", "Lentes", EyeIcon)}
-                    {menuButton("discounts", "Descuentos", Tags)}
-
+                    {tienePermiso(PERMISOS_PESTAÑAS_MANTENIMIENTO.clientes, role) && menuButton("clientes", "Clientes", User)}
+                    {tienePermiso(PERMISOS_PESTAÑAS_MANTENIMIENTO.sedes, role) && menuButton("sedes", "Sedes", Building2)}
+                    {tienePermiso(PERMISOS_PESTAÑAS_MANTENIMIENTO.users, role) && menuButton("users", "Usuarios", Users)}
+                    {tienePermiso(PERMISOS_PESTAÑAS_MANTENIMIENTO.movimiento, role) && menuButton("movimiento", "Movimientos de Caja", MoveUpRight)}
+                    {tienePermiso(PERMISOS_PESTAÑAS_MANTENIMIENTO.combos, role) && menuButton("combos", "Combos", Boxes)}
+                    {tienePermiso(PERMISOS_PESTAÑAS_MANTENIMIENTO.accesories, role) && menuButton("accesories", "Accesorios", Package)}
+                    {tienePermiso(PERMISOS_PESTAÑAS_MANTENIMIENTO.eyeglasses, role) && menuButton("eyeglasses", "Monturas", ScanEye)}
+                    {tienePermiso(PERMISOS_PESTAÑAS_MANTENIMIENTO.lens, role) && menuButton("lens", "Lentes", EyeIcon)}
+                    {tienePermiso(PERMISOS_PESTAÑAS_MANTENIMIENTO.discounts, role) && menuButton("discounts", "Descuentos", Tags)}
                   </div>
                 </div>
               </div>
@@ -101,15 +93,15 @@ const MyAccount = () => {
             {/* CONTENT (Lazy tab rendering) */}
             <div className="flex-grow flex flex-col">
               <div className="w-full bg-white rounded-xl shadow-1 flex-grow flex flex-col">
-                {activeTab === "clientes" && <ClientsPage />}
-                {activeTab === "sedes" && <SedesPage />}
-                {activeTab === "users" && <UsersTab />}
-                {activeTab === "movimiento" && <MovimientoCajaPage />}
-                {activeTab === "combos" && <KitPage />}
-                {activeTab === "accesories" && <AccesoriesPage />}
-                {activeTab === "eyeglasses" && <EyeglassesPage />}
-                {activeTab === "discounts" && <DiscountPage />}
-                {activeTab === "lens" && <LensesPage />}
+                {activeTab === "clientes" && tienePermiso(PERMISOS_PESTAÑAS_MANTENIMIENTO.clientes, role) && <ClientsPage />}
+                {activeTab === "sedes" && tienePermiso(PERMISOS_PESTAÑAS_MANTENIMIENTO.sedes, role) && <SedesPage />}
+                {activeTab === "users" && tienePermiso(PERMISOS_PESTAÑAS_MANTENIMIENTO.users, role) && <UsersTab />}
+                {activeTab === "movimiento" && tienePermiso(PERMISOS_PESTAÑAS_MANTENIMIENTO.movimiento, role) && <MovimientoCajaPage />}
+                {activeTab === "combos" && tienePermiso(PERMISOS_PESTAÑAS_MANTENIMIENTO.combos, role) && <KitPage />}
+                {activeTab === "accesories" && tienePermiso(PERMISOS_PESTAÑAS_MANTENIMIENTO.accesories, role) && <AccesoriesPage />}
+                {activeTab === "eyeglasses" && tienePermiso(PERMISOS_PESTAÑAS_MANTENIMIENTO.eyeglasses, role) && <EyeglassesPage />}
+                {activeTab === "discounts" && tienePermiso(PERMISOS_PESTAÑAS_MANTENIMIENTO.discounts, role) && <DiscountPage />}
+                {activeTab === "lens" && tienePermiso(PERMISOS_PESTAÑAS_MANTENIMIENTO.lens, role) && <LensesPage />}
               </div>
             </div>
           </div>

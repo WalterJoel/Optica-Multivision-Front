@@ -1,14 +1,13 @@
 import Mantenimiento from "@/components/Mantenimiento";
 import React from "react";
-
 import { Metadata } from "next";
+
 export const metadata: Metadata = {
-  title: "My Account | NextCommerce Nextjs E-commerce template",
-  description: "This is My Account page for NextCommerce Template",
-  // other metadata
+  title: "Mantenimiento | Óptica Multivisión",
+  description: "Página de Mantenimiento y Gestión de Óptica Multivisión",
 };
 
-const MyAccountPage = () => {
+const MantenimientoPage = () => {
   return (
     <main>
       <Mantenimiento />
@@ -16,4 +15,4 @@ const MyAccountPage = () => {
   );
 };
 
-export default MyAccountPage;
+export default MantenimientoPage;

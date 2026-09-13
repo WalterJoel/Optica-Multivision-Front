@@ -1,37 +1,10 @@
-//TODO: REFACTORIZAR CODE LLEVAR A CONSTANTS
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
-
-type Role = "ADMIN" | "VENDEDOR" | "ALMACEN" | "TALLER";
-
-const ROLE_PERMISSIONS: Record<Role, string[]> = {
-  ADMIN: [
-    "/products",
-    "/my-account",
-    "/admin",
-    "/profile",
-    "/checkout",
-    "/matrix",
-    "/vender",
-    "/lentes",
-    "/cart",
-    "/register-sale",
-    "/sell-products",
-    "/seguimiento-pedidos",
-    "/caja",
-    "/inventarios/accesorios",
-    "/inventarios/excel",
-    "/traslados",
-    "/solicitudes"
-  ],
-
-  VENDEDOR: ["/products", "/dashboard", "/profile"],
-  ALMACEN: ["/products", "/profile"],
-  TALLER: ["/products"],
-};
+import { Roles } from "@/commons/constants";
+import { PERMISOS_RUTAS, tienePermiso } from "@/commons/permissions";
 
 /*
- * Rutas Publicas
+ * Rutas Públicas
  * PARA TODOS LOS ROLES
  */
 const PUBLIC_ROUTES = ["/", "/signin"];
@@ -41,7 +14,7 @@ export default withAuth(
     const token = req.nextauth.token;
     const path = req.nextUrl.pathname;
 
-    const userRole = token?.role as Role | undefined;
+    const userRole = token?.role as Roles | undefined;
 
     // ✅ siempre permitir públicas
     if (PUBLIC_ROUTES.includes(path)) {
@@ -49,28 +22,23 @@ export default withAuth(
     }
 
     // ❌ sin login → signin
-    if (!token) {
+    if (!token || !userRole) {
       return NextResponse.redirect(new URL("/signin", req.url));
     }
 
-    // ❌ sin role → bloquear
-    if (!userRole) {
-      return NextResponse.redirect(new URL("/signin", req.url));
-    }
+    // Buscar los roles permitidos para la ruta actual
+    const routeEntry = Object.entries(PERMISOS_RUTAS).find(([route]) =>
+      path === route || (route !== "/" && path.startsWith(route))
+    );
 
-    const allowedPages = ROLE_PERMISSIONS[userRole] || [];
-    const hasAccess = allowedPages.some((page) => path.startsWith(page));
+    // Si la ruta está registrada en PERMISOS_RUTAS, evaluar permiso
+    const hasAccess = routeEntry
+      ? tienePermiso(routeEntry[1], userRole)
+      : true;
 
-    // ❌ sin acceso → redirect inteligente por rol
+    // ❌ sin acceso → redirect a /products
     if (!hasAccess) {
-      const fallbackByRole: Record<Role, string> = {
-        ADMIN: "/products",
-        VENDEDOR: "/products",
-        ALMACEN: "/products",
-        TALLER: "/products",
-      };
-
-      return NextResponse.redirect(new URL(fallbackByRole[userRole], req.url));
+      return NextResponse.redirect(new URL("/products", req.url));
     }
 
     return NextResponse.next();
@@ -82,7 +50,7 @@ export default withAuth(
         const path = req.nextUrl.pathname;
 
         // pública siempre accesible
-        if (path === "/" || path === "/signin") return true;
+        if (PUBLIC_ROUTES.includes(path)) return true;
 
         return !!token;
       },

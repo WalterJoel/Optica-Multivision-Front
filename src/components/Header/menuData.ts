@@ -37,7 +37,7 @@ export const menuData: Menu[] = [
     id: 4,
     title: "Ventas",
     newTab: false,
-    path: "/sell-products",
+    path: "/ventas",
   },
   {
     id: 5,
@@ -49,7 +49,7 @@ export const menuData: Menu[] = [
     id: 6,
     title: "Mantenimiento",
     newTab: false,
-    path: "/my-account",
+    path: "/mantenimiento",
   },
   // vista de seguimiento de pedidos
   {

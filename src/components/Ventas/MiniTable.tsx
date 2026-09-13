@@ -28,6 +28,7 @@ import { RegistrarPagoModal } from "./RegistrarPagoModal";
 import { useEditarVenta, useRegistrarPago } from "@/hooks/sales";
 import { useSessionUser } from "@/hooks/session";
 import { STATUS_MODAL, ITEMS_PER_PAGE } from "@/commons/constants";
+import { tienePermiso, PERMISOS_ACCIONES } from "@/commons/permissions";
 import { formatearMedidasLente } from "@/utils/lenses";
 
 export const MiniTable = ({
@@ -60,7 +61,7 @@ export const MiniTable = ({
 
   const { editarVenta, loading: isEditing } = useEditarVenta();
   const { registrarPago, loading: isPaying } = useRegistrarPago();
-  const { sedeId } = useSessionUser();
+  const { sedeId, role } = useSessionUser();
 
   const printRef = useRef<HTMLDivElement | null>(null);
 
@@ -422,16 +423,18 @@ export const MiniTable = ({
                       >
                         <FileText size={16} strokeWidth={3} />
                       </button>
-                      <button
-                        type="button"
-                        onClick={() => setEditSale(venta)}
-                        className="p-2.5 rounded-xl bg-white border border-blue-light-4 text-blue hover:bg-blue hover:text-white cursor-pointer transition-all shadow-sm flex items-center justify-center"
-                        title="Editar Venta"
-                        disabled={!venta.activo}
-                      >
-                        <Pencil size={16} strokeWidth={3} />
-                      </button>
-                      {venta.estadoPago === "PENDIENTE" && Number(venta.deuda) > 0 && venta.activo && (
+                      {tienePermiso(PERMISOS_ACCIONES.EDITAR_VENTA, role) && (
+                        <button
+                          type="button"
+                          onClick={() => setEditSale(venta)}
+                          className="p-2.5 rounded-xl bg-white border border-blue-light-4 text-blue hover:bg-blue hover:text-white cursor-pointer transition-all shadow-sm flex items-center justify-center"
+                          title="Editar Venta"
+                          disabled={!venta.activo}
+                        >
+                          <Pencil size={16} strokeWidth={3} />
+                        </button>
+                      )}
+                      {venta.estadoPago === "PENDIENTE" && Number(venta.deuda) > 0 && venta.activo && tienePermiso(PERMISOS_ACCIONES.REGISTRAR_PAGO_CUOTA, role) && (
                         <button
                           type="button"
                           onClick={() => setPagoSale(venta)}
@@ -441,20 +444,22 @@ export const MiniTable = ({
                           <DollarSign size={16} strokeWidth={3} />
                         </button>
                       )}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setDeleteId(venta.id);
-                        }}
-                        className={`p-2.5 rounded-xl transition-all shadow-sm border flex items-center justify-center ${venta.activo
-                          ? "bg-white border-red-light-4 text-red hover:bg-red hover:text-white cursor-pointer"
-                          : "bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed opacity-60"
-                          }`}
-                        disabled={!venta.activo}
-                        title={venta.activo ? "Anular Venta" : "Venta Anulada"}
-                      >
-                        <Power size={16} strokeWidth={3} />
-                      </button>
+                      {tienePermiso(PERMISOS_ACCIONES.ANULAR_VENTA, role) && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setDeleteId(venta.id);
+                          }}
+                          className={`p-2.5 rounded-xl transition-all shadow-sm border flex items-center justify-center ${venta.activo
+                            ? "bg-white border-red-light-4 text-red hover:bg-red hover:text-white cursor-pointer"
+                            : "bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed opacity-60"
+                            }`}
+                          disabled={!venta.activo}
+                          title={venta.activo ? "Anular Venta" : "Venta Anulada"}
+                        >
+                          <Power size={16} strokeWidth={3} />
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>
