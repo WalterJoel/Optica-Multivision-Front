@@ -221,6 +221,9 @@ export const MiniTable = ({
                 Tipo Venta
               </th>
               <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3 text-center">
+                Método Pago
+              </th>
+              <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3 text-center">
                 Cuotas
               </th>
               <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3 text-center">
@@ -243,7 +246,7 @@ export const MiniTable = ({
             {paginatedData.length === 0 && (
               <tr>
                 <td
-                  colSpan={10}
+                  colSpan={11}
                   className="px-6 py-24 text-center text-dark-5 font-bold uppercase text-[10px] tracking-widest"
                 >
                   No hay ventas registradas
@@ -334,6 +337,17 @@ export const MiniTable = ({
                     >
                       {esCredito ? "A Crédito" : "Al Contado"}
                     </span>
+                  </td>
+
+                  {/* Método Pago */}
+                  <td className="px-6 py-5 text-center">
+                    {venta.metodoPago ? (
+                      <span className="font-bold text-dark uppercase text-[11px]">
+                        {venta.metodoPago}
+                      </span>
+                    ) : (
+                      <span className="text-gray-4 font-semibold">—</span>
+                    )}
                   </td>
 
                   {/* Cuotas */}
@@ -501,7 +515,7 @@ export const MiniTable = ({
             </div>
 
             {/* Metadata Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 mb-6">
               <div className="bg-beige/40 rounded-2xl p-3.5 border border-gray-100/50 flex items-center gap-3">
                 <Calendar size={16} className="text-blue" />
                 <div>
@@ -533,6 +547,16 @@ export const MiniTable = ({
                         : `${selectedSale.cliente.nombres || ""} ${selectedSale.cliente.apellidos || ""}`.trim()
                       : "Público General"
                     }
+                  </span>
+                </div>
+              </div>
+
+              <div className="bg-beige/40 rounded-2xl p-3.5 border border-gray-100/50 flex items-center gap-3">
+                <CreditCard size={16} className="text-blue" />
+                <div>
+                  <span className="block text-[8px] font-black text-gray-4 uppercase tracking-wider leading-none mb-1">Método de Pago</span>
+                  <span className="text-xs font-bold text-dark-3 uppercase truncate block max-w-[150px]">
+                    {selectedSale.metodoPago || "—"}
                   </span>
                 </div>
               </div>
