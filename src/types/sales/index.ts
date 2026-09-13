@@ -47,11 +47,30 @@ export interface IVentaKitResponse {
   ventaId: number;
   kitId: number;
   cantidad: number;
+  createdAt?: string;
   kit?: {
     id: number;
+    sedeId?: number;
     nombre: string;
+    descripcion?: string | null;
     precio: string | number;
-    descripcion?: string;
+    activo?: boolean;
+    createdAt?: string;
+    accesorios?: Array<{
+      id: number;
+      cantidad: number;
+      createdAt?: string;
+      accesorio: {
+        id: number;
+        codigoAccesorio?: string;
+        nombre: string;
+        color?: string;
+        atributo?: string;
+        clasificacion?: string;
+        imagenUrl?: string | null;
+        createdAt?: string;
+      };
+    }>;
   } | null;
 }
 

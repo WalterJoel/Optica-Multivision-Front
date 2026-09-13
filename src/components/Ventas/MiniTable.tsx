@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import { useReactToPrint } from "react-to-print";
 import { ModalFrameWrapper, ConfirmModal, StatusModal } from "@/components/Common/modal";
-import { IResponseSale } from "@/types/sales";
+import { IResponseSale, ProductSale } from "@/types/sales";
 import { IStore } from "@/types/stores";
 import { TicketVenta } from "./TicketVenta";
 import { EditarVentaModal } from "./EditarVentaModal";
@@ -538,6 +538,31 @@ export const MiniTable = ({
               </div>
             </div>
 
+            {/* Sección de Kits Otorgados en la Venta */}
+            {selectedSale.ventaKits && selectedSale.ventaKits.length > 0 && (
+              <div className="bg-emerald-50/60 border border-emerald-200/80 rounded-2xl p-3.5 mb-6 flex items-center gap-3">
+                <span className="text-base">🎁</span>
+                <div>
+                  <span className="block text-[8px] font-black text-emerald-700 uppercase tracking-wider leading-none mb-1">
+                    Kits de Regalo Otorgados
+                  </span>
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {selectedSale.ventaKits.map(
+                      (vk) =>
+                        vk.kit?.nombre && (
+                          <span
+                            key={vk.id}
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-black uppercase tracking-wider bg-white text-emerald-900 border border-emerald-300 shadow-xs"
+                          >
+                            {vk.cantidad > 1 ? `${vk.cantidad}x ${vk.kit.nombre}` : vk.kit.nombre}
+                          </span>
+                        )
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Product list section title */}
             <div className="flex items-center gap-2 mb-3">
               <span className="w-5 h-[3px] bg-yellow-dark rounded-full" />
@@ -561,7 +586,7 @@ export const MiniTable = ({
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-1 bg-white/20">
-                  {selectedSale.productos.map((prod: any) => {
+                  {selectedSale.productos.map((prod: ProductSale) => {
                     const price = Number(prod.precioUnitario);
                     const quantity = Number(prod.cantidad);
                     const discount = Number(prod.descuento || 0);
@@ -601,14 +626,6 @@ export const MiniTable = ({
                             <span className="inline-block mt-1 text-[9px] font-bold font-mono text-yellow-dark bg-yellow/10 border border-yellow-dark/20 rounded px-1.5 py-0.5 mr-1.5">
                               {formatearMedidasLente(prod.esf, prod.cyl)}
                             </span>
-                          )}
-
-                          {/* Badge indicador de Kit vinculado */}
-                          {prod.stock?.lente?.kit && (
-                            <div className="mt-1.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider bg-emerald-100/80 text-emerald-900 border border-emerald-300 shadow-xs w-fit">
-                              <span className="text-xs">🎁</span>
-                              <span>{prod.stock.lente.kit.nombre}</span>
-                            </div>
                           )}
 
                         </td>
