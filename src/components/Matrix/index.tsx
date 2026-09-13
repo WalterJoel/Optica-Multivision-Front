@@ -4,7 +4,8 @@ import { useState } from "react";
 import Breadcrumb from "../Common/Breadcrumb";
 import { BaseButton } from "@/components/Common/Buttons";
 import { StatusModal } from "@/components/Common/modal";
-import { STATUS_MODAL } from "@/commons/constants";
+import { STATUS_MODAL, Roles } from "@/commons/constants";
+import { tienePermiso, PERMISOS_ACCIONES } from "@/commons/permissions";
 import { useLenteStock, useLenses } from "@/hooks/products";
 import { useRouter, useSearchParams } from "next/navigation";
 import { DetailModal } from "./DetailModal";
@@ -55,7 +56,7 @@ const esfValuesPositivo = [
 export default function Matrix() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { sedeId } = useSessionUser(); //Sede automatica
+  const { sedeId, role } = useSessionUser(); // Sede y Rol del usuario autorizados
   const lenteId = Number(searchParams.get("lenteId"));
   const mode = searchParams.get("mode");
 
@@ -312,7 +313,7 @@ export default function Matrix() {
             onExportPdf={() => exportarMatrizPdf(activeLens, stock)}
           />
 
-          {mode !== "stock" && (
+          {mode !== "stock" && tienePermiso(PERMISOS_ACCIONES.GUARDAR_MATRIZ_STOCK, role) && (
             <BaseButton onClick={handleSave} fullWidth={false}>
               Guardar
             </BaseButton>
