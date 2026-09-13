@@ -10,14 +10,12 @@ import { ILens } from "@/types/products";
 import { Edit3, Power, Eye, Search } from "lucide-react";
 import { useLenses } from "@/hooks/products";
 import { useUpdateLens } from "@/hooks/products/lens/useUpdateLens";
-import { useKits } from "@/hooks/kits";
 import { useSessionUser } from "@/hooks/session";
 
 export default function ListLenses() {
   // Hooks
   const { sedeId } = useSessionUser();
   const { lenses, loading, getAllLenses } = useLenses();
-  const { kits, getAllKits } = useKits();
   const {
     updateLens,
     loading: updating,
@@ -34,12 +32,6 @@ export default function ListLenses() {
   const [typeModal, setTypeModal] = useState("");
   const [modalMsg, setModalMsg] = useState("");
 
-  // Load kits for names
-  useEffect(() => {
-    if (sedeId) {
-      getAllKits(Number(sedeId));
-    }
-  }, [sedeId]);
 
   // Memos
   const filteredLenses = useMemo(() => {
@@ -93,11 +85,6 @@ export default function ListLenses() {
     }
   }, [updating, updateOk, updateMessage]);
 
-  const getKitName = (kitId?: number | null) => {
-    if (!kitId) return "Ninguno";
-    const kit = kits.find((k) => k.id === kitId);
-    return kit ? kit.nombre : `Kit #${kitId}`;
-  };
 
   return (
     <div className="w-full rounded-2xl border border-gray-3 bg-white shadow-sm overflow-hidden flex flex-col">
@@ -202,7 +189,7 @@ export default function ListLenses() {
                   <td className="px-6 py-5 text-dark-2 font-semibold">S/ {Number(l.precio_serie3).toFixed(2)}</td>
                   <td className="px-6 py-5 text-dark-2">
                     <span className="px-2.5 py-1 bg-slate-100 text-slate-700 text-[10px] font-bold rounded-lg uppercase">
-                      {getKitName(l.kitId)}
+                      {l.nombreKit || "Ninguno"}
                     </span>
                   </td>
                   <td className="px-6 py-5">

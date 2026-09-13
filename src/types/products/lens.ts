@@ -8,6 +8,7 @@ export interface ILens {
   precio_serie2: number;
   precio_serie3: number;
   kitId?: number | null;
+  nombreKit?: string | null;
   imagenUrl?: string | null;
   activo?: boolean;
   clasificacion: ClasificacionLentes;

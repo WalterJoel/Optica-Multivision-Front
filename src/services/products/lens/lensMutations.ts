@@ -1,5 +1,5 @@
 import { api } from "../../api";
-import { CreateLens, ILens } from "@/types/products";
+import { CreateLens } from "@/types/products";
 
 export const updateLensService = async (
   id: number,
@@ -11,10 +11,5 @@ export const updateLensService = async (
 
 export const deleteLensService = async (id: number) => {
   const { data } = await api.delete(`/productos/lentes/eliminar/${id}`);
-  return data;
-};
-
-export const getLensByIdService = async (id: number): Promise<ILens> => {
-  const { data } = await api.get(`/productos/lente/${id}`);
   return data;
 };
