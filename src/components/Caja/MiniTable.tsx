@@ -8,6 +8,7 @@ import {
   Search,
   Wallet,
   Eye,
+  Printer,
 } from "lucide-react";
 import { formatToPeruDateString, formatToPeruTimeString } from "@/utils/date";
 import { ITEMS_PER_PAGE, TipoVenta, TipoCliente } from "@/commons/constants";
@@ -17,10 +18,12 @@ export const MiniTable = ({
   titulo,
   data = [],
   type,
+  onImprimirTicket,
 }: {
   titulo: string;
   data: any[];
   type: "ingreso" | "egreso";
+  onImprimirTicket?: (filteredData: any[]) => void;
 }) => {
   const [selectedMov, setSelectedMov] = useState<any | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -89,6 +92,19 @@ export const MiniTable = ({
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black bg-blue-light/10 text-blue border border-blue-light/20 shadow-xs uppercase tracking-wider">
               Total: S/. {totalMontoFiltrado.toFixed(2)}
             </span>
+
+            {/* Ticket de consolidado de caja */}
+            {onImprimirTicket && (
+              <button
+                type="button"
+                onClick={() => onImprimirTicket(filteredData)}
+                title="Imprimir Ticket Consolidado"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black bg-emerald-500/10 text-emerald-700 hover:bg-emerald-500/20 border border-emerald-500/30 shadow-xs uppercase tracking-wider transition-all cursor-pointer"
+              >
+                <Printer size={12} />
+                <span>Imprimir Ticket</span>
+              </button>
+            )}
           </div>
         </div>
 

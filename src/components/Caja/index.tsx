@@ -4,21 +4,30 @@ import React, { useEffect, useState } from "react";
 import { TrendingUp, Calendar } from "lucide-react";
 import { useMovimientosCaja } from "@/hooks/caja-movimiento/useMovimientosCaja";
 import { useSessionUser } from "@/hooks/session/useSessionUser";
+import { useStores } from "@/hooks/stores/useStores";
 import { getLocalDateString } from "@/utils/date";
 import { SedeSelect } from "@/components/Common/SedeSelect";
 import { LoadingModal } from "@/components/Common/modal";
 import { MiniTable } from "./MiniTable";
 import CajaResumenCard from "./CajaResumenCard";
-
+import { TicketConsolidadoCaja } from "./TicketConsolidadoCaja";
 
 export default function CajaPremiumFino() {
   const { movimientos, getMovimientosCaja, loading } = useMovimientosCaja();
   const { sedeId: userSedeId } = useSessionUser();
+  const { sedes } = useStores();
 
   const today = getLocalDateString();
   const [sedeId, setSedeId] = useState<number | null>(null);
   const [fechaInicio, setFechaInicio] = useState<string>(today);
   const [fechaFin, setFechaFin] = useState<string>(today);
+
+  const [ticketState, setTicketState] = useState<{
+    titulo: string;
+    movimientos: any[];
+  } | null>(null);
+
+  const currentSede = sedes.find((s) => s.id === sedeId) || null;
 
   useEffect(() => {
     if (userSedeId) {
@@ -47,6 +56,14 @@ export default function CajaPremiumFino() {
   const totalIngresos = ingresos.reduce((acc, m) => acc + getMovimientoNeto(m), 0);
   const totalEgresos = egresos.reduce((acc, m) => acc + getMovimientoNeto(m), 0);
   const balance = totalIngresos - totalEgresos;
+
+  // Ticket consolidado de caja
+  const handlePrintTicket = (titulo: string, dataToPrint: any[]) => {
+    setTicketState({ titulo, movimientos: dataToPrint });
+    setTimeout(() => {
+      window.print();
+    }, 100);
+  };
 
   return (
     <div className="bg-beige pt-32 pb-16 px-4 sm:px-6 lg:px-8 min-h-screen mt-15">
@@ -122,18 +139,34 @@ export default function CajaPremiumFino() {
             titulo="Historial de Ingresos"
             data={ingresos}
             type="ingreso"
+            onImprimirTicket={(filteredData) =>
+              handlePrintTicket("Reporte de Ingresos", filteredData)
+            }
           />
           <MiniTable
             titulo="Historial de Egresos"
             data={egresos}
             type="egreso"
+            onImprimirTicket={(filteredData) =>
+              handlePrintTicket("Reporte de Egresos", filteredData)
+            }
           />
         </div>
       </div>
+
+      {/* TICKET DE IMPRESIÓN CONSOLIDADO */}
+      {ticketState && (
+        <TicketConsolidadoCaja
+          titulo={ticketState.titulo}
+          sede={currentSede}
+          fechaInicio={fechaInicio}
+          fechaFin={fechaFin}
+          movimientos={ticketState.movimientos}
+        />
+      )}
 
       {/* MODAL DE CARGA */}
       <LoadingModal isOpen={loading} />
     </div>
   );
 }
-
