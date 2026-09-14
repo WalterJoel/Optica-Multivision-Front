@@ -66,11 +66,16 @@ export interface IClient {
 
 export interface ISearchClient {
   id: number;
+  tipoCliente: ClientType;
+  tipoDoc: "DNI" | "RUC";
   numeroDoc: string;
   nombres: string | null;
   apellidos: string | null;
-  tipoCliente?: ClientType;
-  razonSocial?: string | null;
+  razonSocial: string | null;
+  telefono?: string | null;
+  correo?: string | null;
+  direccion?: string | null;
+  activo: boolean;
 }
 
 export interface IResponseSearchClient {

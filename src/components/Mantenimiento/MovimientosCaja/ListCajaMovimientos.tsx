@@ -7,9 +7,10 @@ import EditCajaMovimientoModal from "./EditCajaMovimientoModal";
 import { Edit3, Search, TrendingUp, TrendingDown, Calendar, CreditCard } from "lucide-react";
 import { LoadingModal } from "@/components/Common/modal";
 import { useSessionUser } from "@/hooks/session";
+import { tienePermiso, PERMISOS_ACCIONES } from "@/commons/permissions";
 
 export default function ListCajaMovimientos() {
-  const { sedeId } = useSessionUser();
+  const { sedeId, role } = useSessionUser();
   const { movimientos, loading, getMovimientosCaja } = useMovimientosCaja();
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -184,14 +185,16 @@ export default function ListCajaMovimientos() {
                       </td>
                       <td className="px-6 py-5 text-right">
                         <div className="flex items-center justify-end gap-2.5">
-                          <button
-                            type="button"
-                            onClick={() => openEditModal(item)}
-                            className="p-2.5 rounded-xl bg-yellow-dark text-white hover:scale-110 active:scale-95 transition-all shadow-md shadow-yellow-dark/20 border border-yellow-dark"
-                            title="Editar Movimiento"
-                          >
-                            <Edit3 size={16} strokeWidth={3} />
-                          </button>
+                          {tienePermiso(PERMISOS_ACCIONES.EDITAR_MOVIMIENTO_CAJA, role) && (
+                            <button
+                              type="button"
+                              onClick={() => openEditModal(item)}
+                              className="p-2.5 rounded-xl bg-yellow-dark text-white hover:scale-110 active:scale-95 transition-all shadow-md shadow-yellow-dark/20 border border-yellow-dark"
+                              title="Editar Movimiento"
+                            >
+                              <Edit3 size={16} strokeWidth={3} />
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>

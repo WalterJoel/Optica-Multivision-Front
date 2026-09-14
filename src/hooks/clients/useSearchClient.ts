@@ -23,8 +23,8 @@ export function useSearchClient() {
 
     debounceRef.current = setTimeout(async () => {
       try {
-        const data = await searchClient(value);
-        setClients(data);
+        const { clientes } = await searchClient(value);
+        setClients(clientes || []);
         setShowList(true);
       } catch (error) {
         console.error("Error buscando clientes", error);

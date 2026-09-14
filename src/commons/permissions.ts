@@ -21,7 +21,7 @@ export const PERMISOS_PESTAÑAS_MANTENIMIENTO: Record<string, Roles[]> = {
   clientes: [Roles.ADMIN, Roles.VENDEDOR],
   sedes: [Roles.ADMIN],
   users: [Roles.ADMIN],
-  movimiento: [Roles.ADMIN],
+  movimiento: [Roles.ADMIN, Roles.VENDEDOR],
   combos: [Roles.ADMIN],
   accesories: [Roles.ADMIN],
   eyeglasses: [Roles.ADMIN],
@@ -43,6 +43,9 @@ export const PERMISOS_ACCIONES: Record<string, Roles[]> = {
   // Traslados
   CREAR_TRASLADO: [Roles.ADMIN, Roles.VENDEDOR],
   CANCELAR_TRASLADO: [Roles.ADMIN],
+
+  // Movimientos de Caja
+  EDITAR_MOVIMIENTO_CAJA: [Roles.ADMIN],
 };
 
 // 4. HELPER UNIVERSAL PARA VALIDAR PERMISOS EN VISTAS Y BOTONES

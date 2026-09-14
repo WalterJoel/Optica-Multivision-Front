@@ -1,7 +1,7 @@
 
 "use client";
 import EditClientModal from "./EditClientModal";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { IClient } from "@/types/clients";
 import { Edit3, Power, Eye, User, Building, Phone, Mail, Search, X } from "lucide-react";
 import { ModalFrameWrapper } from "@/components/Common/modal";
@@ -9,7 +9,6 @@ import { useClients, useToggleClientStatus } from "@/hooks/clients";
 
 export default function ListClients() {
   const { toggleClientStatus } = useToggleClientStatus();
-  const [searchTerm, setSearchTerm] = useState("");
 
   const [openMeasures, setOpenMeasures] = useState(false);
   const [selected, setSelected] = useState<IClient | null>(null);
@@ -18,13 +17,23 @@ export default function ListClients() {
   const [clientEdit, setClientEdit] = useState<IClient | null>(null);
 
   // Hooks
-  const { loadClientes, clientes, loading } = useClients();
+  const {
+    loadClientes,
+    clientes,
+    total,
+    page,
+    limit,
+    searchTerm,
+    setSearchTerm,
+    setPage,
+    loading,
+  } = useClients(50);
 
   // Functions
   const onToggle = async (c: IClient) => {
     const success = await toggleClientStatus(c.id, !c.activo);
     if (success) {
-      await loadClientes();
+      loadClientes();
     }
   };
 
@@ -39,33 +48,11 @@ export default function ListClients() {
     return c.razonSocial ?? "-";
   };
 
-  const filteredClientes = useMemo(() => {
-    let result = clientes;
-
-    if (searchTerm.trim() !== "") {
-      const term = searchTerm.toLowerCase().trim();
-      result = result.filter((c) => {
-        const nombres = (c.nombres || "").toLowerCase();
-        const apellidos = (c.apellidos || "").toLowerCase();
-        const razonSocial = (c.razonSocial || "").toLowerCase();
-        const numeroDoc = (c.numeroDoc || "").toLowerCase();
-
-        return (
-          nombres.includes(term) ||
-          apellidos.includes(term) ||
-          razonSocial.includes(term) ||
-          numeroDoc.includes(term)
-        );
-      });
-    }
-
-    return result;
-  }, [clientes, searchTerm]);
-
   const openModalMeasures = (c: IClient) => {
     setSelected(c);
     setOpenMeasures(true);
   };
+
   const openEditClient = (c: IClient) => {
     setClientEdit(c);
     setOpenEdit(true);
@@ -87,7 +74,9 @@ export default function ListClients() {
     <>
       <div className="w-full rounded-2xl border border-gray-3 bg-white shadow-sm overflow-hidden flex flex-col">
         <div className="px-6 py-5 border-b border-gray-3 flex items-center justify-between gap-4 flex-wrap bg-white">
-
+          <span className="text-xs font-bold text-gray-5">
+            Total clientes: <strong className="text-dark">{total}</strong>
+          </span>
 
           {/* Buscador */}
           <div className="flex items-center bg-beige-dark/40 rounded-2xl px-4 py-2 border border-transparent focus-within:border-blue-light-3 transition-all ml-auto">
@@ -134,7 +123,7 @@ export default function ListClients() {
                     Cargando clientes...
                   </td>
                 </tr>
-              ) : filteredClientes.length === 0 ? (
+              ) : clientes.length === 0 ? (
                 <tr>
                   <td
                     colSpan={5}
@@ -142,11 +131,11 @@ export default function ListClients() {
                   >
                     {searchTerm.trim() !== ""
                       ? "No se encontraron clientes para tu búsqueda"
-                      : "No se encontraron clientes activos"}
+                      : "No se encontraron clientes en la base de datos"}
                   </td>
                 </tr>
               ) : (
-                filteredClientes.map((c) => {
+                clientes.map((c) => {
                   return (
                     <tr
                       key={c.id}
@@ -212,7 +201,7 @@ export default function ListClients() {
                         </div>
                       </td>
 
-                      {/* Acciones - tal cual listStores.tsx */}
+                      {/* Acciones */}
                       <td className="px-6 py-5 text-right">
                         <div className="flex items-center justify-end gap-2.5">
                           {/* Ver Medidas */}
@@ -255,6 +244,36 @@ export default function ListClients() {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Paginación */}
+        <div className="px-6 py-4 border-t border-gray-3 flex items-center justify-between gap-4 flex-wrap bg-white">
+          <span className="text-xs font-semibold text-dark-5">
+            Mostrando {clientes.length > 0 ? (page - 1) * limit + 1 : 0} a{" "}
+            {Math.min(page * limit, total)} de {total} clientes
+          </span>
+
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              disabled={page <= 1 || loading}
+              onClick={() => setPage(page - 1)}
+              className="px-3.5 py-1.5 rounded-xl border border-gray-3 bg-beige/40 text-xs font-bold text-dark-3 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-beige transition-all cursor-pointer"
+            >
+              Anterior
+            </button>
+            <span className="text-xs font-black text-dark px-2">
+              Página {page} de {Math.ceil(total / limit) || 1}
+            </span>
+            <button
+              type="button"
+              disabled={page >= Math.ceil(total / limit) || loading}
+              onClick={() => setPage(page + 1)}
+              className="px-3.5 py-1.5 rounded-xl border border-gray-3 bg-beige/40 text-xs font-bold text-dark-3 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-beige transition-all cursor-pointer"
+            >
+              Siguiente
+            </button>
+          </div>
         </div>
       </div>
 
