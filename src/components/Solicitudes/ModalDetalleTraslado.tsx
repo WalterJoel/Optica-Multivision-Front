@@ -83,6 +83,22 @@ export function ModalDetalleTraslado({
             (d) => d.tipoProducto === "LENTE" || d.stockId != null
           );
 
+          // Sección de suma de cantidades
+          const totalSolicitada = traslado.detalles.reduce(
+            (acc, d) => acc + d.cantidadSolicitada,
+            0
+          );
+
+          const totalEnviada = traslado.detalles.reduce(
+            (acc, d) => acc + d.cantidadEnviada,
+            0
+          );
+
+          const totalRecibida = traslado.detalles.reduce(
+            (acc, d) => acc + d.cantidadRecibida,
+            0
+          );
+
           return (
             <div className="border border-gray-3 rounded-2xl overflow-hidden shadow-sm">
               <table className="w-full text-left text-xs border-collapse">
@@ -98,9 +114,31 @@ export function ModalDetalleTraslado({
                         <th className="px-3 py-1.5 text-center">CYL</th>
                       </>
                     )}
-                    <th className="px-3 py-1.5 text-center">📥 Solicitada</th>
-                    <th className="px-3 py-1.5 text-center">🚚 Enviada</th>
-                    <th className="px-3 py-1.5 text-center">✅ Recibida</th>
+                    {/* Sección de encabezados con contadores */}
+                    <th className="px-3 py-1.5 text-center">
+                      <div className="flex items-center justify-center gap-1.5">
+                        <span>📥 Solicitada</span>
+                        <span className="inline-flex items-center justify-center bg-amber-500/10 text-amber-600 border border-amber-500/30 px-1.5 py-0.5 rounded-full font-black text-[10px]">
+                          {totalSolicitada}
+                        </span>
+                      </div>
+                    </th>
+                    <th className="px-3 py-1.5 text-center">
+                      <div className="flex items-center justify-center gap-1.5">
+                        <span>🚚 Enviada</span>
+                        <span className="inline-flex items-center justify-center bg-amber-500/10 text-amber-600 border border-amber-500/30 px-1.5 py-0.5 rounded-full font-black text-[10px]">
+                          {totalEnviada}
+                        </span>
+                      </div>
+                    </th>
+                    <th className="px-3 py-1.5 text-center">
+                      <div className="flex items-center justify-center gap-1.5">
+                        <span>✅ Recibida</span>
+                        <span className="inline-flex items-center justify-center bg-amber-500/10 text-amber-600 border border-amber-500/30 px-1.5 py-0.5 rounded-full font-black text-[10px]">
+                          {totalRecibida}
+                        </span>
+                      </div>
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-2 text-dark font-medium">

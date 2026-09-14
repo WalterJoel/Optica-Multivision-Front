@@ -110,6 +110,22 @@ function ProveedorCard({ traslado, onEnviar, loading = false }: ProveedorCardPro
             (d) => d.tipoProducto === "LENTE" || d.stockId != null
           );
 
+          // Sección de suma de cantidades
+          const totalSolicitada = traslado.detalles.reduce(
+            (acc, d) => acc + d.cantidadSolicitada,
+            0
+          );
+
+          const totalAEnviar = isDespachoEditable
+            ? detallesState.reduce(
+                (acc, s) => acc + Number(s.cantidadEnviada),
+                0
+              )
+            : traslado.detalles.reduce(
+                (acc, d) => acc + d.cantidadEnviada,
+                0
+              );
+
           return (
             <div className="border border-gray-3 rounded-xl overflow-hidden mb-4">
               <table className="w-full text-left text-xs border-collapse">
@@ -125,8 +141,23 @@ function ProveedorCard({ traslado, onEnviar, loading = false }: ProveedorCardPro
                         <th className="px-3 py-1.5 text-center">CYL</th>
                       </>
                     )}
-                    <th className="px-3 py-1.5 text-center">📥 Cant. Solicitada</th>
-                    <th className="px-3 py-1.5 text-center">🚚 Cant. a Enviar</th>
+                    {/* Sección de encabezados con contadores */}
+                    <th className="px-3 py-1.5 text-center">
+                      <div className="flex items-center justify-center gap-1.5">
+                        <span>📥 Cant. Solicitada</span>
+                        <span className="inline-flex items-center justify-center bg-amber-500/10 text-amber-600 border border-amber-500/30 px-1.5 py-0.5 rounded-full font-black text-[10px]">
+                          {totalSolicitada}
+                        </span>
+                      </div>
+                    </th>
+                    <th className="px-3 py-1.5 text-center">
+                      <div className="flex items-center justify-center gap-1.5">
+                        <span>🚚 Cant. a Enviar</span>
+                        <span className="inline-flex items-center justify-center bg-amber-500/10 text-amber-600 border border-amber-500/30 px-1.5 py-0.5 rounded-full font-black text-[10px]">
+                          {totalAEnviar}
+                        </span>
+                      </div>
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-2 text-dark font-medium">
