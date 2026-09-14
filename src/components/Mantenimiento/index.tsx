@@ -31,7 +31,7 @@ import LensesPage from "./Lenses/LensesPage";
 import { tienePermiso, PERMISOS_PESTAÑAS_MANTENIMIENTO } from "@/commons/permissions";
 
 const MyAccount = () => {
-  const [activeTab, setActiveTab] = useState("clientes");
+  const [activeTab, setActiveTab] = useState("sedes");
 
   //Hooks
   const { fullName, user, role } = useSessionUser();

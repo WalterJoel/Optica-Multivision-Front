@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { IClient } from "@/types/clients";
+import { IClient, ClientType } from "@/types/clients";
 import { LoadingModal, StatusModal, ModalFrameWrapper } from "@/components/Common/modal";
-import { STATUS_MODAL } from "@/commons/constants";
+import { STATUS_MODAL, TipoCliente } from "@/commons/constants";
 import { BaseInput } from "@/components/Common/Inputs/BaseInput";
+import { BaseSelect } from "@/components/Common/Inputs/BaseSelect";
 import { BaseTarea } from "@/components/Common/Inputs/BaseTarea";
 import { BaseButton } from "@/components/Common/Buttons/BaseButton";
 import { useUpdateClient } from "@/hooks/clients";
@@ -16,6 +17,12 @@ interface Props {
   onClose: () => void;
   onUpdated: () => void | Promise<void>;
 }
+
+const parseNumberOrNull = (val: any): number | null => {
+  if (val === "" || val === null || val === undefined) return null;
+  const num = Number(val);
+  return isNaN(num) ? null : num;
+};
 
 export default function EditClientModal({
   open,
@@ -32,7 +39,18 @@ export default function EditClientModal({
   const [statusMessage, setStatusMessage] = useState("");
 
   useEffect(() => {
-    setForm(client);
+    if (client) {
+      let formattedDate = client.fechaNacimiento ?? "";
+      if (formattedDate && formattedDate.includes("T")) {
+        formattedDate = formattedDate.split("T")[0];
+      }
+      setForm({
+        ...client,
+        fechaNacimiento: formattedDate,
+      });
+    } else {
+      setForm(null);
+    }
   }, [client]);
 
   useEffect(() => {
@@ -74,30 +92,61 @@ export default function EditClientModal({
     });
   };
 
+  const handleTipoClienteChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const tipo = e.target.value as ClientType;
+    const docType = tipo === TipoCliente.PERSONA ? "DNI" : "RUC";
+    setForm((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        tipoCliente: tipo,
+        tipoDoc: docType,
+      };
+    });
+  };
+
+  const handleTipoDocChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const docType = e.target.value as "DNI" | "RUC";
+    setForm((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        tipoDoc: docType,
+      };
+    });
+  };
+
   const updateClient = async () => {
     if (!form) return;
 
+    const isPersona = form.tipoCliente === TipoCliente.PERSONA;
+
     await runUpdate(form.id, {
-      nombres: form.nombres?.trim() || null,
-      apellidos: form.apellidos?.trim() || null,
-      razonSocial: form.razonSocial?.trim() || null,
+      tipoCliente: form.tipoCliente,
+      tipoDoc: form.tipoDoc,
+      numeroDoc: form.numeroDoc?.trim() || "",
+
+      nombres: isPersona ? (form.nombres?.trim() || null) : null,
+      apellidos: isPersona ? (form.apellidos?.trim() || null) : null,
+      razonSocial: !isPersona ? (form.razonSocial?.trim() || null) : null,
+
       telefono: form.telefono?.trim() || null,
       correo: form.correo?.trim() || null,
       direccion: form.direccion?.trim() || null,
       antecedentes: form.antecedentes?.trim() || null,
       fechaNacimiento: form.fechaNacimiento || null,
 
-      add: form.add || null,
-      dipOd: form.dipOd || null,
-      dipOi: form.dipOi || null,
+      add: parseNumberOrNull(form.add),
+      dipOd: parseNumberOrNull(form.dipOd),
+      dipOi: parseNumberOrNull(form.dipOi),
 
-      odEsf: form.odEsf || null,
-      odCyl: form.odCyl || null,
-      odEje: form.odEje || null,
+      odEsf: parseNumberOrNull(form.odEsf),
+      odCyl: parseNumberOrNull(form.odCyl),
+      odEje: parseNumberOrNull(form.odEje),
 
-      oiEsf: form.oiEsf || null,
-      oiCyl: form.oiCyl || null,
-      oiEje: form.oiEje || null,
+      oiEsf: parseNumberOrNull(form.oiEsf),
+      oiCyl: parseNumberOrNull(form.oiCyl),
+      oiEje: parseNumberOrNull(form.oiEje),
     });
   };
 
@@ -110,7 +159,7 @@ export default function EditClientModal({
   };
 
   const getNombre = () => {
-    if (form.tipoCliente === "PERSONA") {
+    if (form.tipoCliente === TipoCliente.PERSONA) {
       return `${form.nombres ?? ""} ${form.apellidos ?? ""}`.trim() || "-";
     }
     return form.razonSocial ?? "-";
@@ -146,40 +195,7 @@ export default function EditClientModal({
 
           {/* Form Content */}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            {/* Generales */}
-            <div className="bg-beige/40 border border-slate-200/80 border-dashed rounded-2xl p-5">
-              <div className="flex items-center gap-2 mb-4">
-                <span className="w-5 h-[3px] bg-yellow-dark rounded-full" />
-                <h4 className="text-[10px] font-black text-blue uppercase tracking-widest">
-                  Generales
-                </h4>
-              </div>
-
-              <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-3">
-                <BaseInput
-                  label="ADD"
-                  name="add"
-                  value={form.add ?? ""}
-                  onChange={handleInputChange}
-                />
-
-                <BaseInput
-                  label="DIP OD"
-                  name="dipOd"
-                  value={form.dipOd ?? ""}
-                  onChange={handleInputChange}
-                />
-
-                <BaseInput
-                  label="DIP OI"
-                  name="dipOi"
-                  value={form.dipOi ?? ""}
-                  onChange={handleInputChange}
-                />
-              </div>
-            </div>
-
-            {/* Datos principales */}
+            {/* Datos de Identificación y principales */}
             <div className="bg-beige/40 border border-slate-200/80 border-dashed rounded-2xl p-5">
               <div className="flex items-center gap-2 mb-4">
                 <span className="w-5 h-[3px] bg-yellow-dark rounded-full" />
@@ -189,7 +205,38 @@ export default function EditClientModal({
               </div>
 
               <div className="mt-3 grid grid-cols-1 gap-3">
-                {form.tipoCliente === "PERSONA" ? (
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <BaseSelect
+                    label="Tipo Cliente"
+                    name="tipoCliente"
+                    value={form.tipoCliente}
+                    onChange={handleTipoClienteChange}
+                    options={[
+                      { label: "Persona", value: TipoCliente.PERSONA },
+                      { label: "Empresa", value: TipoCliente.EMPRESA },
+                    ]}
+                  />
+
+                  <BaseSelect
+                    label="Tipo Doc."
+                    name="tipoDoc"
+                    value={form.tipoDoc}
+                    onChange={handleTipoDocChange}
+                    options={[
+                      { label: "DNI", value: "DNI" },
+                      { label: "RUC", value: "RUC" },
+                    ]}
+                  />
+
+                  <BaseInput
+                    label="N° Documento"
+                    name="numeroDoc"
+                    value={form.numeroDoc ?? ""}
+                    onChange={handleInputChange}
+                  />
+                </div>
+
+                {form.tipoCliente === TipoCliente.PERSONA ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <BaseInput
                       label="Nombres"
@@ -218,6 +265,39 @@ export default function EditClientModal({
                   label="Teléfono"
                   name="telefono"
                   value={form.telefono ?? ""}
+                  onChange={handleInputChange}
+                />
+              </div>
+            </div>
+
+            {/* Generales / Medidas básicas */}
+            <div className="bg-beige/40 border border-slate-200/80 border-dashed rounded-2xl p-5">
+              <div className="flex items-center gap-2 mb-4">
+                <span className="w-5 h-[3px] bg-yellow-dark rounded-full" />
+                <h4 className="text-[10px] font-black text-blue uppercase tracking-widest">
+                  Medidas Generales
+                </h4>
+              </div>
+
+              <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-3">
+                <BaseInput
+                  label="ADD"
+                  name="add"
+                  value={form.add ?? ""}
+                  onChange={handleInputChange}
+                />
+
+                <BaseInput
+                  label="DIP OD"
+                  name="dipOd"
+                  value={form.dipOd ?? ""}
+                  onChange={handleInputChange}
+                />
+
+                <BaseInput
+                  label="DIP OI"
+                  name="dipOi"
+                  value={form.dipOi ?? ""}
                   onChange={handleInputChange}
                 />
               </div>
@@ -322,7 +402,6 @@ export default function EditClientModal({
                 name="direccion"
                 value={form.direccion ?? ""}
                 onChange={handleInputChange}
-
               />
 
               <BaseTarea
