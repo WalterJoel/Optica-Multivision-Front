@@ -10,7 +10,6 @@ const METODOS = Object.values(MetodoPago);
 
 interface RegistrarPagoModalProps {
   venta: IResponseSale;
-  sedeId: number;
   onClose: () => void;
   onSave: (id: number, payload: { montoPagado: number; metodoPago: string; sedeId: number }) => Promise<any>;
   loading: boolean;
@@ -18,7 +17,6 @@ interface RegistrarPagoModalProps {
 
 export const RegistrarPagoModal: React.FC<RegistrarPagoModalProps> = ({
   venta,
-  sedeId,
   onClose,
   onSave,
   loading,
@@ -53,7 +51,7 @@ export const RegistrarPagoModal: React.FC<RegistrarPagoModalProps> = ({
     if (!isMontoValido || !metodoPago) return;
 
     setError("");
-    await onSave(venta.id, { montoPagado: montoNum, metodoPago, sedeId });
+    await onSave(venta.id, { montoPagado: montoNum, metodoPago, sedeId: venta.sedeId });
   };
 
   return (

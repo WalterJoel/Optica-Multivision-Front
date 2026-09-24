@@ -27,7 +27,7 @@ import { EditarVentaModal } from "./EditarVentaModal";
 import { RegistrarPagoModal } from "./RegistrarPagoModal";
 import { useEditarVenta, useRegistrarPago } from "@/hooks/sales";
 import { useSessionUser } from "@/hooks/session";
-import { STATUS_MODAL, ITEMS_PER_PAGE } from "@/commons/constants";
+import { STATUS_MODAL, ITEMS_PER_PAGE, EstadoPago, TipoVenta } from "@/commons/constants";
 import { tienePermiso, PERMISOS_ACCIONES } from "@/commons/permissions";
 import { formatearMedidasLente } from "@/utils/lenses";
 
@@ -260,8 +260,8 @@ export const MiniTable = ({
               const total = Number(venta.total);
 
               // Clases condicionales de estilos para badges visuales premium (estilo ListStores)
-              const esCredito = (venta.tipoVenta || "").toUpperCase() === "CREDITO";
-              const esPagado = (venta.estadoPago || "").toUpperCase() === "PAGADO";
+              const esCredito = (venta.tipoVenta || "").toUpperCase() === TipoVenta.CREDITO;
+              const esPagado = (venta.estadoPago || "").toUpperCase() === EstadoPago.PAGADO;
 
               return (
                 <tr
@@ -434,7 +434,7 @@ export const MiniTable = ({
                           <Pencil size={16} strokeWidth={3} />
                         </button>
                       )}
-                      {venta.estadoPago === "PENDIENTE" && Number(venta.deuda) > 0 && venta.activo && tienePermiso(PERMISOS_ACCIONES.REGISTRAR_PAGO_CUOTA, role) && (
+                      {venta.estadoPago === EstadoPago.PENDIENTE && Number(venta.deuda) > 0 && venta.activo && tienePermiso(PERMISOS_ACCIONES.REGISTRAR_PAGO_CUOTA, role) && (
                         <button
                           type="button"
                           onClick={() => setPagoSale(venta)}
@@ -767,7 +767,6 @@ export const MiniTable = ({
       {pagoSale && (
         <RegistrarPagoModal
           venta={pagoSale}
-          sedeId={sedeId}
           loading={isPaying}
           onClose={() => setPagoSale(null)}
           onSave={async (id, payload) => {
