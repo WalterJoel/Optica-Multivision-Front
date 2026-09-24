@@ -8,7 +8,7 @@ import AlCredito from "./AlCredito";
 import AlContado from "./AlContado";
 
 export default function EyeglassesPage() {
-  const [tab, setTab] = useState("contado");
+  const [tab, setTab] = useState("credito");
 
   const tabsData = [
     { key: "contado", label: "Contado", icon: <CirclePlus size={22} /> },
