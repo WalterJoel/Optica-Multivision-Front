@@ -39,10 +39,15 @@ export default function ListDiscounts() {
     loadClientes();
   }, [sedeId]);
 
-  const getClientName = (clientId: number) => {
-    const client = clientes.find((c) => c.id === clientId);
-    if (!client) return `Cliente #${clientId}`;
-    return client.tipoCliente === "EMPRESA" ? (client.razonSocial || "") : `${client.nombres || ""} ${client.apellidos || ""}`.trim();
+  const getClientName = (d: IDescuento) => {
+    const client = d.cliente || clientes.find((c) => c.id === d.clienteId);
+    if (!client) return `Cliente #${d.clienteId}`;
+    return client.tipoCliente === "EMPRESA" ? (client.razonSocial || "-") : `${client.nombres || ""} ${client.apellidos || ""}`.trim();
+  };
+
+  const getClientDoc = (d: IDescuento) => {
+    const client = d.cliente || clientes.find((c) => c.id === d.clienteId);
+    return client?.numeroDoc ? `${client.tipoDoc}: ${client.numeroDoc}` : null;
   };
 
   const getProductName = (d: IDescuento) => {
@@ -88,11 +93,13 @@ export default function ListDiscounts() {
     if (searchTerm.trim() !== "") {
       const term = searchTerm.toLowerCase().trim();
       result = result.filter((d) => {
-        const clientName = getClientName(d.clienteId).toLowerCase();
+        const clientName = getClientName(d).toLowerCase();
+        const clientDoc = (getClientDoc(d) || "").toLowerCase();
         const productName = getProductName(d).toLowerCase();
         const tipo = (d.tipoProducto || "").toLowerCase();
         return (
           clientName.includes(term) ||
+          clientDoc.includes(term) ||
           productName.includes(term) ||
           tipo.includes(term)
         );
@@ -162,6 +169,9 @@ export default function ListDiscounts() {
           <thead>
             <tr className="bg-beige backdrop-blur-sm">
               <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3">
+                ID Descuento
+              </th>
+              <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3 min-w-[250px]">
                 Cliente
               </th>
               <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3">
@@ -189,7 +199,7 @@ export default function ListDiscounts() {
             {filteredDiscounts.length === 0 ? (
               <tr>
                 <td
-                  colSpan={7}
+                  colSpan={8}
                   className="px-6 py-24 text-center text-dark-5 font-bold uppercase text-[10px] tracking-widest"
                 >
                   {searchTerm.trim() !== ""
@@ -203,19 +213,28 @@ export default function ListDiscounts() {
                   key={d.id}
                   className="group hover:bg-white transition-all duration-300"
                 >
+                  {/* ID Descuento */}
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-3">
                       <div className="h-10 w-10 flex items-center justify-center bg-blue-light/20 rounded-xl text-blue shadow-sm group-hover:scale-110 transition-transform">
                         <Tags size={20} strokeWidth={2.5} />
                       </div>
-                      <div className="flex flex-col">
-                        <span className="font-black text-dark uppercase text-xs tracking-tight">
-                          {getClientName(d.clienteId)}
-                        </span>
+                      <span className="font-black text-dark text-xs tracking-tight">
+                        #{d.id}
+                      </span>
+                    </div>
+                  </td>
+                  {/* Cliente */}
+                  <td className="px-6 py-5">
+                    <div className="flex flex-col">
+                      <span className="font-black text-dark uppercase text-xs tracking-tight">
+                        {getClientName(d)}
+                      </span>
+                      {getClientDoc(d) && (
                         <span className="text-[10px] text-dark-5 font-bold uppercase tracking-tighter">
-                          ID DESCUENTO: {d.id}
+                          {getClientDoc(d)}
                         </span>
-                      </div>
+                      )}
                     </div>
                   </td>
                   <td className="px-6 py-5">

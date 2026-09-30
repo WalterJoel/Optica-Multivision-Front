@@ -38,10 +38,10 @@ export default function EditDiscountModal({
     loadClientes();
   }, []);
 
-  const getClientName = (clientId: number) => {
-    const client = clientes.find((c) => c.id === clientId);
-    if (!client) return `Cliente #${clientId}`;
-    return client.tipoCliente === "EMPRESA" ? (client.razonSocial || "") : `${client.nombres || ""} ${client.apellidos || ""}`.trim();
+  const getClientName = (d: IDescuento) => {
+    const client = d.cliente || clientes.find((c) => c.id === d.clienteId);
+    if (!client) return `Cliente #${d.clienteId}`;
+    return client.tipoCliente === "EMPRESA" ? (client.razonSocial || "-") : `${client.nombres || ""} ${client.apellidos || ""}`.trim();
   };
 
   const getProductName = (d: IDescuento) => {
@@ -142,7 +142,7 @@ export default function EditDiscountModal({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5 bg-white border border-slate-100 p-4 rounded-xl shadow-sm text-xs">
                 <div>
                   <span className="text-gray-400 font-bold block uppercase tracking-wider text-[9px]">Cliente</span>
-                  <span className="font-black text-dark uppercase">{getClientName(discount.clienteId)}</span>
+                  <span className="font-black text-dark uppercase">{getClientName(discount)}</span>
                 </div>
                 <div>
                   <span className="text-gray-400 font-bold block uppercase tracking-wider text-[9px]">Tipo Producto</span>

@@ -40,6 +40,18 @@ export interface IDescuento {
   tipoProducto: string;
   activo: boolean;
   createdAt: string;
+  cliente?: {
+    id: number;
+    tipoCliente?: string;
+    tipoDoc?: string;
+    numeroDoc?: string;
+    nombres?: string | null;
+    apellidos?: string | null;
+    razonSocial?: string | null;
+    telefono?: string | null;
+    correo?: string | null;
+    direccion?: string | null;
+  } | null;
   producto?: {
     id: number;
     nombre: string;
