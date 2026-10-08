@@ -118,13 +118,13 @@ function ProveedorCard({ traslado, onEnviar, loading = false }: ProveedorCardPro
 
           const totalAEnviar = isDespachoEditable
             ? detallesState.reduce(
-                (acc, s) => acc + Number(s.cantidadEnviada),
-                0
-              )
+              (acc, s) => acc + Number(s.cantidadEnviada),
+              0
+            )
             : traslado.detalles.reduce(
-                (acc, d) => acc + d.cantidadEnviada,
-                0
-              );
+              (acc, d) => acc + d.cantidadEnviada,
+              0
+            );
 
           return (
             <div className="border border-gray-3 rounded-xl overflow-hidden mb-4">
@@ -309,8 +309,8 @@ export function Proveedor({
     if (res?.success) {
       onSuccessAction(res.message);
       setEstadoFilter("ENVIADO");
-    } else {
-      onErrorAction(res?.error);
+    } else if (res && !res.silent) {
+      onErrorAction(res.error);
     }
     return res;
   };

@@ -133,13 +133,13 @@ function SolicitanteCard({ traslado, onRecibir, onEliminar, loading = false }: S
 
           const totalRecibida = isRecepcionEditable
             ? detallesState.reduce(
-                (acc, s) => acc + Number(s.cantidadRecibida),
-                0
-              )
+              (acc, s) => acc + Number(s.cantidadRecibida),
+              0
+            )
             : traslado.detalles.reduce(
-                (acc, d) => acc + d.cantidadRecibida,
-                0
-              );
+              (acc, d) => acc + d.cantidadRecibida,
+              0
+            );
 
           return (
             <div className="border border-gray-3 rounded-xl overflow-hidden mb-4">

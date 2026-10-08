@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import {
   ITraslado,
   ICrearTrasladoPayload,
@@ -17,6 +17,7 @@ import {
 export function useTraslados() {
   const [loading, setLoading] = useState<boolean>(false);
   const [actionLoading, setActionLoading] = useState<boolean>(false);
+  const accionEnCurso = useRef<boolean>(false);
   const [traslados, setTraslados] = useState<ITraslado[]>([]);
   const [statusMessage, setStatusMessage] = useState<string>("");
   const [success, setSuccess] = useState<boolean>(false);
@@ -43,6 +44,8 @@ export function useTraslados() {
   );
 
   const crearTraslado = async (payload: ICrearTrasladoPayload) => {
+    if (accionEnCurso.current) return null;
+    accionEnCurso.current = true;
     setActionLoading(true);
     setSuccess(false);
     setStatusMessage("");
@@ -58,11 +61,14 @@ export function useTraslados() {
       setSuccess(false);
       return null;
     } finally {
+      accionEnCurso.current = false;
       setActionLoading(false);
     }
   };
 
   const enviarMercaderia = async (payload: IEnviarMercaderiaPayload) => {
+    if (accionEnCurso.current) return { success: false, silent: true };
+    accionEnCurso.current = true;
     setActionLoading(true);
     setSuccess(false);
     setStatusMessage("");
@@ -84,11 +90,14 @@ export function useTraslados() {
       setSuccess(false);
       return { success: false, error: msg, invalidDetalleIds };
     } finally {
+      accionEnCurso.current = false;
       setActionLoading(false);
     }
   };
 
   const recibirMercaderia = async (payload: IRecibirMercaderiaPayload) => {
+    if (accionEnCurso.current) return null;
+    accionEnCurso.current = true;
     setActionLoading(true);
     setSuccess(false);
     setStatusMessage("");
@@ -104,11 +113,14 @@ export function useTraslados() {
       setSuccess(false);
       return null;
     } finally {
+      accionEnCurso.current = false;
       setActionLoading(false);
     }
   };
 
   const eliminarTraslado = async (id: number) => {
+    if (accionEnCurso.current) return null;
+    accionEnCurso.current = true;
     setActionLoading(true);
     setSuccess(false);
     setStatusMessage("");
@@ -124,6 +136,7 @@ export function useTraslados() {
       setSuccess(false);
       return null;
     } finally {
+      accionEnCurso.current = false;
       setActionLoading(false);
     }
   };

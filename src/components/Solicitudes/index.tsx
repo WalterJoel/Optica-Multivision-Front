@@ -55,11 +55,10 @@ export default function Solicitudes() {
           <div className="flex gap-2 p-1.5 bg-white rounded-2xl border border-gray-3 shadow-sm w-full lg:w-auto">
             <button
               onClick={() => setActiveTab("RECEPCIONES")}
-              className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                activeTab === "RECEPCIONES"
+              className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${activeTab === "RECEPCIONES"
                   ? "bg-blue-light text-white shadow-md"
                   : "text-gray-500 hover:text-dark hover:bg-beige"
-              }`}
+                }`}
             >
               <Inbox size={16} />
               <span>Como solicitante</span>
@@ -67,11 +66,10 @@ export default function Solicitudes() {
 
             <button
               onClick={() => setActiveTab("DESPACHOS")}
-              className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                activeTab === "DESPACHOS"
+              className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${activeTab === "DESPACHOS"
                   ? "bg-blue-light text-white shadow-md"
                   : "text-gray-500 hover:text-dark hover:bg-beige"
-              }`}
+                }`}
             >
               <Truck size={16} />
               <span>Como proveedor</span>
