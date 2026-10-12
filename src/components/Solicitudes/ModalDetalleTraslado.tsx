@@ -22,9 +22,9 @@ export function ModalDetalleTraslado({
 
   return (
     <ModalFrameWrapper size="xl" variant="blue" onClose={onClose}>
-      <div className="flex flex-col space-y-6">
+      <div className="flex flex-col max-h-[78vh]">
         {/* Cabecera */}
-        <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+        <div className="flex items-center justify-between border-b border-gray-100 pb-4 shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-blue-light/10 text-blue-light flex items-center justify-center">
               <FileText size={20} />
@@ -50,173 +50,176 @@ export function ModalDetalleTraslado({
           </button>
         </div>
 
-        {/* Resumen de Sedes y Fecha */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-beige/60 p-4 rounded-2xl border border-gray-3 text-xs">
-          <div className="flex flex-col">
-            <span className="text-[10px] font-black uppercase text-dark-5">Sede Proveedora</span>
-            <span className="font-bold text-dark uppercase mt-0.5 flex items-center gap-1">
-              <Building2 size={13} className="text-yellow-dark" />
-              {traslado.sedeProveedora?.nombre || `Sede #${traslado.sedeProveedoraId}`}
-            </span>
+        {/* Contenido scrolleable */}
+        <div className="flex-1 min-h-0 overflow-y-auto py-4 pr-1.5 space-y-6">
+          {/* Resumen de Sedes y Fecha */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-beige/60 p-4 rounded-2xl border border-gray-3 text-xs">
+            <div className="flex flex-col">
+              <span className="text-[10px] font-black uppercase text-dark-5">Sede Proveedora</span>
+              <span className="font-bold text-dark uppercase mt-0.5 flex items-center gap-1">
+                <Building2 size={13} className="text-yellow-dark" />
+                {traslado.sedeProveedora?.nombre || `Sede #${traslado.sedeProveedoraId}`}
+              </span>
+            </div>
+
+            <div className="flex flex-col">
+              <span className="text-[10px] font-black uppercase text-dark-5">Sede Solicitante</span>
+              <span className="font-bold text-dark uppercase mt-0.5 flex items-center gap-1">
+                <Building2 size={13} className="text-emerald-700" />
+                {traslado.sedeSolicitante?.nombre || `Sede #${traslado.sedeSolicitanteId}`}
+              </span>
+            </div>
+
+            <div className="flex flex-col">
+              <span className="text-[10px] font-black uppercase text-dark-5">Fecha Creación</span>
+              <span className="font-bold text-dark uppercase mt-0.5 flex items-center gap-1">
+                <Calendar size={13} className="text-blue-light" />
+                {new Date(traslado.createdAt).toLocaleDateString()}
+              </span>
+            </div>
           </div>
 
-          <div className="flex flex-col">
-            <span className="text-[10px] font-black uppercase text-dark-5">Sede Solicitante</span>
-            <span className="font-bold text-dark uppercase mt-0.5 flex items-center gap-1">
-              <Building2 size={13} className="text-emerald-700" />
-              {traslado.sedeSolicitante?.nombre || `Sede #${traslado.sedeSolicitanteId}`}
-            </span>
-          </div>
+          {/* Tabla de Productos con SPH y CYL */}
+          {(() => {
+            const hasLente = traslado.detalles?.some(
+              (d) => d.tipoProducto === "LENTE" || d.stockId != null
+            );
 
-          <div className="flex flex-col">
-            <span className="text-[10px] font-black uppercase text-dark-5">Fecha Creación</span>
-            <span className="font-bold text-dark uppercase mt-0.5 flex items-center gap-1">
-              <Calendar size={13} className="text-blue-light" />
-              {new Date(traslado.createdAt).toLocaleDateString()}
-            </span>
-          </div>
+            // Sección de suma de cantidades
+            const totalSolicitada = (traslado.detalles || []).reduce(
+              (acc, d) => acc + d.cantidadSolicitada,
+              0
+            );
+
+            const totalEnviada = (traslado.detalles || []).reduce(
+              (acc, d) => acc + d.cantidadEnviada,
+              0
+            );
+
+            const totalRecibida = (traslado.detalles || []).reduce(
+              (acc, d) => acc + d.cantidadRecibida,
+              0
+            );
+
+            return (
+              <div className="border border-gray-3 rounded-2xl overflow-x-auto shadow-sm">
+                <table className="w-full text-left text-xs border-collapse min-w-[650px]">
+                  <thead>
+                    <tr className="bg-beige text-dark-3 font-black uppercase text-[10px] tracking-wider border-b border-gray-3">
+                      <th className="px-3 py-1.5">Código / Nombre</th>
+                      <th className="px-3 py-1.5 text-center">Marca</th>
+                      <th className="px-3 py-1.5 text-center">Material</th>
+                      <th className="px-3 py-1.5 text-center">Tipo</th>
+                      {hasLente && (
+                        <>
+                          <th className="px-3 py-1.5 text-center">SPH</th>
+                          <th className="px-3 py-1.5 text-center">CYL</th>
+                        </>
+                      )}
+                      {/* Sección de encabezados con contadores */}
+                      <th className="px-3 py-1.5 text-center">
+                        <div className="flex items-center justify-center gap-1.5">
+                          <span>📥 Solicitada</span>
+                          <span className="inline-flex items-center justify-center bg-amber-500/10 text-amber-600 border border-amber-500/30 px-1.5 py-0.5 rounded-full font-black text-[10px]">
+                            {totalSolicitada}
+                          </span>
+                        </div>
+                      </th>
+                      <th className="px-3 py-1.5 text-center">
+                        <div className="flex items-center justify-center gap-1.5">
+                          <span>🚚 Enviada</span>
+                          <span className="inline-flex items-center justify-center bg-amber-500/10 text-amber-600 border border-amber-500/30 px-1.5 py-0.5 rounded-full font-black text-[10px]">
+                            {totalEnviada}
+                          </span>
+                        </div>
+                      </th>
+                      <th className="px-3 py-1.5 text-center">
+                        <div className="flex items-center justify-center gap-1.5">
+                          <span>✅ Recibida</span>
+                          <span className="inline-flex items-center justify-center bg-amber-500/10 text-amber-600 border border-amber-500/30 px-1.5 py-0.5 rounded-full font-black text-[10px]">
+                            {totalRecibida}
+                          </span>
+                        </div>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-2 text-dark font-medium">
+                    {traslado.detalles?.map((det) => {
+                      const codigoVal =
+                        det.producto?.montura?.codigo ||
+                        det.producto?.accesorio?.codigoAccesorio ||
+                        det.producto?.accesorio?.nombre ||
+                        det.producto?.nombre ||
+                        "-";
+
+                      const marcaVal =
+                        det.producto?.montura?.marca ||
+                        det.producto?.accesorio?.marca ||
+                        det.stock?.lente?.marca ||
+                        "-";
+
+                      const materialVal =
+                        det.producto?.montura?.material ||
+                        det.producto?.accesorio?.material ||
+                        det.stock?.lente?.material ||
+                        "-";
+
+                      const isLente = det.tipoProducto === "LENTE";
+                      const sphVal = isLente ? formatearMedida(det.stock?.esf) : "-";
+                      const cylVal = isLente ? formatearMedida(det.stock?.cyl) : "-";
+
+                      return (
+                        <tr key={det.id} className="hover:bg-beige/40">
+                          <td className="px-3 py-1.5 font-bold uppercase text-dark">
+                            {codigoVal}
+                          </td>
+                          <td className="px-3 py-1.5 text-center uppercase font-bold text-dark-3">
+                            {marcaVal}
+                          </td>
+                          <td className="px-3 py-1.5 text-center uppercase font-bold text-dark-3">
+                            {materialVal}
+                          </td>
+                          <td className="px-3 py-1.5 text-center text-[10px] font-bold text-dark-5">
+                            {det.tipoProducto}
+                          </td>
+                          {hasLente && (
+                            <>
+                              <td className="px-3 py-1.5 text-center font-bold text-dark text-xs">
+                                {sphVal}
+                              </td>
+                              <td className="px-3 py-1.5 text-center font-bold text-dark text-xs">
+                                {cylVal}
+                              </td>
+                            </>
+                          )}
+                          <td className="px-3 py-1.5 text-center font-bold text-dark-3 text-xs">
+                            {det.cantidadSolicitada}
+                          </td>
+                          <td className="px-3 py-1.5 text-center font-bold text-dark-3 text-xs">
+                            {det.cantidadEnviada}
+                          </td>
+                          <td className="px-3 py-1.5 text-center font-bold text-dark-3 text-xs">
+                            {det.cantidadRecibida}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            );
+          })()}
+
+          {traslado.observaciones && (
+            <div className="bg-gray-50 p-3.5 rounded-xl border border-gray-2 text-xs text-dark-3">
+              <span className="font-bold block text-[10px] uppercase text-dark-5 mb-0.5">Observaciones:</span>
+              {traslado.observaciones}
+            </div>
+          )}
         </div>
 
-        {/* Tabla de Productos con SPH y CYL */}
-        {(() => {
-          const hasLente = traslado.detalles?.some(
-            (d) => d.tipoProducto === "LENTE" || d.stockId != null
-          );
-
-          // Sección de suma de cantidades
-          const totalSolicitada = traslado.detalles.reduce(
-            (acc, d) => acc + d.cantidadSolicitada,
-            0
-          );
-
-          const totalEnviada = traslado.detalles.reduce(
-            (acc, d) => acc + d.cantidadEnviada,
-            0
-          );
-
-          const totalRecibida = traslado.detalles.reduce(
-            (acc, d) => acc + d.cantidadRecibida,
-            0
-          );
-
-          return (
-            <div className="border border-gray-3 rounded-2xl overflow-hidden shadow-sm">
-              <table className="w-full text-left text-xs border-collapse">
-                <thead>
-                  <tr className="bg-beige text-dark-3 font-black uppercase text-[10px] tracking-wider border-b border-gray-3">
-                    <th className="px-3 py-1.5">Código / Nombre</th>
-                    <th className="px-3 py-1.5 text-center">Marca</th>
-                    <th className="px-3 py-1.5 text-center">Material</th>
-                    <th className="px-3 py-1.5 text-center">Tipo</th>
-                    {hasLente && (
-                      <>
-                        <th className="px-3 py-1.5 text-center">SPH</th>
-                        <th className="px-3 py-1.5 text-center">CYL</th>
-                      </>
-                    )}
-                    {/* Sección de encabezados con contadores */}
-                    <th className="px-3 py-1.5 text-center">
-                      <div className="flex items-center justify-center gap-1.5">
-                        <span>📥 Solicitada</span>
-                        <span className="inline-flex items-center justify-center bg-amber-500/10 text-amber-600 border border-amber-500/30 px-1.5 py-0.5 rounded-full font-black text-[10px]">
-                          {totalSolicitada}
-                        </span>
-                      </div>
-                    </th>
-                    <th className="px-3 py-1.5 text-center">
-                      <div className="flex items-center justify-center gap-1.5">
-                        <span>🚚 Enviada</span>
-                        <span className="inline-flex items-center justify-center bg-amber-500/10 text-amber-600 border border-amber-500/30 px-1.5 py-0.5 rounded-full font-black text-[10px]">
-                          {totalEnviada}
-                        </span>
-                      </div>
-                    </th>
-                    <th className="px-3 py-1.5 text-center">
-                      <div className="flex items-center justify-center gap-1.5">
-                        <span>✅ Recibida</span>
-                        <span className="inline-flex items-center justify-center bg-amber-500/10 text-amber-600 border border-amber-500/30 px-1.5 py-0.5 rounded-full font-black text-[10px]">
-                          {totalRecibida}
-                        </span>
-                      </div>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-2 text-dark font-medium">
-                  {traslado.detalles?.map((det) => {
-                    const codigoVal =
-                      det.producto?.montura?.codigo ||
-                      det.producto?.accesorio?.codigoAccesorio ||
-                      det.producto?.accesorio?.nombre ||
-                      det.producto?.nombre ||
-                      "-";
-
-                    const marcaVal =
-                      det.producto?.montura?.marca ||
-                      det.producto?.accesorio?.marca ||
-                      det.stock?.lente?.marca ||
-                      "-";
-
-                    const materialVal =
-                      det.producto?.montura?.material ||
-                      det.producto?.accesorio?.material ||
-                      det.stock?.lente?.material ||
-                      "-";
-
-                    const isLente = det.tipoProducto === "LENTE";
-                    const sphVal = isLente ? formatearMedida(det.stock?.esf) : "-";
-                    const cylVal = isLente ? formatearMedida(det.stock?.cyl) : "-";
-
-                    return (
-                      <tr key={det.id} className="hover:bg-beige/40">
-                        <td className="px-3 py-1.5 font-bold uppercase text-dark">
-                          {codigoVal}
-                        </td>
-                        <td className="px-3 py-1.5 text-center uppercase font-bold text-dark-3">
-                          {marcaVal}
-                        </td>
-                        <td className="px-3 py-1.5 text-center uppercase font-bold text-dark-3">
-                          {materialVal}
-                        </td>
-                        <td className="px-3 py-1.5 text-center text-[10px] font-bold text-dark-5">
-                          {det.tipoProducto}
-                        </td>
-                        {hasLente && (
-                          <>
-                            <td className="px-3 py-1.5 text-center font-bold text-dark text-xs">
-                              {sphVal}
-                            </td>
-                            <td className="px-3 py-1.5 text-center font-bold text-dark text-xs">
-                              {cylVal}
-                            </td>
-                          </>
-                        )}
-                        <td className="px-3 py-1.5 text-center font-bold text-dark-3 text-xs">
-                          {det.cantidadSolicitada}
-                        </td>
-                        <td className="px-3 py-1.5 text-center font-bold text-dark-3 text-xs">
-                          {det.cantidadEnviada}
-                        </td>
-                        <td className="px-3 py-1.5 text-center font-bold text-dark-3 text-xs">
-                          {det.cantidadRecibida}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          );
-        })()}
-
-
-        {traslado.observaciones && (
-          <div className="bg-gray-50 p-3.5 rounded-xl border border-gray-2 text-xs text-dark-3">
-            <span className="font-bold block text-[10px] uppercase text-dark-5 mb-0.5">Observaciones:</span>
-            {traslado.observaciones}
-          </div>
-        )}
-
-        <div className="flex justify-end pt-2">
+        {/* Pie / Acciones */}
+        <div className="flex justify-end pt-3 border-t border-gray-100 shrink-0">
           <button
             type="button"
             onClick={onClose}

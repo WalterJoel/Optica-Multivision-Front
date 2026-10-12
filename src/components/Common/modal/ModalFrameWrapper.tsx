@@ -30,7 +30,7 @@ export function ModalFrameWrapper({
   return (
     <div
       onClick={onClose}
-      className="fixed inset-0 z-[99999] flex items-center justify-center bg-slate-900/40 backdrop-blur-md p-4 animate-in fade-in duration-500"
+      className="fixed inset-0 z-[99999] flex items-center justify-center bg-slate-900/40 backdrop-blur-md p-4 animate-in fade-in duration-500 overflow-y-auto"
     >
       {/* CONTENEDOR DE BORDE DUAL (Sólido, sin gradiente) */}
       <div
@@ -42,6 +42,7 @@ export function ModalFrameWrapper({
           p-[2px] 
           shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)]
           animate-in zoom-in-95 slide-in-from-bottom-4 duration-300
+          my-auto
         `}
       >
         {/* Fondo del borde: Mitad y Mitad */}
