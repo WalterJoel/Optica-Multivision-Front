@@ -2,6 +2,7 @@ import { PRODUCTOS, ClasificacionMonturas } from "@/commons/constants";
 
 export interface IEyeglass {
   id: number;
+  monturaId?: number;
   sedeId: number;
   productoId: number;
   precioVenta: number;
@@ -30,7 +31,7 @@ export interface IEyeglass {
 }
 
 export type ICreateEyeglass = Omit<
-  IEyeglass, "id" | "productoId" | "createdAt" | "producto"
+  IEyeglass, "id" | "monturaId" | "productoId" | "createdAt" | "producto"
 >;
 
 export type IUpdateEyeglass = Partial<ICreateEyeglass> & { productoId?: number; activo?: boolean };

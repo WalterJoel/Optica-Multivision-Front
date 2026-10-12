@@ -14,7 +14,7 @@ export function useSearchEyeglass() {
   const searchEyeglass = (value: string) => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
-    if (!value || value.length < 2) {
+    if (!value) {
       setEyeglasses([]);
       setShowList(false);
       setLoading(false);

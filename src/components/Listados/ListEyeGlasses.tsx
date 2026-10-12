@@ -92,7 +92,7 @@ function EyeglassCardFrame({
             <p className="text-[10px] text-gray-500 mt-1">
               📐 {eyeglass.talla} • {eyeglass.formaFacial}
             </p>
-
+            <p className="text-[10px] text-gray-500">🔍 {eyeglass.monturaId}</p>
             <p className="text-[10px] text-gray-500">👤 {eyeglass.sexo}</p>
             <p className="text-[10px] text-gray-500 flex items-center gap-1">
               <Package size={18} />

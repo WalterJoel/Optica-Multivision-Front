@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { CheckCircle2, Search } from "lucide-react";
+import { CheckCircle2, Search, Glasses } from "lucide-react";
 import { useSearchEyeglassByQr } from "@/hooks/products/eyeglasses/useSearchEyeGlassByQr";
 import { useSearchEyeglass } from "@/hooks/products/eyeglasses/useSearchEyeglass";
 import { useUpdateStockProductos } from "@/hooks/products/stock/useUpdateStockProductos";
@@ -47,7 +47,7 @@ export default function InventarioMonturas() {
     const existeEnLote = lote.find((item) => item.stock.id === data.stock.id);
 
     if (existeEnLote) {
-      const valorActual = dictStocks[stockId] || "0";
+      const valorActual = dictStocks[stockId];
       const nuevoValor = String(Number(valorActual) + 1);
 
       setDictStocks((prev) => ({ ...prev, [stockId]: nuevoValor }));
@@ -189,13 +189,26 @@ export default function InventarioMonturas() {
                       <li
                         key={opt.id}
                         onClick={() => handleSelectOption(opt.codigo || opt.codigoMontura)}
-                        className="px-4 py-3 hover:bg-slate-50 cursor-pointer border-b border-slate-50 last:border-0 flex items-center justify-between transition-colors"
+                        className="px-4 py-2.5 hover:bg-slate-50 cursor-pointer border-b border-slate-50 last:border-0 flex items-center justify-between gap-3 transition-colors"
                       >
-                        <div className="flex flex-col">
-                          <span className="font-bold text-dark">{opt.marca}</span>
-                          <span className="text-xs text-slate-500">{opt.codigo || opt.codigoMontura}</span>
+                        <div className="flex items-center gap-3 min-w-0">
+                          {/* Miniatura de la Montura */}
+                          <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200/80 flex items-center justify-center overflow-hidden shrink-0 relative">
+                            <Glasses size={20} strokeWidth={2} className="text-slate-400" />
+                            {opt.imagenUrl && (
+                              <img
+                                src={opt.imagenUrl}
+                                alt={opt.marca}
+                                className="absolute inset-0 w-full h-full object-cover bg-white"
+                              />
+                            )}
+                          </div>
+                          <div className="flex flex-col min-w-0">
+                            <span className="font-bold text-dark text-sm leading-tight truncate">{opt.marca}</span>
+                            <span className="text-xs text-slate-500 font-mono">{opt.codigo || opt.codigoMontura}</span>
+                          </div>
                         </div>
-                        <span className="text-[10px] font-bold text-blue bg-blue/10 px-2 py-1 rounded-lg">
+                        <span className="text-[10px] font-bold text-blue bg-blue/10 px-2 py-1 rounded-lg shrink-0">
                           Stock en Sede: {opt.producto?.cantidad || 0}
                         </span>
                       </li>
