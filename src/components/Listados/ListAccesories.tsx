@@ -4,14 +4,14 @@ import { ClassificationBadge } from "@/components/Common/ClassificationBadge";
 import { ImageWithZoom } from "@/components/Common/ImageWithZoom";
 import { BaseButton } from "@/components/Common/Buttons";
 import { useAccessories } from "@/hooks/products/accesories/useAccessories";
-import { IAccessory } from "@/types/products";
+import { IListAccesoriosResponse } from "@/types/products";
 import { useEffect, useState, useMemo } from "react";
 
 import { addItemToCart } from "@/redux/features/cart-slice";
 import { AppDispatch } from "@/redux/store";
 import { useDispatch } from "react-redux";
 import { CartItem } from "@/types/cart";
-import { TipoProducto } from "@/commons/constants";
+import { ITEMS_PER_PAGE, TipoProducto } from "@/commons/constants";
 import { useSessionUser } from "@/hooks/session";
 import { Package, History, Store } from "lucide-react";
 import { ModalHistorialKardex } from "@/components/Kardex/ModalHistorialKardex";
@@ -34,7 +34,7 @@ function AccessoryCardFrame({
   children,
   variant = "blue",
 }: {
-  accessory: IAccessory;
+  accessory: IListAccesoriosResponse;
   children?: React.ReactNode;
   variant?: "blue" | "red" | "yellow";
 }) {
@@ -74,36 +74,52 @@ function AccessoryCardFrame({
         {/* CONTENT */}
         <div className="w-[60%] p-4 flex flex-col justify-between">
           <div>
+            {/* Nombre */}
             <h3 className="text-sm font-black text-dark uppercase line-clamp-1">
               {accessory.nombre}
             </h3>
 
+            {/* Código accesorio */}
             <h3 className="text-[11px] text-gray-400 font-semibold">
-              {accessory.codigoAccesorio || "Sin código"}
+              {accessory.codigoAccesorio}
             </h3>
 
+            {/* Color y clasificación */}
             <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
               <span className="text-[11px] text-gray-400 font-semibold">
-                🎨 {accessory.color || "Sin color"}
+                🎨 {accessory.color}
               </span>
               <ClassificationBadge text={accessory.clasificacion} />
             </div>
 
+            {/* ID Accesorio */}
+            <p className="text-[10px] text-gray-500 mt-1">🔍 {accessory.accesorioId}</p>
 
+            {/* Atributo */}
+            {accessory.atributo && (
+              <p className="text-[10px] text-gray-500">✨ {accessory.atributo}</p>
+            )}
 
+            {/* Ubicación */}
+            {accessory.producto?.ubicacion && (
+              <p className="text-[10px] text-gray-500">📍 {accessory.producto.ubicacion}</p>
+            )}
 
+            {/* Stock */}
             <p className="text-[10px] text-gray-500 flex items-center gap-1">
               <Package size={18} />
-              {accessory.producto?.cantidad ?? accessory.cantidad ?? 0}
+              {accessory.producto?.cantidad}
             </p>
           </div>
 
+          {/* Precio */}
           <div className="mt-2">
             <span className="font-black text-blue text-sm">
               S/ {accessory.precioVenta}
             </span>
           </div>
 
+          {/* Botones de acción */}
           <div className="mt-2 flex justify-end">{children}</div>
         </div>
       </div>
@@ -115,7 +131,7 @@ function AccessoryCardFrame({
 export default function ListAccessories({ filters }: { filters?: Filters }) {
   const dispatch = useDispatch<AppDispatch>();
   // Hooks
-  const { sedeId } = useSessionUser()
+  const { sedeId } = useSessionUser();
   const { accessories, loading, getAllAccessoriesData } = useAccessories(sedeId);
 
   const [kardexState, setKardexState] = useState<{
@@ -124,8 +140,8 @@ export default function ListAccessories({ filters }: { filters?: Filters }) {
     nombre?: string;
   }>({ open: false });
 
-  const handleOpenKardex = (item: IAccessory) => {
-    const pId = item.productoId || item.producto?.id || item.id;
+  const handleOpenKardex = (item: IListAccesoriosResponse) => {
+    const pId = item.producto?.id;
     setKardexState({
       open: true,
       productoId: pId,
@@ -133,15 +149,14 @@ export default function ListAccessories({ filters }: { filters?: Filters }) {
     });
   };
 
-
   const [stockSedesState, setStockSedesState] = useState<{
     open: boolean;
     productoId?: number;
     nombre?: string;
   }>({ open: false });
 
-  const handleOpenStockOtrasSedes = (item: IAccessory) => {
-    const pId = item.productoId || item.producto?.id || item.id;
+  const handleOpenStockOtrasSedes = (item: IListAccesoriosResponse) => {
+    const pId = item.producto?.id;
     setStockSedesState({
       open: true,
       productoId: pId,
@@ -149,12 +164,7 @@ export default function ListAccessories({ filters }: { filters?: Filters }) {
     });
   };
 
-  const ITEMS_PER_PAGE = 20;
-
   const [page, setPage] = useState(1);
-
-
-
 
   useEffect(() => {
     getAllAccessoriesData();
@@ -168,13 +178,14 @@ export default function ListAccessories({ filters }: { filters?: Filters }) {
     const color = filters?.color || "";
     const clasificacion = filters?.clasificacion?.toUpperCase() || "";
 
-    return accessories.filter((item: IAccessory) => {
+    return accessories.filter((item: IListAccesoriosResponse) => {
       const precio = Number(item.precioVenta) || 0;
 
       const matchSearch =
         !search ||
         item.nombre?.toLowerCase().includes(search) ||
-        item.codigoAccesorio?.toLowerCase().includes(search);
+        item.codigoAccesorio?.toLowerCase().includes(search) ||
+        String(item.accesorioId).includes(search);
 
       const matchPrecio = precio >= min && precio <= max;
 
@@ -201,14 +212,14 @@ export default function ListAccessories({ filters }: { filters?: Filters }) {
 
   const totalPages = Math.ceil(filteredAccessories.length / ITEMS_PER_PAGE);
 
-  const handleAddToCart = (item: IAccessory) => {
+  const handleAddToCart = (item: IListAccesoriosResponse) => {
     const itemToCart: CartItem = {
       id: item.id,
       productName: (TipoProducto.ACCESORIO + " " + item.nombre).toUpperCase(),
       productId: item.producto?.id,
       price: item.precioVenta,
       quantity: 1,
-      stock: item.producto?.cantidad ?? 0,
+      stock: item.producto?.cantidad,
       productType: TipoProducto.ACCESORIO,
       discount: 0,
       cyl: null,
@@ -237,15 +248,15 @@ export default function ListAccessories({ filters }: { filters?: Filters }) {
               Sin resultados
             </div>
           ) : (
-            paginatedAccessories.map((item: IAccessory) => {
-              const cantidad = item.producto?.cantidad ?? item.cantidad ?? 0;
+            paginatedAccessories.map((item: IListAccesoriosResponse) => {
+              const cantidad = item.producto?.cantidad;
               return (
                 <AccessoryCardFrame key={item.id} accessory={item}>
                   <div className="flex items-center justify-center gap-2 w-full">
                     <div className="flex-1">
                       <BaseButton
                         onClick={() => handleAddToCart(item)}
-                        disabled={cantidad <= 0}
+                        disabled={!cantidad || cantidad <= 0}
                       >
                         Agregar
                       </BaseButton>

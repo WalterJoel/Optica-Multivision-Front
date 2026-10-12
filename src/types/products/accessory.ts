@@ -18,7 +18,7 @@ export interface IAccessory {
     id: number;
     nombre: string;
     cantidad: number;
-    ubicacion: string;
+    ubicacion?: string;
     tipo: string;
     activo: boolean;
     createdAt?: string;
@@ -36,6 +36,12 @@ export interface ISearchAccesory {
   precioVenta: number;
   nombre: string;
   productoId: number;
+  imagenUrl?: string | null;
+  clasificacion?: string;
+  producto?: {
+    id: number;
+    cantidad: number;
+  };
 }
 
 export interface IResponseSearchAccesory {
@@ -43,7 +49,7 @@ export interface IResponseSearchAccesory {
   accesorios: ISearchAccesory[];
 }
 
-export interface IAccesoryQrResponse {
+export interface IObtenerAccesorioResponse {
   accesorio: {
     id: number;
     codigo: string;
@@ -56,5 +62,29 @@ export interface IAccesoryQrResponse {
     cantidad: number;
     ubicacion: string;
     updateAt: string;
+  };
+}
+
+// Interfaz para obtenerAccesorios
+export interface IListAccesoriosResponse {
+  id: number;
+  accesorioId: number;
+  codigoAccesorio: string;
+  precioCompra: number;
+  precioVenta: number;
+  nombre: string;
+  color: string;
+  atributo?: string;
+  clasificacion: ClasificacionAccesorios;
+  imagenUrl?: string;
+  createdAt?: string;
+  producto?: {
+    id: number;
+    sedeId: number;
+    cantidad: number;
+    ubicacion: string;
+    activo: boolean;
+    createdAt?: string;
+    updatedAt?: string;
   };
 }

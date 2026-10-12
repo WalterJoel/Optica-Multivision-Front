@@ -3,7 +3,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { useAccessories } from "@/hooks/products/accesories/useAccessories";
 import { useUpdateAccessory } from "@/hooks/products/accesories/useUpdateAccesory";
-import { IAccessory } from "@/types/products";
+import { IListAccesoriosResponse } from "@/types/products";
 import { useSessionUser } from "@/hooks/session";
 import EditAccessoryModal from "./EditAccessoryModal";
 import { Edit3, Power, Search, Package } from "lucide-react";
@@ -24,7 +24,7 @@ export default function ListAccesories() {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [openEdit, setOpenEdit] = useState(false);
-  const [selected, setSelected] = useState<IAccessory | null>(null);
+  const [selected, setSelected] = useState<IListAccesoriosResponse | null>(null);
   const [deleteId, setDeleteId] = useState<number | null>(null);
 
   const [openModal, setOpenModal] = useState(false);
@@ -35,7 +35,7 @@ export default function ListAccesories() {
     getAllAccessoriesData();
   }, []);
 
-  const openEditModal = (item: IAccessory) => {
+  const openEditModal = (item: IListAccesoriosResponse) => {
     setSelected(item);
     setOpenEdit(true);
   };
@@ -78,12 +78,12 @@ export default function ListAccesories() {
         const nombre = (item.nombre || "").toLowerCase();
         const codigo = (item.codigoAccesorio || "").toLowerCase();
         const color = (item.color || "").toLowerCase();
-        const ubicacion = (item.producto?.ubicacion ?? item.ubicacion ?? "").toLowerCase();
+        const idAccesorio = String(item.accesorioId || "");
         return (
           nombre.includes(term) ||
           codigo.includes(term) ||
           color.includes(term) ||
-          ubicacion.includes(term)
+          idAccesorio.includes(term)
         );
       });
     }
@@ -108,7 +108,7 @@ export default function ListAccesories() {
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Buscar por nombre, código, color..."
+              placeholder="Buscar por nombre, código, ID accesorio..."
               className="bg-transparent text-sm ml-2.5 outline-none w-72 text-dark-3 font-semibold placeholder:text-gray-5"
             />
           </div>
@@ -118,21 +118,37 @@ export default function ListAccesories() {
           <table className="w-full text-left text-sm border-spacing-0">
             <thead>
               <tr className="bg-beige backdrop-blur-sm">
+                {/* Columna: Nombre / Código */}
                 <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3">
                   Nombre / Código
                 </th>
+
+                {/* Columna: Clasificación */}
                 <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3">
                   Clasificación
                 </th>
+
+                {/* Columna: ID Accesorio */}
+                <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3">
+                  ID Accesorio
+                </th>
+
+                {/* Columna: Color / Ubicación */}
                 <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3">
                   Color / Ubicación
                 </th>
+
+                {/* Columna: Cantidad (Stock) */}
                 <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3">
                   Cantidad (Stock)
                 </th>
+
+                {/* Columna: Precio Venta */}
                 <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3">
                   Precio Venta
                 </th>
+
+                {/* Columna: Acciones */}
                 <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-dark-3 border-b border-gray-3 text-right">
                   Acciones
                 </th>
@@ -143,7 +159,7 @@ export default function ListAccesories() {
               {filteredAccessories.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={6}
+                    colSpan={7}
                     className="px-6 py-24 text-center text-dark-5 font-bold uppercase text-[10px] tracking-widest"
                   >
                     {searchTerm.trim() !== ""
@@ -157,6 +173,7 @@ export default function ListAccesories() {
                     key={item.id}
                     className="group hover:bg-white transition-all duration-300"
                   >
+                    {/* Celda: Nombre / Código */}
                     <td className="px-6 py-5">
                       <div className="flex items-center gap-3">
                         <div className="h-10 w-10 flex items-center justify-center bg-blue-light/20 rounded-xl text-blue shadow-sm group-hover:scale-110 transition-transform overflow-hidden">
@@ -178,6 +195,8 @@ export default function ListAccesories() {
                         </div>
                       </div>
                     </td>
+
+                    {/* Celda: Clasificación */}
                     <td className="px-6 py-5">
                       {item.clasificacion ? (
                         <ClassificationBadge text={item.clasificacion} />
@@ -185,22 +204,42 @@ export default function ListAccesories() {
                         <span className="text-[10px] text-dark-5 font-bold uppercase">-</span>
                       )}
                     </td>
-                    <td className="px-6 py-5 text-dark-2">
-                      <div className="flex flex-col">
-                        <span className="font-bold text-dark text-xs">{item.color || "-"}</span>
-                        <span className="text-[9px] text-gray-6 font-medium mt-0.5">
-                          Ubi: {item.producto?.ubicacion ?? item.ubicacion ?? "-"}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-5">
-                      <span className="font-bold text-dark text-xs bg-beige px-3 py-1.5 rounded-xl border border-slate-200">
-                        {item.producto?.cantidad ?? item.cantidad ?? 0} uds
+
+                    {/* Celda: ID Accesorio */}
+                    <td className="px-6 py-5 font-bold text-dark text-xs">
+                      <span className="flex items-center gap-1 font-mono text-dark-3">
+                        🔍 {item.accesorioId}
                       </span>
                     </td>
+
+                    {/* Celda: Color / Ubicación */}
+                    <td className="px-6 py-5 text-dark-2">
+                      <div className="flex flex-col">
+                        <span className="font-bold text-dark text-xs flex items-center gap-1">
+                          🎨 {item.color}
+                        </span>
+                        {item.producto?.ubicacion && (
+                          <span className="text-[9px] text-gray-6 font-medium mt-0.5 flex items-center gap-1">
+                            📍 {item.producto.ubicacion}
+                          </span>
+                        )}
+                      </div>
+                    </td>
+
+                    {/* Celda: Cantidad (Stock) */}
+                    <td className="px-6 py-5">
+                      <span className="font-bold text-dark text-xs bg-beige px-3 py-1.5 rounded-xl border border-slate-200 inline-flex items-center gap-1.5">
+                        <Package size={14} className="text-dark-4" />
+                        {item.producto?.cantidad} uds
+                      </span>
+                    </td>
+
+                    {/* Celda: Precio Venta */}
                     <td className="px-6 py-5 font-bold text-dark">
                       S/ {Number(item.precioVenta).toFixed(2)}
                     </td>
+
+                    {/* Celda: Acciones */}
                     <td className="px-6 py-5 text-right">
                       <div className="flex items-center justify-end gap-2.5">
                         <button

@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { IAccessory } from "@/types/products/accessory";
+import { IListAccesoriosResponse } from "@/types/products/accessory";
 import { getAllAccessoriesService } from "@/services/products/accesories";
 
 export function useAccessories(sedeId: number) {
   const [loading, setLoading] = useState(false);
   const [statusMessage, setMessage] = useState<string>("");
-  const [accessories, setAccessories] = useState<IAccessory[]>([]);
+  const [accessories, setAccessories] = useState<IListAccesoriosResponse[]>([]);
 
   const getAllAccessoriesData = async () => {
     if (loading) return; // evita doble request

@@ -33,14 +33,14 @@ export type IOutdatedStockProductosPayload = {
 };
 export interface IOutdatedProductStockResponse {
   id: number;
+  sedeId: number;
   nombre: string;
+  activo: boolean;
   tipo: TipoProducto | string;
   cantidad: number;
-  activo: boolean;
   ubicacion?: string;
-  precioCompra: number;
-  precioVenta: number;
-  sedeId: number;
+  precioCompra: number | string;
+  precioVenta: number | string;
   monturaId?: number | null;
   accesorioId?: number | null;
   createdAt: string;
@@ -60,9 +60,14 @@ export interface IOutdatedProductStockResponse {
   } | null;
   accesorio?: {
     id: number;
-    codigo: string;
+    codigoAccesorio: string;
+    codigo?: string;
     nombre: string;
-    marca?: string;
+    color?: string;
+    atributo?: string;
+    clasificacion?: string;
+    imagenUrl?: string | null;
+    createdAt?: string;
   } | null;
 }
 

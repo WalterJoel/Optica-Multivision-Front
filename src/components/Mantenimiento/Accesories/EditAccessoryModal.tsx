@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { BaseInput, BaseFile, BaseSelect } from "@/components/Common/Inputs";
 import { BaseButton } from "@/components/Common/Buttons/BaseButton";
-import { IAccessory, IUpdateAccessory } from "@/types/products";
+import { IAccessory, IListAccesoriosResponse, IUpdateAccessory } from "@/types/products";
 import { ModalFrameWrapper, StatusModal, LoadingModal } from "@/components/Common/modal";
 import { STATUS_MODAL, ClasificacionAccesorios } from "@/commons/constants";
 import { useUpdateAccessory } from "@/hooks/products/accesories/useUpdateAccesory";
@@ -28,7 +28,7 @@ export default function EditAccessoryModal({
   onRefresh,
 }: {
   isOpen: boolean;
-  accessory: IAccessory | null;
+  accessory: IListAccesoriosResponse | null;
   onClose: () => void;
   onRefresh: () => void;
 }) {
@@ -66,7 +66,7 @@ export default function EditAccessoryModal({
       precioCompra: Number(form.precioCompra) || 0,
       precioVenta: Number(form.precioVenta) || 0,
       cantidad: Number(form.cantidad) || 0,
-      productoId: accessory.productoId || accessory.producto?.id,
+      productoId: accessory.producto?.id,
       imagenUrl: imageUrl,
     });
   };
@@ -90,9 +90,9 @@ export default function EditAccessoryModal({
         precioCompra: (accessory.precioCompra ?? "") as unknown as number,
         precioVenta: (accessory.precioVenta ?? "") as unknown as number,
         color: accessory.color ?? "",
-        cantidad: (accessory.producto?.cantidad ?? accessory.cantidad ?? "") as unknown as number,
-        ubicacion: accessory.producto?.ubicacion ?? accessory.ubicacion ?? "",
-        clasificacion: accessory.clasificacion ?? "" as unknown as ClasificacionAccesorios,
+        cantidad: (accessory.producto?.cantidad) as unknown as number,
+        ubicacion: accessory.producto?.ubicacion ?? '',
+        clasificacion: accessory.clasificacion ?? ClasificacionAccesorios.OTROS,
         imagenUrl: accessory.imagenUrl ?? "",
       });
       setSelectedFile(null);

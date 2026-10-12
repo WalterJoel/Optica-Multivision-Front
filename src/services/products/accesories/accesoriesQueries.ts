@@ -3,7 +3,7 @@ import {
   ISearchAccesory,
   IResponseSearchAccesory,
   IAccessory,
-  IAccesoryQrResponse,
+  IObtenerAccesorioResponse,
 } from "@/types/products/accessory";
 
 export const searchAccesoryService = async (
@@ -33,12 +33,12 @@ export const getAllBasicAccessoriesService = async (): Promise<
   return data;
 };
 
-export const searchAccesoriesByCodeService = async (
-  codigo: string,
+export const obtenerAccesorioService = async (
+  codigoOId: string,
   idSede: number,
-): Promise<IAccesoryQrResponse> => {
+): Promise<IObtenerAccesorioResponse> => {
   const { data } = await api.get(
-    `/productos/obtenerAccesorio/${codigo}/${idSede}`,
+    `/productos/obtenerAccesorio/${codigoOId}/${idSede}`,
   );
   return data;
 };

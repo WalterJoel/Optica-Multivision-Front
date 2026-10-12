@@ -19,7 +19,7 @@ export default function AccessoryFilters({ filters, setFilters }: Props) {
 
           <input
             type="text"
-            placeholder="Buscar nombre o código..."
+            placeholder="Buscar por nombre, código o ID..."
             value={filters.search}
             onChange={(e) =>
               setFilters({

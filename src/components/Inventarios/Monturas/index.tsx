@@ -75,23 +75,6 @@ export default function InventarioMonturas() {
     }
   };
 
-  /*
-  const handleScan = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key !== "Enter") return;
-
-    const codigo = e.currentTarget.value.trim();
-    if (!codigo) return;
-
-    searchEyeglassByQr(codigo, sedeId);
-    setShowList(false);
-
-    setBusqueda("");
-    if (inputRef.current) {
-      inputRef.current.value = "";
-    }
-  };
-  */
-
   const updateManual = (stockId: string, valor: string) => {
     setDictStocks((prev) => ({ ...prev, [stockId]: valor }));
   };

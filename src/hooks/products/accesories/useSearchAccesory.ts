@@ -4,9 +4,9 @@ import { searchAccesoryService } from "@/services/products/accesories";
 import { useSessionUser } from "@/hooks/session";
 
 export function useSearchAccesory() {
-  const [loading, setLoading] = useState(false);
   const [accesories, setAccesories] = useState<ISearchAccesory[]>([]);
   const [showList, setShowList] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { sedeId } = useSessionUser();
 
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
@@ -26,7 +26,7 @@ export function useSearchAccesory() {
     debounceRef.current = setTimeout(async () => {
       try {
         const data = await searchAccesoryService(sedeId || 0, value);
-        setAccesories(data);
+        setAccesories(data || []);
         setShowList(true);
       } catch (error) {
         console.error("Error buscando accesorios", error);

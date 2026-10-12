@@ -11,7 +11,7 @@ import { addItemToCart } from "@/redux/features/cart-slice";
 import { AppDispatch } from "@/redux/store";
 import { useDispatch } from "react-redux";
 import { CartItem } from "@/types/cart";
-import { TipoProducto } from "@/commons/constants";
+import { TipoProducto, ITEMS_PER_PAGE } from "@/commons/constants";
 import { useSessionUser } from "@/hooks/session";
 import { Package, History, Store } from "lucide-react";
 import { ModalHistorialKardex } from "@/components/Kardex/ModalHistorialKardex";
@@ -154,8 +154,6 @@ export default function ListEyeglasses({ filters }: { filters?: Filters }) {
       nombre: title ? `MONTURA — ${title}` : "MONTURA",
     });
   };
-
-  const ITEMS_PER_PAGE = 20;
 
   const [page, setPage] = useState(1);
 
