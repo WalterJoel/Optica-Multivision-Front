@@ -11,7 +11,8 @@ export const PERMISOS_RUTAS: Record<string, Roles[]> = {
   "/traslados": [Roles.ADMIN, Roles.VENDEDOR],
   "/solicitudes": [Roles.ADMIN, Roles.VENDEDOR],
   "/inventarios/excel": [Roles.ADMIN],
-  "/inventarios/accesorios": [Roles.ADMIN, Roles.VENDEDOR],
+  "/inventarios/monturas": [Roles.ADMIN],
+  "/inventarios/accesorios": [Roles.ADMIN],
   "/lentes": [Roles.ADMIN, Roles.VENDEDOR],
   "/matrix": [Roles.ADMIN, Roles.VENDEDOR],
 };

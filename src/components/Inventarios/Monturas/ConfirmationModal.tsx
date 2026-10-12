@@ -30,7 +30,7 @@ export const ConfirmationModal = ({
   const handleGuardarInventario = async () => {
     const payload: IUpdateStockProductos = {
       items: productosModificados.map((p) => ({
-        stockId: p.stock.id,
+        productoId: p.stock.id,
         cantidad: Number(dictStocks[String(p.stock.id)]),
       })),
     };

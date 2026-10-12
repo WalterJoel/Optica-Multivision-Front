@@ -12,12 +12,13 @@ import {
   ModalFrameWrapper,
 } from "@/components/Common/modal";
 import { STATUS_MODAL } from "@/commons/constants";
-import { BaseButton } from "../Common/Buttons";
+import { BaseButton } from "@/components/Common/Buttons";
+import { useSessionUser } from "@/hooks/session";
 
 // Modales
 import { OutdatedProductsModal } from "./OutdatedProductsModal";
 
-export default function InventarioMultivision() {
+export default function InventarioMonturas() {
   const [busqueda, setBusqueda] = useState("");
   const [lote, setLote] = useState<IEyeglassQrResponse[]>([]);
   const [boxItem, setBoxItem] = useState<IEyeglassQrResponse | null>(null);
@@ -27,7 +28,7 @@ export default function InventarioMultivision() {
   const [typeModal, setTypeModal] = useState<string>("");
   const [openModal, setOpenModal] = useState<boolean>(false);
 
-  //Modales
+  // Modales
   const [isOpenModalOutdated, setOpenModalOutdated] = useState<boolean>(false);
 
   const [dictStocks, setDictStocks] = useState<{ [key: string]: string }>({});
@@ -35,6 +36,7 @@ export default function InventarioMultivision() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Hooks
+  const { sedeId } = useSessionUser();
   const { eyeglass, searchEyeglassByQr } = useSearchEyeglassByQr();
   const { eyeglasses: opciones, showList, searchEyeglass, setShowList } = useSearchEyeglass();
   const { loading, statusMessage, success, updateStockProductos } =
@@ -65,7 +67,7 @@ export default function InventarioMultivision() {
   };
 
   const handleSelectOption = (codigo: string) => {
-    searchEyeglassByQr(codigo, 1);
+    searchEyeglassByQr(codigo, sedeId);
     setShowList(false);
     setBusqueda("");
     if (inputRef.current) {
@@ -73,22 +75,22 @@ export default function InventarioMultivision() {
     }
   };
 
+  /*
   const handleScan = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key !== "Enter") return;
 
-    // Captura directa para evitar el lag del estado asíncrono
     const codigo = e.currentTarget.value.trim();
     if (!codigo) return;
 
-    searchEyeglassByQr(codigo, 1);
+    searchEyeglassByQr(codigo, sedeId);
     setShowList(false);
 
-    // Limpieza inmediata para el siguiente escaneo
     setBusqueda("");
     if (inputRef.current) {
       inputRef.current.value = "";
     }
   };
+  */
 
   const updateManual = (stockId: string, valor: string) => {
     setDictStocks((prev) => ({ ...prev, [stockId]: valor }));
@@ -100,10 +102,22 @@ export default function InventarioMultivision() {
     return stockNuevo !== "" && Number(stockNuevo) !== p.stock.cantidad;
   });
 
+  const limpiarTablaInventario = () => {
+    setLote([]);
+    setDictStocks({});
+    setContador(0);
+    setBoxItem(null);
+    setBusqueda("");
+    if (inputRef.current) {
+      inputRef.current.value = "";
+      inputRef.current.focus();
+    }
+  };
+
   const guardarInventario = async () => {
     const payload: IUpdateStockProductos = {
       items: productosModificados.map((p) => ({
-        stockId: p.stock.id,
+        productoId: p.stock.id,
         cantidad: Number(dictStocks[String(p.stock.id)]),
       })),
     };
@@ -121,6 +135,7 @@ export default function InventarioMultivision() {
     if (!loading && (success || statusMessage)) {
       if (success) {
         setTypeModal(STATUS_MODAL.SUCCESS_MODAL);
+        limpiarTablaInventario();
       } else {
         setTypeModal(STATUS_MODAL.ERROR_MODAL);
       }
@@ -161,8 +176,7 @@ export default function InventarioMultivision() {
                   type="text"
                   value={busqueda}
                   onChange={handleInputChange}
-                  onKeyDown={handleScan}
-                  // disabled={loading} <-- Removido para permitir ráfagas de escaneo
+                  // onKeyDown={handleScan}
                   placeholder={
                     loading ? "BUSCANDO..." : "Buscar por nombre, código, marca, etc..."
                   }
@@ -204,7 +218,6 @@ export default function InventarioMultivision() {
                 Por Actualizar
               </BaseButton>
             </header>
-
           </div>
 
           {/* TABLAS */}
@@ -273,7 +286,6 @@ export default function InventarioMultivision() {
           </div>
         </div>
 
-        {/* MODAL DE FINALIZACIÓN */}
         {/* MODAL DE FINALIZACIÓN */}
         {isModalOpen && (
           <ModalFrameWrapper size="md">

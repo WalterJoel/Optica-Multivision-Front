@@ -2,9 +2,10 @@
 
 import { useEffect } from "react";
 import { TipoProducto } from "@/commons/constants";
-import { ModalFrameWrapper } from "../Common/modal";
+import { ModalFrameWrapper } from "@/components/Common/modal";
 import { useOutdatedStockProducts } from "@/hooks/products/stock";
 import { CheckCircle, Loader2, PackageSearch } from "lucide-react";
+import { useSessionUser } from "@/hooks/session";
 
 interface Props {
   isOpenModalOutdated: boolean;
@@ -17,15 +18,16 @@ export function OutdatedProductsModal({
 }: Props) {
   const { loading, getOutdatedStockProductos, outdatedProducts } =
     useOutdatedStockProducts();
+  const { sedeId } = useSessionUser();
 
   useEffect(() => {
     if (isOpenModalOutdated) {
       getOutdatedStockProductos({
         tipoProducto: TipoProducto.MONTURA,
-        idSede: 1,
+        idSede: sedeId,
       });
     }
-  }, [isOpenModalOutdated]);
+  }, [isOpenModalOutdated, sedeId]);
 
   if (!isOpenModalOutdated) return null;
 

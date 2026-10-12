@@ -74,7 +74,7 @@ export const menuData: Menu[] = [
         id: 82,
         title: "Monturas",
         newTab: false,
-        path: "/checkout",
+        path: "/inventarios/monturas",
       },
       {
         id: 83,

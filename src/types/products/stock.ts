@@ -1,7 +1,7 @@
 import { TipoProducto } from "@/commons/constants";
 
 interface IUpdateStockProducto {
-  stockId: number;
+  productoId: number;
   cantidad: number;
 }
 

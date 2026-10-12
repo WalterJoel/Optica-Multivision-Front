@@ -95,10 +95,22 @@ export default function InventarioMultivision() {
     return stockNuevo !== "" && Number(stockNuevo) !== p.stock.cantidad;
   });
 
+  const limpiarTablaInventario = () => {
+    setLote([]);
+    setDictStocks({});
+    setContador(0);
+    setBoxItem(null);
+    setBusqueda("");
+    if (inputRef.current) {
+      inputRef.current.value = "";
+      inputRef.current.focus();
+    }
+  };
+
   const guardarInventario = async () => {
     const payload: IUpdateStockProductos = {
       items: productosModificados.map((p) => ({
-        stockId: p.stock.id,
+        productoId: p.stock.id,
         cantidad: Number(dictStocks[String(p.stock.id)]),
       })),
     };
@@ -114,6 +126,9 @@ export default function InventarioMultivision() {
 
   useEffect(() => {
     if (!loading && (success || statusMessage)) {
+      if (success) {
+        limpiarTablaInventario();
+      }
       setModalMessage({
         open: true,
         type: success ? STATUS_MODAL.SUCCESS_MODAL : STATUS_MODAL.ERROR_MODAL,
