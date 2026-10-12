@@ -90,7 +90,7 @@ export function ModalPorActualizar({
 
                       {/* ID montura */}
                       <td className="mv-td !py-1 !px-1 text-center">
-                        <span className="font-mono text-[10px] font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded inline-block">
+                        <span className="font-mono text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded inline-block whitespace-nowrap">
                           {p.montura?.id}
                         </span>
                       </td>

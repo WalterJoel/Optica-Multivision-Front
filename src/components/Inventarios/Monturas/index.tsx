@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { CheckCircle2, Search, Glasses } from "lucide-react";
+import { CheckCircle2, Search, Glasses, PackageSearch, CheckCircle } from "lucide-react";
 import { useSearchEyeglassByQr } from "@/hooks/products/eyeglasses/useSearchEyeGlassByQr";
 import { useSearchEyeglass } from "@/hooks/products/eyeglasses/useSearchEyeglass";
 import { useUpdateStockProductos } from "@/hooks/products/stock/useUpdateStockProductos";
@@ -248,6 +248,7 @@ export default function InventarioMonturas() {
                     <tr className="text-[10px] font-black text-blue uppercase tracking-widest">
                       <th className="py-4 px-6 w-12 text-center">#</th>
                       <th className="py-4 px-6">MONTURA / MODELO</th>
+                      <th className="py-4 px-6 text-center">ID MONTURA</th>
                       <th className="py-4 px-6 text-center">STOCK ACTUAL</th>
                       <th className="py-4 px-6 text-center">NUEVO STOCK</th>
                     </tr>
@@ -261,11 +262,14 @@ export default function InventarioMonturas() {
                           key={stockId}
                           className={`transition-colors ${isSelected ? "bg-blue-light-6" : "hover:bg-slate-50"}`}
                         >
+                          {/* N° correlativo */}
                           <td className="py-3 px-6 text-[10px] font-bold text-slate-300 text-center">
                             {cIdx === 0
                               ? i + 1
                               : Math.ceil(lote.length / 2) + i + 1}
                           </td>
+
+                          {/* Montura / Modelo */}
                           <td className="py-3 px-6">
                             <p
                               className={`font-bold text-sm uppercase ${isSelected ? "text-blue" : "text-slate-800"}`}
@@ -276,9 +280,20 @@ export default function InventarioMonturas() {
                               {item.montura.codigoQr}
                             </p>
                           </td>
+
+                          {/* ID montura */}
+                          <td className="py-3 px-6 text-center">
+                            <span className="font-mono text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded inline-block whitespace-nowrap">
+                              {item.montura.id}
+                            </span>
+                          </td>
+
+                          {/* Stock actual */}
                           <td className="py-3 px-6 text-center text-sm font-bold text-slate-500">
                             {item.stock.cantidad}
                           </td>
+
+                          {/* Nuevo stock */}
                           <td className="py-3 px-6 text-center">
                             <input
                               type="text"
@@ -301,48 +316,77 @@ export default function InventarioMonturas() {
 
         {/* MODAL DE FINALIZACIÓN */}
         {isModalOpen && (
-          <ModalFrameWrapper size="md">
-            <div className="pt-4 pb-8">
-              {/* Cabecera unificada */}
+          <ModalFrameWrapper size="lg">
+            <div className="pt-4 pb-16">
+              {/* Cabecera */}
               <header className="flex flex-col items-center text-center mb-6">
-                <div className="w-14 h-14 bg-blue-light-6 rounded-2xl flex items-center justify-center mb-3 shadow-sm border border-blue-light-5">
-                  <span className="text-2xl">📋</span>
+                <div className="w-14 h-14 bg-yellow-light-4 rounded-2xl flex items-center justify-center mb-3 rotate-3 shadow-sm border border-yellow-light-2">
+                  <PackageSearch
+                    className="w-7 h-7 text-yellow-dark"
+                    strokeWidth={1.5}
+                  />
                 </div>
-                <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tighter leading-none">
+                <h3 className="text-2xl font-black text-slate-800 uppercase tracking-tight leading-none">
                   Confirmar <span className="text-blue">Inventario</span>
                 </h3>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
-                  Revise los cambios antes de guardar
-                </p>
               </header>
 
-              {/* Contenedor de Tabla con clases de style.css */}
-              <div className="mv-table-container my-6">
-                <div className="mv-table-scroll max-h-60">
+              {/* Listado de Productos Modificados */}
+              <div className="mv-table-container max-h-[60vh] overflow-y-auto overflow-x-hidden">
+                <div className="mv-scroll-area">
                   {productosModificados.length > 0 ? (
-                    <table className="mv-table">
-                      <thead className="mv-thead">
+                    <table className="mv-table w-full">
+                      <thead>
                         <tr>
-                          <th className="mv-th">Modelo / Marca</th>
-                          <th className="mv-th">Código</th>
-                          <th className="mv-th text-center">Nuevo Stock</th>
+                          <th className="mv-th !py-1.5 !px-3 text-left w-[28%]">Producto</th>
+                          <th className="mv-th !py-1.5 !px-1 text-center w-[14%]">ID Montura</th>
+                          <th className="mv-th !py-1.5 !px-1 text-center w-[16%]">Código</th>
+                          <th className="mv-th !py-1.5 !px-1 text-center w-[16%]">Código Montura</th>
+                          <th className="mv-th !py-1.5 !px-1 text-center w-[13%]">Stock Actual</th>
+                          <th className="mv-th !py-1.5 !px-1 text-center w-[13%]">Nuevo Stock</th>
                         </tr>
                       </thead>
-                      <tbody>
+                      <tbody className="divide-y divide-blue-light-6">
                         {productosModificados.map((p) => (
                           <tr key={p.stock.id} className="mv-tr">
-                            <td className="mv-td">
-                              <span className="mv-text-main text-slate-700">
+                            {/* Producto */}
+                            <td className="mv-td !py-1 !px-3">
+                              <span className="mv-text-main text-[11px] text-slate-700 block line-clamp-1">
                                 {p.montura.marca}
                               </span>
                             </td>
-                            <td className="mv-td">
-                              <span className="font-mono text-[10px] font-bold text-slate-500">
+
+                            {/* ID montura */}
+                            <td className="mv-td !py-1 !px-1 text-center">
+                              <span className="font-mono text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded inline-block whitespace-nowrap">
+                                {p.montura.id}
+                              </span>
+                            </td>
+
+                            {/* Codigo de montura */}
+                            <td className="mv-td !py-1 !px-1 text-center">
+                              <span className="font-mono text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded inline-block whitespace-nowrap">
                                 {p.montura.codigo}
                               </span>
                             </td>
-                            <td className="mv-td text-center">
-                              <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue text-white font-black text-[10px]">
+
+                            {/* Codigo de montura */}
+                            <td className="mv-td !py-1 !px-1 text-center">
+                              <span className="font-mono text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded inline-block whitespace-nowrap">
+                                {p.montura.codigoQr}
+                              </span>
+                            </td>
+
+                            {/* Stock actual */}
+                            <td className="mv-td !py-1 !px-1 text-center">
+                              <span className="font-mono text-[11px] font-bold text-slate-500">
+                                {p.stock.cantidad}
+                              </span>
+                            </td>
+
+                            {/* Nuevo stock */}
+                            <td className="mv-td !py-1 !px-1 text-center">
+                              <span className="inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 rounded-full bg-blue text-white font-black text-[10px]">
                                 {dictStocks[String(p.stock.id)]}
                               </span>
                             </td>
@@ -351,8 +395,9 @@ export default function InventarioMonturas() {
                       </tbody>
                     </table>
                   ) : (
-                    <div className="flex flex-col items-center justify-center py-8">
-                      <p className="text-slate-400 font-black text-[10px] uppercase tracking-widest">
+                    <div className="flex-1 flex flex-col items-center justify-center py-10 px-6 text-center">
+                      <CheckCircle className="w-8 h-8 text-green-500 mb-2" />
+                      <p className="text-slate-500 font-black text-[10px] uppercase tracking-tighter">
                         Sin cambios detectados
                       </p>
                     </div>
@@ -361,7 +406,7 @@ export default function InventarioMonturas() {
               </div>
 
               {/* Acciones del Footer */}
-              <div className="grid grid-cols-2 gap-4">
+              <footer className="mt-6 grid grid-cols-2 gap-4">
                 <BaseButton
                   variant="cancel"
                   onClick={() => setIsModalOpen(false)}
@@ -374,7 +419,7 @@ export default function InventarioMonturas() {
                 >
                   Guardar
                 </BaseButton>
-              </div>
+              </footer>
             </div>
           </ModalFrameWrapper>
         )}
