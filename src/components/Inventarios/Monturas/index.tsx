@@ -248,7 +248,7 @@ export default function InventarioMonturas() {
                     <tr className="text-[10px] font-black text-blue uppercase tracking-widest">
                       <th className="py-4 px-6 w-12 text-center">#</th>
                       <th className="py-4 px-6">MONTURA / MODELO</th>
-                      <th className="py-4 px-6 text-center">STOCK SISTEMA</th>
+                      <th className="py-4 px-6 text-center">STOCK ACTUAL</th>
                       <th className="py-4 px-6 text-center">NUEVO STOCK</th>
                     </tr>
                   </thead>
