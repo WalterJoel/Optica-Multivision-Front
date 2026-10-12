@@ -7,6 +7,8 @@ import { useOutdatedStockProducts } from "@/hooks/products/stock";
 import { CheckCircle, Loader2, PackageSearch } from "lucide-react";
 import { useSessionUser } from "@/hooks/session";
 
+import { BaseButton } from "@/components/Common/Buttons/BaseButton";
+
 interface Props {
   isOpenModalOutdated: boolean;
   onCloseModalOutdated: () => void;
@@ -32,7 +34,7 @@ export function OutdatedProductsModal({
   if (!isOpenModalOutdated) return null;
 
   return (
-    <ModalFrameWrapper size="md">
+    <ModalFrameWrapper size="lg">
       <div className="pt-4 pb-16">
         {/* Cabecera */}
         <header className="flex flex-col items-center text-center mb-6">
@@ -43,15 +45,13 @@ export function OutdatedProductsModal({
             />
           </div>
           <h3 className="text-2xl font-black text-slate-800 uppercase tracking-tight leading-none">
-            Stock <span className="text-blue">Pendiente</span>
+            Stock <span className="text-blue">Pendiente (Hoy)</span>
           </h3>
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
-            Inventario de Hoy
-          </p>
+
         </header>
 
         {/* Listado de Productos */}
-        <div className="mv-table-container max-h-[60vh] overflow-y-auto">
+        <div className="mv-table-container max-h-[60vh] overflow-y-auto overflow-x-hidden">
           <div className="mv-scroll-area">
             {loading ? (
               <div className="flex-1 flex flex-col items-center justify-center py-10">
@@ -61,29 +61,58 @@ export function OutdatedProductsModal({
                 </span>
               </div>
             ) : outdatedProducts.length > 0 ? (
-              <table className="mv-table">
+              <table className="mv-table w-full">
                 <thead>
                   <tr>
-                    <th className="mv-th">Producto</th>
-                    <th className="mv-th text-center">Código Interno</th>
-                    <th className="mv-th text-center">Stock</th>
+                    <th className="mv-th !py-1.5 !px-3 text-left w-[28%]">Producto</th>
+                    <th className="mv-th !py-1.5 !px-2 text-center w-[18%]">Material</th>
+                    <th className="mv-th !py-1.5 !px-1 text-center w-[12%]">ID Montura</th>
+                    <th className="mv-th !py-1.5 !px-1 text-center w-[15%]">Código</th>
+                    <th className="mv-th !py-1.5 !px-1 text-center w-[17%]">Código Montura</th>
+                    <th className="mv-th !py-1.5 !px-1 text-center w-[10%]">Stock</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-blue-light-6">
                   {outdatedProducts.map((p) => (
                     <tr key={p.id} className="mv-tr">
-                      <td className="mv-td">
-                        <span className="mv-text-main">
-                          {p.nombre || "N/A"}
+                      <td className="mv-td !py-1 !px-3">
+                        <span className="mv-text-main text-[11px] text-slate-700 block line-clamp-1">
+                          {p.nombre}
                         </span>
                       </td>
-                      <td className="mv-td text-center">
-                        <span className="font-mono text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded border border-slate-200">
-                          {p.montura?.codigo || p.accesorio?.codigo || "---"}
+
+                      {/* Material */}
+                      <td className="mv-td !py-1 !px-2 text-center">
+                        <span className="font-mono text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded inline-block whitespace-nowrap">
+                          {p.montura?.material || "---"}
                         </span>
                       </td>
-                      <td className="mv-td text-center">
-                        <span className="mv-stock-badge">{p.cantidad}</span>
+
+                      {/* ID montura */}
+                      <td className="mv-td !py-1 !px-1 text-center">
+                        <span className="font-mono text-[10px] font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded inline-block">
+                          {p.montura?.id}
+                        </span>
+                      </td>
+
+                      {/* Codigo de montura */}
+                      <td className="mv-td !py-1 !px-1 text-center">
+                        <span className="font-mono text-[10px] font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded inline-block">
+                          {p.montura?.codigo}
+                        </span>
+                      </td>
+
+                      {/* Codigo de montura */}
+                      <td className="mv-td !py-1 !px-1 text-center">
+                        <span className="font-mono text-[10px] font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded inline-block">
+                          {p.montura?.codigoMontura}
+                        </span>
+                      </td>
+
+                      <td className="mv-td !py-1 !px-1 text-center">
+                        <span className="inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 rounded-full bg-blue text-white font-black text-[10px]">
+                          {p.cantidad}
+                        </span>
                       </td>
                     </tr>
                   ))}
@@ -102,13 +131,9 @@ export function OutdatedProductsModal({
 
         {/* Footer */}
         <footer className="mt-6">
-          <button
-            onClick={onCloseModalOutdated}
-            className="group relative w-full overflow-hidden rounded-xl bg-blue py-3.5 font-black text-[10px] uppercase tracking-widest text-white shadow-lg shadow-blue/20 transition-all hover:bg-blue-dark active:scale-[0.98]"
-          >
-            <span className="relative z-10 text-white">Continuar</span>
-            <div className="absolute inset-0 z-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500" />
-          </button>
+          <BaseButton onClick={onCloseModalOutdated}>
+            Continuar
+          </BaseButton>
         </footer>
       </div>
     </ModalFrameWrapper>

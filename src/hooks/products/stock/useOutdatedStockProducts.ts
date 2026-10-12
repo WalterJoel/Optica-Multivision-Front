@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-  IOutdatedAccesoryStockResponse,
   IOutdatedProductStockResponse,
   IOutdatedStockProductosPayload,
 } from "@/types/products";
@@ -8,7 +7,7 @@ import { getAllOutdatedStockProductsService } from "@/services/products/stock";
 export function useOutdatedStockProducts() {
   const [loading, setLoading] = useState(false);
   const [outdatedProducts, setOutdatedProducts] = useState<
-    IOutdatedProductStockResponse[] | IOutdatedAccesoryStockResponse[]
+    IOutdatedProductStockResponse[]
   >([]);
   const [statusMessage, setMessage] = useState<string>("");
 

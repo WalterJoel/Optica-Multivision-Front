@@ -32,44 +32,37 @@ export type IOutdatedStockProductosPayload = {
   idSede: number;
 };
 export interface IOutdatedProductStockResponse {
-  id: string;
-  sedeId: string;
-  productoId: string;
-  cantidad: string;
-  ubicacion: string;
+  id: number;
+  nombre: string;
+  tipo: TipoProducto | string;
+  cantidad: number;
+  activo: boolean;
+  ubicacion?: string;
+  precioCompra: number;
+  precioVenta: number;
+  sedeId: number;
+  monturaId?: number | null;
+  accesorioId?: number | null;
   createdAt: string;
   updatedAt: string;
-  producto: {
-    id: string;
+  montura?: {
+    id: number;
+    codigo: string;
+    codigoMontura: string;
+    marca: string;
+    material?: string;
+    talla?: string;
+    color?: string;
+    formaFacial?: string;
+    sexo?: string;
+    clasificacion?: string;
+    imagenUrl?: string | null;
+  } | null;
+  accesorio?: {
+    id: number;
+    codigo: string;
     nombre: string;
-    activo: string;
-    tipo: string;
-    createdAt: string;
-    montura: {
-      id: string;
-      codigo: string;
-      codigoQr: string;
-    };
-  };
+    marca?: string;
+  } | null;
 }
 
-export interface IOutdatedAccesoryStockResponse {
-  id: string;
-  sedeId: string;
-  productoId: string;
-  cantidad: string;
-  ubicacion: string;
-  createdAt: string;
-  updatedAt: string;
-  producto: {
-    id: string;
-    nombre: string;
-    activo: string;
-    tipo: string;
-    createdAt: string;
-    accesorio: {
-      id: string;
-      codigo: string;
-    };
-  };
-}
