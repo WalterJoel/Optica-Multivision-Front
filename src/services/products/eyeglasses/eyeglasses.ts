@@ -53,6 +53,6 @@ export const searchEyeglassByQrService = async (
   codigo: string,
   idSede: number,
 ): Promise<IEyeglassQrResponse> => {
-  const { data } = await api.get(`/productos/montura/qr/${codigo}/${idSede}`);
+  const { data } = await api.get(`/productos/montura/busquedaInventario/${codigo}/${idSede}`);
   return data;
 };

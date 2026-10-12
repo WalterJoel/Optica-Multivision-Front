@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { CheckCircle2, Search } from "lucide-react";
 import { useSearchEyeglassByQr } from "@/hooks/products/eyeglasses/useSearchEyeGlassByQr";
+import { useSearchEyeglass } from "@/hooks/products/eyeglasses/useSearchEyeglass";
 import { useUpdateStockProductos } from "@/hooks/products/stock/useUpdateStockProductos";
 import { IEyeglassQrResponse, IUpdateStockProductos } from "@/types/products";
 import {
@@ -35,6 +36,7 @@ export default function InventarioMultivision() {
 
   // Hooks
   const { eyeglass, searchEyeglassByQr } = useSearchEyeglassByQr();
+  const { eyeglasses: opciones, showList, searchEyeglass, setShowList } = useSearchEyeglass();
   const { loading, statusMessage, success, updateStockProductos } =
     useUpdateStockProductos();
 
@@ -56,6 +58,21 @@ export default function InventarioMultivision() {
     setContador((c) => c + 1);
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setBusqueda(value);
+    searchEyeglass(value);
+  };
+
+  const handleSelectOption = (codigo: string) => {
+    searchEyeglassByQr(codigo, 1);
+    setShowList(false);
+    setBusqueda("");
+    if (inputRef.current) {
+      inputRef.current.value = "";
+    }
+  };
+
   const handleScan = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key !== "Enter") return;
 
@@ -64,6 +81,7 @@ export default function InventarioMultivision() {
     if (!codigo) return;
 
     searchEyeglassByQr(codigo, 1);
+    setShowList(false);
 
     // Limpieza inmediata para el siguiente escaneo
     setBusqueda("");
@@ -142,14 +160,34 @@ export default function InventarioMultivision() {
                   autoFocus
                   type="text"
                   value={busqueda}
-                  onChange={(e) => setBusqueda(e.target.value)}
+                  onChange={handleInputChange}
                   onKeyDown={handleScan}
                   // disabled={loading} <-- Removido para permitir ráfagas de escaneo
                   placeholder={
-                    loading ? "BUSCANDO..." : "ESCANEE CÓDIGO DE QR ..."
+                    loading ? "BUSCANDO..." : "Buscar por nombre, código, marca, etc..."
                   }
                   className="w-full py-4 pl-12 pr-4 rounded-xl border border-slate-100 bg-slate-50 text-blue font-bold text-lg focus:border-blue focus:bg-white transition-all outline-none"
                 />
+                {/* Listado de autocompletado */}
+                {showList && opciones && opciones.length > 0 && (
+                  <ul className="absolute left-0 right-0 top-[calc(100%+8px)] bg-white rounded-xl shadow-lg border border-slate-100 max-h-64 overflow-y-auto z-[60]">
+                    {opciones.map((opt) => (
+                      <li
+                        key={opt.id}
+                        onClick={() => handleSelectOption(opt.codigo || opt.codigoMontura)}
+                        className="px-4 py-3 hover:bg-slate-50 cursor-pointer border-b border-slate-50 last:border-0 flex items-center justify-between transition-colors"
+                      >
+                        <div className="flex flex-col">
+                          <span className="font-bold text-dark">{opt.marca}</span>
+                          <span className="text-xs text-slate-500">{opt.codigo || opt.codigoMontura}</span>
+                        </div>
+                        <span className="text-[10px] font-bold text-blue bg-blue/10 px-2 py-1 rounded-lg">
+                          Stock en Sede: {opt.producto?.cantidad || 0}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
 
               <BaseButton
@@ -165,49 +203,8 @@ export default function InventarioMultivision() {
               >
                 Por Actualizar
               </BaseButton>
-              <BaseButton
-                variant="secondary"
-                fullWidth={false}
-                onClick={() => setOpenModalOutdated(true)}
-              >
-                Cargar Excel
-              </BaseButton>
             </header>
 
-            {/* BOX ITEM ACTUAL */}
-            <div
-              className={`transition-all duration-300 overflow-hidden ${boxItem ? "mt-4 opacity-100 max-h-24" : "opacity-0 max-h-0"}`}
-            >
-              <div className="mx-auto max-w-2xl grid grid-cols-[80px_1fr_120px] bg-blue border border-blue-dark rounded-xl p-2 items-center gap-3 shadow-lg shadow-blue/20">
-                <div className="flex justify-center text-4xl">👓</div>
-                <div className="flex flex-col justify-center min-w-0">
-                  <h2 className="text-white font-black text-2xl uppercase tracking-tighter leading-none truncate">
-                    {boxItem?.montura?.marca}
-                  </h2>
-                  <p className="text-blue-light-5 font-bold font-mono text-[10px] uppercase mt-0.5">
-                    MODELO: {boxItem?.montura?.codigo}
-                  </p>
-                </div>
-                <div className="flex flex-col items-center justify-center border-l border-white/20 pl-2">
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={dictStocks[String(boxItem?.stock?.id)] || ""}
-                      onChange={(e) =>
-                        updateManual(String(boxItem?.stock?.id), e.target.value)
-                      }
-                      className="w-20 py-1 border-2 border-white rounded-lg text-center font-black text-3xl text-blue outline-none bg-white"
-                    />
-                    <div className="absolute -right-2 -top-2 bg-white text-blue rounded-full p-0.5 shadow-md">
-                      <CheckCircle2 size={14} strokeWidth={3} />
-                    </div>
-                  </div>
-                  <p className="text-[8px] font-black text-white uppercase mt-1 tracking-tighter">
-                    NUEVO STOCK
-                  </p>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* TABLAS */}

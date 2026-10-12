@@ -17,6 +17,7 @@ export interface IEyeglassQrResponse {
     productoId: number;
     precio: number;
     marca: string;
+    imagenUrl?: string | null;
   };
   stock: {
     id: number;

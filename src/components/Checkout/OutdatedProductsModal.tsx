@@ -49,7 +49,7 @@ export function OutdatedProductsModal({
         </header>
 
         {/* Listado de Productos */}
-        <div className="mv-table-container">
+        <div className="mv-table-container max-h-[60vh] overflow-y-auto">
           <div className="mv-scroll-area">
             {loading ? (
               <div className="flex-1 flex flex-col items-center justify-center py-10">
@@ -72,12 +72,12 @@ export function OutdatedProductsModal({
                     <tr key={p.id} className="mv-tr">
                       <td className="mv-td">
                         <span className="mv-text-main">
-                          {p.producto?.nombre || "N/A"}
+                          {p.nombre || "N/A"}
                         </span>
                       </td>
                       <td className="mv-td text-center">
                         <span className="font-mono text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded border border-slate-200">
-                          {p.producto?.montura?.codigo || "---"}
+                          {p.montura?.codigo || p.accesorio?.codigo || "---"}
                         </span>
                       </td>
                       <td className="mv-td text-center">
