@@ -47,7 +47,7 @@ function AccessoryCardFrame({
   const colors = borderPairs[variant];
 
   return (
-    <div className="relative w-full h-[220px] overflow-hidden rounded-[1.6rem] p-[2px] shadow-md hover:shadow-lg transition flex">
+    <div className="relative w-full min-h-[250px] h-full overflow-hidden rounded-[1.6rem] p-[2px] shadow-md hover:shadow-lg transition flex">
       {/* BORDER */}
       <div className="absolute inset-0 flex">
         <div className={`w-1/2 h-full ${colors.left}`} />
@@ -72,7 +72,7 @@ function AccessoryCardFrame({
         </div>
 
         {/* CONTENT */}
-        <div className="w-[60%] p-4 flex flex-col justify-between">
+        <div className="w-[60%] p-3.5 sm:p-4 flex flex-col justify-between">
           <div>
             {/* Nombre */}
             <h3 className="text-sm font-black text-dark uppercase line-clamp-1">
@@ -112,15 +112,13 @@ function AccessoryCardFrame({
             </p>
           </div>
 
-          {/* Precio */}
-          <div className="mt-2">
-            <span className="font-black text-blue text-sm">
+          {/* Precio y botones de acción */}
+          <div className="mt-2 pt-1">
+            <span className="font-black text-blue text-sm block mb-1.5">
               S/ {accessory.precioVenta}
             </span>
+            <div className="flex justify-end">{children}</div>
           </div>
-
-          {/* Botones de acción */}
-          <div className="mt-2 flex justify-end">{children}</div>
         </div>
       </div>
     </div>
