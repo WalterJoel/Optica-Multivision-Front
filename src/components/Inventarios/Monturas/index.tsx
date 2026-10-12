@@ -16,7 +16,7 @@ import { BaseButton } from "@/components/Common/Buttons";
 import { useSessionUser } from "@/hooks/session";
 
 // Modales
-import { OutdatedProductsModal } from "./OutdatedProductsModal";
+import { ModalPorActualizar } from "./ModalPorActualizar";
 
 export default function InventarioMonturas() {
   const [busqueda, setBusqueda] = useState("");
@@ -388,7 +388,7 @@ export default function InventarioMonturas() {
         onClose={() => setOpenModal(false)}
       />
 
-      <OutdatedProductsModal
+      <ModalPorActualizar
         isOpenModalOutdated={isOpenModalOutdated}
         onCloseModalOutdated={() => setOpenModalOutdated(false)}
       />

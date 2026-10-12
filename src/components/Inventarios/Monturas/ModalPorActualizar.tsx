@@ -14,7 +14,7 @@ interface Props {
   onCloseModalOutdated: () => void;
 }
 
-export function OutdatedProductsModal({
+export function ModalPorActualizar({
   isOpenModalOutdated,
   onCloseModalOutdated,
 }: Props) {
@@ -139,3 +139,6 @@ export function OutdatedProductsModal({
     </ModalFrameWrapper>
   );
 }
+
+// Alias de retrocompatibilidad
+export { ModalPorActualizar as OutdatedProductsModal };
