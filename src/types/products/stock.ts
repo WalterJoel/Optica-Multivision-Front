@@ -1,4 +1,4 @@
-import { TipoProducto } from "@/commons/constants";
+import { EstadoInventario, TipoProducto } from "@/commons/constants";
 
 interface IUpdateStockProducto {
   productoId: number;
@@ -71,3 +71,32 @@ export interface IOutdatedProductStockResponse {
   } | null;
 }
 
+
+// Reporte Inventario 
+
+export type IReporteInventarioPayload = {
+  tipoProducto: TipoProducto;
+  idSede: number;
+};
+
+
+export interface IReporteInventarioResponse {
+  sedeId: number;
+  productoId: number;
+  tipo: string;
+
+  monturaId: number | null;
+  accesorioId: number | null;
+
+  nombre: string;
+  codigo: string;
+
+  material: string;
+  talla: string;
+  color: string;
+  clasificacion: string;
+
+  stock: number;
+  fechaInventario: string | Date | null;
+  estadoInventario: EstadoInventario.INVENTARIADO | EstadoInventario.INVENTARIADO;
+}

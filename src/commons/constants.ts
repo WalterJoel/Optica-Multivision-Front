@@ -147,3 +147,9 @@ export enum ClasificacionLentes {
 }
 
 export const ITEMS_PER_PAGE = 40;
+
+// Inventario
+export enum EstadoInventario {
+  INVENTARIADO = 'INVENTARIADO',
+  PENDIENTE = 'PENDIENTE'
+}

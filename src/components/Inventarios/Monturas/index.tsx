@@ -1,22 +1,24 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { CheckCircle2, Search, Glasses, PackageSearch, CheckCircle } from "lucide-react";
+import { CheckCircle2, Search, Glasses, PackageSearch, CheckCircle, Trash2 } from "lucide-react";
 import { useSearchEyeglassByQr } from "@/hooks/products/eyeglasses/useSearchEyeGlassByQr";
 import { useSearchEyeglass } from "@/hooks/products/eyeglasses/useSearchEyeglass";
 import { useUpdateStockProductos } from "@/hooks/products/stock/useUpdateStockProductos";
-import { IEyeglassQrResponse, IUpdateStockProductos } from "@/types/products";
+import { IEyeglassQrResponse, IReporteInventarioPayload, IUpdateStockProductos } from "@/types/products";
 import {
   StatusModal,
   LoadingModal,
   ModalFrameWrapper,
 } from "@/components/Common/modal";
-import { STATUS_MODAL } from "@/commons/constants";
+import { STATUS_MODAL, TipoProducto } from "@/commons/constants";
 import { BaseButton } from "@/components/Common/Buttons";
 import { useSessionUser } from "@/hooks/session";
 
 // Modales
 import { ModalPorActualizar } from "./ModalPorActualizar";
+import { BaseButtonIcon } from "@/components/Common/Buttons/BaseButtonIcon";
+import { useReporteInventario } from "@/hooks/products/stock/useReporteInventario";
 
 export default function InventarioMonturas() {
   const [busqueda, setBusqueda] = useState("");
@@ -39,9 +41,8 @@ export default function InventarioMonturas() {
   const { sedeId } = useSessionUser();
   const { eyeglass, searchEyeglassByQr } = useSearchEyeglassByQr();
   const { eyeglasses: opciones, showList, searchEyeglass, setShowList } = useSearchEyeglass();
-  const { loading, statusMessage, success, updateStockProductos } =
-    useUpdateStockProductos();
-
+  const { descargarExcel } = useReporteInventario();
+  const { loading, statusMessage, success, updateStockProductos } = useUpdateStockProductos();
   const procesarProductoEncontrado = (data: IEyeglassQrResponse) => {
     const stockId = String(data.stock.id);
     const existeEnLote = lote.find((item) => item.stock.id === data.stock.id);
@@ -97,6 +98,24 @@ export default function InventarioMonturas() {
     }
   };
 
+  const eliminarFila = (stockId: string) => {
+    setLote((prev) =>
+      prev.filter((item) => String(item.stock.id) !== stockId)
+    );
+
+    setDictStocks((prev) => {
+      const nuevo = { ...prev };
+      delete nuevo[stockId];
+      return nuevo;
+    });
+
+    setContador((prev) => Math.max(0, prev - 1));
+
+    if (boxItem && String(boxItem.stock.id) === stockId) {
+      setBoxItem(null);
+    }
+  };
+
   const guardarInventario = async () => {
     const payload: IUpdateStockProductos = {
       items: productosModificados.map((p) => ({
@@ -107,6 +126,16 @@ export default function InventarioMonturas() {
     await updateStockProductos(payload);
     setIsModalOpen(false);
   };
+
+  // Reporte de inventario
+  const descargarReporteExcel = async () => {
+    const payload: IReporteInventarioPayload = {
+      idSede: sedeId,
+      tipoProducto: TipoProducto.MONTURA
+    }
+    await descargarExcel(payload);
+  };
+
 
   useEffect(() => {
     if (eyeglass && eyeglass.montura) {
@@ -213,6 +242,12 @@ export default function InventarioMonturas() {
               >
                 Por Actualizar
               </BaseButton>
+              <BaseButton
+                fullWidth={false}
+                onClick={descargarReporteExcel}
+              >
+                Reporte
+              </BaseButton>
             </header>
           </div>
 
@@ -234,6 +269,8 @@ export default function InventarioMonturas() {
                       <th className="py-4 px-6 text-center">ID MONTURA</th>
                       <th className="py-4 px-6 text-center">STOCK ACTUAL</th>
                       <th className="py-4 px-6 text-center">NUEVO STOCK</th>
+                      <th className="py-4 px-3 text-center w-12">Acción</th>
+
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-50">
@@ -259,7 +296,7 @@ export default function InventarioMonturas() {
                             >
                               {item.montura.marca} {item.montura.codigo}
                             </p>
-                            <p className="text-[9px] font-mono font-bold text-slate-400 uppercase leading-none">
+                            <p className="text-[9px] font-mo  font-bold text-slate-400 uppercase leading-none">
                               {item.montura.codigoQr}
                             </p>
                           </td>
@@ -286,6 +323,18 @@ export default function InventarioMonturas() {
                               }
                               className={`w-12 py-1.5 border-2 rounded-lg text-center font-black text-sm ${isSelected ? "border-blue text-blue bg-white" : "border-slate-100 text-slate-400 bg-slate-50"}`}
                             />
+                          </td>
+                          {/* Accion eliminar */}
+                          <td className="py-3 px-3 text-center">
+                            <td className="p-4 text-center">
+                              <BaseButtonIcon
+                                type="button"
+                                variant="danger"
+                                onClick={() => eliminarFila(stockId)}
+                              >
+                                <Trash2 size={16} />
+                              </BaseButtonIcon>
+                            </td>
                           </td>
                         </tr>
                       );
