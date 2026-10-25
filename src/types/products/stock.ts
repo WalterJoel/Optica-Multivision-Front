@@ -9,24 +9,6 @@ export type IUpdateStockProductos = {
   items: IUpdateStockProducto[];
 };
 
-export interface IEyeglassQrResponse {
-  montura: {
-    id: number;
-    codigo: string;
-    codigoQr: string;
-    productoId: number;
-    precio: number;
-    marca: string;
-    imagenUrl?: string | null;
-  };
-  stock: {
-    id: number;
-    cantidad: number;
-    ubicacion: string;
-    updateAt: string;
-  };
-}
-
 export type IOutdatedStockProductosPayload = {
   tipoProducto: TipoProducto;
   idSede: number;
@@ -71,14 +53,12 @@ export interface IOutdatedProductStockResponse {
   } | null;
 }
 
-
-// Reporte Inventario 
+// Reporte Inventario
 
 export type IReporteInventarioPayload = {
   tipoProducto: TipoProducto;
   idSede: number;
 };
-
 
 export interface IReporteInventarioResponse {
   sedeId: number;
@@ -98,5 +78,7 @@ export interface IReporteInventarioResponse {
 
   stock: number;
   fechaInventario: string | Date | null;
-  estadoInventario: EstadoInventario.INVENTARIADO | EstadoInventario.INVENTARIADO;
+  estadoInventario:
+    | EstadoInventario.INVENTARIADO
+    | EstadoInventario.INVENTARIADO;
 }

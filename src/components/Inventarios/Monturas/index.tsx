@@ -2,18 +2,16 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import {
-  CheckCircle2,
   Search,
   Glasses,
   PackageSearch,
   CheckCircle,
   Trash2,
 } from "lucide-react";
-import { useSearchEyeglassByQr } from "@/hooks/products/eyeglasses/useSearchEyeGlassByQr";
 import { useSearchEyeglass } from "@/hooks/products/eyeglasses/useSearchEyeglass";
 import { useUpdateStockProductos } from "@/hooks/products/stock/useUpdateStockProductos";
 import {
-  IEyeglassQrResponse,
+  IEyeglass,
   IReporteInventarioPayload,
   IUpdateStockProductos,
 } from "@/types/products";
@@ -26,23 +24,21 @@ import { STATUS_MODAL, TipoProducto } from "@/commons/constants";
 import { BaseButton } from "@/components/Common/Buttons";
 import { useSessionUser } from "@/hooks/session";
 
-// Modales
-import { ModalPorActualizar } from "./ModalPorActualizar";
 import { BaseButtonIcon } from "@/components/Common/Buttons/BaseButtonIcon";
 import { useReporteInventario } from "@/hooks/products/stock/useReporteInventario";
 
+const getProductoId = (item: IEyeglass) =>
+  item.productoId ?? item.producto?.id ?? item.id;
+
 export default function InventarioMonturas() {
   const [busqueda, setBusqueda] = useState("");
-  const [lote, setLote] = useState<IEyeglassQrResponse[]>([]);
-  const [boxItem, setBoxItem] = useState<IEyeglassQrResponse | null>(null);
+  const [lote, setLote] = useState<IEyeglass[]>([]);
+  const [boxItem, setBoxItem] = useState<IEyeglass | null>(null);
   const [contador, setContador] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [typeModal, setTypeModal] = useState<string>("");
   const [openModal, setOpenModal] = useState<boolean>(false);
-
-  // Modales
-  const [isOpenModalOutdated, setOpenModalOutdated] = useState<boolean>(false);
 
   const [dictStocks, setDictStocks] = useState<{ [key: string]: string }>({});
 
@@ -50,31 +46,30 @@ export default function InventarioMonturas() {
 
   // Hooks
   const { sedeId } = useSessionUser();
-  const { eyeglass, searchEyeglassByQr } = useSearchEyeglassByQr();
   const {
     eyeglasses: opciones,
     showList,
     searchEyeglass,
-    setShowList,
   } = useSearchEyeglass();
   const { descargarExcel } = useReporteInventario();
   const { loading, statusMessage, success, updateStockProductos } =
     useUpdateStockProductos();
-  const procesarProductoEncontrado = (data: IEyeglassQrResponse) => {
-    const stockId = String(data.stock.id);
-    const existeEnLote = lote.find((item) => item.stock.id === data.stock.id);
+  const procesarProductoEncontrado = (data: IEyeglass) => {
+    const stockId = String(getProductoId(data));
 
-    if (existeEnLote) {
-      const valorActual = dictStocks[stockId];
-      const nuevoValor = String(Number(valorActual) + 1);
+    setLote((prev) => {
+      const existe = prev.some(
+        (item) => String(getProductoId(item)) === stockId,
+      );
+      return existe ? prev : [data, ...prev];
+    });
 
-      setDictStocks((prev) => ({ ...prev, [stockId]: nuevoValor }));
-      setBoxItem(existeEnLote);
-    } else {
-      setLote((prev) => [data, ...prev]);
-      setDictStocks((prev) => ({ ...prev, [stockId]: "1" }));
-      setBoxItem(data);
-    }
+    setDictStocks((prev) => {
+      const actual = prev[stockId] ?? "0";
+      return { ...prev, [stockId]: String(Number(actual || 0) + 1) };
+    });
+
+    setBoxItem(data);
     setContador((c) => c + 1);
   };
 
@@ -84,13 +79,11 @@ export default function InventarioMonturas() {
     searchEyeglass(value);
   };
 
-  const handleSelectOption = (codigo: string) => {
-    searchEyeglassByQr(codigo, sedeId);
-    setShowList(false);
+  const handleSelectOption = (opt: IEyeglass) => {
+    procesarProductoEncontrado(opt);
+    searchEyeglass("");
     setBusqueda("");
-    if (inputRef.current) {
-      inputRef.current.value = "";
-    }
+    inputRef.current?.focus();
   };
 
   const updateManual = (stockId: string, valor: string) => {
@@ -98,7 +91,7 @@ export default function InventarioMonturas() {
   };
 
   const productosModificados = lote.filter((p) => {
-    const stockId = String(p.stock.id);
+    const stockId = String(getProductoId(p));
     const stockNuevo = dictStocks[stockId];
     return stockNuevo !== "";
   });
@@ -109,14 +102,15 @@ export default function InventarioMonturas() {
     setContador(0);
     setBoxItem(null);
     setBusqueda("");
-    if (inputRef.current) {
-      inputRef.current.value = "";
-      inputRef.current.focus();
-    }
+    searchEyeglass("");
+    inputRef.current?.focus();
   };
 
+  // Eliminar fila
   const eliminarFila = (stockId: string) => {
-    setLote((prev) => prev.filter((item) => String(item.stock.id) !== stockId));
+    setLote((prev) =>
+      prev.filter((item) => String(getProductoId(item)) !== stockId),
+    );
 
     setDictStocks((prev) => {
       const nuevo = { ...prev };
@@ -126,16 +120,17 @@ export default function InventarioMonturas() {
 
     setContador((prev) => Math.max(0, prev - 1));
 
-    if (boxItem && String(boxItem.stock.id) === stockId) {
+    if (boxItem && String(getProductoId(boxItem)) === stockId) {
       setBoxItem(null);
     }
   };
 
+  //  Guardar inventario
   const guardarInventario = async () => {
     const payload: IUpdateStockProductos = {
       items: productosModificados.map((p) => ({
-        productoId: p.stock.id,
-        cantidad: Number(dictStocks[String(p.stock.id)]),
+        productoId: getProductoId(p),
+        cantidad: Number(dictStocks[String(getProductoId(p))]),
       })),
     };
     await updateStockProductos(payload);
@@ -150,12 +145,6 @@ export default function InventarioMonturas() {
     };
     await descargarExcel(payload);
   };
-
-  useEffect(() => {
-    if (eyeglass && eyeglass.montura) {
-      procesarProductoEncontrado(eyeglass);
-    }
-  }, [eyeglass]);
 
   useEffect(() => {
     if (!loading && (success || statusMessage)) {
@@ -211,13 +200,11 @@ export default function InventarioMonturas() {
                 />
                 {/* Listado de autocompletado */}
                 {showList && opciones && opciones.length > 0 && (
-                  <ul className="absolute left-0 right-0 top-[calc(100%+8px)] bg-white rounded-xl shadow-lg border border-slate-100 max-h-64 overflow-y-auto z-[60]">
+                  <ul className="absolute left-0 right-0 top-[calc(100%+8px)] bg-white rounded-xl shadow-lg border border-slate-100 max-h-96 overflow-y-auto z-[60]">
                     {opciones.map((opt) => (
                       <li
                         key={opt.id}
-                        onClick={() =>
-                          handleSelectOption(opt.codigo || opt.codigoMontura)
-                        }
+                        onClick={() => handleSelectOption(opt)}
                         className="px-4 py-2.5 hover:bg-slate-50 cursor-pointer border-b border-slate-50 last:border-0 flex items-center justify-between gap-3 transition-colors"
                       >
                         <div className="flex items-center gap-3 min-w-0">
@@ -236,13 +223,21 @@ export default function InventarioMonturas() {
                               />
                             )}
                           </div>
-                          <div className="flex flex-col min-w-0">
+                          <div className="flex flex-col min-w-0 gap-0.5">
                             <span className="font-bold text-dark text-sm leading-tight truncate">
                               {opt.marca}
                             </span>
-                            <span className="text-xs text-slate-500 font-mono">
-                              {opt.codigo || opt.codigoMontura}
-                            </span>
+                            <div className="flex flex-wrap items-center gap-1.5 text-[10px]">
+                              <span className="font-mono font-bold text-slate-500">
+                                Cód: {opt.codigo}
+                              </span>
+                              <span className="font-mono font-bold text-slate-500">
+                                Cod. montura: {opt.codigoMontura}
+                              </span>
+                              <span className="font-bold text-blue bg-blue/10 px-1.5 py-0.5 rounded">
+                                {opt.material}
+                              </span>
+                            </div>
                           </div>
                         </div>
                         <span className="text-[10px] font-bold text-blue bg-blue/10 px-2 py-1 rounded-lg shrink-0">
@@ -260,13 +255,7 @@ export default function InventarioMonturas() {
               >
                 Finalizar
               </BaseButton>
-              <BaseButton
-                variant="secondary"
-                fullWidth={false}
-                onClick={() => setOpenModalOutdated(true)}
-              >
-                Por Actualizar
-              </BaseButton>
+
               <BaseButton fullWidth={false} onClick={descargarReporteExcel}>
                 Reporte
               </BaseButton>
@@ -296,8 +285,10 @@ export default function InventarioMonturas() {
                   </thead>
                   <tbody className="divide-y divide-slate-50">
                     {col.map((item, i) => {
-                      const stockId = String(item.stock.id);
-                      const isSelected = item.stock.id === boxItem?.stock?.id;
+                      const stockId = String(getProductoId(item));
+                      const isSelected =
+                        boxItem !== null &&
+                        getProductoId(item) === getProductoId(boxItem);
                       return (
                         <tr
                           key={stockId}
@@ -315,23 +306,20 @@ export default function InventarioMonturas() {
                             <p
                               className={`font-bold text-sm uppercase ${isSelected ? "text-blue" : "text-slate-800"}`}
                             >
-                              {item.montura.marca} {item.montura.codigo}
-                            </p>
-                            <p className="text-[9px] font-mo  font-bold text-slate-400 uppercase leading-none">
-                              {item.montura.codigoQr}
+                              {item.marca} {item.codigo}
                             </p>
                           </td>
 
                           {/* ID montura */}
                           <td className="py-3 px-6 text-center">
                             <span className="font-mono text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded inline-block whitespace-nowrap">
-                              {item.montura.id}
+                              {item.monturaId}
                             </span>
                           </td>
 
                           {/* Stock actual */}
                           <td className="py-3 px-6 text-center text-sm font-bold text-slate-500">
-                            {item.stock.cantidad}
+                            {item.producto?.cantidad}
                           </td>
 
                           {/* Nuevo stock */}
@@ -347,15 +335,13 @@ export default function InventarioMonturas() {
                           </td>
                           {/* Accion eliminar */}
                           <td className="py-3 px-3 text-center">
-                            <td className="p-4 text-center">
-                              <BaseButtonIcon
-                                type="button"
-                                variant="danger"
-                                onClick={() => eliminarFila(stockId)}
-                              >
-                                <Trash2 size={16} />
-                              </BaseButtonIcon>
-                            </td>
+                            <BaseButtonIcon
+                              type="button"
+                              variant="danger"
+                              onClick={() => eliminarFila(stockId)}
+                            >
+                              <Trash2 size={16} />
+                            </BaseButtonIcon>
                           </td>
                         </tr>
                       );
@@ -413,46 +399,46 @@ export default function InventarioMonturas() {
                       </thead>
                       <tbody className="divide-y divide-blue-light-6">
                         {productosModificados.map((p) => (
-                          <tr key={p.stock.id} className="mv-tr">
+                          <tr key={getProductoId(p)} className="mv-tr">
                             {/* Producto */}
                             <td className="mv-td !py-1 !px-3">
                               <span className="mv-text-main text-[11px] text-slate-700 block line-clamp-1">
-                                {p.montura.marca}
+                                {p.marca}
                               </span>
                             </td>
 
                             {/* ID montura */}
                             <td className="mv-td !py-1 !px-1 text-center">
                               <span className="font-mono text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded inline-block whitespace-nowrap">
-                                {p.montura.id}
+                                {p.monturaId ?? p.id}
                               </span>
                             </td>
 
                             {/* Codigo de montura */}
                             <td className="mv-td !py-1 !px-1 text-center">
                               <span className="font-mono text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded inline-block whitespace-nowrap">
-                                {p.montura.codigo}
+                                {p.codigo}
                               </span>
                             </td>
 
                             {/* Codigo de montura */}
                             <td className="mv-td !py-1 !px-1 text-center">
                               <span className="font-mono text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded inline-block whitespace-nowrap">
-                                {p.montura.codigoQr}
+                                {p.codigoMontura}
                               </span>
                             </td>
 
                             {/* Stock actual */}
                             <td className="mv-td !py-1 !px-1 text-center">
                               <span className="font-mono text-[11px] font-bold text-slate-500">
-                                {p.stock.cantidad}
+                                {p.producto?.cantidad ?? p.cantidad}
                               </span>
                             </td>
 
                             {/* Nuevo stock */}
                             <td className="mv-td !py-1 !px-1 text-center">
                               <span className="inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 rounded-full bg-blue text-white font-black text-[10px]">
-                                {dictStocks[String(p.stock.id)]}
+                                {dictStocks[String(getProductoId(p))]}
                               </span>
                             </td>
                           </tr>
@@ -498,10 +484,6 @@ export default function InventarioMonturas() {
         onClose={() => setOpenModal(false)}
       />
 
-      <ModalPorActualizar
-        isOpenModalOutdated={isOpenModalOutdated}
-        onCloseModalOutdated={() => setOpenModalOutdated(false)}
-      />
     </>
   );
 }
