@@ -1,11 +1,22 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { CheckCircle2, Search, Glasses, PackageSearch, CheckCircle, Trash2 } from "lucide-react";
+import {
+  CheckCircle2,
+  Search,
+  Glasses,
+  PackageSearch,
+  CheckCircle,
+  Trash2,
+} from "lucide-react";
 import { useSearchEyeglassByQr } from "@/hooks/products/eyeglasses/useSearchEyeGlassByQr";
 import { useSearchEyeglass } from "@/hooks/products/eyeglasses/useSearchEyeglass";
 import { useUpdateStockProductos } from "@/hooks/products/stock/useUpdateStockProductos";
-import { IEyeglassQrResponse, IReporteInventarioPayload, IUpdateStockProductos } from "@/types/products";
+import {
+  IEyeglassQrResponse,
+  IReporteInventarioPayload,
+  IUpdateStockProductos,
+} from "@/types/products";
 import {
   StatusModal,
   LoadingModal,
@@ -40,9 +51,15 @@ export default function InventarioMonturas() {
   // Hooks
   const { sedeId } = useSessionUser();
   const { eyeglass, searchEyeglassByQr } = useSearchEyeglassByQr();
-  const { eyeglasses: opciones, showList, searchEyeglass, setShowList } = useSearchEyeglass();
+  const {
+    eyeglasses: opciones,
+    showList,
+    searchEyeglass,
+    setShowList,
+  } = useSearchEyeglass();
   const { descargarExcel } = useReporteInventario();
-  const { loading, statusMessage, success, updateStockProductos } = useUpdateStockProductos();
+  const { loading, statusMessage, success, updateStockProductos } =
+    useUpdateStockProductos();
   const procesarProductoEncontrado = (data: IEyeglassQrResponse) => {
     const stockId = String(data.stock.id);
     const existeEnLote = lote.find((item) => item.stock.id === data.stock.id);
@@ -83,7 +100,7 @@ export default function InventarioMonturas() {
   const productosModificados = lote.filter((p) => {
     const stockId = String(p.stock.id);
     const stockNuevo = dictStocks[stockId];
-    return stockNuevo !== "" && Number(stockNuevo) !== p.stock.cantidad;
+    return stockNuevo !== "";
   });
 
   const limpiarTablaInventario = () => {
@@ -99,9 +116,7 @@ export default function InventarioMonturas() {
   };
 
   const eliminarFila = (stockId: string) => {
-    setLote((prev) =>
-      prev.filter((item) => String(item.stock.id) !== stockId)
-    );
+    setLote((prev) => prev.filter((item) => String(item.stock.id) !== stockId));
 
     setDictStocks((prev) => {
       const nuevo = { ...prev };
@@ -131,11 +146,10 @@ export default function InventarioMonturas() {
   const descargarReporteExcel = async () => {
     const payload: IReporteInventarioPayload = {
       idSede: sedeId,
-      tipoProducto: TipoProducto.MONTURA
-    }
+      tipoProducto: TipoProducto.MONTURA,
+    };
     await descargarExcel(payload);
   };
-
 
   useEffect(() => {
     if (eyeglass && eyeglass.montura) {
@@ -188,9 +202,10 @@ export default function InventarioMonturas() {
                   type="text"
                   value={busqueda}
                   onChange={handleInputChange}
-                  // onKeyDown={handleScan}
                   placeholder={
-                    loading ? "BUSCANDO..." : "Buscar por nombre, código, marca, etc..."
+                    loading
+                      ? "BUSCANDO..."
+                      : "Buscar por nombre, código, marca, etc..."
                   }
                   className="w-full py-4 pl-12 pr-4 rounded-xl border border-slate-100 bg-slate-50 text-blue font-bold text-lg focus:border-blue focus:bg-white transition-all outline-none"
                 />
@@ -200,13 +215,19 @@ export default function InventarioMonturas() {
                     {opciones.map((opt) => (
                       <li
                         key={opt.id}
-                        onClick={() => handleSelectOption(opt.codigo || opt.codigoMontura)}
+                        onClick={() =>
+                          handleSelectOption(opt.codigo || opt.codigoMontura)
+                        }
                         className="px-4 py-2.5 hover:bg-slate-50 cursor-pointer border-b border-slate-50 last:border-0 flex items-center justify-between gap-3 transition-colors"
                       >
                         <div className="flex items-center gap-3 min-w-0">
                           {/* Miniatura de la Montura */}
                           <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200/80 flex items-center justify-center overflow-hidden shrink-0 relative">
-                            <Glasses size={20} strokeWidth={2} className="text-slate-400" />
+                            <Glasses
+                              size={20}
+                              strokeWidth={2}
+                              className="text-slate-400"
+                            />
                             {opt.imagenUrl && (
                               <img
                                 src={opt.imagenUrl}
@@ -216,8 +237,12 @@ export default function InventarioMonturas() {
                             )}
                           </div>
                           <div className="flex flex-col min-w-0">
-                            <span className="font-bold text-dark text-sm leading-tight truncate">{opt.marca}</span>
-                            <span className="text-xs text-slate-500 font-mono">{opt.codigo || opt.codigoMontura}</span>
+                            <span className="font-bold text-dark text-sm leading-tight truncate">
+                              {opt.marca}
+                            </span>
+                            <span className="text-xs text-slate-500 font-mono">
+                              {opt.codigo || opt.codigoMontura}
+                            </span>
                           </div>
                         </div>
                         <span className="text-[10px] font-bold text-blue bg-blue/10 px-2 py-1 rounded-lg shrink-0">
@@ -242,10 +267,7 @@ export default function InventarioMonturas() {
               >
                 Por Actualizar
               </BaseButton>
-              <BaseButton
-                fullWidth={false}
-                onClick={descargarReporteExcel}
-              >
+              <BaseButton fullWidth={false} onClick={descargarReporteExcel}>
                 Reporte
               </BaseButton>
             </header>
@@ -270,7 +292,6 @@ export default function InventarioMonturas() {
                       <th className="py-4 px-6 text-center">STOCK ACTUAL</th>
                       <th className="py-4 px-6 text-center">NUEVO STOCK</th>
                       <th className="py-4 px-3 text-center w-12">Acción</th>
-
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-50">
@@ -370,12 +391,24 @@ export default function InventarioMonturas() {
                     <table className="mv-table w-full">
                       <thead>
                         <tr>
-                          <th className="mv-th !py-1.5 !px-3 text-left w-[28%]">Producto</th>
-                          <th className="mv-th !py-1.5 !px-1 text-center w-[14%]">ID Montura</th>
-                          <th className="mv-th !py-1.5 !px-1 text-center w-[16%]">Código</th>
-                          <th className="mv-th !py-1.5 !px-1 text-center w-[16%]">Código Montura</th>
-                          <th className="mv-th !py-1.5 !px-1 text-center w-[13%]">Stock Actual</th>
-                          <th className="mv-th !py-1.5 !px-1 text-center w-[13%]">Nuevo Stock</th>
+                          <th className="mv-th !py-1.5 !px-3 text-left w-[28%]">
+                            Producto
+                          </th>
+                          <th className="mv-th !py-1.5 !px-1 text-center w-[14%]">
+                            ID Montura
+                          </th>
+                          <th className="mv-th !py-1.5 !px-1 text-center w-[16%]">
+                            Código
+                          </th>
+                          <th className="mv-th !py-1.5 !px-1 text-center w-[16%]">
+                            Código Montura
+                          </th>
+                          <th className="mv-th !py-1.5 !px-1 text-center w-[13%]">
+                            Stock Actual
+                          </th>
+                          <th className="mv-th !py-1.5 !px-1 text-center w-[13%]">
+                            Nuevo Stock
+                          </th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-blue-light-6">
