@@ -56,7 +56,8 @@ const esfValuesPositivo = [
 export default function Matrix() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { sedeId, role } = useSessionUser(); // Sede y Rol del usuario autorizados
+  const { role } = useSessionUser(); // Rol del usuario autorizado
+  const sedeId = Number(searchParams.get("sedeId"));
   const lenteId = Number(searchParams.get("lenteId"));
   const mode = searchParams.get("mode");
 

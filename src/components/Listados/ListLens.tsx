@@ -103,7 +103,7 @@ export default function ListLens({
 
 
   const handleOpenMatrix = (id: number) => {
-    router.push(`/matrix?lenteId=${id}&mode=stock`);
+    router.push(`/matrix?lenteId=${id}&mode=stock&sedeId=${sedeId}`);
   };
 
   return (

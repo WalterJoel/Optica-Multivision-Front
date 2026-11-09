@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import Breadcrumb from "@/components/Common/Breadcrumb";
 import { BaseButton } from "@/components/Common/Buttons";
 import { ImageWithZoom } from "@/components/Common/ImageWithZoom";
+import { SedeSelect } from "@/components/Common/SedeSelect";
 import { useLenses } from "@/hooks/products";
 import { useSessionUser } from "@/hooks/session";
 import { useRouter } from "next/navigation";
@@ -90,18 +92,23 @@ function LensCardFrame({
 
 export default function ListLens() {
   const router = useRouter();
-  const { sedeId } = useSessionUser();
+  const { sedeId: userSedeId } = useSessionUser();
+  const [sedeId, setSedeId] = useState<number | null>(userSedeId);
   const { lenses, loading } = useLenses(sedeId);
 
   // mode:Stock para que pueda editar la matriz
   const handleOpenMatrix = (id: number) => {
-    router.push(`/matrix?lenteId=${id}&mode=stockS`);
+    router.push(`/matrix?lenteId=${id}&mode=stockS&sedeId=${sedeId}`);
   };
 
   return (
     <>
       <section className="overflow-hidden pt-[200px] pb-20 bg-beige min-h-screen">
         <div className="max-w-[1700px] w-full mx-auto px-4 sm:px-8 xl:px-10">
+          <div className="flex justify-end mb-5">
+            <SedeSelect value={sedeId} onChange={setSedeId} />
+          </div>
+
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
             {loading ? (
               <div className="col-span-full text-center text-blue text-xs font-bold">
