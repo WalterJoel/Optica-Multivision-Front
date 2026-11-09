@@ -12,7 +12,6 @@ import { AppDispatch } from "@/redux/store";
 import { useDispatch } from "react-redux";
 import { CartItem } from "@/types/cart";
 import { TipoProducto, ITEMS_PER_PAGE } from "@/commons/constants";
-import { useSessionUser } from "@/hooks/session";
 import { Package, History, Store } from "lucide-react";
 import { ModalHistorialKardex } from "@/components/Kardex/ModalHistorialKardex";
 import { ModalStockOtrasSedes } from "@/components/Products/ModalStockOtrasSedes";
@@ -116,9 +115,13 @@ function EyeglassCardFrame({
 }
 
 /* Filters es opcional */
-export default function ListEyeglasses({ filters }: { filters?: Filters }) {
-  const { sedeId } = useSessionUser();
-
+export default function ListEyeglasses({
+  filters,
+  sedeId,
+}: {
+  filters?: Filters;
+  sedeId?: number | null;
+}) {
   const dispatch = useDispatch<AppDispatch>();
   const { eyeglasses, loading, getAllEyeglassesData } = useEyeglasses(sedeId);
 
@@ -159,8 +162,10 @@ export default function ListEyeglasses({ filters }: { filters?: Filters }) {
 
 
   useEffect(() => {
-    getAllEyeglassesData();
-  }, []);
+    if (sedeId) {
+      getAllEyeglassesData();
+    }
+  }, [sedeId]);
 
   /* FILTRADO */
   const filteredEyeglasses = useMemo(() => {

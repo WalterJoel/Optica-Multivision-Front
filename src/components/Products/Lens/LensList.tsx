@@ -4,6 +4,7 @@ import Breadcrumb from "@/components/Common/Breadcrumb";
 import { BaseButton } from "@/components/Common/Buttons";
 import { ImageWithZoom } from "@/components/Common/ImageWithZoom";
 import { useLenses } from "@/hooks/products";
+import { useSessionUser } from "@/hooks/session";
 import { useRouter } from "next/navigation";
 
 function LensCardFrame({
@@ -89,7 +90,8 @@ function LensCardFrame({
 
 export default function ListLens() {
   const router = useRouter();
-  const { lenses, loading } = useLenses();
+  const { sedeId } = useSessionUser();
+  const { lenses, loading } = useLenses(sedeId);
 
   // mode:Stock para que pueda editar la matriz
   const handleOpenMatrix = (id: number) => {

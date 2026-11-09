@@ -93,9 +93,13 @@ function LensCardFrame({
   );
 }
 
-export default function ListLens() {
+export default function ListLens({
+  sedeId,
+}: {
+  sedeId?: number | null;
+}) {
   const router = useRouter();
-  const { lenses, loading } = useLenses();
+  const { lenses, loading } = useLenses(sedeId);
 
 
   const handleOpenMatrix = (id: number) => {

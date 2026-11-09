@@ -15,7 +15,7 @@ import { useSessionUser } from "@/hooks/session";
 export default function ListLenses() {
   // Hooks
   const { sedeId } = useSessionUser();
-  const { lenses, loading, getAllLenses } = useLenses();
+  const { lenses, loading, getAllLenses } = useLenses(sedeId);
   const {
     updateLens,
     loading: updating,

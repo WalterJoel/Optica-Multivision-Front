@@ -3,12 +3,14 @@
 import React, { useState } from "react";
 import Breadcrumb from "@/components/Common/Breadcrumb";
 import { useLenses } from "@/hooks/products/useLenses";
+import { useSessionUser } from "@/hooks/session";
 
 interface ProductListProps {
   stock?: boolean;
 }
 export default function ProductList({ stock }: ProductListProps) {
-  const { lenses, loading } = useLenses();
+  const { sedeId } = useSessionUser();
+  const { lenses, loading } = useLenses(sedeId);
   const [productStyle, setProductStyle] = useState("grid");
 
   const options = [

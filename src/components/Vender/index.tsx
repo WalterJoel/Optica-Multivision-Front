@@ -11,17 +11,25 @@ import ListAccesories from "../Listados/ListAccesories";
 
 import MonturaFilters from "./MonturasFilter";
 import AccessoryFilters from "./AccesoriosFilter";
+import { SedeSelect } from "../Common/SedeSelect";
+import { useSessionUser } from "@/hooks/session";
 
 export default function Vender() {
   const searchParams = useSearchParams();
   const catParam = searchParams.get("cat");
 
+  const { sedeId: userSedeId } = useSessionUser();
+  const [sedeId, setSedeId] = useState<number | null>(userSedeId);
+
   const [selectedCategory, setSelectedCategory] = useState(
-    (catParam as TipoProducto) || TipoProducto.LENTE
+    (catParam as TipoProducto) || TipoProducto.LENTE,
   );
 
   useEffect(() => {
-    if (catParam && (Object.values(TipoProducto) as string[]).includes(catParam)) {
+    if (
+      catParam &&
+      (Object.values(TipoProducto) as string[]).includes(catParam)
+    ) {
       setSelectedCategory(catParam as TipoProducto);
     }
   }, [catParam]);
@@ -78,28 +86,24 @@ export default function Vender() {
             </div>
           </div>
 
-          {/* CATEGORÍAS (IGUAL) */}
-          <div className="flex gap-3 flex-wrap">
-            {categories.map((cat) => {
-              const isActive = selectedCategory === cat;
+          {/* SEDE + CATEGORÍAS */}
+          <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto items-center">
+            <SedeSelect value={sedeId} onChange={setSedeId} />
 
-              return (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className="relative group"
-                >
-                  <div
-                    className={`absolute inset-0 blur-xl rounded-xl transition ${isActive ? "bg-blue-light/20" : "bg-transparent"
-                      }`}
-                  />
+            <div className="flex gap-3 flex-wrap">
+              {categories.map((cat) => {
+                const isActive = selectedCategory === cat;
 
-                  <div
-                    className={`relative px-4 py-2 rounded-xl text-sm font-bold border transition flex items-center gap-2
-                    ${isActive
-                        ? "bg-white border-blue-light text-blue-light shadow-testimonial"
-                        : "bg-white border-gray-200 text-gray-500 hover:border-blue-light hover:text-blue-light"
-                      }`}
+                return (
+                  <button
+                    key={cat}
+                    onClick={() => setSelectedCategory(cat)}
+                    className={`relative px-4 py-3 rounded-2xl text-[13px] font-bold border-2 shadow-md hover:shadow-lg transition-all flex items-center gap-2
+                    ${
+                      isActive
+                        ? "bg-white border-blue-light text-blue-light"
+                        : "bg-white border-blue-light-4 text-dark hover:border-blue-light-3"
+                    }`}
                   >
                     <span className="flex gap-[2px]">
                       <span className="w-[3px] h-3 bg-blue-light rounded-full" />
@@ -107,10 +111,10 @@ export default function Vender() {
                     </span>
 
                     {cat}
-                  </div>
-                </button>
-              );
-            })}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </header>
 
@@ -138,13 +142,15 @@ export default function Vender() {
 
         {/* LISTAS */}
         {selectedCategory === TipoProducto.MONTURA && (
-          <ListEyeGlasses filters={monturaFilters} />
+          <ListEyeGlasses filters={monturaFilters} sedeId={sedeId} />
         )}
 
-        {selectedCategory === TipoProducto.LENTE && <ListLens />}
+        {selectedCategory === TipoProducto.LENTE && (
+          <ListLens sedeId={sedeId} />
+        )}
 
         {selectedCategory === TipoProducto.ACCESORIO && (
-          <ListAccesories filters={accessoryFilters} />
+          <ListAccesories filters={accessoryFilters} sedeId={sedeId} />
         )}
       </div>
     </div>

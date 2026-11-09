@@ -12,7 +12,6 @@ import { AppDispatch } from "@/redux/store";
 import { useDispatch } from "react-redux";
 import { CartItem } from "@/types/cart";
 import { ITEMS_PER_PAGE, TipoProducto } from "@/commons/constants";
-import { useSessionUser } from "@/hooks/session";
 import { Package, History, Store } from "lucide-react";
 import { ModalHistorialKardex } from "@/components/Kardex/ModalHistorialKardex";
 import { ModalStockOtrasSedes } from "@/components/Products/ModalStockOtrasSedes";
@@ -126,10 +125,15 @@ function AccessoryCardFrame({
 }
 
 /* LIST */
-export default function ListAccessories({ filters }: { filters?: Filters }) {
+export default function ListAccessories({
+  filters,
+  sedeId,
+}: {
+  filters?: Filters;
+  sedeId?: number | null;
+}) {
   const dispatch = useDispatch<AppDispatch>();
   // Hooks
-  const { sedeId } = useSessionUser();
   const { accessories, loading, getAllAccessoriesData } = useAccessories(sedeId);
 
   const [kardexState, setKardexState] = useState<{
@@ -165,8 +169,10 @@ export default function ListAccessories({ filters }: { filters?: Filters }) {
   const [page, setPage] = useState(1);
 
   useEffect(() => {
-    getAllAccessoriesData();
-  }, []);
+    if (sedeId) {
+      getAllAccessoriesData();
+    }
+  }, [sedeId]);
 
   /* 🔎 FILTRO COMPLETO */
   const filteredAccessories = useMemo(() => {

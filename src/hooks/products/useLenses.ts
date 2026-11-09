@@ -5,14 +5,12 @@ import {
   UpdateLensStock,
   getInventoryByStoresService,
 } from "@/services/products";
-import { useSessionUser } from "@/hooks/session";
 
-export function useLenses() {
+export function useLenses(sedeId?: number | null) {
   const [lenses, setLenses] = useState<ILens[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [stockVersion, setStockVersion] = useState(0); // <--- versión para refrescar stock
-  const { sedeId } = useSessionUser();
 
   // Obtener todos los lentes
   const getAllLenses = async () => {

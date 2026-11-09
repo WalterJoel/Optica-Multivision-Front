@@ -5,7 +5,7 @@ import { Building2, ChevronDown } from "lucide-react";
 import { useStores } from "@/hooks/stores/useStores";
 
 interface SedeSelectProps {
-  value: number | null;
+  value?: number | null;
   onChange: (value: number) => void;
   className?: string;
 }

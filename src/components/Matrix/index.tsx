@@ -60,7 +60,7 @@ export default function Matrix() {
   const lenteId = Number(searchParams.get("lenteId"));
   const mode = searchParams.get("mode");
 
-  const { lenses, updateStock, stockVersion } = useLenses();
+  const { lenses, updateStock, stockVersion } = useLenses(sedeId);
   const { stock, loading, error } = useLenteStock(
     lenteId,
     sedeId,
