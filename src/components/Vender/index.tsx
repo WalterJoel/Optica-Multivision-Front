@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { ShoppingCart } from "lucide-react";
-import { TipoProducto } from "@/commons/constants";
+import { Roles, TipoProducto } from "@/commons/constants";
+import { tienePermiso } from "@/commons/permissions";
 
 import ListEyeGlasses from "../Listados/ListEyeGlasses";
 import ListLens from "../Listados/ListLens";
@@ -18,7 +19,7 @@ export default function Vender() {
   const searchParams = useSearchParams();
   const catParam = searchParams.get("cat");
 
-  const { sedeId: userSedeId } = useSessionUser();
+  const { sedeId: userSedeId, role } = useSessionUser();
   const [sedeId, setSedeId] = useState<number | null>(userSedeId);
 
   const [selectedCategory, setSelectedCategory] = useState(
@@ -88,7 +89,9 @@ export default function Vender() {
 
           {/* SEDE + CATEGORÍAS */}
           <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto items-center">
-            <SedeSelect value={sedeId} onChange={setSedeId} />
+            {tienePermiso([Roles.ADMIN], role) && (
+              <SedeSelect value={sedeId} onChange={setSedeId} />
+            )}
 
             <div className="flex gap-3 flex-wrap">
               {categories.map((cat) => {
